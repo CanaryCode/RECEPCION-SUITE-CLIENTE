@@ -1,0 +1,1196 @@
+/* 
+   ESTILOS ESPECÍFICOS DE MÓDULOS (modules.css)
+   -------------------------------------------
+   Contiene la lógica visual avanzada para las funcionalidades operativas:
+   - Caja y Cobro: Grids de billetes, monedas y resaltes de foco.
+   - Rack de Habitaciones: Cajas interactivas y estados visuales.
+   - Dashboard: Accesos directos (Tiles) con efectos hover dinámicos.
+   - Notas Permanentes: Estilo Post-it con rotación y colores vibrantes.
+   - Otros: Paneles de contenido, tarjetas de precios y guías operativas.
+*/
+
+/* Estilos para la calculadora de caja y cobro */
+.sub-caja {
+  min-width: 70px;
+  justify-content: flex-end;
+  font-family: monospace;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.input-caja:focus,
+.input-cobro-recibido:focus {
+  background-color: #fff9e6;
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.rack-box {
+  width: 40px;
+  height: 40px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.rack-box:hover {
+  transform: scale(1.15);
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   NUEVOS ESTILOS PARA ACCESOS DIRECTOS Y DASHBOARD (EFECTO WOW)
+   ========================================================================== */
+
+/* Definición de colores para los accesos directos */
+.shortcut-success {
+  --shortcut-color: #198754;
+}
+
+/* Verde (Caja) */
+.shortcut-info {
+  --shortcut-color: #0dcaf0;
+}
+
+/* Cian (Novedades) */
+.shortcut-warning {
+  --shortcut-color: #ffc107;
+}
+
+/* Amarillo (Notas) */
+.shortcut-primary {
+  --shortcut-color: #0d6efd;
+}
+
+/* Azul (Agenda) */
+.shortcut-danger {
+  --shortcut-color: #dc3545;
+}
+
+/* Rojo (Urgencias) */
+.shortcut-dark {
+  --shortcut-color: #343a40;
+}
+
+/* Oscuro (Admin) */
+
+/* Botones de Acceso Directo (Estilo App/Tile) */
+.btn-shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px;
+  padding: 1rem;
+  height: 100%;
+  min-height: 110px;
+  color: #495057 !important;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shortcut:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--shortcut-color, var(--primary-color)) !important;
+  /* Borde del color específico */
+  color: var(--shortcut-color, var(--primary-color)) !important;
+}
+
+.btn-shortcut i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  /* Icono dentro de círculo suave */
+  background: #f8f9fa;
+  color: var(--shortcut-color, var(--primary-color));
+  /* Icono del color específico */
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Efecto rebote suave */
+}
+
+.btn-shortcut:hover i {
+  background: var(--shortcut-color, var(--primary-color));
+  /* Fondo del color específico al pasar ratón */
+  color: white;
+  transform: scale(1.25) rotate(-5deg);
+  /* Crece y rota ligeramente */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-shortcut span {
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+/* Barra decorativa inferior en hover */
+.btn-shortcut::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--shortcut-color, var(--primary-color));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.btn-shortcut:hover::after {
+  transform: scaleX(1);
+}
+
+/* Colores específicos para tarjetas RIU */
+.bg-riu-class {
+  background-color: #0d6efd !important;
+  color: white;
+}
+
+.bg-riu-oro {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.bg-riu-diamante {
+  background-color: #212529 !important;
+  color: white;
+}
+
+/* ==========================================================================
+   ESTILOS PARA NOTAS PERMANENTES (POST-ITS)
+   ========================================================================== */
+.post-it {
+  background-color: var(--post-it-color, #fff740) !important;
+  /* Amarillo por defecto */
+  color: #333 !important;
+  border: none !important;
+  border-radius: 2px !important;
+  /* Bordes casi rectos como papel */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+  position: relative;
+  min-height: 220px;
+  font-family: "Inter", sans-serif;
+  /* Fuente limpia */
+  transform: rotate(var(--rotation, 0deg));
+  /* Rotación aleatoria sutil */
+}
+
+.post-it:hover {
+  transform: scale(1.05) rotate(0deg) !important;
+  /* Se endereza y crece al pasar el ratón */
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2) !important;
+  z-index: 10;
+}
+
+/* Efecto de esquina levantada (opcional, sutil) */
+.post-it::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 20px 20px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.05) transparent;
+  pointer-events: none;
+}
+
+/* Variantes de Color (Colores Pastel Vibrantes) */
+.note-yellow {
+  --post-it-color: #fff740;
+}
+
+.note-pink {
+  --post-it-color: #ff7eb9;
+}
+
+.note-blue {
+  --post-it-color: #7afcff;
+}
+
+.note-green {
+  --post-it-color: #c7f464;
+}
+
+.note-orange {
+  --post-it-color: #ffb347;
+}
+
+.note-purple {
+  --post-it-color: #cdb4db;
+}
+
+/* ==========================================================================
+   MEJORA VISUAL MÓDULO DE CAJA / COBRO (GRID COMPACTO)
+   ========================================================================== */
+/* 1. Estilo para CAJA (Ancho grande para etiqueta + input + total) */
+.money-grid-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  /* Columnas automáticas */
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 2. Estilo específico para COBRO (Ancho pequeño para etiqueta + input) */
+#cobro-content div[id$="container"] {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  /* Más estrecho para que quepan más */
+  gap: 8px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* El título ocupa todo el ancho */
+.money-grid-container h6,
+#cobro-content div[id$="container"] h6 {
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  padding-bottom: 5px;
+}
+
+.money-input-group,
+#cobro-content .input-group {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Efecto Resalte para evitar errores */
+.money-input-group:hover,
+.money-input-group:focus-within,
+#cobro-content .input-group:hover,
+#cobro-content .input-group:focus-within {
+  transform: scale(1.08);
+  /* Crece para destacar */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  /* Se pone por encima de los demás */
+  border: 1px solid var(--primary-color);
+  background: #fff;
+}
+
+/* Ajuste para que el input tenga espacio suficiente */
+.money-input-group .form-control {
+  padding-left: 4px;
+  padding-right: 4px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   ESTILOS DE BOTONES PREMIUM (GLOBALES)
+   ========================================================================== */
+/* Aplicar a todos los botones de la app para asegurar consistencia total */
+.btn:not(.btn-link) {
+  border-radius: 10px !important;
+  padding: 10px 20px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+  border: 1px solid transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+.btn:not(.btn-link):hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Botones Primarios (Azules con degradado) */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), #0a58ca) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Botones Outline Primary (Vistas) */
+.btn-outline-primary {
+  background: white !important;
+  color: var(--primary-color) !important;
+  border: 1px solid var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary.active,
+.btn-check:checked + .btn-outline-primary {
+  background: linear-gradient(135deg, var(--primary-color), #0a58ca) !important;
+  color: white !important;
+  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3) !important;
+  border-color: transparent !important;
+}
+
+/* ==========================================================================
+   CORRECCIÓN DEFINITIVA BOTONES CAJA (SÓLIDOS Y LEGIBLES)
+   Forzamos colores sólidos con texto blanco para garantizar contraste
+   ========================================================================== */
+
+/* Guardar / Imprimir (Success - Verde Intenso) */
+/* Guardar / Imprimir (Success - Verde Intenso) */
+/* Guardar / Imprimir (Success - Verde Intenso) */
+.btn-success {
+  background: linear-gradient(135deg, #198754, #146c43) !important;
+  /* Fondo Sólido */
+  color: #ffffff !important;
+  border: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  opacity: 1 !important;
+}
+
+.btn-outline-success {
+  background: white !important;
+  color: #198754 !important;
+  border: 1px solid #198754 !important;
+}
+
+.btn-success:hover,
+.btn-outline-success:hover,
+.btn-check:checked + .btn-outline-success {
+  background: linear-gradient(135deg, #146c43, #0f5132) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3) !important;
+}
+
+/* Email (Info - Azul Cian) */
+.btn-info {
+  background: linear-gradient(135deg, #0dcaf0, #0aa2c0) !important;
+  /* Fondo Sólido */
+  color: #ffffff !important;
+  border: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  opacity: 1 !important;
+}
+
+.btn-outline-info {
+  background: white !important;
+  color: #0dcaf0 !important;
+  border: 1px solid #0dcaf0 !important;
+}
+
+.btn-info:hover,
+.btn-outline-info:hover,
+.btn-check:checked + .btn-outline-info {
+  background: linear-gradient(135deg, #0aa2c0, #087990) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(13, 202, 240, 0.3) !important;
+}
+
+/* PDF / Eliminar (Danger - Rojo) */
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545, #b02a37) !important;
+  /* Fondo Sólido */
+  color: #ffffff !important;
+  border: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  opacity: 1 !important;
+}
+
+.btn-outline-danger {
+  background: white !important;
+  color: #dc3545 !important;
+  border: 1px solid #dc3545 !important;
+}
+
+.btn-danger:hover,
+.btn-outline-danger:hover,
+.btn-check:checked + .btn-outline-danger {
+  background: linear-gradient(135deg, #b02a37, #842029) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Botones Secondary/Dark (Grises) */
+/* Botones Secondary/Dark (Grises) */
+.btn-secondary,
+.btn-dark {
+  background: linear-gradient(135deg, #6c757d, #495057) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Botones Outline Secondary (Botón Imprimir) */
+/* Botones Outline Secondary (Botón Imprimir) */
+.btn-outline-secondary {
+  background: white !important;
+  color: #6c757d !important;
+  border: 1px solid #6c757d !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-check:checked + .btn-outline-secondary {
+  background: #6c757d !important;
+  color: white !important;
+  box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* FIX: Add checked state support for other buttons */
+.btn-check:checked + .btn-outline-success {
+  background: linear-gradient(135deg, #198754, #146c43) !important;
+  color: white !important;
+}
+.btn-check:checked + .btn-outline-danger {
+  background: linear-gradient(135deg, #dc3545, #b02a37) !important;
+  color: white !important;
+}
+.btn-check:checked + .btn-outline-info {
+  background: linear-gradient(135deg, #0dcaf0, #0aa2c0) !important;
+  color: white !important;
+}
+.btn-check:checked + .btn-outline-warning {
+  background: #ffc107 !important;
+  color: #000 !important;
+}
+
+/* Botones de Eliminar/Acción (Rojos suaves que se intensifican) */
+/* Específico para botones pequeños de borrar en listas */
+[id$="-content"] .btn-light.text-danger {
+  background: rgba(220, 53, 69, 0.08) !important;
+  color: #dc3545 !important;
+  border: 1px solid rgba(220, 53, 69, 0.2) !important;
+}
+
+[id$="-content"] .btn-light.text-danger:hover {
+  background: #dc3545 !important;
+  color: white !important;
+  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3) !important;
+  border-color: #dc3545 !important;
+}
+
+/* Ajuste para botones pequeños en tarjetas */
+/* [id$="-content"] .btn-sm {
+    padding: 6px 12px !important;
+    font-size: 0.7rem !important;
+} */
+
+/* FIX: Eliminar fondos extraños en iconos de botones */
+/* FIX: Eliminar fondos extraños en iconos de botones y aplicar color global */
+.btn i,
+.btn .bi {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: white !important; /* Regla general: iconos blancos */
+}
+
+/* Excepciones: Botones con fondo blanco o estilo outline (en estado normal) */
+.btn-outline-primary i,
+.btn-outline-primary .bi,
+.btn-outline-secondary i,
+.btn-outline-secondary .bi,
+.btn-outline-success i,
+.btn-outline-success .bi,
+.btn-outline-danger i,
+.btn-outline-danger .bi,
+.btn-outline-warning i,
+.btn-outline-warning .bi,
+.btn-outline-info i,
+.btn-outline-info .bi,
+.btn-outline-dark i,
+.btn-outline-dark .bi,
+.btn-light i,
+.btn-light .bi,
+.btn-white i,
+.btn-white .bi,
+.btn-link i,
+.btn-link .bi {
+  color: inherit !important;
+}
+
+/* Resaltar el Total de Tesorería */
+#total_caja {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: var(--primary-color) !important;
+  background-color: #fff !important;
+  border: 2px solid rgba(13, 110, 253, 0.2) !important;
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.1) !important;
+}
+
+/* Distinción Visual Billetes vs Monedas */
+.bill-label {
+  background-color: #d1e7dd !important;
+  /* Verde suave */
+  color: #0f5132 !important;
+  border-color: #badbcc !important;
+}
+
+.coin-label {
+  background-color: #fff3cd !important;
+  /* Amarillo suave */
+  color: #664d03 !important;
+  border-color: #ffecb5 !important;
+}
+
+#cobro-content .input-group-text:first-child {
+  font-weight: 700;
+  color: #495057;
+  min-width: 75px !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+#cobro-content .sub-caja {
+  font-weight: 700;
+  color: var(--primary-color);
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* ==========================================================================
+   ESTILOS PARA GUÍAS OPERATIVAS (AYUDA) - DISEÑO DOCUMENTACIÓN
+   ========================================================================== */
+#agenda-content,
+#riu-trabajo,
+#estancia-trabajo,
+#cobro-content,
+#despertadores-trabajo,
+#cena-fria-trabajo,
+#atenciones-trabajo,
+#notas-content,
+#ayuda-content,
+#safe-content,
+#precios-content,
+#valoracion-content,
+#valoracion-content-wrapper,
+#impresion-content,
+#impresion-root-inner {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Ensure no pseudo-elements create lines */
+#agenda-content::before,
+#agenda-content::after,
+#riu-trabajo::before,
+#riu-trabajo::after,
+#estancia-trabajo::before,
+#estancia-trabajo::after,
+#cobro-content::before,
+#cobro-content::after,
+#despertadores-trabajo::before,
+#despertadores-trabajo::after,
+#cena-fria-trabajo::before,
+#cena-fria-trabajo::after,
+#atenciones-trabajo::before,
+#atenciones-trabajo::after {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+/* Clase para paneles internos */
+.content-panel {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+  position: relative;
+  overflow: visible;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 600px;
+  margin-top: 20px;
+}
+
+.content-panel::before {
+  display: none !important;
+}
+
+/* Títulos dentro de la ayuda */
+#agenda-content h4,
+.content-panel h4 {
+  color: #344767;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Subrayado elegante para títulos */
+#agenda-content h4::after,
+.content-panel h4::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+  margin-top: 8px;
+}
+
+/* Texto legible */
+.content-panel p,
+.content-panel li {
+  color: #555;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* ==========================================================================
+   ESTILOS MÓDULO PRECIOS (TARJETAS)
+   ========================================================================== */
+.price-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: white;
+}
+
+.price-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.price-icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03);
+}
+
+/* ==========================================================================
+   ESTILOS GUÍAS OPERATIVAS (ITEMS)
+   ========================================================================== */
+.guide-item {
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-left-width: 5px !important;
+  /* Borde lateral grueso para indicar estado */
+}
+
+.guide-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+.guide-item.done {
+  border-left-color: #198754 !important;
+  /* Verde */
+  background-color: #f8f9fa !important;
+  opacity: 0.85;
+}
+
+.guide-item.pending {
+  border-left-color: var(--primary-color) !important;
+  /* Azul */
+  background-color: #ffffff !important;
+}
+
+/* FIX: Eliminar scrolls internos en listas (Precios y Novedades) */
+#lista-precios-container,
+#nov_depts_container {
+  max-height: none !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* FIX: Forzar expansión de cualquier contenedor con scroll en Precios */
+#precios-content .overflow-auto,
+#precios-content [style*="max-height"] {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+@media print {
+  @page {
+    margin: 0.5cm;
+    size: A4 portrait;
+  }
+
+  body {
+    background-color: white !important;
+    font-family: Arial, sans-serif;
+  }
+
+  /* CONTENEDOR PRINCIPAL - Ajuste ancho completo */
+  #caja-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  /* OCULTAR ELEMENTOS NO DESEADOS */
+  #caja-content .btn,
+  #caja-content button,
+  .dynamic-concept button,
+  #caja_repc_otro_container,
+  .no-print,
+  .d-print-none {
+    display: none !important;
+  }
+
+  /* RESET DE TARJETAS PARA IMPRESIÓN (SIN SOMBRAS NI BORDES EXTERNOS) */
+  #caja-content .card {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin-bottom: 5px !important;
+  }
+
+  #caja-content .card-body {
+    padding: 0 !important;
+  }
+
+  /* CABECERAS SIMPLES Y LIMPIAS */
+  #caja-content .card-header {
+    background-color: transparent !important;
+    border-bottom: 2px solid #0d6efd !important;
+    padding: 2px 0 !important;
+    margin-bottom: 5px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #caja-content .card-header span,
+  #caja-content .card-header h6 {
+    font-weight: bold !important;
+    font-size: 10pt !important;
+    color: #0d6efd !important;
+    text-transform: uppercase;
+    margin: 0 !important;
+  }
+
+  /* RESTAURAR LAYOUT DE 2 COLUMNAS (IMPORTANTE) */
+  #caja-content > .row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+  }
+
+  #caja-content .col-md-8 {
+    width: 65% !important;
+    flex: 0 0 65% !important;
+    padding-right: 15px !important;
+  }
+
+  #caja-content .col-md-4 {
+    width: 35% !important;
+    flex: 0 0 35% !important;
+    padding-left: 15px !important;
+    border-left: 1px dashed #ccc !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* GRID DE BILLETES Y MONEDAS (MUY COMPACTO) */
+  .money-grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px !important;
+    margin-bottom: 10px !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .money-input-group {
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    background: white !important;
+  }
+
+  .money-input-group .input-group-text,
+  .money-input-group .form-control {
+    font-size: 8pt !important;
+    padding: 1px 2px !important;
+    height: auto !important;
+    border: none !important;
+    background: white !important;
+  }
+
+  /* SEPARADORES DE SECCIÓN */
+  #billetes-container,
+  #monedas-container {
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  /* FOOTER DE OTROS CONCEPTOS (GRID 2 COLUMNAS para evitar solapamiento) */
+  #otros-container .row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-top: 5px !important;
+    border-top: 1px solid #ddd !important;
+    padding-top: 5px !important;
+  }
+
+  #otros-container .col-md-4,
+  #otros-container .col-6 {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Permitir colores en textos de caja */
+  .text-primary {
+    color: #0d6efd !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .text-danger {
+    color: #dc3545 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .text-success {
+    color: #198754 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .small {
+    font-size: 8pt !important;
+  }
+
+  /* Reducir tamaño de títulos en print */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #0d6efd !important;
+    font-weight: bold !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 9pt !important;
+  }
+
+  /* Excepción: Total Tesorería en NEGRO */
+  #total_caja {
+    color: #000 !important;
+    font-size: 20pt !important;
+  }
+
+  /* Asegurar que iconos conserven el color del padre o el suyo propio */
+  h6 i,
+  h6 .bi {
+    color: inherit !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  #otros-container .input-group-text,
+  #otros-container input {
+    font-size: 8pt !important;
+  }
+
+  .small {
+    font-size: 8pt !important;
+  }
+
+  /* FIRMAS */
+  .signature-area {
+    margin-top: 20px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    page-break-inside: avoid;
+  }
+
+  .sig-box {
+    border-top: 1px solid #000;
+    width: 45%;
+    text-align: center;
+    padding-top: 5px;
+    font-size: 10pt;
+  }
+}
+
+/* =================================================================*********
+   PDF EXPORT FORCED STYLES (Simulates Print Layout on Screen for html2pdf)
+   ========================================================================== */
+.pdf-export {
+  background-color: white !important;
+  font-family: Arial, sans-serif !important;
+  color: #000 !important;
+  width: 100% !important;
+}
+
+.pdf-export .btn,
+.pdf-export .no-print,
+.pdf-export textarea,
+.pdf-export .dynamic-concept button {
+  display: none !important;
+}
+
+/* Visibility overrides */
+.pdf-export .report-header-print,
+.pdf-export .signature-area,
+.pdf-export #print-vales-details,
+.pdf-export #print-comentarios-caja {
+  display: block !important;
+}
+
+.pdf-export .signature-area {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 30px !important;
+}
+
+/* Card Reset */
+.pdf-export .card {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  margin-bottom: 5px !important;
+}
+
+.pdf-export .card-header {
+  background: transparent !important;
+  border-bottom: 2px solid #000 !important;
+  padding: 2px 0 !important;
+}
+
+/* Layout Columns */
+.pdf-export .row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+.pdf-export .col-md-8 {
+  width: 65% !important;
+  flex: 0 0 65% !important;
+  max-width: 65% !important;
+  padding-right: 15px !important;
+}
+
+.pdf-export .col-md-4 {
+  width: 35% !important;
+  flex: 0 0 35% !important;
+  max-width: 35% !important;
+  padding-left: 15px !important;
+  border-left: 1px dashed #ccc !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Money Grid */
+.pdf-export .money-grid-container {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.pdf-export .money-input-group {
+  border: 1px solid #ddd !important;
+}
+
+.pdf-export .money-input-group span,
+.pdf-export .money-input-group input {
+  font-size: 8pt !important;
+  padding: 1px !important;
+  height: auto !important;
+  border: none !important;
+}
+
+/* Otros Grid */
+.pdf-export #otros-container .row {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 5px !important;
+  margin-top: 5px !important;
+}
+
+.pdf-export #otros-container .col-md-4,
+.pdf-export #otros-container .col-6 {
+  width: 100% !important;
+}
+
+/* Comments Stretch */
+.pdf-export #card-comentarios-caja {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+}
+
+.pdf-export #print-comentarios-caja {
+  flex-grow: 1 !important;
+  border: 1px solid #ccc !important;
+  min-height: 100px !important;
+  white-space: pre-wrap !important;
+}
+
+/* Totals */
+.pdf-export #total_caja {
+  border: 2px solid #000 !important;
+  color: #000 !important;
+  font-size: 18pt !important;
+  background: white !important;
+}
+/* Rack Printing Adjustments */
+/* Rack Printing Adjustments */
+#rack-grid-container {
+  width: 100% !important;
+}
+
+@media print {
+  /* Hide Sidebars and Toolbars in Rack */
+  #rack-content .col-md-3,
+  #rack-content .module-toolbar,
+  .d-print-none {
+    display: none !important;
+  }
+
+  /* Expand Main Grid */
+  #rack-content .col-md-9 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Adjust Room Cards for Print */
+  .room-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .room-card .badge,
+  .room-card i {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS TÍTULOS DISCRETOS (H4)
+   ========================================================================== */
+.module-title-discrete {
+  font-weight: 700;
+  color: #344767;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* EFECTO DINÁMICO PARA TÍTULOS Y SUBTÍTULOS */
+.module-title-discrete i,
+.sub-title-dynamic i {
+  color: var(--primary-color);
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.module-title-discrete:hover i,
+.sub-title-dynamic:hover i {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* GALLERY MODULE STYLES */
+
+.gallery-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: var(--card-bg, #fff);
+}
+
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+.gallery-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.gallery-item-col.d-none {
+    display: none !important;
+}
+
+/* Modal Fullscreen Override */
+.modal-fullscreen .modal-header {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+#galleryViewerContainer {
+    background-color: #000;
+}
+
+#galleryViewerImage {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Polished Gallery Navigation */
+.viewer-nav-btn {
+    transition: all 0.2s ease;
+    border: none !important;
+}
+
+.viewer-nav-btn:hover {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+.viewer-nav-btn:active {
+    transform: translateY(-50%) scale(0.95) !important;
+}
+
+
+.shortcut-purple {
+  --shortcut-color: #6f42c1;
+}
+
+/* Row Highlight Animation */
+.highlight-row {
+    animation: highlightFade 3s ease-out forwards;
+}
+
+@keyframes highlightFade {
+    0% { background-color: rgba(255, 193, 7, 0.4); }
+    100% { background-color: transparent; }
+}
+

@@ -1,0 +1,48 @@
+===========================================================================
+    GUÍA DE INSTALACIÓN Y TRASLADO: RECEPCIÓN SUITE
+===========================================================================
+
+Este proyecto es PORTABLE. Puedes copiar toda esta carpeta a otro 
+ordenador y seguirá funcionando con todos tus datos intactos.
+
+REQUISITOS PREVIOS:
+-------------------
+1. Tener instalado Node.js (descárgalo en: https://nodejs.org/)
+   * Se recomienda la versión "LTS" (la más estable).
+
+PASOS PARA INSTALAR EN UN ORDENADOR NUEVO:
+------------------------------------------
+
+1. COPIAR LA CARPETA:
+   Copia la carpeta entera del proyecto ("RECEPCIÓN SUITE" o como la hayas nombrado)
+   al nuevo ordenador.
+
+2. INSTALAR DEPENDENCIAS (Solo la primera vez):
+   a) Abre una terminal (CMD o PowerShell).
+   b) Navega hasta la carpeta 'server' del proyecto.
+      Ejemplo: cd C:\TuRuta\RECEPCIÓN SUITE\server
+   c) Escribe el siguiente comando y pulsa Intro:
+      npm install
+   
+   * Esto descargará las librerías necesarias. Solo hay que hacerlo una vez.
+
+3. INICIAR LA APLICACIÓN:
+   a) Puedes usar el archivo 'INICIAR_APP.bat' que está en la raíz.
+   b) O manualmente: En la carpeta 'server', escribe: npm start
+
+4. ABRIR EL PROGRAMA:
+   Una vez el servidor esté funcionando, abre el archivo 'index.html' 
+   en cualquier navegador (Chrome, Edge, etc.).
+
+
+NOTAS IMPORTANTES:
+------------------
+- DATOS: Toda la información (Caja, Agenda, Safes...) se guarda en la 
+  carpeta 'storage/'. Al copiar el proyecto, te llevas todos tus datos.
+- RED: Asegúrate de que el servidor esté encendido antes de empezar a 
+  trabajar en la web para que los cambios se guarden correctamente en 
+  los archivos JSON.
+
+---------------------------------------------------------------------------
+Desarrollado con ❤️ para Recepción Suite
+===========================================================================

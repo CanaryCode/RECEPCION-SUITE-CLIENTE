@@ -1,0 +1,112 @@
+/* 
+   ORQUESTADOR GLOBAL DE ESTILOS (styles.css)
+   ------------------------------------------
+   Punto de entrada único que importa y organiza la jerarquía de estilos.
+   Estructura:
+   1. Google Fonts: Tipografía Inter.
+   2. base.css: Fundamentos y variables.
+   3. components.css: Elementos UI reutilizables.
+   4. modules.css: Lógica visual operativa.
+   5. Fixes Locales: Ajustes específicos de Layout y Responsive.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* === IMPORTACIÓN DE HOJAS DE ESTILO === */
+
+@import 'base.css';
+/* Variables, Reset y Tipografía */
+@import 'components.css';
+/* Botones, Tarjetas, Menús, Inputs */
+@import 'modules.css';
+/* Estilos específicos de cada módulo (Caja, Riu, Notas...) */
+/* @import 'print.css'; -- MOVIDO A INDEX.HTML PARA CONTROLAR CACHE */
+
+/* FIX CRÍTICO: Layout Margins Override */
+/* (Eliminado para restaurar comportamiento estándar) */
+/* SALVAGUARDA: Forzar comportamiento de contenedor Bootstrap */
+/* FIX: Se aplica directamente al ID para vencer especificidad */
+#app-layout {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    width: 100%; /* Default mobile */
+}
+
+@media (min-width: 576px) { #app-layout { max-width: 540px !important; } }
+@media (min-width: 768px) { #app-layout { max-width: 720px !important; } }
+@media (min-width: 992px) { #app-layout { max-width: 960px !important; } }
+@media (min-width: 1200px) { #app-layout { max-width: 1140px !important; } }
+@media (min-width: 1400px) { #app-layout { max-width: 1320px !important; } }
+
+@media screen {
+    /* FIX: Navbar Layout with Stacking Context */
+    #navbar-container {
+        position: relative;
+        z-index: 5000 !important; /* Stand above module content but behind modales (10500+) */
+    }
+}
+
+
+/* FIX: Tooltip Stacking & Styling for Nav */
+.custom-tooltip {
+    /* Ensure the span behaves like a block container for events/positioning */
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Clases generadas por Bootstrap */
+.tooltip {
+    z-index: 100000 !important; /* Ultimate priority */
+}
+
+/* FIX: Ensure Dropdowns are ALWAYS on top */
+.dropdown-menu {
+    z-index: 99999 !important; 
+    position: absolute !important; /* Force standard positioning */
+    /* Ensure it's not clipped */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+}
+
+.custom-nav-tooltip {
+    z-index: 100000 !important;
+    pointer-events: none; 
+}
+/* Asegurar que el inner también hereda o respeta */
+.custom-nav-tooltip .tooltip-inner {
+    background-color: #333; /* Darker distinct color */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Responsive Navbar refined fixes */
+/* Only wrap on smaller screens (< 991px) */
+@media (max-width: 991px) {
+    .nav-tabs {
+        justify-content: center;
+        gap: 5px;
+    }
+
+    #navbar-container {
+        padding: 0.25rem;
+    }
+    
+
+    #globalUserBtn {
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .nav-link {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+    
+    .nav-tabs {
+        border-radius: 12px;
+    }
+
+    /* En móviles pequeños, apilar controles si es necesario o dejar que el flex-wrap actúe natural */
+}

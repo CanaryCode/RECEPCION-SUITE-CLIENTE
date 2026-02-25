@@ -1,0 +1,149 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Gestión RIU Class</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-riu"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-riu"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-person-badge-fill"></i>Gestión RIU Class</h4>
+
+<div class="module-toolbar no-print d-flex justify-content-between align-items-center">
+    <div class="btn-group shadow-sm" role="group">
+        <button type="button" class="btn btn-outline-primary active fw-bold" id="btnVistaTrabajoRiu"
+            data-bs-toggle="tooltip" data-bs-title="Ver Formulario y Lista">
+            <i class="bi bi-pencil-square me-2"></i>Vista de Trabajo
+        </button>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+        <button type="button" id="btnEnviarReporte" class="btn btn-info btn-sm text-white fw-bold shadow-sm"
+                data-bs-toggle="tooltip" data-bs-title="Enviar informe por Email">
+            <i class="bi bi-envelope me-2"></i>Enviar Reporte
+        </button>
+        <div class="btn-print-wrapper d-flex gap-2">
+            <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" onclick="guardarRiuPDF()"
+                data-bs-toggle="tooltip" data-bs-title="Guardar listado como PDF">
+                <i class="bi bi-file-earmark-pdf me-2"></i>PDF
+            </button>
+            <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="imprimirRiu()"
+                data-bs-toggle="tooltip" data-bs-title="Imprimir Listado de Miembros RIU">
+                <i class="bi bi-printer me-2"></i>Imprimir
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="riu-trabajo">
+    <div class="card mb-3 shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+             <h6 class="sub-title-dynamic mb-0"><i class="bi bi-person-plus"></i>Registro de Cliente</h6>
+        </div>
+        <form id="formCliente" class="card-body row g-2 d-print-none">
+            <!-- Hidden ID for Edit Mode -->
+            <input type="hidden" id="riu_id_hidden">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">Nombre</label>
+                <input type="text" id="nombre" class="form-control form-control-sm" placeholder="Ej: Juan Pérez" required
+                    data-bs-toggle="tooltip" data-bs-title="Nombre del Titular">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Habitación</label>
+                <input type="text" id="habitacion" class="form-control form-control-sm" placeholder="Ej: 101" required
+                    data-bs-toggle="tooltip" data-bs-title="Número de Habitación">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Tarjeta</label>
+                <select id="tipo_tarjeta" class="form-select form-select-sm" data-bs-toggle="tooltip" data-bs-title="Nivel de Tarjeta">
+                    <option value="Class">Class</option>
+                    <option value="Oro">Oro</option>
+                    <option value="Diamante">Diamante</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Entrada</label>
+                <input type="date" id="fecha_entrada" class="form-control form-control-sm" required
+                    data-bs-toggle="tooltip" data-bs-title="Fecha de Llegada">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Salida</label>
+                <input type="date" id="fecha_salida" class="form-control form-control-sm" required
+                    data-bs-toggle="tooltip" data-bs-title="Fecha de Salida">
+            </div>
+            <div class="col-12">
+                <label class="form-label small mb-1">Comentarios</label>
+                <textarea id="comentarios" class="form-control form-control-sm" rows="1"
+                    placeholder="Notas o requerimientos especiales..."
+                    data-bs-toggle="tooltip" data-bs-title="Información Adicional"></textarea>
+            </div>
+            <div class="col-12 d-flex justify-content-end align-items-center gap-2 mt-2">
+                <button type="button" id="btnLimpiarSalidas" class="btn btn-sm btn-outline-danger border-0"
+                        data-bs-toggle="tooltip" data-bs-title="Eliminar registros con salida hoy">
+                    <i class="bi bi-trash me-1"></i>Limpiar Salidas Hoy
+                </button>
+                <button type="submit" id="btnSubmitRiu" class="btn btn-primary btn-sm px-4 fw-bold shadow-sm" 
+                        data-bs-toggle="tooltip" data-bs-title="Guardar Datos del Cliente">
+                    <i class="bi bi-person-check-fill me-2"></i>Registrar Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mb-2 px-1">
+        <h6 class="sub-title-dynamic mb-0"><i class="bi bi-list-ul"></i>Listado de Clientes</h6>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table id="table-riu" class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th data-sort="nombre">Cliente</th>
+                        <th style="width: 10%" data-sort="habitacion">Hab.</th>
+                        <th style="width: 15%" data-sort="tipo_tarjeta">Tarjeta</th>
+                        <th style="width: 15%" data-sort="fecha_salida">Salida</th>
+                        <th>Comentarios</th>
+                        <th class="text-end" style="width: 120px">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaCuerpo"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="riu-rack" class="d-none">
+    <div class="row mb-4 g-3">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    <div style="height: 140px; width: 100%;"><canvas id="riuChart"></canvas></div>
+                    <div class="mt-2 text-center">
+                        <small class="text-muted fw-bold">OCUPACIÓN CON TARJETA</small>
+                        <div class="h5 mb-0 fw-bold text-primary" id="totalOcupacionText">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header border-0 pt-3 pb-0">
+                    <h6 class="mb-0 fw-bold" style="font-size: 0.8rem;">ESTADÍSTICAS POR TIPO DE TARJETA</h6>
+                </div>
+                <div class="card-body">
+                    <div id="statsLabels" class="row g-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div id="rack-riu-habitaciones" class="d-flex flex-wrap gap-1 justify-content-start"></div>
+        </div>
+    </div>
+</div>

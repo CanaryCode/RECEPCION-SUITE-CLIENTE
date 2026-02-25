@@ -1,0 +1,72 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   assets/css/layout_fix.css
+	modified:   assets/css/modules/impresion.css
+	modified:   assets/css/print.css
+	modified:   assets/css/styles.css
+	modified:   assets/js/core/Api.js
+	modified:   assets/js/core/CompLoader.js
+	modified:   assets/js/core/Config.js
+	modified:   assets/js/core/PdfService.js
+	modified:   assets/js/core/RackView.js
+	modified:   assets/js/core/Router.js
+	modified:   assets/js/core/SyncManager.js
+	modified:   assets/js/core/Ui.js
+	modified:   assets/js/core/Utils.js
+	modified:   assets/js/main.js
+	modified:   assets/js/modules/Impresion.js
+	modified:   assets/js/modules/agenda.js
+	modified:   assets/js/modules/atenciones.js
+	modified:   assets/js/modules/ayuda.js
+	modified:   assets/js/modules/caja.js
+	modified:   assets/js/modules/cena_fria.js
+	modified:   assets/js/modules/cobro.js
+	modified:   assets/js/modules/configuracion.js
+	modified:   assets/js/modules/desayuno.js
+	modified:   assets/js/modules/despertadores.js
+	modified:   assets/js/modules/estancia.js
+	modified:   assets/js/modules/excursiones.js
+	modified:   assets/js/modules/gallery.js
+	modified:   assets/js/modules/lost_found.js
+	modified:   assets/js/modules/notas_permanentes.js
+	modified:   assets/js/modules/novedades.js
+	modified:   assets/js/modules/precios.js
+	modified:   assets/js/modules/rack.js
+	modified:   assets/js/modules/reservas_instalaciones.js
+	modified:   assets/js/modules/riu.js
+	modified:   assets/js/modules/safe.js
+	modified:   assets/js/modules/system_alarms_ui.js
+	modified:   assets/js/modules/transfers.js
+	modified:   assets/js/modules/vales.js
+	modified:   assets/js/services/BaseService.js
+	modified:   assets/js/services/ConfigService.js
+	modified:   assets/js/services/LostFoundService.js
+	modified:   assets/js/services/NotasService.js
+	modified:   assets/js/services/RackService.js
+	modified:   assets/js/services/SystemAlarmsService.js
+	modified:   assets/templates/agenda.html
+	modified:   assets/templates/cobro.html
+	modified:   assets/templates/configuracion.html
+	modified:   assets/templates/estancia.html
+	modified:   assets/templates/impresion.html
+	modified:   assets/templates/lost_found.html
+	modified:   assets/templates/notas_permanentes.html
+	modified:   assets/templates/rack.html
+	modified:   assets/templates/riu.html
+	modified:   assets/templates/system_alarms.html
+	modified:   config.json
+	modified:   index.html
+	modified:   storage/arqueo_caja.json
+	modified:   storage/config.json
+	modified:   storage/riu_estancia_diaria.json
+	modified:   storage/riu_notas_permanentes.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	assets/js/core/PrintService.js
+	status.txt
+	storage/media/caja_cierres/ARQUEO_10-02-2026_NOCHE.pdf
+

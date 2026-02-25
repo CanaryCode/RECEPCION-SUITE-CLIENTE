@@ -1,0 +1,49 @@
+[
+    {
+        "res_id": "",
+        "instalacion": "Cancha de tennis",
+        "habitacion": "102",
+        "pax": 2,
+        "fecha": "2026-02-06",
+        "hora_inicio": "00:00",
+        "hora_fin": "11:11",
+        "observaciones": "",
+        "id": "RES-1769938606485",
+        "timestamp": 1769938606485,
+        "autor": "Pavel",
+        "actualizadoEn": "2026-02-01T09:36:46.485Z"
+    },
+    {
+        "res_id": "",
+        "instalacion": "Cancha de tennis",
+        "externo_switch": true,
+        "habitacion": "EXTERNO",
+        "nombre_cliente": "marcos",
+        "fecha": "2026-02-01",
+        "hora_inicio": "08:00",
+        "hora_fin": "10:00",
+        "pax": 1,
+        "observaciones": "",
+        "id": "RES-1769941250261",
+        "externo": true,
+        "timestamp": 1769943076958,
+        "autor": "Anadelia",
+        "actualizadoEn": "2026-02-01T10:51:16.958Z"
+    },
+    {
+        "id": "RES-1769943734902",
+        "instalacion": "Cancha de tennis",
+        "externo_switch": false,
+        "habitacion": "102",
+        "nombre_cliente": "",
+        "fecha": "2026-02-01",
+        "hora_inicio": "11:00",
+        "hora_fin": "11:30",
+        "pax": 1,
+        "observaciones": "",
+        "externo": false,
+        "timestamp": 1769943734902,
+        "autor": "Anadelia",
+        "actualizadoEn": "2026-02-01T11:02:14.902Z"
+    }
+]

@@ -1,0 +1,8 @@
+Backups/
+Backups_DISABLED/
+backups/
+node_modules/
+server/node_modules/
+dist/
+build/
+.git/

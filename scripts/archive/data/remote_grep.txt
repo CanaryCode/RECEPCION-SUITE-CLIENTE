@@ -1,0 +1,20 @@
+[2026-02-24T02:44:27.538Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:27.558Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:28.538Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:28.558Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:29.535Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:29.556Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:30.545Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:30.567Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:31.535Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:31.557Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:32.550Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:32.571Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:33.542Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:33.569Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:34.560Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:34.580Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:35.544Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:35.569Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1
+[2026-02-24T02:44:36.538Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Unknown column 'hora' in 'field list'
+[2026-02-24T02:44:36.559Z] [Storage] CRITICAL: Transaction Error for arqueo_caja: Incorrect datetime value: '2026-02-24T02:24:43.000Z' for column 'created_at' at row 1

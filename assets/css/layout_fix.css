@@ -1,0 +1,286 @@
+/* LAYOUT FIX - FORCE MARGINS */
+/* Se aplica SOLO a pantalla para no romper la impresión absoluta */
+@media screen {
+  #app-layout {
+    width: 100% !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    overflow: visible !important; /* VITAL for Dropdowns */
+  }
+
+  /* Force Bootstrap container max-widths */
+  @media (min-width: 576px) {
+    #app-layout {
+      max-width: 540px !important;
+    }
+  }
+  @media (min-width: 768px) {
+    #app-layout {
+      max-width: 720px !important;
+    }
+  }
+  @media (min-width: 992px) {
+    #app-layout {
+      max-width: 960px !important;
+    }
+  }
+  @media (min-width: 1200px) {
+    #app-layout {
+      max-width: 1140px !important;
+    }
+  }
+  @media (min-width: 1400px) {
+    #app-layout {
+      max-width: 1320px !important;
+    }
+  }
+
+  /* Ensure children don't overflow */
+  .tab-content,
+  .tab-pane {
+    max-width: 100% !important;
+    width: 100% !important;
+    position: relative !important; /* Reset potential absolute positioning */
+    left: auto !important;
+    right: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* FIX: Prevent tab-pane from breaking out (High Specificity) */
+  #app-layout .tab-content .tab-pane.active,
+  .tab-pane.active {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important; /* CRITICAL: Override print.css absolute */
+    top: auto !important;
+    left: auto !important;
+
+    /* FORCE CONTAINER BEHAVIOR ON MODULES INDEPENDENT OF PARENT */
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Force Bootstrap container max-widths ON THE TABS THEMSELVES */
+  @media (min-width: 576px) {
+    .tab-pane.active {
+      max-width: 540px !important;
+    }
+  }
+  @media (min-width: 768px) {
+    .tab-pane.active {
+      max-width: 720px !important;
+    }
+  }
+  @media (min-width: 992px) {
+    .tab-pane.active {
+      max-width: 960px !important;
+    }
+  }
+  @media (min-width: 1200px) {
+    .tab-pane.active {
+      max-width: 1140px !important;
+    }
+  }
+  @media (min-width: 1400px) {
+    .tab-pane.active {
+      max-width: 1320px !important;
+    }
+  }
+
+  /* SPECIAL: Ensure rows inside tabs don't cause overflow */
+  .tab-pane .row {
+    margin-left: -0.75rem; /* Bootstrap default, compatible with container padding */
+    margin-right: -0.75rem;
+    width: auto !important;
+  }
+
+  /* ==========================================================================
+       FIX UNIVERSAL MODAL RACK
+       Asegura que el modal de habitación siempre esté visible y por encima de todo
+       ========================================================================== */
+  .modal-backdrop {
+    z-index: 10500 !important;
+  }
+
+  .modal {
+    z-index: 10600 !important;
+  }
+
+  .modal.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* SEGURIDAD: Ocultar navbar cuando hay un modal abierto para evitar solapamientos */
+  body.modal-open #navbar-container {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease;
+  }
+
+    /* SPOTIFY FOOTER PLAYER - DRAWER MODE */
+    .spotify-footer-player {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 99999 !important;
+        background: #191414 !important;
+        border-top: 1px solid #1DB954 !important;
+        box-shadow: 0 -8px 24px rgba(0,0,0,0.6) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* HANDLE AT THE TOP */
+    .spotify-footer-toggle {
+        width: 100%;
+        background: #1DB954;
+        color: white;
+        border: none;
+        padding: 2px 12px;
+        font-size: 0.6rem;
+        font-weight: 950;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    .spotify-footer-toggle:hover {
+        background: #1ed760;
+    }
+
+    /* MINI ICON FIX */
+    .spotify-footer-toggle i {
+        font-size: 0.8rem;
+    }
+
+    /* SWITCHER BELOW HANDLE */
+    #spotify-playlist-switcher {
+        background: #191414 !important;
+        padding: 8px 12px !important;
+        border-bottom: 1px solid #282828 !important;
+        display: flex !important;
+        gap: 8px;
+        overflow-x: auto;
+    }
+
+    /* BODY AT THE BOTTOM */
+    .spotify-player-body {
+        height: 152px;
+        background: #121212 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden;
+        transition: height 0.3s ease;
+    }
+
+    #spotify-footer-iframe {
+        flex: 1;
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+    }
+
+    /* MINIMIZED STATE */
+    .spotify-footer-player.minimized .spotify-player-body,
+    .spotify-footer-player.minimized #spotify-playlist-switcher {
+        display: none !important;
+    }
+
+    /* SAFETY PADDING FOR MAIN CONTENT */
+    body {
+        padding-bottom: 22px; /* Minimal height of the collapsed drawer */
+    }
+
+    /* VALORACION MODULE CUSTOM STYLES */
+    .periodo-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .periodo-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    }
+
+    .periodo-item .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+    .periodo-item .form-label {
+        font-size: 0.65rem !important;
+        margin-bottom: 2px !important;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    /* Fix vertical misalignment for grouped selects/inputs */
+    .periodo-item .align-items-end .col-md-4,
+    .periodo-item .align-items-end .col-md-3,
+    .periodo-item .align-items-end .col-md-6 {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    /* VERSION RIBBON (PREMIUM LOOK) */
+    .app-header-panel {
+        position: relative;
+        overflow: hidden !important; /* Ensure the ribbon is clipped to the header corners */
+    }
+
+    .version-ribbon {
+        position: absolute;
+        bottom: 15px;
+        right: -35px; /* Adjust for rotation */
+        width: 150px;
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        color: white;
+        text-align: center;
+        font-size: 0.72rem;
+        font-weight: 800;
+        padding: 6px 0;
+        transform: rotate(-45deg); /* Adjusted rotation for bottom corner */
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.2); /* Inverted shadow */
+        z-index: 100;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        pointer-events: none !important; /* CRITICAL: Must not block any clicks */
+        user-select: none;
+        border: 1px solid rgba(255,255,255,0.2);
+        opacity: 0.95;
+    }
+
+    /* Shine effect for the ribbon */
+    .version-ribbon::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: ribbonShine 5s infinite;
+    }
+
+    @keyframes ribbonShine {
+        0% { left: -100%; }
+        20% { left: 100%; }
+        100% { left: 100%; }
+    }
+}

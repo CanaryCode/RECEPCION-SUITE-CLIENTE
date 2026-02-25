@@ -1,0 +1,130 @@
+/* 
+   ESTILOS BASE COMPLETOS (base.css)
+   ---------------------------------
+   Este archivo define la base visual del proyecto, incluyendo:
+   - Variables de color y diseño (Design Tokens).
+   - Tipografía principal (Inter) y ajustes de legibilidad.
+   - Fixes críticos de comportamiento del DOM (Modales, Pestañas).
+   - Estilos fundamentales del Rack de Habitaciones.
+*/
+
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --bg-light: #f3f4f6;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-size: 1.15rem; /* Aumento significativo de legibilidad */
+  background-color: #eef1f5;
+  background-image:
+    radial-gradient(#cbd5e1 1.5px, transparent 1.5px),
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(13, 110, 253, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(13, 202, 240, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(102, 16, 242, 0.1) 0%,
+      transparent 50%
+    );
+  background-size:
+    24px 24px,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+  background-attachment: fixed;
+  color: #344767;
+  letter-spacing: -0.01em;
+}
+
+/* Forzar tipografía idéntica en todos los inputs y controles */
+input,
+button,
+select,
+textarea,
+.input-group-text,
+.form-control,
+.badge,
+.money-total,
+.sub-caja {
+  font-family: "Inter", sans-serif !important;
+  font-feature-settings: "zero" 0 !important; /* Desactivar ceros barrados (con palo diagonal) */
+  font-variant-numeric: lining-nums tabular-nums !important;
+}
+
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+}
+
+/* ==========================================================================
+   FIX CRÍTICO: CORRECCIÓN DE PESTAÑAS
+   ========================================================================== */
+/* Esto asegura que las pestañas no activas se oculten SIEMPRE */
+.tab-pane:not(.active) {
+  display: none !important;
+}
+
+/* ==========================================================================
+   FIX Z-INDEX: MODALES SOBRE NAV-TABS
+   ========================================================================== */
+/* La barra de navegación tiene z-index: 9999. Modales deben superarlo con margen. */
+.modal-backdrop {
+  z-index: 10500 !important;
+}
+
+.modal {
+  z-index: 10600 !important;
+}
+
+/* FIX CRÍTICO: Asegurar visibilidad si Bootstrap añade la clase pero algo la oculta */
+.modal.show {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ==========================================================================
+   RACK MODULE STYLES
+   ========================================================================== */
+.room-card {
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.room-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Sidebar Scrollbar */
+.overflow-auto::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}

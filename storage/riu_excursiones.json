@@ -1,0 +1,38 @@
+[
+    {
+        "id": "EXC-1769897301496-AEC",
+        "tipoId": "CAT-1769894964475",
+        "huesped": "34",
+        "habitacion": "22",
+        "externo": false,
+        "fechaExcursion": "2026-01-31",
+        "adultos": 1,
+        "niños": 0,
+        "grupos": 0,
+        "total": 23,
+        "estado": "Cobrado",
+        "comments": "",
+        "vendedor": "Javi",
+        "autor": "Javi",
+        "actualizadoEn": "2026-01-31T22:08:21.496Z",
+        "fechaVenta": "2026-01-31T22:08:21.496Z"
+    },
+    {
+        "id": "EXC-1769897637404-UDQ",
+        "tipoId": "CAT-1769894964475",
+        "huesped": "juan",
+        "habitacion": "EXTERNO",
+        "externo": true,
+        "fechaExcursion": "2026-01-31",
+        "adultos": 1,
+        "niños": 0,
+        "grupos": 0,
+        "total": 23,
+        "estado": "Cobrado",
+        "comments": "",
+        "vendedor": "Javi",
+        "autor": "Javi",
+        "actualizadoEn": "2026-01-31T22:13:57.404Z",
+        "fechaVenta": "2026-01-31T22:13:57.404Z"
+    }
+]

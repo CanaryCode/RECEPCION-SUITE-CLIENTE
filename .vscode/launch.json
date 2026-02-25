@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "ABRIR WEB (MODO SEGURO)",
+            "url": "https://www.desdetenerife.com:3000",
+            "presentation": {
+                "url": "https://www.desdetenerife.com:3000"
+            }
+        }
+    ]
+}

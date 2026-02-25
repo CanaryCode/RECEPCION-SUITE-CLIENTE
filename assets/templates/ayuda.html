@@ -1,0 +1,106 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Guías Operativas</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-ayuda"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-ayuda"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-journal-check"></i>Guías Operativas</h4>
+
+<div class="module-toolbar no-print d-flex justify-content-end">
+    <div class="btn-print-wrapper">
+        <button class="btn btn-primary btn-sm fw-bold" onclick="imprimirGuia()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Guía Operativa">
+            <i class="bi bi-printer me-2"></i>Imprimir Guía
+        </button>
+    </div>
+</div>
+
+<div id="ayuda-wrapper" class="container-fluid p-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom no-print">
+            
+            <div class="mb-3">
+                 <h6 class="sub-title-dynamic mb-0"><i class="bi bi-journal-text"></i>Selección de Manual</h6>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <select class="form-select form-select-sm fw-bold border-primary text-primary" id="select-guia-ayuda"
+                        style="width: auto; min-width: 200px;" data-bs-toggle="tooltip" data-bs-title="Selecciona la Guía">
+                        <option value="noche" selected>🌙 Guía Turno de Noche</option>
+                        <option value="mañana">☕ Guía Turno de Mañana</option>
+                        <option value="tarde">☀️ Guía Turno de Tarde</option>
+                    </select>
+                    
+                    <!-- New search filter -->
+                    <div class="input-group input-group-sm" style="max-width: 250px;">
+                        <span class="input-group-text bg-white border-primary text-primary"><i class="bi bi-search"></i></span>
+                        <input type="text" id="search-guia-ayuda" class="form-control border-primary" placeholder="Filtrar por palabra..." data-bs-toggle="tooltip" data-bs-title="Buscar en las tareas de este turno">
+                    </div>
+
+                    <h5 class="mb-0 text-primary fw-bold d-none" id="titulo-guia"></h5>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="toggleEdicionGuia()"
+                            data-bs-toggle="tooltip" data-bs-title="Modificar pasos de la guía">
+                        <i class="bi bi-lock-fill me-1" id="icono-candado"></i>
+                        <span id="texto-btn-edicion">Editar Guía</span>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="resetearChecksGuia()"
+                            data-bs-toggle="tooltip" data-bs-title="Desmarcar todas las tareas">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>Resetear Todo
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div id="lista-pasos-container" class="list-group list-group-flush">
+                <!-- Los pasos se renderizan aquí -->
+            </div>
+
+            <!-- Área de agregar paso (Solo visible en edición) -->
+            <div id="form-agregar-paso" class="p-3 bg-light border-top d-none no-print">
+                <div class="d-flex gap-2 align-items-start">
+                    <div id="nuevo-paso-texto" contenteditable="true" class="form-control bg-white"
+                        onfocus="setFoco(this)"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault(); agregarPasoGuiaManual();}"
+                        style="min-height: 38px;"></div>
+                    <button onclick="agregarPasoGuiaManual()" class="btn btn-primary px-4"><i class="bi bi-plus-lg"></i>
+                        Añadir</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light text-muted small no-print">
+            <i class="bi bi-info-circle me-1"></i>
+            <span id="info-footer">Modo Lectura: Marca las casillas a medida que completes las tareas.</span>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Firmas (Solo impresión) -->
+<div class="d-none d-print-block mt-5">
+    <div class="row g-5">
+        <div class="col-6">
+            <div class="mb-4">
+                <small class="text-muted d-block mb-1">Nombre Recepcionista:</small>
+                <div class="fw-bold border-bottom border-dark pb-1" id="print-repc-nombre-ayuda-footer"
+                    style="min-height: 20px;"></div>
+            </div>
+            <div class="text-center pt-3" style="border-top: 1px dashed #ccc;"><small class="fw-bold">Firma
+                    Recepcionista</small></div>
+        </div>
+        <div class="col-6">
+            <div class="mb-4">
+                <small class="text-muted d-block mb-1">Vº Bº Jefe Recepción:</small>
+                <div class="border-bottom border-dark pb-1" style="min-height: 20px;">&nbsp;</div>
+            </div>
+            <div class="text-center pt-3" style="border-top: 1px dashed #ccc;"><small class="fw-bold">Firma / Sello</small></div>
+        </div>
+    </div>
+</div>

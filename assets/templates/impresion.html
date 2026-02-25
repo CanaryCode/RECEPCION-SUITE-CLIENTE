@@ -1,0 +1,175 @@
+<div id="impresion-root-inner" class="content-panel animate-fade-in">
+  <!-- VISTA 1: PREPARACIÓN -->
+  <div id="impresion-trabajo" class="view-pane">
+    <div class="card shadow-sm border-0 bg-soft-panel">
+      <div
+        class="card-header py-3 bg-transparent d-flex justify-content-between align-items-center"
+      >
+        <h6 class="mb-0 fw-bold text-primary">
+          <i class="bi bi-clipboard-data me-2"></i>Paso 1: Preparación de Datos
+        </h6>
+      </div>
+      <div class="card-body bg-transparent">
+        <!-- Cocktail Metadata (Ahora siempre visible en la vista de trabajo) -->
+        <div id="cocktail-metadata-section" class="row g-3 mb-4 p-3 bg-soft-panel rounded border shadow-sm">
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">Fecha del Cocktail</label>
+            <input type="date" id="cocktail-fecha" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">Hora</label>
+            <input type="time" id="cocktail-hora" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label class="small fw-bold text-muted">Lugar de Celebración</label>
+            <select id="cocktail-lugar" class="form-control">
+                <!-- Dinámico -->
+            </select>
+          </div>
+        </div>
+
+        <p class="small text-muted mb-3">
+          Pega aquí las filas copiadas directamente de la tabla de Word.
+        </p>
+        <textarea
+          id="txtWordData"
+          class="form-control mb-3"
+          rows="12"
+          placeholder="Pega aquí los datos..."
+        ></textarea>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-success fw-bold" id="btnProcesarWord">
+            <i class="bi bi-magic me-2"></i>Generar Tarjetas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA 2: RENDERIZADO (UNIFICADO CON PESTAÑAS) -->
+  <div id="impresion-tarjetero" class="view-pane d-none">
+    <!-- Selector de vista previsualización -->
+    <ul class="nav nav-tabs mb-4 px-3 border-bottom-0" id="preview-tabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active fw-bold template-tab-btn" id="tab-tarjetero" data-type="tarjetero" onclick="window.setTemplateType('tarjetero')">
+                <i class="bi bi-person-badge me-2"></i>Tarjetero Cliente
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link fw-bold template-tab-btn" id="tab-cocktail" data-type="cocktail" onclick="window.setTemplateType('cocktail')">
+                <i class="bi bi-glass-balanced me-2"></i>Invitación Cocktail
+            </button>
+        </li>
+    </ul>
+
+
+    <div class="alert alert-info no-print mb-4 shadow-sm border-0 py-3 px-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
+          <!-- Info & Selection Toggle -->
+          <div class="d-flex align-items-center flex-wrap gap-3">
+            <div class="bg-light rounded border px-3 py-1 shadow-sm d-flex align-items-center" style="min-height: 40px; border-color: #dee2e6 !important;">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input ms-0 me-2 cursor-pointer" type="checkbox" id="toggleSelectAll" onchange="window.selectAll(this.checked)" checked style="width: 2.4rem; height: 1.2rem; cursor: pointer;">
+                <label class="form-check-label small fw-bold text-dark cursor-pointer mb-0" for="toggleSelectAll" style="padding-top: 2px;">Todos</label>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-center bg-light rounded border px-3 py-1 shadow-sm" style="min-height: 40px; border-color: #dee2e6 !important;">
+                <i class="bi bi-check2-square text-primary me-2"></i>
+                <span class="fw-bold text-primary" id="lblTotalCards" style="min-width: 45px; text-align: center;">0 / 0</span>
+            </div>
+          </div>
+
+          <!-- Botones de Rotación -->
+          <div class="btn-group btn-group-sm shadow-sm bg-light rounded border">
+              <button class="btn btn-outline-secondary rotation-btn active" data-rotation="0" onclick="window.setRotation(0)" title="Horizontal (0°)">
+                  <i class="bi bi-file-earmark-code"></i>
+              </button>
+              <button class="btn btn-outline-secondary rotation-btn" data-rotation="90" onclick="window.setRotation(90)" title="Vertical (90°)">
+                  <i class="bi bi-file-earmark-code" style="display: inline-block; transform: rotate(90deg);"></i>
+              </button>
+              <button class="btn btn-outline-secondary rotation-btn" data-rotation="180" onclick="window.setRotation(180)" title="Invertido (180°)">
+                  <i class="bi bi-file-earmark-code" style="font-size: 0.9rem; transform: rotate(180deg);"></i>
+              </button>
+              <button class="btn btn-outline-secondary rotation-btn" data-rotation="270" onclick="window.setRotation(270)" title="Vertical Rev (270°)">
+                  <i class="bi bi-file-earmark-code" style="display: inline-block; transform: rotate(270deg);"></i>
+              </button>
+          </div>
+
+          <!-- Calibration (Solo si cabe, si no flex-wrap lo bajará) -->
+          <div
+            id="calibration-bar"
+            class="d-flex align-items-center gap-2 opacity-50"
+            style="pointer-events: none"
+          >
+            <span class="small fw-bold text-uppercase me-1" id="calib-field-name"
+              >Campo: ---</span
+            >
+            <div class="input-group input-group-sm" style="width: 90px">
+              <span class="input-group-text bg-light">X</span>
+              <input
+                type="number"
+                id="calib-x"
+                class="form-control"
+                step="0.5"
+                oninput="window.updateActiveFieldCoord('x', this.value)"
+              />
+            </div>
+            <div class="input-group input-group-sm" style="width: 90px">
+              <span class="input-group-text bg-light">Y</span>
+              <input
+                type="number"
+                id="calib-y"
+                class="form-control"
+                step="0.5"
+                oninput="window.updateActiveFieldCoord('y', this.value)"
+              />
+            </div>
+            <div class="input-group input-group-sm" style="width: 90px">
+              <span class="input-group-text bg-light">H</span>
+              <input
+                type="number"
+                id="calib-h"
+                class="form-control"
+                step="0.5"
+                oninput="window.updateActiveFieldCoord('h', this.value)"
+              />
+            </div>
+            <div class="input-group input-group-sm" style="width: 90px">
+              <span class="input-group-text bg-white">W</span>
+              <input
+                type="number"
+                id="calib-w"
+                class="form-control"
+                step="0.5"
+                oninput="window.updateActiveFieldCoord('w', this.value)"
+              />
+            </div>
+            <button
+              class="btn btn-sm btn-light border h-100"
+              onclick="window.resetActiveField()"
+              title="Resetear campo"
+            >
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+          </div>
+        </div>
+      <div>
+        <span class="badge bg-light text-dark border me-1">
+          <i class="bi bi-arrows-move"></i> Arrastra
+        </span>
+        <span class="badge bg-light text-dark border">
+          <i class="bi bi-pencil"></i> Edita
+        </span>
+      </div>
+    </div>
+
+    <div id="cards-container" class="print-cards-grid">
+      <!-- Las tarjetas se inyectarán aquí -->
+      <div class="text-center p-5 text-muted">
+        <i class="bi bi-printer fs-1 opacity-25 d-block mb-3"></i>
+        <p>No hay tarjetas generadas. Pega los datos en la vista anterior.</p>
+      </div>
+    </div>
+  </div>
+</div>

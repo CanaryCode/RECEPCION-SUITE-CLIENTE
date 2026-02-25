@@ -1,0 +1,155 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Control de Safe</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-safe"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-safe"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-safe2-fill"></i>Control de Safe</h4>
+
+<div class="module-toolbar no-print">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary active" id="btnVistaTrabajoSafe"
+            data-bs-toggle="tooltip" data-bs-title="Ver Formulario y Lista">
+            <i class="bi bi-pencil-square me-2"></i>Vista de Trabajo
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="btnVistaRackSafe"
+            data-bs-toggle="tooltip" data-bs-title="Ver Resumen por Habitaciones">
+            <i class="bi bi-grid-3x3-gap me-2"></i>Vista de Rack
+        </button>
+    </div>
+
+    <div class="btn-print-wrapper">
+        <!-- Selector eliminado: Se usa usuario global -->
+        <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="imprimirSafe()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Listado">
+            <i class="bi bi-printer me-2"></i>Imprimir Listado
+        </button>
+    </div>
+</div>
+
+<!-- VISTA DE TRABAJO -->
+<div id="safe-trabajo">
+    <div class="card mb-4 shadow-sm border-0 no-print">
+        <div class="card-header py-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-key me-2"></i>Registrar Alquiler de Safe</h6>
+        </div>
+        <div class="card-body">
+            <form id="formNuevoSafe" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Habitación</label>
+                    <input type="text" id="safe_hab" class="form-control" placeholder="Ej: 101" required
+                        list="lista-habs-safe" data-bs-toggle="tooltip" data-bs-title="Número de Habitación">
+                    <datalist id="lista-habs-safe"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Nombre del Cliente</label>
+                    <input type="text" id="safe_nombre" class="form-control" placeholder="Nombre completo" required
+                        data-bs-toggle="tooltip" data-bs-title="Nombre del Huésped">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Fecha de Inicio</label>
+                    <input type="date" id="safe_fecha_inicio" class="form-control" required
+                        data-bs-toggle="tooltip" data-bs-title="Inicio del Alquiler">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2" data-bs-toggle="tooltip" data-bs-title="Registrar Alquiler"><i class="bi bi-save-fill me-2"></i>Guardar</button>
+                </div>
+                <!-- Selector de recepcionista estático -->
+                <!-- Selector de recepcionista eliminado -->
+                <div class="col-12 mt-2">
+                    <label class="form-label small fw-bold">Comentarios</label>
+                    <textarea id="safe_comentario" class="form-control" rows="2"
+                        placeholder="Notas adicionales sobre el alquiler (pérdida de llave, descuentos, etc.)"
+                        data-bs-toggle="tooltip" data-bs-title="Información Adicional"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header py-3">
+            <h6 class="mb-0 fw-bold">Alquileres Activos</h6>
+        </div>
+        <div class="table-responsive">
+            <table id="table-safe" class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th data-sort="habitacion">Habitación</th>
+                        <th data-sort="nombre">Cliente</th>
+                        <th data-sort="fechaInicio">Fecha Inicio</th>
+                        <th>Días</th>
+                        <th>Total Acumulado</th>
+                        <th>Comentarios</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaSafeActivos"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Área de Impresión Oculta (Ticket de Alquiler) -->
+<div id="print-safe-ticket" class="d-none d-print-block">
+  <div class="safe-ticket-print-container p-4 border rounded" style="max-width: 500px; margin: 0 auto; border: 2px solid #333 !important;">
+    <div class="text-center mb-4 border-bottom border-dark pb-3">
+      <h2 class="fw-bold mb-0">ALQUILER CAJA FUERTE</h2>
+      <small class="text-uppercase text-muted">Safe Deposit Box Rental</small>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-6">
+        <small class="text-muted d-block text-uppercase">Habitación / Room</small>
+        <strong class="fs-2 text-primary" id="print_safe_hab">---</strong>
+      </div>
+      <div class="col-6 text-end">
+        <small class="text-muted d-block text-uppercase">Fecha Inicio / Start Date</small>
+        <strong class="fs-4" id="print_safe_fecha_inicio">--/--/----</strong>
+      </div>
+    </div>
+
+    <div class="alert alert-light border border-dark mb-4">
+      <div class="mb-2">
+        <span class="text-muted small">Titular / Guest:</span><br>
+        <strong id="print_safe_nombre" class="fs-5">---</strong>
+      </div>
+      <div class="mt-3 pt-2 border-top">
+        <span class="text-muted small">Condiciones / Policy:</span>
+        <ul class="ps-3 mb-0" style="font-size: 0.75rem;">
+            <li>Coste diario según tarifa vigente.</li>
+            <li>No olvide dejar la puerta abierta al finalizar.</li>
+            <li>Please keep the door open on departure.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="text-center small text-muted mt-5 pt-4 border-top border-dark">
+      <p class="fw-bold mb-1">Hotel Garoé - Recepción</p>
+      <p class="mb-0">Gracias por su confianza.</p>
+      <p>Thank you for your trust.</p>
+    </div>
+  </div>
+</div>
+
+<!-- VISTA DE RACK -->
+<div id="safe-rack" class="d-none">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold text-muted mb-3 small">ESTADÍSTICAS DE SAFE (3€/día)</h6>
+            <div id="safe-stats" class="row g-2">
+                <!-- Inyectado por JS -->
+            </div>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div id="rack-safe-habitaciones" class="d-flex flex-wrap gap-1 justify-content-start"></div>
+        </div>
+    </div>
+</div>

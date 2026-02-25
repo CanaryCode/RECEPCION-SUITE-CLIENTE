@@ -1,0 +1,109 @@
+0 verbose cli /usr/bin/node /usr/bin/npm
+1 info using npm@9.2.0
+2 info using node@v20.18.1
+3 timing npm:load:whichnode Completed in 1ms
+4 timing config:load:defaults Completed in 2ms
+5 timing config:load:file:/usr/share/nodejs/npm/npmrc Completed in 3ms
+6 timing config:load:builtin Completed in 3ms
+7 timing config:load:cli Completed in 3ms
+8 timing config:load:env Completed in 0ms
+9 timing config:load:file:/home/ajpd/recepcion-suite/server/.npmrc Completed in 0ms
+10 timing config:load:project Completed in 3ms
+11 timing config:load:file:/home/ajpd/.npmrc Completed in 1ms
+12 timing config:load:user Completed in 1ms
+13 timing config:load:file:/etc/npmrc Completed in 0ms
+14 timing config:load:global Completed in 0ms
+15 timing config:load:setEnvs Completed in 2ms
+16 timing config:load Completed in 14ms
+17 timing npm:load:configload Completed in 14ms
+18 timing npm:load:mkdirpcache Completed in 0ms
+19 timing npm:load:mkdirplogs Completed in 0ms
+20 verbose title npm install
+21 verbose argv "install" "--cache" ".npm-cache" "--no-audit" "--no-fund"
+22 timing npm:load:setTitle Completed in 1ms
+23 timing config:load:flatten Completed in 4ms
+24 timing npm:load:display Completed in 5ms
+25 verbose logfile logs-max:10 dir:/home/ajpd/recepcion-suite/server/.npm-cache/_logs/2026-02-23T23_45_33_815Z-
+26 verbose logfile /home/ajpd/recepcion-suite/server/.npm-cache/_logs/2026-02-23T23_45_33_815Z-debug-0.log
+27 timing npm:load:logFile Completed in 9ms
+28 timing npm:load:timers Completed in 0ms
+29 timing npm:load:configScope Completed in 0ms
+30 timing npm:load Completed in 31ms
+31 silly logfile done cleaning log files
+32 timing config:load:flatten Completed in 1ms
+33 timing arborist:ctor Completed in 1ms
+34 timing idealTree:init Completed in 126ms
+35 timing idealTree:userRequests Completed in 1ms
+36 silly idealTree buildDeps
+37 timing idealTree:#root Completed in 0ms
+38 timing idealTree:buildDeps Completed in 1ms
+39 timing idealTree:fixDepFlags Completed in 0ms
+40 timing idealTree Completed in 131ms
+41 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+42 timing reify:loadTrees Completed in 232ms
+43 timing reify:diffTrees Completed in 5ms
+44 silly reify mark retired [
+44 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite'
+44 silly reify ]
+45 silly reify mark retired [
+45 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/debug'
+45 silly reify ]
+46 silly reify mark retired [
+46 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/ms'
+46 silly reify ]
+47 silly reify mark retired [
+47 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/send/node_modules/ms'
+47 silly reify ]
+48 silly reify moves {
+48 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite': '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/.iconv-lite-6XyZ3NVx',
+48 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/debug': '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/.debug-4xvtGNbk',
+48 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/ms': '/home/ajpd/recepcion-suite/server/node_modules/nodemon/node_modules/.ms-3OApE8Ce',
+48 silly reify   '/home/ajpd/recepcion-suite/server/node_modules/send/node_modules/ms': '/home/ajpd/recepcion-suite/server/node_modules/send/node_modules/.ms-l9S1v7xs'
+48 silly reify }
+49 timing reify:rollback:retireShallow Completed in 1ms
+50 timing command:install Completed in 251ms
+51 verbose stack Error: EACCES: permission denied, rename '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite' -> '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/.iconv-lite-6XyZ3NVx'
+51 verbose stack     at async Object.rename (node:internal/fs/promises:782:10)
+51 verbose stack     at async moveFile (/usr/share/nodejs/@npmcli/fs/lib/move-file.js:30:5)
+51 verbose stack     at async Promise.allSettled (index 0)
+51 verbose stack     at async [reifyPackages] (/usr/share/nodejs/@npmcli/arborist/lib/arborist/reify.js:234:11)
+51 verbose stack     at async Arborist.reify (/usr/share/nodejs/@npmcli/arborist/lib/arborist/reify.js:158:5)
+51 verbose stack     at async Install.exec (/usr/share/nodejs/npm/lib/commands/install.js:146:5)
+51 verbose stack     at async module.exports (/usr/share/nodejs/npm/lib/cli.js:133:5)
+52 verbose cwd /home/ajpd/recepcion-suite/server
+53 verbose Linux 6.14.0-37-generic
+54 verbose node v20.18.1
+55 verbose npm  v9.2.0
+56 error code EACCES
+57 error syscall rename
+58 error path /home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite
+59 error dest /home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/.iconv-lite-6XyZ3NVx
+60 error errno -13
+61 error Error: EACCES: permission denied, rename '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite' -> '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/.iconv-lite-6XyZ3NVx'
+61 error     at async Object.rename (node:internal/fs/promises:782:10)
+61 error     at async moveFile (/usr/share/nodejs/@npmcli/fs/lib/move-file.js:30:5)
+61 error     at async Promise.allSettled (index 0)
+61 error     at async [reifyPackages] (/usr/share/nodejs/@npmcli/arborist/lib/arborist/reify.js:234:11)
+61 error     at async Arborist.reify (/usr/share/nodejs/@npmcli/arborist/lib/arborist/reify.js:158:5)
+61 error     at async Install.exec (/usr/share/nodejs/npm/lib/commands/install.js:146:5)
+61 error     at async module.exports (/usr/share/nodejs/npm/lib/cli.js:133:5) {
+61 error   errno: -13,
+61 error   code: 'EACCES',
+61 error   syscall: 'rename',
+61 error   path: '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/iconv-lite',
+61 error   dest: '/home/ajpd/recepcion-suite/server/node_modules/mysql2/node_modules/.iconv-lite-6XyZ3NVx'
+61 error }
+62 error
+62 error The operation was rejected by your operating system.
+62 error It is likely you do not have the permissions to access this file as the current user
+62 error
+62 error If you believe this might be a permissions issue, please double-check the
+62 error permissions of the file and its containing directories, or try running
+62 error the command again as root/Administrator.
+63 verbose exit -13
+64 timing npm Completed in 305ms
+65 verbose unfinished npm timer reify 1771890333865
+66 verbose unfinished npm timer reify:retireShallow 1771890334106
+67 verbose code -13
+68 error A complete log of this run can be found in:
+68 error     /home/ajpd/recepcion-suite/server/.npm-cache/_logs/2026-02-23T23_45_33_815Z-debug-0.log

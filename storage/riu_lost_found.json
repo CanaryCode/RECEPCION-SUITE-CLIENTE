@@ -1,0 +1,16 @@
+[
+    {
+        "id": "LF-20260131-RP8B",
+        "objeto": "gafas",
+        "lugar": "23",
+        "quien": "juan",
+        "estado": "Almacenado",
+        "comments": "",
+        "imagenes": [
+            "storage/media/lost_found/1770028052632_garoe_negro.jpg"
+        ],
+        "fecha": "2026-01-31",
+        "autor": "Anadelia",
+        "actualizadoEn": "2026-02-02T10:27:35.780Z"
+    }
+]

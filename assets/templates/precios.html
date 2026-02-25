@@ -1,0 +1,192 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Lista de Precios</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-precios"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-precios"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-tags-fill"></i>Lista de Precios</h4>
+
+<div class="module-toolbar no-print d-flex justify-content-end">
+
+    <div class="btn-print-wrapper">
+        <!-- Selector eliminado: Se usa usuario global -->
+        <button class="btn btn-primary btn-sm fw-bold" onclick="imprimirPrecios()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Listado de Precios">
+            <i class="bi bi-printer me-2"></i>Imprimir Lista
+        </button>
+    </div>
+</div>
+
+<div class="container-fluid p-3">
+    <div class="card shadow-sm border-0">
+        <!-- Controles de Filtro y Edición -->
+        <div class="card-header bg-white py-3 border-bottom no-print">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+                <h6 class="sub-title-dynamic mb-0"><i class="bi bi-tags-fill"></i>Lista de Precios</h6>
+                <div class="d-flex flex-wrap align-items-center gap-2 w-100 mt-2 mt-md-0">
+                    <!-- Buscador Texto -->
+                    <div class="input-group input-group-sm flex-grow-1" style="min-width: 200px;">
+                        <span class="input-group-text bg-light border-end-0 border-2"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="search-precios-modulo" class="form-control border-start-0 bg-light border-2"
+                            placeholder="Buscar por nombre o descripción..." data-bs-toggle="tooltip" data-bs-title="Buscar en tiempo real">
+                    </div>
+
+                    <!-- Filtro Departamento -->
+                    <div style="min-width: 150px;">
+                        <select id="filter-precios-departamento" class="form-select form-select-sm border-2 shadow-none">
+                            <option value="">Todos los Dptos</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro Favoritos -->
+                    <button id="filter-precios-fav" class="btn btn-sm btn-outline-warning border-2" data-bs-toggle="button" aria-pressed="false" title="Filtrar Favoritos">
+                        <i class="bi bi-star"></i>
+                    </button>
+
+                    <div class="ms-auto d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm text-nowrap fw-bold" onclick="toggleEdicionPrecios()"
+                                data-bs-toggle="tooltip" data-bs-title="Añadir o Borrar Artículos">
+                            <i class="bi bi-lock-fill me-1" id="icon-lock-precios"></i>
+                            <span id="btn-text-precios">Editar Lista</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="form-add-precio-container" class="card-body bg-light border-bottom p-4 d-none no-print">
+            <form onsubmit="agregarPrecio(event)">
+                <!-- Fila 1: Atributos y Acciones -->
+                <div class="row g-3 align-items-end mb-3">
+                    <!-- Icono -->
+                    <div class="col-md-1 col-3">
+                        <label class="form-label small fw-bold text-muted">Icono</label>
+                        <input type="text" id="new-precio-icon" class="form-control form-control-lg text-center shadow-sm"
+                            placeholder="📦" value="📦" onclick="abrirSelectorIconos('new-precio-icon')" readonly role="button">
+                    </div>
+                    <!-- Departamento -->
+                    <div class="col-md-2 col-9">
+                        <label class="form-label small fw-bold text-muted">Departamento</label>
+                        <select id="new-precio-departamento" class="form-select form-select-lg shadow-sm" required>
+                            <option value="" selected disabled>...</option>
+                        </select>
+                    </div>
+                    <!-- Nombre -->
+                    <div class="col-md-3 col-12">
+                        <label class="form-label small fw-bold text-muted">Nombre del Producto</label>
+                        <input type="text" id="new-precio-nombre" class="form-control form-control-lg shadow-sm"
+                            placeholder="Ej: Plato Combinado" required>
+                    </div>
+                    <!-- Precio -->
+                    <div class="col-md-2 col-12">
+                        <label class="form-label small fw-bold text-muted">Precio (€)</label>
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="number" id="new-precio-valor" class="form-control text-center"
+                                placeholder="0.00" step="0.01" required>
+                            <span class="input-group-text bg-white">€</span>
+                        </div>
+                    </div>
+                    <!-- Favorito -->
+                    <div class="col-md-2 col-4">
+                        <div class="bg-white p-2 rounded border border-2 shadow-sm text-center h-100 d-flex flex-column justify-content-center">
+                            <label class="form-label small fw-bold d-block mb-1 text-primary" style="font-size: 0.65rem; letter-spacing: 1px;">FAVORITO</label>
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input ms-0" type="checkbox" id="new-precio-fav" style="cursor: pointer; width: 2.5em; height: 1.25em;">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Botón Añadir -->
+                    <div class="col-md-2 col-8">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 h-100 fw-bold shadow-sm d-flex flex-column align-items-center justify-content-center py-2">
+                            <i class="bi bi-plus-circle fs-4 mb-0"></i>
+                            <span style="font-size: 0.8rem;">AÑADIR</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fila 2: Textarea Full Width -->
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label small fw-bold text-primary mb-1">
+                            <i class="bi bi-card-text me-1"></i>Descripción Detallada y Observaciones
+                        </label>
+                        <textarea id="new-precio-comentario" class="form-control shadow-sm border-2" rows="4" 
+                            style="font-size: 1rem; line-height: 1.5;"
+                            placeholder="Describe aquí el contenido del pack, detalles del servicio o notas relevantes..."></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0" style="max-height: calc(100vh - 220px); overflow-y: auto;">
+            <!-- Vista de Pantalla (Cards) -->
+            <div id="lista-precios-container" class="list-group list-group-flush no-print"></div>
+            
+            <!-- Vista de Impresión (Tabla limpia) -->
+            <div class="d-none d-print-block p-2">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 60px;"></th>
+                            <th>Producto / Artículo</th>
+                            <th>Descripción / Comentario</th>
+                            <th class="text-end" style="width: 100px;">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-precios-print">
+                        <!-- Se llena vía JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Selección de Icono -->
+<div class="modal fade" id="modalIconos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Icono</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" id="iconTabs" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" id="emojis-tab"
+                            data-bs-toggle="tab" data-bs-target="#emojis-panel" type="button"><i
+                                class="bi bi-emoji-smile me-2"></i>Iconos</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" id="images-tab"
+                            data-bs-toggle="tab" data-bs-target="#images-panel" type="button"><i
+                                class="bi bi-image me-2"></i>Mi PC</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="emojis-panel" role="tabpanel">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Filtrar iconos..."
+                                onkeyup="filtrarEmojis(this.value)">
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center" id="emoji-grid"
+                            style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="images-panel" role="tabpanel">
+                        <div class="text-center p-4 border rounded bg-light">
+                            <label for="inputImagenPC" class="btn btn-primary mb-3">
+                                <i class="bi bi-upload me-2"></i>Seleccionar imagen del PC
+                            </label>
+                            <input type="file" id="inputImagenPC" class="d-none" accept="image/*"
+                                onchange="procesarImagenSubida(this)">
+                            <p class="small text-muted mb-0">La imagen se guardará y redimensionará automáticamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

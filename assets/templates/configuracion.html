@@ -1,0 +1,544 @@
+<div class="d-none d-print-block report-header-print">
+  <div class="report-info-left">
+    <h2>Configuración del Sistema</h2>
+    <p>Hotel Garoé • Recepción Suite</p>
+  </div>
+  <div class="report-info-right">
+    <div><strong>Fecha:</strong> <span id="print-date-config"></span></div>
+    <div>
+      <strong>Generado por:</strong> <span id="print-repc-nombre-config"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Encabezado del Módulo (Título Dinámico) -->
+<h4 class="module-title-discrete">
+  <i class="bi bi-gear-fill"></i> CONFIGURACIÓN
+</h4>
+
+<!-- Barra de Herramientas -->
+<div class="module-toolbar no-print">
+  <div class="btn-group" role="group">
+    <button
+      class="btn btn-outline-primary active"
+      id="btnConfigMain"
+      data-bs-toggle="tooltip"
+      data-bs-title="Editar Configuración"
+    >
+      <i class="bi bi-sliders me-2"></i>General
+    </button>
+  </div>
+
+  <div class="btn-print-wrapper gap-2">
+    <button
+      class="btn btn-warning btn-sm fw-bold shadow-sm"
+      id="btnLockConfig"
+      onclick="Configurator.lockConfig()"
+      data-bs-toggle="tooltip"
+      data-bs-title="Cerrar todas las secciones protegidas (Bloquear)"
+    >
+      <i class="bi bi-lock-fill me-2"></i>Bloquear Todo
+    </button>
+    <button
+      class="btn btn-success btn-sm fw-bold shadow-sm"
+      onclick="exportConfig()"
+      data-bs-toggle="tooltip"
+      data-bs-title="Descargar archivo JSON para guardar cambios permanentemente"
+    >
+      <i class="bi bi-download me-2"></i>Descargar config.json
+    </button>
+    <button
+      class="btn btn-primary btn-sm fw-bold shadow-sm"
+      onclick="saveConfigLocal()"
+      data-bs-toggle="tooltip"
+      data-bs-title="Aplicar cambios en este navegador"
+    >
+      <i class="bi bi-save-fill me-2"></i>Aplicar Cambios
+    </button>
+  </div>
+</div>
+
+<!-- Contenedor Principal -->
+<div id="configuracion-content-wrapper" class="animate-fade-in">
+  <form
+    id="formConfig"
+    autocomplete="off"
+    onsubmit="
+      event.preventDefault();
+      saveConfigLocal();
+    "
+  >
+    <div class="accordion" id="accordionConfig">
+      
+      <!-- CATEGORÍA 1: PERSONAL Y ORGANIZACIÓN (PROTEGIDO) -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingPersonal">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonal" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 1. Personal y Organización
+          </button>
+        </h2>
+        <div id="collapsePersonal" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <!-- 1.1 Recepcionistas -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Equipo de Recepción</h6>
+              <p class="small text-muted mb-3">Nombres que aparecerán en los selectores de usuario y firmas.</p>
+              <div id="config-recepcionistas-list" class="d-flex flex-wrap gap-2 mb-3"></div>
+              <div class="input-group input-group-sm" style="max-width: 400px">
+                <input type="text" id="newRecepcionista" class="form-control" placeholder="Nuevo nombre..."/>
+                <button class="btn btn-outline-primary" type="button" onclick="addRecepcionista()">
+                  <i class="bi bi-plus-lg"></i> Añadir
+                </button>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 1.2 Departamentos del Hotel -->
+            <div>
+              <h6 class="fw-bold text-dark mb-2">Departamentos del Hotel</h6>
+              <p class="small text-muted mb-3">Lista maestra de departamentos para Novedades, Averías y Lista de Precios.</p>
+              <div id="list-departamentos-global" class="d-flex flex-wrap gap-2 mb-3"></div>
+              <div class="input-group input-group-sm" style="max-width: 400px">
+                <input type="text" id="newDepartamentoGlobal" class="form-control" placeholder="Nuevo departamento..."/>
+                <button class="btn btn-outline-primary" type="button" onclick="addDepartamentoGlobal()">
+                  <i class="bi bi-plus-lg"></i> Añadir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 2: LANZADOR Y MULTIMEDIA -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingLauncher">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLauncher">
+            <i class="bi bi-grid-3x3-gap-fill"></i> 2. Lanzador y Multimedia
+          </button>
+        </h2>
+        <div id="collapseLauncher" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <!-- 2.1 LaunchPad -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Lanzador de Aplicaciones (LaunchPad)</h6>
+              <p class="small text-muted mb-3">Configura los accesos directos del menú "LaunchPad".</p>
+              <div id="list-app-launchers" class="row g-2 mb-3"></div>
+              <div class="p-3 bg-light rounded border">
+                  <div class="row g-2 align-items-end">
+                      <div class="col-md-2">
+                          <label class="form-label small fw-bold">Tipo</label>
+                          <select id="newLauncherType" class="form-select form-select-sm" onchange="Configurator.onLauncherTypeChange(this.value)">
+                              <option value="app">Aplicación / Archivo</option>
+                              <option value="folder">Carpeta</option>
+                              <option value="url">URL Web</option>
+                              <option value="video">Video (YouTube)</option>
+                              <option value="maps">Mapas (Google Maps)</option>
+                              <option value="documentos">Documentos (PDF/Office)</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label class="form-label small fw-bold">Nombre</label>
+                          <input type="text" id="newLauncherLabel" class="form-control form-control-sm" placeholder="Ej: Word">
+                      </div>
+                      <div class="col-md-4">
+                          <label id="labelLauncherPath" class="form-label small fw-bold">Ruta</label>
+                          <div class="input-group input-group-sm">
+                              <input type="text" id="newLauncherPath" class="form-control" placeholder="C:\...">
+                              <button class="btn btn-outline-secondary" type="button" onclick="pickLauncherFile()">
+                                  <i class="bi bi-folder2-open"></i>
+                              </button>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <label class="form-label small fw-bold">Icono</label>
+                          <div class="input-group input-group-sm">
+                              <button class="btn btn-outline-secondary" type="button" onclick="IconSelector.open('newLauncherIcon')"><i class="bi bi-palette"></i></button>
+                              <input type="text" id="newLauncherIcon" class="form-control" placeholder="bi-box">
+                          </div>
+                      </div>
+                      <div class="col-md-1">
+                          <button class="btn btn-primary btn-sm w-100 fw-bold" type="button" onclick="addAppLauncher()"><i class="bi bi-plus-lg"></i></button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 2.2 Visualizador (Galerías) -->
+            <div>
+              <h6 class="fw-bold text-dark mb-2">Rutas del Visualizador (Galerías y PDFs)</h6>
+              <p class="small text-muted mb-3">Define las carpetas para la pestaña "Galería".</p>
+              <div class="mb-3 p-3 bg-light rounded border">
+                  <label class="form-label small fw-bold text-dark"><i class="bi bi-star-fill me-1"></i>Carpeta Principal (Predeterminada)</label>
+                  <div class="input-group input-group-sm">
+                      <input type="text" id="conf_gallery_path" class="form-control">
+                      <button class="btn btn-outline-secondary" type="button" onclick="pickGalleryFolder()"><i class="bi bi-folder2-open"></i> Explorar</button>
+                  </div>
+              </div>
+              <h6 class="small fw-bold mb-2">Carpetas Adicionales</h6>
+              <div id="list-gallery-folders" class="row g-2 mb-3"></div>
+              <div class="row g-2 align-items-end p-3 bg-light rounded border">
+                  <div class="col-md-4">
+                      <label class="form-label small fw-bold">Nombre</label>
+                      <input type="text" id="newGalleryLabel" class="form-control form-control-sm">
+                  </div>
+                  <div class="col-md-6">
+                      <label class="form-label small fw-bold">Ruta</label>
+                      <div class="input-group input-group-sm">
+                          <input type="text" id="newGalleryPath" class="form-control">
+                          <button class="btn btn-outline-secondary" type="button" onclick="pickNewGalleryFolder()"><i class="bi bi-folder2-open"></i></button>
+                      </div>
+                  </div>
+                  <div class="col-md-2">
+                      <button class="btn btn-primary btn-sm w-100 fw-bold" type="button" onclick="addGalleryFolder()"><i class="bi bi-plus-lg"></i> Añadir</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 3: LANZADOR SPOTIFY -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingSpotify">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpotify">
+            <i class="bi bi-spotify"></i> 3. Lanzador Spotify
+          </button>
+        </h2>
+        <div id="collapseSpotify" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <div class="mb-0">
+              <h6 class="fw-bold text-dark mb-2">Spotify Footer (Reproductor)</h6>
+              <p class="small text-muted mb-3">Configura las listas de reproducción que aparecen en la barra inferior.</p>
+              <div id="config-spotify-playlists-list" class="row g-2 mb-3"></div>
+              <div class="p-3 bg-light rounded border">
+                  <div class="row g-2 align-items-end">
+                      <div class="col-md-4">
+                          <label class="form-label small fw-bold">Nombre de la Lista</label>
+                          <input type="text" id="newSpotifyLabel" class="form-control form-control-sm" placeholder="Ej: Música Relax">
+                      </div>
+                      <div class="col-md-6">
+                          <label class="form-label small fw-bold">Enlace de Spotify</label>
+                          <input type="text" id="newSpotifyUrl" class="form-control form-control-sm" placeholder="https://open.spotify.com/...">
+                      </div>
+                      <div class="col-md-2">
+                          <button class="btn btn-success btn-sm w-100 fw-bold" type="button" onclick="Configurator.addSpotifyPlaylist()">
+                              <i class="bi bi-plus-lg"></i> Añadir
+                          </button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 4: SERVICIOS Y EXCURSIONES -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingServicios">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServicios" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 4. Servicios y Excursiones
+          </button>
+        </h2>
+        <div id="collapseServicios" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <!-- 4.1 Transfers & Destinos -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Transfers & Destinos</h6>
+              <p class="small text-muted mb-3">Destinos habituales para Transfers (ej: Aeropuertos).</p>
+              <div id="list-destinos-transfers" class="d-flex flex-wrap gap-2 mb-3"></div>
+              <div class="input-group input-group-sm" style="max-width: 400px">
+                <input type="text" id="newDestinoTransfer" class="form-control" placeholder="Nuevo destino..."/>
+                <button class="btn btn-outline-primary" type="button" onclick="addDestinoTransfer()">
+                  <i class="bi bi-plus-lg"></i> Añadir
+                </button>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 4.2 Catálogo de Excursiones -->
+            <div class="mb-0">
+              <h6 class="fw-bold text-dark mb-2">Catálogo de Excursiones & Tickets</h6>
+              <div class="table-responsive border rounded mb-3">
+                <table id="table-excursiones" class="table table-sm table-hover align-middle mb-0">
+                  <thead class="table-light small">
+                    <tr>
+                      <th data-sort="nombre">Producto</th>
+                      <th data-sort="operador">Operador</th>
+                      <th class="text-center" data-sort="precioAdulto">Adulto</th>
+                      <th class="text-center" data-sort="precioNiño">Niño</th>
+                      <th class="text-center" data-sort="esTicket">Cat.</th>
+                      <th class="text-end"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="config-excursiones-list"></tbody>
+                </table>
+              </div>
+              <div class="row g-2 align-items-end p-3 bg-light rounded border">
+                <div class="col-md-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="newExc_nombre" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">Operador</label><input type="text" id="newExc_operador" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">€ Adulto</label><input type="number" step="0.01" id="newExc_pAdulto" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">€ Niño</label><input type="number" step="0.01" id="newExc_pNiño" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">Categoría</label><select id="newExc_esTicket" class="form-select form-select-sm"><option value="false">🏞️ Excursión</option><option value="true">🎟️ Ticket</option></select></div>
+                <div class="col-md-1"><button class="btn btn-primary btn-sm w-100 fw-bold" type="button" onclick="Configurator.addExcursionAlCatalogo()"><i class="bi bi-plus-lg"></i></button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 5: OPERATIVA Y COCKTAIL -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingOperativa">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOperativa" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 5. Operativa y Cocktail
+          </button>
+        </h2>
+        <div id="collapseOperativa" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <!-- 5.1 Automatización Cocktail -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Automatización Cocktail</h6>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label small fw-bold">Día del Cocktail</label><select id="conf_cocktail_dia" class="form-select"><option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option><option value="0">Domingo</option></select></div>
+                <div class="col-md-6"><label class="form-label small fw-bold">Hora Predeterminada</label><input type="time" id="conf_cocktail_hora" class="form-control"></div>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 5.2 Lugares del Cocktail -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Lugares para Celebración (Traducciones)</h6>
+              <div class="table-responsive border rounded mb-3">
+                <table class="table table-sm table-hover align-middle mb-0">
+                  <thead class="table-light small">
+                    <tr><th>ES</th><th>EN</th><th>DE</th><th>FR</th><th class="text-center">Def.</th><th></th></tr>
+                  </thead>
+                  <tbody id="list-cocktail-lugares"></tbody>
+                </table>
+              </div>
+              <div class="p-3 bg-light rounded border">
+                <div class="row g-2 mb-2">
+                  <div class="col-md-3"><label class="small fw-bold text-muted">Nombre ES</label><input type="text" id="newLugarES" class="form-control form-control-sm"></div>
+                  <div class="col-md-3"><label class="small fw-bold text-muted">Nombre EN</label><input type="text" id="newLugarEN" class="form-control form-control-sm"></div>
+                  <div class="col-md-3"><label class="small fw-bold text-muted">Nombre DE</label><input type="text" id="newLugarDE" class="form-control form-control-sm"></div>
+                  <div class="col-md-3"><label class="small fw-bold text-muted">Nombre FR</label><input type="text" id="newLugarFR" class="form-control form-control-sm"></div>
+                </div>
+                <div class="d-flex justify-content-end"><button class="btn btn-primary btn-sm fw-bold" type="button" onclick="addCocktailLugar()"><i class="bi bi-plus-lg me-1"></i>Añadir Lugar</button></div>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 5.3 Touroperadores -->
+            <div>
+              <h6 class="fw-bold text-dark mb-2">Touroperadores por Nacionalidad</h6>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="p-3 border rounded bg-light bg-opacity-50">
+                    <label class="form-label small fw-bold text-warning d-flex align-items-center"><span class="badge bg-warning text-dark me-2">DE</span> Alemanes</label>
+                    <div id="list-to-de" class="d-flex flex-wrap gap-1 mb-3"></div>
+                    <div class="input-group input-group-sm"><input type="text" id="newToDE" class="form-control"><button class="btn btn-outline-warning" type="button" onclick="addTourOperator('DE')"><i class="bi bi-plus-lg"></i></button></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-3 border rounded bg-light bg-opacity-50">
+                    <label class="form-label small fw-bold text-danger d-flex align-items-center"><span class="badge bg-danger me-2">ES</span> Españoles</label>
+                    <div id="list-to-es" class="d-flex flex-wrap gap-1 mb-3"></div>
+                    <div class="input-group input-group-sm"><input type="text" id="newToES" class="form-control"><button class="btn btn-outline-danger" type="button" onclick="addTourOperator('ES')"><i class="bi bi-plus-lg"></i></button></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-3 border rounded bg-light bg-opacity-50">
+                    <label class="form-label small fw-bold text-info d-flex align-items-center"><span class="badge bg-info me-2 text-white">FR</span> Franceses</label>
+                    <div id="list-to-fr" class="d-flex flex-wrap gap-1 mb-3"></div>
+                    <div class="input-group input-group-sm"><input type="text" id="newToFR" class="form-control"><button class="btn btn-outline-info" type="button" onclick="addTourOperator('FR')"><i class="bi bi-plus-lg"></i></button></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-3 border rounded bg-light bg-opacity-50">
+                    <label class="form-label small fw-bold text-primary d-flex align-items-center"><span class="badge bg-primary me-2">UK</span> Ingleses (Default)</label>
+                    <div id="list-to-uk" class="d-flex flex-wrap gap-1 mb-3"></div>
+                    <div class="input-group input-group-sm"><input type="text" id="newToUK" class="form-control"><button class="btn btn-outline-primary" type="button" onclick="addTourOperator('UK')"><i class="bi bi-plus-lg"></i></button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 6: AJUSTES DEL SISTEMA (PROTEGIDO) -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingSistema">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSistema" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 6. Ajustes del Sistema
+          </button>
+        </h2>
+        <div id="collapseSistema" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <div class="mb-0">
+              <h6 class="fw-bold text-dark mb-2">Hotel y Sistema</h6>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Modo de Trabajo</label>
+                  <select id="conf_work_mode" class="form-select form-select-sm" onchange="Configurator.onWorkModeChange(this.value)">
+                    <option value="local">📁 Local (Archivos y DB Local)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">URL Servidor API</label>
+                  <div class="input-group input-group-sm">
+                    <input type="text" id="conf_api_url" class="form-control" placeholder="http://localhost:3000/api" />
+                    <button class="btn btn-outline-info" type="button" onclick="Configurator.testConnection()" id="btnTestConn">
+                      <i class="bi bi-broadcast me-1"></i>Verificar
+                    </button>
+                  </div>
+                  <div id="test-conn-feedback" class="small mt-1 d-none"></div>
+                </div>
+                <div class="col-md-4"><label class="form-label small fw-bold">Precio Safe (€/día)</label><input type="number" step="0.01" id="conf_safe_precio" class="form-control" /></div>
+                <div class="col-md-4"><label class="form-label small fw-bold">Fondo de Caja (€)</label><input type="number" step="0.01" id="conf_caja_fondo" class="form-control" /></div>
+                <div class="col-md-4"><label class="form-label small fw-bold">Intervalo Sincro (ms)</label><input type="number" step="1000" id="conf_sync_interval" class="form-control" /></div>
+                <div class="col-md-12"><label class="form-label small fw-bold">Contraseña Admin</label><div class="input-group input-group-sm" style="max-width: 300px;"><input type="password" id="conf_admin_pass" class="form-control" autocomplete="current-password" placeholder="..."><button class="btn btn-outline-secondary" type="button" onclick="Utils.togglePassword('conf_admin_pass')"><i class="bi bi-eye"></i></button></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 7: TARIFAS Y PRECIOS -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingTarifas">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTarifas" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 7. Tarifas y Precios
+          </button>
+        </h2>
+        <div id="collapseTarifas" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Precios Predefinidos (Valoración)</h6>
+              <div id="list-valoracion-precios" class="row g-2 mb-3"></div>
+              <div class="p-3 bg-light rounded border mb-4">
+                  <div class="row g-2 align-items-end">
+                      <div class="col-md-5"><label class="form-label small fw-bold">Nombre</label><input type="text" id="newValPrecioLabel" class="form-control form-control-sm"></div>
+                      <div class="col-md-4"><label class="form-label small fw-bold">Precio Base (€)</label><input type="number" step="0.01" id="newValPrecioValor" class="form-control form-control-sm"></div>
+                      <div class="col-md-3"><button class="btn btn-primary btn-sm w-100 fw-bold" type="button" onclick="Configurator.addValoracionPrecio()"><i class="bi bi-plus-lg"></i> Añadir</button></div>
+                  </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <h6 class="small fw-bold text-muted mb-2 border-bottom pb-1">Suplements. Indiv.</h6>
+                  <div id="list-valoracion-supl-indiv" class="row g-1 mb-2"></div>
+                  <div class="p-2 bg-light rounded border"><div class="row g-1"><div class="col-8"><input type="text" id="newValSuplIndivLabel" class="form-control form-control-sm" placeholder="Nombre"></div><div class="col-4"><input type="number" step="0.01" id="newValSuplIndivValor" class="form-control form-control-sm" placeholder="€"></div><div class="col-12 mt-1"><button class="btn btn-outline-primary btn-sm w-100" type="button" onclick="Configurator.addValoracionSuplIndiv()">Añadir</button></div></div></div>
+                </div>
+                <div class="col-md-4">
+                  <h6 class="small fw-bold text-muted mb-2 border-bottom pb-1">Suplements. Niño</h6>
+                  <div id="list-valoracion-supl-nino" class="row g-1 mb-2"></div>
+                  <div class="p-2 bg-light rounded border"><div class="row g-1"><div class="col-8"><input type="text" id="newValSuplNinoLabel" class="form-control form-control-sm" placeholder="Nombre"></div><div class="col-4"><input type="number" step="0.01" id="newValSuplNinoValor" class="form-control form-control-sm" placeholder="€"></div><div class="col-12 mt-1"><button class="btn btn-outline-primary btn-sm w-100" type="button" onclick="Configurator.addValoracionSuplNino()">Añadir</button></div></div></div>
+                </div>
+                <div class="col-md-4">
+                  <h6 class="small fw-bold text-muted mb-2 border-bottom pb-1">Descuento 3ª Pers.</h6>
+                  <div id="list-valoracion-desc-triple" class="row g-1 mb-2"></div>
+                  <div class="p-2 bg-light rounded border"><div class="row g-1"><div class="col-8"><input type="text" id="newValDescTripleLabel" class="form-control form-control-sm" placeholder="Nombre"></div><div class="col-4"><input type="number" step="0.01" id="newValDescTripleValor" class="form-control form-control-sm" placeholder="€"></div><div class="col-12 mt-1"><button class="btn btn-outline-primary btn-sm w-100" type="button" onclick="Configurator.addValoracionDescTriple()">Añadir</button></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA 8: GESTIÓN DE HABITACIONES E INSTALACIONES (PROTEGIDO) -->
+      <div class="accordion-item config-accordion-item">
+        <h2 class="accordion-header" id="headingHabitaciones">
+          <button class="accordion-button collapsed config-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHabitaciones" data-requires-pin="true">
+            <i class="bi bi-lock-fill"></i> 8. Gestión de Habitaciones e Instalaciones
+          </button>
+        </h2>
+        <div id="collapseHabitaciones" class="accordion-collapse collapse" data-bs-parent="#accordionConfig">
+          <div class="accordion-body bg-white border-top">
+            <!-- 8.1 Instalaciones -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-dark mb-2">Instalaciones del Hotel</h6>
+              <div id="config-instalaciones-list" class="d-flex flex-wrap gap-2 mb-3"></div>
+              <div class="row g-2 align-items-end p-3 bg-light rounded border">
+                <div class="col-md-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="newInst_nombre" class="form-control form-control-sm"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">Apertura</label><input type="time" id="newInst_apertura" class="form-control form-control-sm" value="08:00"></div>
+                <div class="col-md-2"><label class="form-label small fw-bold">Cierre</label><input type="time" id="newInst_cierre" class="form-control form-control-sm" value="21:00"></div>
+                <div class="col-md-3"><label class="form-label small fw-bold">Icono</label><div class="input-group input-group-sm"><button class="btn btn-outline-secondary" type="button" onclick="IconSelector.open('newInst_icono')"><i class="bi bi-palette"></i></button><input type="text" id="newInst_icono" class="form-control"></div></div>
+                <div class="col-md-2"><button class="btn btn-primary btn-sm w-100 fw-bold" type="button" onclick="Configurator.addInstalacion()"><i class="bi bi-plus-lg"></i></button></div>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 8.2 Rangos -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold text-dark mb-0">Rangos de Habitaciones</h6>
+                <span class="badge bg-secondary">Total: <span id="total-rooms-count">0</span> habs.</span>
+              </div>
+              <div class="table-responsive border rounded mb-2">
+                <table id="table-rangos" class="table table-sm table-striped mb-0 text-center align-middle">
+                  <thead class="table-light"><tr><th>Planta</th><th>Desde</th><th>Hasta</th><th></th></tr></thead>
+                  <tbody id="config-rangos-table"></tbody>
+                </table>
+              </div>
+              <div class="input-group input-group-sm">
+                <input type="number" id="newRangePlanta" class="form-control" placeholder="Planta">
+                <input type="number" id="newRangeMin" class="form-control" placeholder="Desde">
+                <input type="number" id="newRangeMax" class="form-control" placeholder="Hasta">
+                <button class="btn btn-outline-primary" type="button" onclick="addRango()"><i class="bi bi-plus-lg"></i></button>
+              </div>
+            </div>
+            <hr class="text-muted opacity-25">
+            <!-- 8.3 Filtros -->
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Tipos</label>
+                <div id="list-filtros-tipos" class="d-flex flex-wrap gap-1 mb-2"></div>
+                <div class="input-group input-group-sm border rounded overflow-hidden">
+                  <button class="btn btn-light border-0" type="button" onclick="IconSelector.open('newFiltroTipoEmoji')"><span id="preview-newFiltroTipoEmoji"><i class="bi bi-palette text-primary"></i></span><input type="hidden" id="newFiltroTipoEmoji"></button>
+                  <input type="text" id="newFiltroTipo" class="form-control border-0 fw-bold" placeholder="Nombre...">
+                  <button class="btn btn-primary" type="button" onclick="addFilter('TIPOS')"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Vistas</label>
+                <div id="list-filtros-vistas" class="d-flex flex-wrap gap-1 mb-2"></div>
+                <div class="input-group input-group-sm border rounded overflow-hidden">
+                  <button class="btn btn-light border-0" type="button" onclick="IconSelector.open('newFiltroVistaEmoji')"><span id="preview-newFiltroVistaEmoji"><i class="bi bi-palette text-primary"></i></span><input type="hidden" id="newFiltroVistaEmoji"></button>
+                  <input type="text" id="newFiltroVista" class="form-control border-0 fw-bold" placeholder="Nombre...">
+                  <button class="btn btn-primary" type="button" onclick="addFilter('VISTAS')"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Características</label>
+                <div id="list-filtros-carac" class="d-flex flex-wrap gap-1 mb-2"></div>
+                <div class="input-group input-group-sm border rounded overflow-hidden">
+                  <button class="btn btn-light border-0" type="button" onclick="IconSelector.open('newFiltroCaracEmoji')"><span id="preview-newFiltroCaracEmoji"><i class="bi bi-palette text-primary"></i></span><input type="hidden" id="newFiltroCaracEmoji"></button>
+                  <input type="text" id="newFiltroCarac" class="form-control border-0 fw-bold" placeholder="Nombre...">
+                  <button class="btn btn-primary" type="button" onclick="addFilter('CARACTERISTICAS')"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- Fin Accordion -->
+  </form>
+</div>
+
+<!-- MODAL PARA PIN DE CONFIGURACIÓN SENSIBLE -->
+<div class="modal fade" id="configPinModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-warning text-dark py-2">
+        <h6 class="modal-title fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>Acceso Restringido</h6>
+      </div>
+      <div class="modal-body text-center p-4">
+        <p class="small text-muted mb-3">Introduce el <b>PIN de Administrador</b> para acceder a esta sección.</p>
+        <div class="pin-input-wrapper mb-3">
+          <input type="password" id="config-pin-input" class="form-control form-control-lg text-center fw-bold" maxlength="4" placeholder="••••" style="letter-spacing: 0.5rem; font-size: 1.5rem;">
+        </div>
+        <div id="pin-error-msg" class="text-danger small mb-2 d-none">PIN Incorrecto</div>
+        <div class="d-grid">
+          <button type="button" class="btn btn-primary fw-bold" onclick="Configurator.validatePin()">Acceder</button>
+          <button type="button" class="btn btn-link btn-sm mt-1 text-muted" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

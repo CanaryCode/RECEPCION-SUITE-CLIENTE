@@ -1,0 +1,425 @@
+<h4 class="module-title-discrete">
+  <i class="bi bi-calculator-fill"></i> Ayuda a la Valoración
+</h4>
+
+<div class="module-toolbar no-print">
+  <div class="btn-group" role="group">
+    <button
+      class="btn btn-outline-primary"
+      id="btnValoracionVistaTrabajo"
+    >
+      <i class="bi bi-pencil-square me-2"></i>Calculadora
+    </button>
+    <button
+      class="btn btn-outline-primary"
+      id="btnValoracionVistaResumen"
+    >
+      <i class="bi bi-printer me-2"></i>Cola Impresión
+    </button>
+    <button
+      class="btn btn-outline-primary"
+      id="btnValoracionVistaHistorico"
+    >
+      <i class="bi bi-archive me-2"></i>Archivo Histórico
+    </button>
+    <button
+      class="btn btn-outline-primary"
+      id="btnValoracionVistaChequeo"
+    >
+      <i class="bi bi-patch-check me-2"></i>Chequeo
+    </button>
+  </div>
+
+  <div class="btn-print-wrapper d-flex gap-2">
+    <button
+      class="btn btn-primary shadow-sm px-3"
+      onclick="window.imprimirSegunVista()"
+    >
+      <i class="bi bi-printer me-2"></i>Imprimir
+    </button>
+  </div>
+</div>
+
+<div id="valoracion-content-wrapper" class="content-panel animate__animated animate__fadeIn">
+  <!-- VISTA FORMULARIO / CALCULADORA -->
+  <div class="row g-3" id="valoracion-view-form">
+    <!-- Panel de Formulario / Periodos -->
+    <div class="col-lg-8">
+      <!-- Datos Opcionales (Habitación / Reserva) -->
+      <div class="card mb-3 shadow-sm border-0 bg-primary bg-opacity-10 border-start border-primary border-4">
+        <div class="card-body py-3">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Habitación</label>
+                    <input type="text" id="val-meta-room" class="form-control form-control-sm border-0 bg-white shadow-none" placeholder="Opcional..." oninput="window.actualizarValoracion()">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Nº Reserva <span class="text-danger">*</span></label>
+                    <input type="text" id="val-meta-booking" class="form-control form-control-sm border-0 bg-white shadow-none" placeholder="Obligatorio" oninput="window.actualizarValoracion()">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Nombre de Reserva</label>
+                    <input type="text" id="val-meta-name" class="form-control form-control-sm border-0 bg-white shadow-none" placeholder="Nombre completo..." oninput="window.actualizarValoracion()">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Ocupación / Niño</label>
+                    <div class="d-flex gap-2">
+                        <select id="val-meta-type" class="form-select form-select-sm border-0 bg-white shadow-none" onchange="window.actualizarValoracion()">
+                            <option value="">(Tipo Habitación)</option>
+                            <option value="Individual">Individual</option>
+                            <option value="Doble">Doble</option>
+                            <option value="Triple">Triple</option>
+                        </select>
+                        <div class="form-check form-switch pt-1 ms-2">
+                            <input class="form-check-input" type="checkbox" id="val-meta-child" onchange="window.actualizarValoracion()">
+                            <label class="form-check-label small text-muted" for="val-meta-child">Niño</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Comentarios / Notas Internas</label>
+                    <textarea id="val-meta-comments" class="form-control form-control-sm border-0 shadow-none" rows="2" placeholder="Notas adicionales..." oninput="window.actualizarValoracion()"></textarea>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <div id="valoracion-periodos-container">
+        <!-- Los periodos se renderizarán aquí dinámicamente -->
+      </div>
+
+      <div class="card border-0 shadow-sm mt-3">
+        <div class="card-body p-2">
+          <button class="btn btn-outline-primary w-100 fw-bold" onclick="window.agregarPeriodoValoracion()">
+            <i class="bi bi-plus-circle me-2"></i>Añadir Nuevo Periodo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Resumen / Resultados -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm sticky-top" style="top: 20px; z-index: 10;">
+        <div class="card-header py-3 bg-light">
+          <h6 class="mb-0 fw-bold text-primary">
+            <i class="bi bi-receipt me-2"></i>Resumen de Estancia
+          </h6>
+        </div>
+        <div class="card-body bg-light bg-opacity-25">
+          <div class="text-center mb-4">
+            <div class="text-muted small text-uppercase fw-bold mb-1">Total Reserva</div>
+            <h1 class="display-4 fw-bold text-primary mb-0" id="valoracion-total-global">0.00€</h1>
+            <div class="badge bg-light text-dark shadow-sm border" id="valoracion-total-dias">0 días</div>
+          </div>
+
+          <div class="border-top pt-3">
+            <div id="valoracion-desglose-resumen">
+              <!-- Desglose por periodos -->
+            </div>
+          </div>
+
+          <div class="mt-4 border-top pt-3 d-grid gap-2">
+            <button class="btn btn-primary fw-bold shadow-sm py-2" id="btn-save-valuation" onclick="window.guardarValoracionEnLista()">
+              <i class="bi bi-save me-2"></i>Guardar en Lista
+            </button>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light btn-sm flex-fill" id="btn-reset-valuation" onclick="window.resetearValoracion()">
+                  <i class="bi bi-trash me-2"></i><span id="label-reset-val">Limpiar</span>
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA HISTORIAL PERSISTENTE -->
+  <div id="valoracion-view-historico" class="d-none animate__animated animate__fadeIn">
+    <div class="card border-0 shadow-sm mb-3 bg-soft-panel">
+        <div class="card-header bg-light py-3 border-0 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold text-primary">
+                <i class="bi bi-archive me-2"></i>Archivo Histórico de Valoraciones
+            </h6>
+        </div>
+        <div class="card-body bg-light bg-opacity-50 border-top border-bottom py-3">
+            <!-- BOTONES DE MANDO SUPERIOR -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex gap-2" id="botones-filtros-historico">
+                    <button class="btn btn-sm btn-white border shadow-sm" onclick="window.setFiltroReservasActivas()">
+                        <i class="bi bi-funnel me-1"></i>Reservas Activas
+                    </button>
+                    <button class="btn btn-sm btn-white border shadow-sm" onclick="window.limpiarFiltrosHistorico()">
+                        <i class="bi bi-x-circle me-1"></i>Limpiar Filtros
+                    </button>
+                </div>
+                <button id="btn-toggle-mantenimiento" class="btn btn-sm btn-outline-danger shadow-sm px-3" onclick="window.toggleSeccionBorradoMasivo()">
+                    <i class="bi bi-eraser-fill me-1"></i>Modo Mantenimiento
+                </button>
+            </div>
+
+            <!-- FILTROS NORMALES -->
+            <div id="filtros-historico-normal" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small text-muted text-uppercase fw-semibold mb-1"><i class="bi bi-calendar-event me-1"></i>Filtrar Llegada (Desde)</label>
+                    <input type="date" id="val-filter-arrival" class="form-control form-control-sm border-0 shadow-sm" onchange="window.actualizarTablaHistoricoPermanente()">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted text-uppercase fw-semibold mb-1"><i class="bi bi-calendar-check me-1"></i>Filtrar Salida (Hasta)</label>
+                    <input type="date" id="val-filter-departure" class="form-control form-control-sm border-0 shadow-sm" onchange="window.actualizarTablaHistoricoPermanente()">
+                </div>
+                <div class="col-md-4 text-muted small pb-1">
+                    <i class="bi bi-info-circle me-1"></i> Filtra el histórico para búsquedas rápidas.
+                </div>
+            </div>
+
+            <!-- SECCIÓN MANTENIMIENTO (Borrados masivos) -->
+            <div id="seccion-mantenimiento-historico" class="d-none animate__animated animate__fadeIn">
+                <div class="bg-white p-3 rounded shadow-sm border border-danger border-4 border-top-0 border-end-0 border-bottom-0">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-9">
+                            <h6 class="text-danger fw-bold mb-1 small"><i class="bi bi-exclamation-triangle-fill me-2"></i>Herramienta de Limpieza Selectiva</h6>
+                            <p class="text-muted small mb-0">Selecciona la fecha límite de salida. Se marcarán todas las reservas que hayan terminado antes de ese día.</p>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Hasta (Salida):</label>
+                            <input type="date" id="val-batch-delete-end" class="form-control form-control-sm border-light shadow-sm" onchange="window.aplicarPrevisualizacionBorrado()">
+                        </div>
+                        <div class="col-12 mt-3 p-2 bg-danger bg-opacity-10 rounded d-flex justify-content-between align-items-center">
+                            <div id="batch-delete-count-preview" class="small text-danger fw-bold">
+                                <i class="bi bi-eye me-1"></i> Esperando selección...
+                            </div>
+                            <div class="btn-group shadow-sm">
+                                <button class="btn btn-warning btn-sm px-3 fw-bold" onclick="window.seleccionarObsoletos()">
+                                    <i class="bi bi-clock-history me-2"></i>Seleccionar Obsoletos (>2 días)
+                                </button>
+                                <button class="btn btn-danger btn-sm px-4 fw-bold" onclick="window.eliminarRangoHistorialPermanente()">
+                                    <i class="bi bi-trash-fill me-2"></i>Eliminar Selección
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;" class="text-center">
+                            <div class="form-check d-none" id="col-header-select-all">
+                                <input class="form-check-input" type="checkbox" id="val-master-checkbox" onchange="window.toggleSelectAllValuations(this.checked)" checked>
+                            </div>
+                        </th>
+                        <th style="width: 120px;">Fecha Registro</th>
+                        <th>Habit. / Reserva</th>
+                        <th>Ocupación</th>
+                        <th>Entrada / Salida</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center" style="width: 100px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="valoracion-tabla-historico-permanente">
+                    <!-- Registros del histórico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+
+  <!-- VISTA COLA DE IMPRESIÓN (Antigua VISTA RESUMEN) -->
+  <div id="valoracion-view-list" class="d-none">
+    <div class="card border-0 shadow-sm bg-soft-panel">
+        <div class="card-header py-3 bg-light d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold text-primary">
+                <i class="bi bi-printer me-2"></i>Cola de Impresión Masiva (Temporal)
+            </h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                         <th style="width: 150px;">Fecha/Hora</th>
+                        <th>Habit. / Reserva</th>
+                        <th>Ocupación</th>
+                        <th>Recepcionista</th>
+                        <th>Periodos</th>
+                        <th>Noches</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center no-print" style="width: 120px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="valoracion-tabla-historial">
+                    <!-- Registros del historial -->
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-light border-0 text-end py-3">
+            <button class="btn btn-outline-danger btn-sm" onclick="window.limpiarHistorialValoraciones()">
+                <i class="bi bi-trash me-2"></i>Borrar Cola de Impresión
+            </button>
+        </div>
+    </div>
+  </div>
+
+  <!-- VISTA CHEQUEO EXTERNO -->
+  <div id="valoracion-view-chequeo" class="d-none animate__animated animate__fadeIn">
+      <div class="card border-0 shadow-sm bg-soft-panel">
+          <div class="card-header bg-transparent py-3 border-0 d-flex justify-content-between align-items-center">
+              <h6 class="mb-0 fw-bold text-primary">
+                  <i class="bi bi-patch-check me-2"></i>Herramienta de Verificación Externa
+              </h6>
+              <button class="btn btn-white btn-sm px-3 border shadow-sm" onclick="window.copiarHistorialPortapapeles()" title="Copiar Reservas Activas">
+                  <i class="bi bi-clipboard-data me-1"></i>Copiar Reservas Activas Hoy
+              </button>
+          </div>
+          <div class="card-body border-top bg-transparent">
+              <div class="alert alert-info small mb-3 border-0 shadow-sm" style="background: rgba(13, 202, 240, 0.1); color: #055160;">
+                  <i class="bi bi-info-circle-fill me-2"></i>Pega aquí la tabla de reservas para compararla con el histórico local. El sistema buscará por <strong>Nº de Reserva</strong> y validará el <strong>Precio Total</strong> (margen 1€).
+              </div>
+              
+              <div class="mb-3">
+                  <textarea id="val-check-paste-area" class="form-control form-control-sm font-monospace border-0 shadow-sm" rows="6" placeholder="Pega aquí los datos (ej: Nº Reserva [tab] Total)" style="background: rgba(255,255,255,0.7);"></textarea>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div class="small text-muted fw-bold" id="val-check-stats">Esperando datos...</div>
+                  <div class="btn-group shadow-sm">
+                      <button class="btn btn-primary btn-sm px-4" onclick="window.ejecutarChequeoIniciativa()">
+                          <i class="bi bi-play-fill me-1"></i>Iniciar Verificación
+                      </button>
+                      <button class="btn btn-white btn-sm px-3 border" onclick="document.getElementById('val-check-paste-area').value=''; window.limpiarResultadosChequeo();">
+                          Limpiar
+                      </button>
+                  </div>
+              </div>
+
+              <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0 small">
+                      <thead class="table-light">
+                          <tr>
+                              <th>Reserva</th>
+                              <th>Pestaña (Externo)</th>
+                              <th>Histórico (Local)</th>
+                              <th>Diferencia</th>
+                              <th class="text-center">Estado</th>
+                          </tr>
+                      </thead>
+                      <tbody id="val-check-results-table">
+                          <!-- Resultados del chequeo -->
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Template para un periodo -->
+<template id="template-periodo-valoracion">
+  <div class="card mb-3 shadow-sm border-0 border-start border-primary border-4 periodo-item animate__animated animate__fadeIn">
+    <div class="card-header py-2 d-flex justify-content-between align-items-center bg-light bg-opacity-50">
+      <h6 class="mb-0 fw-bold text-primary small text-uppercase">
+        <i class="bi bi-calendar3 me-2"></i>Periodo <span class="periodo-index">1</span>
+      </h6>
+      <button class="btn btn-link btn-sm text-danger p-0 btn-eliminar-periodo" onclick="window.eliminarPeriodoValoracion(this)">
+        <i class="bi bi-x-circle fs-5"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <!-- Fechas del Periodo -->
+        <div class="col-md-3">
+          <label class="form-label small text-muted text-uppercase fw-semibold">Inicio Estancia</label>
+          <input type="date" class="form-control form-control-sm val-fecha-inicio shadow-sm" onchange="window.actualizarValoracion()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted text-uppercase fw-semibold">Fin Estancia</label>
+          <input type="date" class="form-control form-control-sm val-fecha-fin shadow-sm" onchange="window.actualizarValoracion()">
+        </div>
+
+        <!-- Bloque de Precio (Manual + Selector consolidado) -->
+        <div class="col-md-6">
+            <label class="form-label small text-muted text-uppercase fw-semibold">Precio / Noche (€)</label>
+            <div class="input-group input-group-sm shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-currency-euro"></i></span>
+                <input type="number" step="0.01" class="form-control fw-bold val-precio border-start-0 ps-0" placeholder="0.00" style="max-width: 90px;" oninput="window.actualizarValoracion()">
+                <select class="form-select val-select-precio" onchange="window.handlePrecioSelect(this)">
+                    <option value="">(Predefinidos / Manual...)</option>
+                    <!-- Opciones cargadas dinámicamente -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Suplementos y Descuentos -->
+        <div class="col-md-4 val-suplementos-container d-none">
+            <label class="form-label small text-muted text-uppercase fw-semibold suplemento-label-dinamico">Suplemento</label>
+            <div class="input-group input-group-sm shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-person-plus"></i></span>
+                <select class="form-select val-select-suplemento border-start-0 ps-0" onchange="window.handleSuplementoSelect(this)">
+                    <option value="0">Sin suplemento</option>
+                    <!-- Opciones cargadas dinámicamente -->
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label small text-muted text-uppercase fw-semibold">Descuento Aplicado</label>
+            <div class="input-group input-group-sm shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-percent"></i></span>
+                <select class="form-select val-select-descuento border-start-0 ps-0" onchange="window.handleDescuentoSelect(this)">
+                    <option value="0">Sin descuento</option>
+                    <option value="5">5%</option>
+                    <option value="10">10%</option>
+                    <option value="15">15%</option>
+                    <option value="20">20%</option>
+                    <option value="25">25%</option>
+                    <option value="30">30%</option>
+                    <option value="35">35%</option>
+                    <option value="40">40%</option>
+                    <option value="45">45%</option>
+                    <option value="50">50%</option>
+                    <option value="custom">Personalizado (%)</option>
+                </select>
+                <input type="number" class="form-control val-custom-input d-none" min="0" max="100" placeholder="%" style="max-width: 60px;" oninput="window.actualizarValoracion()">
+            </div>
+        </div>
+
+        <div class="col-md-4 val-suplementos-nino-container d-none">
+            <label class="form-label small text-muted text-uppercase fw-semibold">Suplemento Niño</label>
+            <div class="input-group input-group-sm shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-gender-ambiguous"></i></span>
+                <select class="form-select val-select-suplemento-nino border-start-0 ps-0" onchange="window.handleSuplementoNinoSelect(this)">
+                    <option value="0">Sin suplemento niño</option>
+                    <!-- Opciones cargadas dinámicamente -->
+                </select>
+            </div>
+        </div>
+      </div>
+
+      <!-- Conceptos Adicionales (Suma/Resta) -->
+      <div class="border-top pt-2 mt-2">
+        <label class="form-label small text-muted text-uppercase fw-semibold d-block mb-1">Conceptos Adicionales (Extras / Ajustes)</label>
+        <div class="val-conceptos-list mb-2">
+            <!-- Lista de conceptos añadidos -->
+        </div>
+        <div class="input-group input-group-sm shadow-sm mb-2" style="max-width: 400px;">
+            <input type="text" class="form-control val-new-concept-name" placeholder="Ej: Parking, Cena...">
+            <input type="number" class="form-control val-new-concept-price" placeholder="0.00" style="max-width: 80px;">
+            <button class="btn btn-outline-primary" type="button" onclick="window.agregarConceptoExtra(this)">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+      </div>
+      
+      <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded mt-3">
+          <div class="small text-muted">
+            <span class="val-resumen-dias">0</span> noches x <span class="val-resumen-precio">0.00</span>€
+            <small class="d-block text-info val-resumen-formula" style="font-size: 0.65rem;"></small>
+          </div>
+          <div class="text-end">
+            <div class="fw-bold">Subtotal: <span class="val-resumen-subtotal">0.00</span>€</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</template>

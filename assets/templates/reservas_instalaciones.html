@@ -1,0 +1,436 @@
+<!-- Cabecera de Reporte de Impresión (Estándar del Sistema) -->
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Reservas de Instalaciones</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-inst"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-inst"></span></div>
+    </div>
+</div>
+
+<!-- Encabezado Visual -->
+<h4 class="module-title-discrete no-print">
+    <i class="bi bi-building-fill me-2"></i>Reservas de Instalaciones
+</h4>
+
+<!-- Barra de Herramientas Principal -->
+<div class="module-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3 no-print">
+    <!-- Selector de Vistas -->
+    <div class="btn-group shadow-sm mb-2 mb-md-0" role="group">
+        <button class="btn btn-outline-primary active" id="btnReservasForm" onclick="ReservasInstalaciones.showView('form')">
+            <i class="bi bi-plus-circle me-1"></i>Nueva Reserva
+        </button>
+        <button class="btn btn-outline-primary" id="btnReservasLista" onclick="ReservasInstalaciones.showView('lista')">
+            <i class="bi bi-list-ul me-1"></i>Listado
+        </button>
+        <button class="btn btn-outline-primary" id="btnReservasHorarios" onclick="ReservasInstalaciones.showView('horarios')">
+            <i class="bi bi-calendar-range me-1"></i>Disponibilidad
+        </button>
+    </div>
+
+    <!-- Acciones Globales -->
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-sm px-3 shadow-sm" onclick="ReservasInstalaciones.imprimirActual()">
+            <i class="bi bi-printer me-2"></i>Imprimir&nbsp;<span id="label-print-view">Reserva</span>
+        </button>
+    </div>
+</div>
+
+<!-- Contenedor de Vistas -->
+<div id="reservas-instalaciones-container" class="animate-fade-in">
+    
+    <!-- Vista A: Formulario -->
+    <div id="view-reserva-form" class="reserva-view">
+        <div class="row g-4">
+            <!-- Columna Formulario -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="card-title mb-0 fw-bold text-primary" id="form-title-reserva"><i class="bi bi-calendar-plus me-2"></i>Nueva Reserva</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="formReservaInstalacion">
+                            <input type="hidden" id="res_id" name="id">
+                            
+                            <div class="row g-3">
+                                <!-- Instalación -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Instalación</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-building"></i></span>
+                                        <select id="res_instalacion" name="instalacion" class="form-select border-start-0 ps-0" required></select>
+                                    </div>
+                                </div>
+
+                                <!-- Habitación / Externo -->
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label fw-bold small text-uppercase text-muted mb-0">Habitación / Cliente</label>
+                                        <div class="form-check form-switch m-0 p-0" style="min-height: auto;">
+                                        <input class="form-check-input ms-0 me-2" type="checkbox" id="res_externo" name="externo_switch" onchange="ReservasInstalaciones.toggleExterno(this.checked)">
+                                        <label class="form-check-label small text-muted" for="res_externo">Externo</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group" id="wrap-input-hab">
+                                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-door-closed"></i></span>
+                                        <input type="text" id="res_habitacion" name="habitacion" class="form-control border-start-0 ps-0" placeholder="Ej: 101" required>
+                                    </div>
+                                    <div class="input-group d-none" id="wrap-input-nombre">
+                                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-badge"></i></span>
+                                        <input type="text" id="res_nombre_cliente" name="nombre_cliente" class="form-control border-start-0 ps-0" placeholder="Nombre completo">
+                                    </div>
+                                </div>
+
+                                <!-- Fecha -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Fecha</label>
+                                    <input type="date" id="res_fecha" name="fecha" class="form-control" required>
+                                </div>
+
+                                <!-- Hora Inicio -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Hora Inicio</label>
+                                    <input type="time" id="res_hora_inicio" name="hora_inicio" class="form-control" required>
+                                </div>
+
+                                <!-- Hora Fin -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Hora Fin</label>
+                                    <input type="time" id="res_hora_fin" name="hora_fin" class="form-control" required>
+                                </div>
+
+                                <!-- Pax -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Nueros de Personas (Pax)</label>
+                                    <input type="number" id="res_pax" name="pax" class="form-control" min="1" value="1" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Observaciones</label>
+                                    <textarea id="res_observaciones" name="observaciones" class="form-control" rows="2" placeholder="Notas adicionales..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                                <button type="button" class="btn btn-light rounded-pill px-4" onclick="ReservasInstalaciones.limpiarFormulario()">
+                                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">
+                                    <i class="bi bi-check2-circle me-2"></i>Guardar Reserva
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Resumen/Status -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h6 class="mb-0 fw-bold text-muted small text-uppercase">Panel de Estado</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Box de Preview Status -->
+                        <div id="res-preview-status">
+                            <div class="alert alert-light border text-muted small text-center py-4">
+                                <i class="bi bi-info-circle d-block fs-3 mb-2 opacity-50"></i>
+                                Complete los campos para verificar disponibilidad en tiempo real.
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="fw-bold small text-uppercase text-muted mb-3">Consejos</h6>
+                            <ul class="small text-muted ps-3">
+                                <li>Respete los horarios de apertura y cierre configurados para cada instalación.</li>
+                                <li>El sistema bloquea automáticamente los solapamientos con otras reservas.</li>
+                                <li>Desde la pestaña <strong>Disponibilidad</strong> puede ver el estado gráfico del día.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista B: Listado -->
+    <div id="view-reserva-lista" class="reserva-view d-none">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom border-light">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary"><i class="bi bi-list-task me-2"></i>Historial de Reservas</h5>
+                    
+                    <!-- Filtros Locales de Listado -->
+                    <div class="d-flex align-items-center gap-2">
+                        <select id="filtro-lista-inst" class="form-select form-select-sm fw-bold border-light shadow-sm" onchange="ReservasInstalaciones.renderLista()">
+                            <option value="">Todas las instalaciones</option>
+                        </select>
+                        <input type="date" id="filtro-lista-fecha" class="form-control form-control-sm fw-bold border-light shadow-sm" onchange="ReservasInstalaciones.renderLista()">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table id="table-reservas-instalaciones" class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase fw-bold">
+                            <tr>
+                                <th class="ps-4" style="width: 80px;" data-sort="habitacion">Hab</th>
+                                <th data-sort="instalacion">Instalación / Autor</th>
+                                <th data-sort="fecha">Fecha / Horario</th>
+                                <th data-sort="pax">Pax</th>
+                                <th data-sort="estado">Estado</th>
+                                <th class="text-end pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservas-instalaciones-table-body">
+                            <!-- Inyectado via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="reservas-instalaciones-sentinel" class="text-center p-3 d-none">
+                    <div class="spinner-border text-primary spinner-border-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista C: Disponibilidad Graph -->
+    <div id="view-reserva-horarios" class="reserva-view d-none">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-white py-3 border-bottom border-light">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary"><i class="bi bi-calendar-range me-2"></i>Estado de Disponibilidad</h5>
+                    
+                    <!-- Filtros Locales de Horarios -->
+                    <div class="d-flex align-items-center gap-2">
+                        <select id="filtro-horarios-inst" class="form-select form-select-sm fw-bold border-light shadow-sm" onchange="ReservasInstalaciones.renderHorarios()">
+                            <option value="">Todas las instalaciones</option>
+                        </select>
+                        <input type="date" id="filtro-horarios-fecha" class="form-control form-control-sm fw-bold border-light shadow-sm" onchange="ReservasInstalaciones.renderHorarios()">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4 bg-light bg-opacity-50">
+                <div id="reservas-grid-container" class="reservas-grid">
+                    <!-- Gantt Timeline Inyectada via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Nueva Gráfica de Ocupación -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold text-muted small text-uppercase">Resumen Diario de Ocupación (%)</h6>
+            </div>
+            <div class="card-body">
+                <div id="reservas-occupancy-chart" style="height: 150px;" class="d-flex align-items-end gap-2 px-2">
+                    <!-- Barras de resumen inyectadas via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TICKET DE IMPRESIÓN INDIVIDUAL (ESTILO TRANSFERS) -->
+    <div id="print-reserva-ticket" class="d-none d-print-block p-4 mx-auto bg-white" style="width: 450px; font-family: 'Segoe UI', system-ui, sans-serif; border: 2px solid #eee; border-radius: 15px; position: relative; z-index: 10001 !important; visibility: visible !important;">
+        <div class="text-center mb-4 border-bottom pb-3">
+            <h2 class="fw-bold mb-0 text-primary">CONFIRMACIÓN RESERVA</h2>
+            <small class="text-uppercase text-muted" id="print-hotel-name">Hotel Garoé • Instalaciones</small>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <small class="text-muted d-block">FECHA / DATE</small>
+                <strong class="fs-4" id="p-res-fecha">--/--/----</strong>
+            </div>
+            <div class="col-6 text-end">
+                <small class="text-muted d-block">HORARIO / TIME</small>
+                <strong class="fs-4" id="p-res-hora">--:--</strong>
+            </div>
+        </div>
+
+        <div class="alert alert-light border mb-4 shadow-sm">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Habitación / Room:</span>
+                <strong id="p-res-hab" class="text-dark">---</strong>
+            </div>
+            <div id="p-wrap-ext" class="d-none">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Cliente / Client:</span>
+                    <strong id="p-res-nombre" class="text-dark">---</strong>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Instalación / Facility:</span>
+                <strong id="p-res-inst" class="text-primary">---</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Personas / Pax:</span>
+                <strong id="p-res-pax">---</strong>
+            </div>
+            <div class="d-flex justify-content-between pt-2 border-top mt-2">
+                <span class="text-muted small">CÓDIGO VERIFICACIÓN:</span>
+                <strong id="p-res-codigo" class="text-danger font-monospace">RS-0000</strong>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <small class="text-muted d-block mb-1">Notas / Comments:</small>
+            <p id="p-res-notas" class="fst-italic border-bottom pb-2 small text-muted">Sin observaciones adicionales.</p>
+        </div>
+
+        <div class="text-center small text-muted mt-5 pt-4 border-top">
+            <p class="mb-1">Generado por: <span id="p-res-autor" class="fw-bold">---</span></p>
+            <p class="mb-2">Por favor, presente este ticket al acceder / Please show this ticket at entrance.</p>
+            <div class="mt-2" style="font-size: 0.6rem; opacity: 0.5;">
+                Recepcion Suite V2 • Digitalized System
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.reservas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.instalacion-timeline-row {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.timeline-visual-wrapper {
+    position: relative;
+    padding-top: 25px; /* Espacio para markers superiores */
+    margin: 10px 0;
+}
+
+.timeline-axis {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hour-marker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 1px dashed rgba(0,0,0,0.1);
+    z-index: 1;
+}
+
+.hour-marker span {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: #888;
+    font-weight: 600;
+}
+
+.timeline-track {
+    position: relative;
+    height: 50px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    cursor: crosshair;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    z-index: 2;
+}
+
+.timeline-track:hover {
+    background: #f1f3f5;
+}
+
+.timeline-reserve-block {
+    position: absolute;
+    top: 5px;
+    height: 40px;
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+    transition: all 0.2s;
+    z-index: 3;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.timeline-reserve-block:hover {
+    transform: scaleY(1.1);
+    filter: brightness(1.1);
+    z-index: 4;
+}
+
+.timeline-reserve-block .block-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Gráfica de Ocupación */
+.occupancy-bar-item {
+    flex: 1;
+    background: #f1f3f5;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: height 1s ease-out;
+    min-width: 30px;
+}
+
+.occupancy-bar-fill {
+    width: 100%;
+    background: linear-gradient(to top, #20c997, #0dcaf0);
+    border-radius: 4px 4px 0 0;
+    position: absolute;
+    bottom: 0;
+    transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.occupancy-bar-label {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: #6c757d;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.occupancy-percentage {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #0d6efd;
+}
+
+.animate-shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+</style>

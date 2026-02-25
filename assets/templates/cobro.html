@@ -1,0 +1,95 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Cobro</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-cobro"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-currency-exchange"></i>Cobro de Clientes</h4>
+
+<div class="module-toolbar d-flex justify-content-end align-items-center p-2 mb-3 no-print">
+    <div class="btn-print-wrapper">
+        <button class="btn btn-primary fw-bold shadow-sm px-4 py-2" style="font-size: 1.1rem;" onclick="imprimirCobro()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Recibo">
+            <i class="bi bi-printer me-2"></i>Imprimir Recibo
+        </button>
+    </div>
+</div>
+
+<div class="row g-2">
+    <!-- COLUMNA PRINCIPAL CALCULADORA (Billetes y Monedas) -->
+    <div class="col-md-9">
+        <div class="card mb-3 shadow-sm border-0">
+            <div class="card-header d-flex justify-content-between align-items-center py-3 bg-white border-bottom">
+                <h5 class="sub-title-dynamic mb-0 fs-4"><i class="bi bi-calculator me-2"></i>Calculadora de Cambio</h5>
+                <button class="btn btn-outline-primary shadow-sm fw-bold px-4 py-2" style="font-size: 1rem;" onclick="resetearCobro()">
+                    <i class="bi bi-arrow-repeat me-2"></i>Nueva Operación
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div class="row g-3">
+                    <!-- SECCIÓN RECIBIDO -->
+                    <div class="col-md-6 border-end">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-arrow-down-circle text-success me-2 fs-4"></i>
+                            <span class="fw-bold text-uppercase text-success" style="font-size: 1.1rem;">1. Dinero Recibido</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6" id="recibido-billetes">
+                                <label class="text-muted d-block mb-2 border-bottom fw-bold" style="font-size: 0.9rem;">BILLETES</label>
+                            </div>
+                            <div class="col-6" id="recibido-monedas">
+                                <label class="text-muted d-block mb-2 border-bottom fw-bold" style="font-size: 0.9rem;">MONEDAS</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SECCIÓN ENTREGADO -->
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-arrow-up-circle text-danger me-2 fs-4"></i>
+                            <span class="fw-bold text-uppercase text-danger" style="font-size: 1.1rem;">2. Cambio Entregado</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6" id="entregado-billetes">
+                                <label class="text-muted d-block mb-2 border-bottom fw-bold" style="font-size: 0.9rem;">BILLETES</label>
+                            </div>
+                            <div class="col-6" id="entregado-monedas">
+                                <label class="text-muted d-block mb-2 border-bottom fw-bold" style="font-size: 0.9rem;">MONEDAS</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUMNA LATERAL RESUMEN -->
+    <div class="col-md-3">
+        <div class="mb-4">
+            <label class="form-label fw-bold text-primary mb-2 text-uppercase" style="font-size: 1.1rem;">Total a Cobrar (€)</label>
+            <input type="number" step="0.01" id="cobro_total_a_cobrar"
+                class="form-control form-control-lg border-primary fw-bold text-center shadow-sm" style="font-size: 3rem; height: 80px;" placeholder="0.00">
+        </div>
+
+        <div class="card shadow-sm border-warning">
+            <div class="card-body p-4 text-center">
+                <h5 class="text-secondary fw-bold mb-2"><i class="bi bi-wallet2 me-2"></i>RESUMEN</h5>
+                <div class="mb-3">
+                    <div class="text-muted d-block mb-1" style="font-size: 1rem;">Cambio a Devolver</div>
+                    <h2 class="fw-bold text-warning mb-0" id="cobro_cambio_deber" style="font-size: 2.5rem;">0.00€</h2>
+                </div>
+                <hr class="my-3">
+                <div class="mb-3 p-3 rounded bg-secondary bg-opacity-10">
+                    <div class="d-block mb-1 text-uppercase fw-bold" style="font-size: 0.9rem; letter-spacing: 1px;">Diferencia Final</div>
+                    <h1 class="fw-bold mb-0" id="cobro_diferencia_final" style="font-size: 3rem;">0.00€</h1>
+                    <div id="cobro_status_msg" class="mt-2" style="font-size: 1.1rem;"></div>
+                </div>
+                <div id="sugerencia-cambio-container" class="alert alert-info p-3 mb-0 d-none shadow-sm" style="font-size: 1rem;"></div>
+            </div>
+        </div>
+    </div>
+</div>

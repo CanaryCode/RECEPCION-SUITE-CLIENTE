@@ -1,0 +1,94 @@
+<h4 class="module-title-discrete px-3"><i class="bi bi-grid-3x3-gap"></i>Rack de Habitaciones</h4>
+
+<!-- Module Toolbar (Print) -->
+<div class="module-toolbar d-flex justify-content-end align-items-center p-2 mb-3 border-bottom d-print-none">
+    <div class="btn-print-wrapper gap-2">
+        <button class="btn btn-primary btn-sm fw-bold" onclick="imprimirRack()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Rack">
+            <i class="bi bi-printer me-2"></i>Imprimir Rack
+        </button>
+    </div>
+</div>
+
+<div class="row h-100 g-0">
+    <!-- Sidebar Filters -->
+    <div class="col-md-3 col-lg-2 bg-light border-end p-3 overflow-auto d-print-none" style="height: calc(100vh - 120px);">
+        
+        <!-- Search Input -->
+        <div class="mb-4">
+            <h6 class="sub-title-dynamic mb-3"><i class="bi bi-search"></i>Buscar</h6>
+            <input type="search" id="room-search-input" class="form-control" placeholder="Buscar habitación..." autocomplete="off">
+        </div>
+
+        <h6 class="sub-title-dynamic mb-3 border-top pt-3"><i class="bi bi-funnel-fill"></i>Filtros</h6>
+        
+        <div class="d-grid gap-2 mb-4">
+            <button class="btn btn-sm btn-outline-secondary" id="btn-reset-filters">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar Filtros
+            </button>
+        </div>
+
+        <!-- Tipos -->
+        <div class="mb-4">
+            <h6 class="fw-bold text-primary small text-uppercase">Tipo de Habitación</h6>
+            <div id="filter-tipos-container" class="d-flex flex-column gap-2">
+                <!-- Checkboxes injected by JS -->
+            </div>
+        </div>
+
+        <!-- Estados -->
+        <div class="mb-4">
+            <h6 class="fw-bold text-primary small text-uppercase">Estado</h6>
+            <div id="filter-estados-container" class="d-flex flex-column gap-2">
+                <!-- Checkboxes injected by JS -->
+            </div>
+        </div>
+
+        <!-- Vistas -->
+        <div class="mb-4">
+            <h6 class="fw-bold text-primary small text-uppercase">Vistas</h6>
+            <div id="filter-vistas-container" class="d-flex flex-column gap-2">
+                <!-- Checkboxes injected by JS -->
+            </div>
+        </div>
+
+        <!-- Extras -->
+        <div class="mb-4">
+            <h6 class="fw-bold text-primary small text-uppercase">Características</h6>
+            <div id="filter-extras-container" class="d-flex flex-column gap-2">
+                <!-- Checkboxes injected by JS -->
+            </div>
+        </div>
+
+        <div class="alert alert-info small mt-4 p-2">
+            <i class="bi bi-info-circle me-1"></i>
+            Mostrando <strong id="rack-count-display">0</strong> habitaciones
+        </div>
+    </div>
+
+    <!-- Main Rack Grid -->
+    <div class="col-md-9 col-lg-10 p-0 bg-white overflow-auto" style="height: calc(100vh - 120px);">
+        <!-- Print Header (Hidden on screen) -->
+        <div class="report-header-print d-none d-print-block p-4 mb-2">
+            <div class="d-flex justify-content-between align-items-end border-bottom pb-2">
+                <div>
+                    <h2 class="m-0 text-primary">RACK DE HABITACIONES</h2>
+                    <p class="m-0 text-muted">Hotel Garoé - Estado Actual</p>
+                </div>
+                <div class="text-end small">
+                    <div><strong>Fecha:</strong> <span id="print-date-rack"></span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-4 pt-3 pb-0 no-print">
+            <h6 class="sub-title-dynamic mb-3"><i class="bi bi-grid-3x3-gap"></i>Estado de Habitaciones</h6>
+        </div>
+
+        <div class="p-4 pt-0" id="rack-grid-container">
+            <!-- Grid injected by JS -->
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,164 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Tablón de Notas</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-notas"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-journal-bookmark-fill"></i>Tablón de Notas</h4>
+
+<!-- 1. BARRA DE IMPRESIÓN (Toolbar estándar) -->
+<div class="module-toolbar d-flex justify-content-end align-items-center p-2 mb-3 border-bottom no-print">
+    <div class="btn-print-wrapper">
+        <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="imprimirNotas()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Tablón">
+            <i class="bi bi-printer me-2"></i>Imprimir Tablón
+        </button>
+    </div>
+</div>
+
+<!-- 2. PANEL DE GESTIÓN (Subtítulo dinámico + Controles) -->
+<div class="card shadow-sm border-0 mb-4 bg-light no-print">
+    <div class="card-body py-2 px-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        
+        <!-- Izquierda: Subtítulo y Botones -->
+        <div class="d-flex align-items-center gap-4">
+            <h6 class="sub-title-dynamic mb-0"><i class="bi bi-gear-wide-connected"></i>Panel de Gestión</h6>
+            
+            <div class="vr h-100 mx-1 opacity-25"></div>
+
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm group-control" id="btn-lock-notas"
+                    data-bs-toggle="tooltip" data-bs-title="Gestionar Permisos">
+                    <i class="bi bi-lock-fill" id="icon-lock-notas"></i> 
+                    <span id="text-lock-notas" class="ms-2">Bloqueado</span>
+                </button>
+                
+                <button type="button" class="btn btn-success btn-sm fw-bold shadow-sm d-none animate__animated animate__fadeIn group-control" id="btn-nueva-nota" onclick="abrirModalNota()"
+                    data-bs-toggle="tooltip" data-bs-title="Añadir Nota">
+                    <i class="bi bi-plus-lg me-2"></i>Nueva Nota
+                </button>
+            </div>
+        </div>
+
+        <!-- Derecha: Filtros y Buscador -->
+        <div class="d-flex align-items-center gap-3">
+            <!-- Ordenación -->
+            <div class="input-group input-group-sm shadow-sm" style="width: 160px;">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-sort-down text-muted"></i></span>
+                <select id="sortNotas" class="form-select border-start-0 ps-0 fw-bold" style="font-size: 0.75rem;">
+                    <option value="manual">Orden Manual</option>
+                    <option value="recent">Más Recientes</option>
+                    <option value="oldest">Más Antiguas</option>
+                </select>
+            </div>
+
+            <!-- Filtro Favoritos -->
+            <button type="button" class="btn btn-outline-warning btn-sm fw-bold shadow-sm" id="btn-filter-favs"
+                data-bs-toggle="tooltip" data-bs-title="Ver solo favoritos">
+                <i class="bi bi-star" id="icon-filter-favs"></i>
+            </button>
+
+            <!-- Buscador -->
+            <div class="input-group input-group-sm shadow-sm" style="width: 220px;">
+                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                 <input type="text" id="searchNotas" class="form-control border-start-0 ps-0" placeholder="Buscar nota..." >
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 px-3 pb-4" id="grid-notas">
+    <!-- Aquí se renderizan los post-its -->
+</div>
+
+<!-- Modal para Crear/Editar Nota -->
+<div class="modal fade" id="modalNota" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalNotaTitle">Nueva Nota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNota">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Color del Post-it</label>
+                        <div class="d-flex gap-2 justify-content-center p-2 bg-light rounded">
+                            <input type="radio" class="btn-check" name="colorNota" id="color-yellow" value="note-yellow"
+                                checked>
+                            <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
+                                for="color-yellow"
+                                style="width: 40px; height: 40px; background-color: #fff740; border-color: transparent;"><i
+                                    class="bi bi-check-lg d-none text-dark"></i></label>
+
+                            <input type="radio" class="btn-check" name="colorNota" id="color-pink" value="note-pink">
+                            <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
+                                for="color-pink"
+                                style="width: 40px; height: 40px; background-color: #ff7eb9; border-color: transparent;"><i
+                                    class="bi bi-check-lg d-none text-dark"></i></label>
+
+                            <input type="radio" class="btn-check" name="colorNota" id="color-blue" value="note-blue">
+                            <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
+                                for="color-blue"
+                                style="width: 40px; height: 40px; background-color: #7afcff; border-color: transparent;"><i
+                                    class="bi bi-check-lg d-none text-dark"></i></label>
+
+                            <input type="radio" class="btn-check" name="colorNota" id="color-green" value="note-green">
+                            <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
+                                for="color-green"
+                                style="width: 40px; height: 40px; background-color: #c7f464; border-color: transparent;"><i
+                                    class="bi bi-check-lg d-none text-dark"></i></label>
+
+                            <input type="radio" class="btn-check" name="colorNota" id="color-orange"
+                                value="note-orange">
+                            <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
+                                for="color-orange"
+                                style="width: 40px; height: 40px; background-color: #ffb347; border-color: transparent;"><i
+                                    class="bi bi-check-lg d-none text-dark"></i></label>
+                        </div>
+                        <style>
+                            .btn-check:checked+label {
+                                border-color: #666 !important;
+                                transform: scale(1.1);
+                            }
+
+                            .btn-check:checked+label i {
+                                display: block !important;
+                            }
+                        </style>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notaTitulo" class="form-label small fw-bold text-muted">Título</label>
+                        <input type="text" class="form-control fw-bold" id="notaTitulo"
+                            placeholder="Ej: Contraseñas Wifi...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="notaContenido" class="form-label small fw-bold text-muted">Contenido</label>
+                        <textarea class="form-control" id="notaContenido" rows="5"
+                            placeholder="Ej: La contraseña es 1234..."></textarea>
+                    </div>
+                    <!-- Nota Protegida Checkbox -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch bg-light p-2 ps-5 rounded border shadow-sm">
+                            <input class="form-check-input" type="checkbox" role="switch" id="notaProtegida">
+                            <label class="form-check-label fw-bold text-dark" for="notaProtegida">
+                                <i class="bi bi-shield-lock-fill me-1 text-primary"></i>¿Proteger nota?
+                                <div class="small fw-normal text-muted" style="font-size: 0.75rem;">
+                                    Se ocultará cuando el tablón esté bloqueado.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary fw-bold">Guardar Nota</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

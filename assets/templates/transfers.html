@@ -1,0 +1,312 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Transfers</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-transfers"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-transfers"></span></div>
+    </div>
+</div>
+
+<!-- Encabezado del Módulo (Oculto al imprimir tickets) -->
+<div id="transfers-general-header" class="d-print-block">
+  <h4 class="module-title-discrete animate-fade-in no-print">
+    <i class="bi bi-taxi-front-fill me-2 text-primary"></i>Transfers & Taxis
+  </h4>
+</div>
+
+<div
+  class="module-toolbar d-flex justify-content-between align-items-center p-2 mb-3 no-print"
+>
+  <!-- View Toggles (Left) -->
+  <div class="btn-group shadow-sm" role="group">
+    <button
+      class="btn btn-outline-primary active fw-bold"
+      id="btnVistaFormTransfers"
+      onclick="cambiarVistaTransfers('form')"
+      data-bs-toggle="tooltip"
+      data-bs-title="Nueva Reserva"
+    >
+      <i class="bi bi-plus-circle me-2"></i>Nueva Reserva
+    </button>
+    <button
+      class="btn btn-outline-primary fw-bold"
+      id="btnVistaListaTransfers"
+      onclick="cambiarVistaTransfers('lista')"
+      data-bs-toggle="tooltip"
+      data-bs-title="Ver Listado"
+    >
+      <i class="bi bi-list-task me-2"></i>Agenda (Listado)
+    </button>
+  </div>
+
+  <!-- Print Button (Right) -->
+  <div class="btn-print-wrapper">
+    <button
+      class="btn btn-primary btn-sm fw-bold shadow-sm"
+      onclick="imprimirTransfers()"
+      data-bs-toggle="tooltip"
+      data-bs-title="Imprimir Listado"
+    >
+      <i class="bi bi-printer me-2"></i>Imprimir
+    </button>
+  </div>
+</div>
+
+<div id="transfers-container" class="animate-slide-up">
+  <!-- VISTA 1: FORMULARIO (POR DEFECTO) -->
+  <div id="transfers-form-view">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3">
+        <h6 class="mb-0 fw-bold text-primary">
+          <i class="bi bi-pencil-square me-2"></i>Detalles de la Reserva
+        </h6>
+      </div>
+      <div class="card-body p-4">
+        <form id="formTransfer" autocomplete="off">
+          <input type="hidden" id="transfer_id" />
+
+          <div class="row g-3">
+            <div class="col-md-4 col-lg-3">
+              <label class="form-label small fw-bold text-muted"
+                >Fecha Recogida</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="transfer_fecha"
+                required
+                onfocus="this.min = new Date().toISOString().split('T')[0]"
+              />
+            </div>
+            <div class="col-md-3 col-lg-2">
+              <label class="form-label small fw-bold text-muted">Hora</label>
+              <input
+                type="time"
+                class="form-control"
+                id="transfer_hora"
+                required
+              />
+            </div>
+
+            <div class="col-md-3 col-lg-2">
+              <label class="form-label small fw-bold text-muted">Habitación</label>
+              <input
+                type="text"
+                class="form-control fw-bold"
+                id="transfer_hab"
+                maxlength="4"
+                required
+                placeholder="Ej: 101"
+              />
+            </div>
+
+            <div class="col-md-3 col-lg-2 d-flex align-items-end pb-2">
+              <div class="form-check form-switch custom-switch mb-0">
+                <input class="form-check-input" type="checkbox" id="transfer_externo" onchange="toggleTransferExterno(this.checked)">
+                <label class="form-check-label small fw-bold text-muted" for="transfer_externo">Cliente Externo</label>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 d-none animate-fade-in" id="wrap_transfer_nombre_externo">
+                <label class="form-label small fw-bold text-muted">Nombre del Cliente</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="transfer_nombre_cliente"
+                  placeholder="Nombre y Apellidos..."
+                />
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label small fw-bold text-muted">Tipo</label>
+              <select class="form-select" id="transfer_tipo" required>
+                <option value="TAXI">🚖 Taxi</option>
+                <option value="TRANSFER">🚌 Transfer Privado</option>
+                <option value="BUS">🚌 Guagua / Bus</option>
+              </select>
+            </div>
+
+            <div class="col-md-2 col-lg-1">
+              <label class="form-label small fw-bold text-muted">Pax</label>
+              <input
+                type="number"
+                class="form-control"
+                id="transfer_pax"
+                min="1"
+                max="50"
+                value="1"
+                required
+              />
+            </div>
+
+            <div class="col-md-8 col-lg-6">
+              <label class="form-label small fw-bold text-muted">Destino</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white"
+                  ><i class="bi bi-geo-alt-fill text-danger"></i
+                ></span>
+                <select
+                  class="form-select"
+                  id="transfer_destino_select"
+                  required
+                >
+                  <option value="" selected disabled>
+                    Seleccione destino...
+                  </option>
+                  <option value="Aeropuerto Norte">✈️ Aeropuerto Norte</option>
+                  <option value="Aeropuerto Sur">✈️ Aeropuerto Sur</option>
+                  <option value="OTRO">✏️ Otro destino...</option>
+                </select>
+              </div>
+              <input
+                type="text"
+                class="form-control mt-2 d-none animate-fade-in"
+                id="transfer_destino_custom"
+                placeholder="Especifique el lugar de destino..."
+                disabled
+              />
+            </div>
+
+            <div class="col-md-12 col-lg-6">
+              <label class="form-label small fw-bold text-muted"
+                >Notas / Observaciones</label
+              >
+              <textarea
+                class="form-control"
+                id="transfer_notas"
+                rows="1"
+                placeholder="Silla bebé, muchas maletas, cliente VIP..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="col-12 d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger border-0"
+              onclick="document.getElementById('formTransfer').reset(); document.getElementById('transfer_id').value='';"
+            >
+              <i class="bi bi-trash me-1"></i>Limpiar
+            </button>
+            <button
+              type="submit"
+              id="btnSubmitTransfer"
+              class="btn btn-primary btn-sm px-4 fw-bold shadow-sm"
+            >
+              <i class="bi bi-save-fill me-2"></i>Guardar Reserva
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA 2: LISTADO (AGENDA) - OCULTO POR DEFECTO -->
+  <div id="transfers-lista-view" class="d-none">
+    <div id="transfers-printable-list">
+        <div class="card shadow-sm border-0">
+          <div
+            class="card-header bg-white py-3 d-flex justify-content-between align-items-center no-print"
+          >
+            <h6 class="mb-0 fw-bold text-muted">
+              <i class="bi bi-calendar-event me-2"></i>Próximas Salidas
+            </h6>
+            <div class="input-group input-group-sm w-auto">
+              <span class="input-group-text bg-light border-end-0"
+                ><i class="bi bi-search"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control border-start-0"
+                id="transfersSearch"
+                placeholder="Buscar habitación..."
+                onkeyup="filtrarTransfers()"
+              />
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="table-transfers" class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="ps-4" data-sort="fecha">Fecha / Hora</th>
+                  <th scope="col" data-sort="habitacion">Hab. / Cliente</th>
+                  <th scope="col" data-sort="tipo">Tipo</th>
+                  <th scope="col" data-sort="pax">Pax</th>
+                  <th scope="col" data-sort="destino">Destino / Notas</th>
+                  <th scope="col" data-sort="autor">Creado por</th>
+                  <th scope="col" class="text-end pe-4 no-print">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaTransfersCuerpo">
+                <!-- JS Rendering -->
+              </tbody>
+            </table>
+          </div>
+          <div id="transfers-empty-state" class="text-center py-5 d-none no-print">
+            <div class="mb-3">
+              <i class="bi bi-car-front display-4 text-muted opacity-25"></i>
+            </div>
+            <h6 class="text-muted fw-bold">No hay traslados programados</h6>
+            <p class="small text-muted mb-0">
+              Utiliza el botón "Nueva Reserva" para añadir uno.
+            </p>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Área de Impresión Oculta (Ticket) -->
+<div id="print-transfer-ticket" class="d-none d-print-block">
+  <div class="transfer-ticket-print-container p-4 border rounded">
+    <div class="text-center mb-4 border-bottom pb-3">
+      <h2 class="fw-bold mb-0">CONFIRMACIÓN RESERVA</h2>
+      <small class="text-uppercase text-muted">Transporte / Taxi</small>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-6">
+        <small class="text-muted d-block">FECHA / DATE</small>
+        <strong class="fs-4" id="print_transfer_fecha">--/--/----</strong>
+      </div>
+      <div class="col-6 text-end">
+        <small class="text-muted d-block">HORA / TIME</small>
+        <strong class="fs-4" id="print_transfer_hora">--:--</strong>
+      </div>
+    </div>
+
+    <div class="alert alert-light border mb-4">
+      <div class="d-flex justify-content-between mb-2">
+        <span id="label_print_hab">Habitación / Room:</span>
+        <strong id="print_transfer_hab">---</strong>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span>Tipo / Type:</span>
+        <strong id="print_transfer_tipo">---</strong>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span>Destino / Destination:</span>
+        <strong id="print_transfer_destino">---</strong>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Pax:</span>
+        <strong id="print_transfer_pax">---</strong>
+      </div>
+    </div>
+
+    <div class="mb-5">
+      <small class="text-muted d-block mb-1">Notas:</small>
+      <p id="print_transfer_notas" class="fst-italic border-bottom pb-2">---</p>
+    </div>
+
+    <div class="text-center small text-muted mt-5 pt-4 border-top">
+      <p>Hotel Garoé - Recepción</p>
+      <p class="mb-0">
+        Por favor, esté preparado en el lobby 10 minutos antes.
+      </p>
+      <p>Please be ready at the lobby 10 minutes before.</p>
+    </div>
+  </div>
+</div>

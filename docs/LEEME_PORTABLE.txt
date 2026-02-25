@@ -1,0 +1,39 @@
+¡La aplicación ahora está ESTANDARIZADA y es PORTABLE!
+
+Para usarla en OTRO ordenador:
+---------------------------------------------------------
+OPCIÓN 1: Si el otro ordenador YA TIENE Node.js instalado
+---------------------------------------------------------
+1. Simplemente copia la carpeta entera de "RECEPCION SUITE v2".
+2. Ejecuta "INICIAR_APP.bat".
+3. Listo.
+
+---------------------------------------------------------
+OPCIÓN 2: MODO "TOTALMENTE PORTABLE" (Recomendado)
+---------------------------------------------------------
+Si quieres llevarla en un Pendrive a ordenadores que NO tienen Node.js:
+
+1. Crea una carpeta llamada "bin" dentro de esta carpeta del proyecto.
+2. Copia el archivo "node.exe" dentro de esa carpeta "bin".
+   (Puedes copiar el node.exe de tu PC actual, suele estar en C:\Program Files\nodejs\node.exe)
+3. Ahora puedes llevarte la carpeta "RECEPCION SUITE v2" a cualquier sitio.
+4. Al hacer doble clic en "INICIAR_APP.bat", usará el node.exe del Pendrive automáticamente.
+
+---------------------------------------------------------
+MANTENIMIENTO Y ACTUALIZACIÓN
+---------------------------------------------------------
+Si necesitas reemplazar archivos por una versión nueva y Windows te 
+dice "La carpeta o uno de sus archivos está en uso":
+
+1. Ejecuta "DETENER_SERVIDOR.bat". Esto cerrará el motor (bin/node.exe).
+2. Ahora ya puedes copiar y reemplazar los archivos que quieras.
+3. Vuelve a ejecutar "INICIAR_APP.bat" para arrancar de nuevo.
+
+---------------------------------------------------------
+RESOLUCIÓN DE PROBLEMAS
+---------------------------------------------------------
+- Si te sale "Server Error 500" al elegir archivo: Se arregló en la versión 4.0. Reinicia.
+- Si no guarda cambios: Se arregló en la versión 4.0. Asegúrate de usar el botón "Aplicar Cambios".
+
+Versión Actual: 4.0 [WEB EDITION]
+Autor: A. Jesús

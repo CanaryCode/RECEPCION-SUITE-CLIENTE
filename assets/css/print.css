@@ -1,0 +1,21 @@
+/* 
+   SISTEMA DE IMPRESIÓN (print.css)
+   --------------------------------
+   Nota: El reporte "Cierre de Caja" ahora utiliza una estrategia de Iframe Aislado
+   que NO depende de este archivo.
+   
+   Este archivo queda reservado para futuras necesidades de impresión global
+   o para estilos compartidos si se decide volver a una estrategia integrada.
+*/
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  
+  /* Retenemos una clase helper por si acaso */
+  .no-print {
+    display: none !important;
+  }
+}

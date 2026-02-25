@@ -1,0 +1,325 @@
+const express = require('express');
+const router = express.Router();
+const fs = require('fs').promises;
+const fsSync = require('fs');
+const path = require('path');
+const db = require('../db');
+
+
+const STORAGE_DIR = path.resolve(__dirname, '../../storage');
+const LOG_FILE = path.join(STORAGE_DIR, 'server_debug.log');
+
+// Helper to log to file (USANDO RUTAS ABSOLUTAS)
+const logToFile = (msg) => {
+    const timestamp = new Date().toISOString();
+    const entry = `[${timestamp}] ${msg}\n`;
+    try {
+        if (!fsSync.existsSync(STORAGE_DIR)) {
+            fsSync.mkdirSync(STORAGE_DIR, { recursive: true });
+        }
+        fsSync.appendFileSync(LOG_FILE, entry);
+    } catch (e) {
+        console.error('CRITICAL: Could not write to log file', e);
+    }
+};
+
+// Log de inicio
+logToFile('--- STORAGE SERVICE INITIALIZED (SQL + JSON) ---');
+
+const TABLE_MAP = {
+    // MODULOS PRINCIPALES (Keys usadas por los Services)
+    'agenda_contactos': 'agenda_contactos',
+    'riu_clientes': 'clientes_riu',
+    'riu_despertadores': 'despertadores',
+    'riu_safe_rentals': 'safe_rentals',
+    'riu_novedades': 'novedades',
+    'riu_notas_permanentes': 'notas',
+    'riu_precios': 'precios',
+    'riu_estancia_diaria': 'estancia_diaria',
+    'arqueo_caja': 'arqueo_caja',
+    'reservas_instalaciones': 'reservas_instalaciones',
+    'riu_atenciones_v2': 'atenciones',
+    'riu_cenas_frias': 'cenas_frias',
+    'riu_desayunos': 'desayunos',
+    'riu_excursiones': 'registro_excursiones',
+    'riu_lost_found': 'lost_found',
+    'riu_rack': 'rack_status',
+    'riu_system_alarms': 'system_alarms',
+    'riu_transfers': 'transfers',
+    'vales_data': 'vales',
+    'guia_operativa': 'guia_operativa',
+    'gallery_favorites': 'gallery_favorites',
+
+    // ALIAS PARA COMPATIBILIDAD O LEGACY
+    'riu_agenda_contactos': 'agenda_contactos',
+    'riu_class_db': 'clientes_riu'
+};
+
+
+/**
+ * GET /api/storage/debug/log
+ * Devuelve el contenido del log de depuración.
+ */
+router.get('/debug/log', async (req, res) => {
+    try {
+        const logs = await fs.readFile(LOG_FILE, 'utf8');
+        res.type('text/plain').send(logs);
+    } catch (err) {
+        res.status(404).send('No hay logs todavía.');
+    }
+});
+
+// Utility: Ensure storage directory exists
+const ensureStorageDir = async () => {
+    try {
+        await fs.access(STORAGE_DIR);
+    } catch {
+        await fs.mkdir(STORAGE_DIR, { recursive: true });
+    }
+};
+
+/**
+ * POST /api/storage/upload
+ * Saves a media file (Base64) to storage/media/:folder/
+ */
+router.post('/upload', async (req, res) => {
+    logToFile('>>> POST /upload received');
+    logToFile(`Headers: ${req.headers['content-type']}`);
+    logToFile(`Body keys: ${Object.keys(req.body || {}).join(', ')}`);
+
+    try {
+        const { fileName, fileData, folder = 'misc' } = req.body;
+
+        logToFile(`Upload request: ${fileName || 'NO_NAME'} to folder ${folder}`);
+        if (!fileName || !fileData) {
+            console.error('[Storage] Error: Missing fileName or fileData');
+            return res.status(400).json({ error: 'Missing fileName or fileData' });
+        }
+
+        logToFile(`[Storage] Received data length: ${fileData.length}`);
+        logToFile(`[Storage] Data start: ${fileData.substring(0, 70)}...`);
+
+        const mediaDir = path.join(STORAGE_DIR, 'media', folder);
+        console.log(`[Storage] Target directory: ${mediaDir}`);
+
+        // Ensure folder exists
+        try {
+            await fs.mkdir(mediaDir, { recursive: true });
+        } catch (dirErr) {
+            console.warn('[Storage] Error creating directory (might exist):', dirErr.message);
+        }
+
+        const filePath = path.join(mediaDir, fileName);
+
+        // Remove Base64 prefix if present (handle both raw b64 and data URIs)
+        const base64Data = fileData.includes(',') ? fileData.split(',')[1] : fileData;
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        await fs.writeFile(filePath, buffer);
+        console.log(`[Storage] File saved: ${filePath}`);
+
+        // Return relative path for frontend
+        const relativePath = `storage/media/${folder}/${fileName}`;
+        console.log(`[Storage] Returning path: ${relativePath}`);
+        res.json({ success: true, path: relativePath });
+    } catch (err) {
+        console.error(`[Storage] Error uploading file:`, err);
+        res.status(500).json({ error: 'Upload error', details: err.message });
+    }
+});
+
+/**
+ * GET /api/storage/:key
+ * Retrieves data from MariaDB or falls back to a JSON file.
+ */
+router.get('/:key', async (req, res) => {
+    const { key } = req.params;
+    const tableName = TABLE_MAP[key];
+
+    // Try Database first if mapping exists
+    if (tableName) {
+        try {
+            logToFile(`[Storage] DB Read: ${tableName} (key: ${key})`);
+            const [rows] = await db.query(`SELECT * FROM \`${tableName}\``);
+
+            // Special handling for JSON fields in DB if needed (e.g. departamentos in novedades)
+            const processedRows = rows.map(row => {
+                const newRow = { ...row };
+                // PARSEO GENÉRICO DE CAMPOS JSON
+                Object.keys(newRow).forEach(col => {
+                    const val = newRow[col];
+                    if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
+                        try { newRow[col] = JSON.parse(val); } catch (e) { }
+                    }
+                });
+                return newRow;
+            });
+
+            // Si es un módulo que el frontend espera como objeto (p.e. rack o atenciones)
+            if (['riu_rack', 'riu_atenciones_v2', 'riu_desayunos', 'riu_cenas_frias'].includes(key)) {
+                const obj = {};
+                processedRows.forEach(row => {
+                    const pk = row.habitacion;
+                    if (pk) {
+                        delete row.habitacion;
+                        obj[pk] = row;
+                    }
+                });
+                return res.json(obj);
+            }
+
+            // CASO ESPECIAL: GUÍA OPERATIVA (Object of Arrays)
+            if (key === 'guia_operativa') {
+                const obj = {};
+                processedRows.forEach(row => {
+                    obj[row.turno] = row.tareas || [];
+                });
+                return res.json(obj);
+            }
+
+            // CASO ESPECIAL: GALLERY FAVORITES (Flat Array)
+            if (key === 'gallery_favorites') {
+                return res.json(processedRows.map(r => r.path));
+            }
+
+            // CASO ESPECIAL: ARQUEO DE CAJA (Singleton Object)
+            if (key === 'arqueo_caja') {
+                return res.json(processedRows[0] || {});
+            }
+
+            return res.json(processedRows);
+        } catch (dbErr) {
+            logToFile(`[Storage] DB Read Error for ${tableName}: ${dbErr.message}. Falling back to JSON.`);
+        }
+    }
+
+    // JSON Fallback
+    const filePath = path.join(STORAGE_DIR, `${key}.json`);
+    try {
+        const data = await fs.readFile(filePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            if (key === 'config') {
+                return res.json({
+                    SYSTEM: { API_URL: '/api', USE_SYNC_SERVER: true },
+                    HOTEL: { RECEPCIONISTAS: [] }
+                });
+            }
+            return res.json(null);
+        }
+        res.status(500).json({ error: 'Read error', details: err.message });
+    }
+});
+
+/**
+ * POST /api/storage/:key
+ * Saves data to MariaDB and JSON file using atomic transactions.
+ */
+router.post('/:key', async (req, res) => {
+    const { key } = req.params;
+    const tableName = TABLE_MAP[key];
+    const data = req.body;
+
+    if (data === undefined || data === null) {
+        return res.status(400).json({ error: 'Body is required' });
+    }
+
+    const connection = await db.pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        if (tableName) {
+            logToFile(`[Storage] DB Write (Transaction Start): ${tableName} (key: ${key})`);
+
+            // 1. Limpiar tabla actual
+            await connection.query(`DELETE FROM \`${tableName}\``);
+
+            // 2. Normalizar data a array para inserción
+            let itemsToInsert = [];
+            if (key === 'guia_operativa') {
+                itemsToInsert = Object.entries(data).map(([turno, tareas]) => ({ turno, tareas }));
+            } else if (key === 'gallery_favorites') {
+                itemsToInsert = Array.isArray(data) ? data.map(path => ({ path })) : [];
+            } else if (key === 'arqueo_caja') {
+                // Arqueo es un objeto único que representa una fila
+                itemsToInsert = [data];
+            } else if (Array.isArray(data)) {
+                itemsToInsert = data;
+            } else if (typeof data === 'object') {
+                itemsToInsert = Object.entries(data).map(([pk, val]) => {
+                    if (typeof val === 'object' && val !== null) {
+                        // Normalizar: si viene como 'hab', convertir a 'habitacion'
+                        const item = { habitacion: pk, ...val };
+                        if (item.hab && !item.habitacion) item.habitacion = item.hab;
+                        return item;
+                    }
+                    return { habitacion: pk, value: val };
+                });
+            }
+
+            // Normalización adicional para casos donde data es un Array de objetos
+            if (Array.isArray(itemsToInsert)) {
+                itemsToInsert = itemsToInsert.map(item => {
+                    if (item.hab && !item.habitacion) return { ...item, habitacion: item.hab };
+                    return item;
+                });
+            }
+
+            // 3. Ejecutar inserciones
+            if (itemsToInsert.length > 0) {
+                // Obtener las columnas válidas de la tabla en DB
+                const [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
+                const validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+
+                // Seleccionar solo columnas válidas
+                const allColumns = new Set();
+                itemsToInsert.forEach(item => Object.keys(item).forEach(col => {
+                    if (validDbColumns.has(col)) allColumns.add(col);
+                }));
+                const columns = Array.from(allColumns);
+
+                const placeholders = columns.map(() => '?').join(', ');
+                const sql = `INSERT INTO \`${tableName}\` (\`${columns.join('\`, \`')}\`) VALUES (${placeholders})`;
+
+                for (const item of itemsToInsert) {
+                    const values = columns.map(col => {
+                        let val = item[col];
+
+                        // Parsear fechas ISO a formato compatible con MariaDB
+                        if (typeof val === 'string' && val.includes('T') && val.endsWith('Z')) {
+                            const dateMatch = val.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/);
+                            if (dateMatch) return `${dateMatch[1]} ${dateMatch[2]}`;
+                        }
+
+                        if (typeof val === 'boolean') return val ? 1 : 0;
+                        if (typeof val === 'object' && val !== null) return JSON.stringify(val);
+                        return (val === undefined || val === '') ? null : val;
+                    });
+                    await connection.query(sql, values);
+                }
+            }
+            logToFile(`[Storage] DB Write (Transaction Success): ${tableName} (${itemsToInsert.length} rows)`);
+        }
+
+        // 4. Confirmar cambios en DB
+        await connection.commit();
+
+        // 5. Solo si la DB tuvo éxito (o no hay mapeo), guardamos el JSON
+        const filePath = path.join(STORAGE_DIR, `${key}.json`);
+        await fs.writeFile(filePath, JSON.stringify(data, null, 4), 'utf8');
+
+        res.json({ success: true, source: tableName ? 'db+json' : 'json' });
+
+    } catch (err) {
+        if (connection) await connection.rollback();
+        logToFile(`[Storage] CRITICAL: Transaction Error for ${key}: ${err.message}`);
+        console.error(`[Storage] Transaction Error:`, err);
+        res.status(500).json({ error: 'Transaction error', details: err.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+
+module.exports = router;

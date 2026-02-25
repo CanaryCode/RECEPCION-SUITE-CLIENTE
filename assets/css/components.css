@@ -1,0 +1,653 @@
+/* 
+   SISTEMA DE COMPONENTES DE INTERFAZ (components.css)
+   ---------------------------------------------------
+   Contiene los elementos reutilizables de la UI diseñados bajo una estética premium.
+   Incluye:
+   - Tarjetas (Cards) con efectos de elevación.
+   - Sistema de navegación por pestañas (Nav-Tabs) centrado y estilo cristal.
+   - Menús desplegables animados.
+   - El Header principal del sistema (App Header Panel).
+   - La barra de herramientas unificada para todos los módulos.
+*/
+
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  /* Permitir que efectos hover salgan */
+}
+
+/* FIX: Clase para paneles que no deben ser blanco puro (#ffffff) */
+.bg-soft-panel {
+  background: #f1f5f9 !important; /* Soft Salish Sea Grey */
+  border-color: rgba(0, 0, 0, 0.05) !important;
+  box-shadow: none !important;
+}
+
+.bg-soft-panel .card-header {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.bg-soft-panel .card-body {
+  background: transparent !important;
+}
+
+/* Forzar elementos anidados a no ser blanco puro si están dentro de un soft panel */
+.bg-soft-panel .input-group-text,
+.bg-soft-panel .form-control,
+.bg-soft-panel .form-select {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- BOTONES GENÉRICOS --- */
+.btn {
+  height: 38px; /* Altura estricta estándar */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px; /* Padding horizontal consistente */
+}
+.btn-sm {
+  height: 31px; /* Altura estricta pequeña */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--primary-color) !important;
+  /* Borde azul visible al pasar el ratón */
+}
+
+.nav-tabs {
+  border-bottom: none;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  /* Efecto cristal esmerilado */
+  padding: 0.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  gap: 6px;
+  margin-bottom: 0 !important;
+  position: relative;
+  z-index: 1000;
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center; /* ALINEACIÓN VERTICAL CRÍTICA */
+  overflow: visible;
+  min-height: 56px;
+}
+
+/* FIX: Contenedor centrado globalmente (App centrada) */
+/* .container {
+  max-width: 1280px !important; 
+  width: 96% !important;
+  margin-left: auto !important;
+  margin-right: auto !important; 
+} */
+
+.nav-link {
+  font-weight: 600;
+  color: #64748b;
+  border: none !important;
+  padding: 8px 16px;
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  height: 40px; /* Altura estandarizada para coincidir con botones */
+}
+
+.nav-link:hover:not(.active) {
+  background-color: rgba(13, 110, 253, 0.08);
+  color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary.active,
+.btn-check:checked + .btn-outline-primary {
+  background: linear-gradient(135deg, var(--primary-color), #0a58ca) !important;
+  color: white !important;
+  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3) !important;
+  border-color: transparent !important; /* Ensure border doesn't clash */
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, var(--primary-color), #0a58ca) !important;
+  color: white !important;
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.35);
+  /* Sombra brillante */
+  transform: translateY(-3px);
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 0.8rem;
+  margin-top: 12px !important;
+  animation: fadeInUp 0.3s ease forwards;
+  z-index: 10000;
+  /* Siempre por encima de la barra de navegación */
+}
+
+.dropdown-item {
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-weight: 500;
+  color: var(--secondary-color);
+  transition: var(--transition);
+}
+
+.dropdown-item:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+  color: var(--primary-color);
+  transform: translateX(5px);
+  /* Pequeño desplazamiento a la derecha */
+}
+
+.card-header {
+  background: transparent !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  padding: 1.2rem 1.5rem;
+}
+
+.card-header h5,
+.card-header .fw-bold {
+  font-weight: 700 !important;
+  letter-spacing: -0.5px;
+  color: #344767;
+  display: flex;
+  align-items: center;
+}
+
+/* Iconos en encabezados con fondo degradado */
+.card-header i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(13, 110, 253, 0.1);
+  /* Fondo suave en lugar de gradiente fuerte */
+  color: var(--primary-color);
+  margin-right: 12px;
+  font-size: 0.9rem;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.card:hover .card-header i {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.1) rotate(-5deg);
+  /* Animación de icono en las tarjetas de resumen */
+}
+
+.tel-entry {
+  transition: var(--transition);
+  border-left: 3px solid transparent !important;
+}
+
+.tel-entry:hover {
+  background-color: #fff !important;
+  border-left-color: var(--primary-color) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  font-weight: 500;
+}
+
+.badge {
+  font-weight: 600;
+  padding: 0.5em 0.8em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.03);
+}
+
+/* Estilos para el Buscador Global en el Menú */
+.nav-search-wrapper {
+  position: relative;
+  width: 220px;
+}
+
+.nav-link, .dropdown-toggle.btn-link {
+  padding-left: 0.9rem !important;
+  padding-right: 0.9rem !important;
+}
+
+.nav-item .btn-link {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10001;
+  /* Por encima de todo */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Animación de entrada suave al cargar */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.btn-shortcut {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* --- HEADER PRINCIPAL (PANEL FLOTANTE) --- */
+.app-header-panel {
+  /* Fondo con colores ULTRA suaves y elegantes (Más luz, menos saturación) */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(225, 240, 255, 0.9) 35%,
+    /* Azul muy pálido */ rgba(248, 240, 255, 0.9) 70%,
+    /* Rosado/Lila ULTRA pálido (Casi blanco) */ rgba(255, 255, 255, 0.98) 100%
+  );
+  background-size: 300% 300%;
+  animation: elegantAloha 20s ease-in-out infinite alternate; /* Animación mucho más lenta */
+
+  backdrop-filter: blur(25px) saturate(120%);
+  -webkit-backdrop-filter: blur(25px) saturate(120%);
+
+  /* Borde animado sutil */
+  border: 1px solid transparent; /* Truco para gradiente en borde */
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  /* Capa de fondo normal + Capa de borde gradiente */
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+    linear-gradient(90deg, #e0e0e0, #a0cfff, #e0d0ff, #e0e0e0);
+  background-size:
+    100% 100%,
+    300% 100%;
+
+  /* Animación separada para el borde */
+  animation:
+    elegantAloha 20s ease-in-out infinite alternate,
+    borderShimmer 6s linear infinite;
+
+  border-radius: 20px;
+
+  /* Dimensiones equilibradas */
+  padding: 1rem 3rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 2rem 0;
+
+  /* Sombra suave inicial */
+  box-shadow:
+    0 10px 30px -5px rgba(13, 110, 253, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.5); /* Refuerzo visual */
+
+  position: relative;
+  overflow: hidden;
+
+  /* Transición rápida para movimiento tipo 'muelle' */
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.4s ease;
+
+  /* Animación de entrada */
+  /* Nota: combinamos las animaciones en la propiedad animation de arriba para no sobreescribir */
+
+  cursor: default;
+  will-change: transform;
+}
+
+@keyframes elegantAloha {
+  0% {
+    background-position:
+      0% 50%,
+      0% 0%;
+  }
+  50% {
+    background-position:
+      100% 50%,
+      100% 0%;
+  }
+  100% {
+    background-position:
+      0% 50%,
+      0% 0%;
+  }
+}
+
+@keyframes borderShimmer {
+  0% {
+    background-position:
+      0% 0%,
+      0% 50%;
+  }
+  100% {
+    background-position:
+      0% 0%,
+      200% 50%;
+  } /* Solo movemos el borde */
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Línea superior elegante (Brand Accent) */
+.app-header-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 4px; /* Un poco más gruesa */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #0d6efd 20%,
+    #6610f2 50%,
+    #0dcaf0 80%,
+    transparent 100%
+  );
+  border-radius: 0 0 4px 4px;
+  opacity: 0.9;
+  filter: blur(0.5px); /* Menos blur para que se vea más */
+}
+
+/* Título con efecto WOW elegante */
+.app-header-panel h1,
+.app-header-panel h2 {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 40%, #6610f2 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 2.3rem !important; /* Ligeramente más grande */
+  letter-spacing: -0.03em !important;
+  margin-bottom: 0.25rem !important;
+
+  animation: shineText 8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 2px 10px rgba(13, 110, 253, 0.2));
+}
+
+@keyframes shineText {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Subtítulo DESTACADO */
+.app-header-panel p {
+  /* Color sólido oscuro o gradiente sutil, no gris claro */
+  background: linear-gradient(45deg, #495057, #212529);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #212529 !important; /* Fallback */
+
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif !important;
+  font-weight: 700 !important; /* Más grueso */
+  font-size: 0.95rem !important; /* Más grande */
+  letter-spacing: 0.3em !important; /* Espaciado premium fijo */
+  text-transform: uppercase;
+  margin-top: 8px;
+  opacity: 1; /* Opacidad total */
+  display: inline-block;
+  position: relative;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Líneas decorativas más visibles */
+.app-header-panel p::before,
+.app-header-panel p::after {
+  content: "";
+  display: inline-block;
+  width: 25px; /* Más largas por defecto */
+  height: 2px; /* Más gruesas */
+  background: linear-gradient(90deg, #0d6efd, #6610f2); /* Color de la marca */
+  vertical-align: middle;
+  margin: 0 12px;
+  opacity: 0.8;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 2px;
+}
+
+/* Interacción Hover: MOVIMIENTO REAL */
+.app-header-panel:hover {
+  transform: translateY(-8px) scale(1.01); /* Movimiento notable + ligera escala */
+  box-shadow:
+    0 20px 40px -10px rgba(13, 110, 253, 0.25),
+    0 0 0 1px rgba(13, 110, 253, 0.3); /* Borde brilla azul */
+}
+
+/* Efecto cuando tiene historial (es interactivo) */
+.app-header-panel[style*="cursor: pointer"]:hover::before {
+  height: 6px;
+  background: linear-gradient(90deg, #0d6efd, #0dcaf0, #0d6efd);
+  filter: blur(1px);
+}
+
+#header-indicator-left,
+#header-indicator-right {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(13, 110, 253, 0.85); /* Fondo más sólido para legibilidad */
+  color: white !important;
+  backdrop-filter: blur(5px);
+  padding: 2px 10px;
+  border-radius: 6px;
+  transform: translateY(-100%);
+  opacity: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 150px; /* Evita que crezcan demasiado hacia el centro */
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#header-indicator-left {
+  border-top-left-radius: 0;
+}
+#header-indicator-right {
+  border-top-right-radius: 0;
+}
+
+.app-header-panel:hover #header-indicator-left:not(.d-none),
+.app-header-panel:hover #header-indicator-right:not(.d-none) {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+#header-indicator-left:hover,
+#header-indicator-right:hover {
+  background: var(--primary-color);
+  color: white !important;
+}
+
+/* Efecto en subtítulo al hover */
+.app-header-panel:hover p {
+  transform: scale(1.05); /* Zoom sutil en el texto */
+  transition: transform 0.3s ease;
+}
+
+.app-header-panel:hover p::before,
+.app-header-panel:hover p::after {
+  width: 40px; /* Crecen bastante */
+  opacity: 1;
+}
+
+/* Efecto de luz ambiental en el fondo */
+.app-header-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% -20%,
+    rgba(13, 202, 240, 0.15) 0%,
+    transparent 70%
+  );
+  z-index: -1;
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+
+.app-header-panel:hover::after {
+  opacity: 1;
+}
+
+/* --- BARRA DE HERRAMIENTAS DE MÓDULO (UNIFICADA) --- */
+.module-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.module-toolbar .btn-group {
+  background: white;
+  padding: 4px;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.module-toolbar .form-select,
+.module-toolbar .form-control {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+}
+
+.module-toolbar .btn-print-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* --- ESTILOS PARA ESTABILIZAR EL LANZADOR (App Launcher) --- */
+#launchPadModal .modal-dialog {
+  margin-top: 50px; /* Posición fija desde arriba */
+  transition: none !important; /* Evitar rebotes de Bootstrap */
+}
+
+#launchPadModal .modal-content {
+  min-height: 550px; /* Altura mínima garantizada para que no se mueva al filtrar */
+  display: flex;
+  flex-direction: column;
+}
+
+#launchPadGrid {
+  min-height: 200px; /* Espacio mínimo para el grid de iconos */
+}
+
+/* Premium Styling for LaunchPad Tabs */
+#launchPadModal .btn-group {
+    background: rgba(0, 0, 0, 0.03);
+    padding: 3px;
+    border-radius: 12px;
+}
+
+#launchPadModal .btn-group .btn {
+    border: none !important;
+    border-radius: 9px !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #6c757d;
+    background: transparent;
+    padding: 8px 16px;
+}
+
+#launchPadModal .btn-group .btn:hover {
+    color: var(--bs-primary);
+    background: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+#launchPadModal .btn-group .btn.active {
+    background: white !important;
+    color: var(--bs-primary) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+/* Fix for truncated text in LaunchPad */
+.launcher-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines for better fit */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.78rem !important; /* Slightly smaller for density */
+  line-height: 1.1;
+  min-height: 3.3em; /* 3 lines * 1.1 line-height */
+  word-break: break-word;
+  margin-bottom: 2px;
+}

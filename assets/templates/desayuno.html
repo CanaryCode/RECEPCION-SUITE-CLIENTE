@@ -1,0 +1,141 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Desayunos Tempranos</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-desayuno"></span></div>
+        <div><strong>Generado por:</strong> <span id="print-repc-nombre-desayuno"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Interno de Uso Operativo</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-egg-fried"></i>Desayunos Tempranos</h4>
+
+<div class="module-toolbar no-print">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary active" id="btnVistaTrabajoDesayuno"
+            data-bs-toggle="tooltip" data-bs-title="Ver Formulario y Lista">
+            <i class="bi bi-pencil-square me-2"></i>Vista de Trabajo
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="btnVistaRackDesayuno"
+            data-bs-toggle="tooltip" data-bs-title="Ver Resumen por Habitaciones">
+            <i class="bi bi-grid-3x3-gap me-2"></i>Vista de Rack
+        </button>
+    </div>
+
+    <div class="btn-print-wrapper">
+        <!-- Selector eliminado: Se usa usuario global -->
+        <button class="btn btn-primary btn-sm fw-bold" onclick="imprimirDesayunos()"
+            data-bs-toggle="tooltip" data-bs-title="Imprimir Listado para Cocina">
+            <i class="bi bi-printer me-2"></i>Imprimir Listado
+        </button>
+    </div>
+</div>
+
+<!-- VISTA DE TRABAJO -->
+<div id="desayuno-trabajo">
+    <div class="card mb-4 shadow-sm border-0 no-print">
+        <div class="card-header py-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-egg-fried me-2"></i>Registrar Desayuno Temprano</h6>
+        </div>
+        <div class="card-body">
+            <form id="formNuevoDesayuno" class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Habitación</label>
+                    <input type="text" id="desayuno_hab" class="form-control" placeholder="Ej: 101" required
+                        list="lista-habs-desayuno" data-bs-toggle="tooltip" data-bs-title="Número de Habitación">
+                    <datalist id="lista-habs-desayuno"></datalist>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Pax (Personas)</label>
+                    <input type="number" id="desayuno_pax" class="form-control" min="1" value="2" required
+                        data-bs-toggle="tooltip" data-bs-title="Número de Personas">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Hora</label>
+                    <input type="time" id="desayuno_hora" class="form-control" required
+                        data-bs-toggle="tooltip" data-bs-title="Hora de Recogida/Servicio">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Observaciones</label>
+                    <textarea id="desayuno_obs" class="form-control" rows="2"
+                        placeholder="Ej: Celíacos, picnic para llevar..."
+                        data-bs-toggle="tooltip" data-bs-title="Detalles Específicos"></textarea>
+                </div>
+                <div class="col-12 d-flex justify-content-end align-items-center gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="limpiarDesayunos()"
+                        data-bs-toggle="tooltip" data-bs-title="Eliminar todos los registros">
+                        <i class="bi bi-trash me-1"></i>Borrar Todo
+                    </button>
+                    <button type="submit" id="btnSubmitDesayuno" class="btn btn-primary btn-sm px-4 fw-bold shadow-sm"
+                        data-bs-toggle="tooltip" data-bs-title="Guardar Pedido">
+                        <i class="bi bi-save-fill me-2"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header py-3">
+            <h6 class="mb-0 fw-bold">Pedidos para Mañana</h6>
+        </div>
+        <div class="table-responsive">
+            <table id="table-desayunos" class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th data-sort="hab">Habitación</th>
+                        <th data-sort="pax">Pax</th>
+                        <th data-sort="hora">Hora</th>
+                        <th data-sort="obs">Observaciones</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaDesayunoActivos"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- VISTA DE RACK -->
+<div id="desayuno-rack" class="d-none">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold text-muted mb-3 small">RESUMEN DE DESAYUNOS</h6>
+            <div id="desayuno-stats" class="row g-2">
+                <!-- Inyectado por JS -->
+            </div>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div id="rack-desayuno-habitaciones" class="d-flex flex-wrap gap-1 justify-content-start"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Firmas para Impresión -->
+<div class="d-none d-print-block mt-5">
+    <div class="row g-5">
+        <div class="col-6">
+            <div class="mb-4">
+                <small class="text-muted d-block mb-1">Nombre Recepcionista:</small>
+                <div class="fw-bold border-bottom border-dark pb-1" id="print-repc-nombre" style="min-height: 20px;">
+                </div>
+            </div>
+            <div class="text-center pt-3" style="border-top: 1px dashed #ccc;">
+                <small class="fw-bold">Firma Recepcionista</small>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-4">
+                <small class="text-muted d-block mb-1">Nombre Cocinero/a:</small>
+                <div class="border-bottom border-dark pb-1" style="min-height: 20px;">&nbsp;</div>
+            </div>
+            <div class="text-center pt-3" style="border-top: 1px dashed #ccc;">
+                <small class="fw-bold">Firma Cocina</small>
+            </div>
+        </div>
+    </div>
+</div>

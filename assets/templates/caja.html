@@ -1,0 +1,332 @@
+<div class="module-wrapper">
+  <!-- VISTA WEB INTERACTIVA (Solo se ve en pantalla) -->
+  <div class="no-print" id="caja-web-interactive-view">
+    <h4 class="module-title-discrete text-end mb-2"><i class="bi bi-cash-coin"></i>Cierre de Caja</h4>
+    <div class="module-toolbar d-flex justify-content-end mb-3">
+      <div class="btn-print-wrapper d-flex gap-2">
+        <button class="btn btn-danger btn-sm fw-bold" onclick="guardarCajaPDF()"><i class="bi bi-file-earmark-pdf me-2"></i>PDF</button>
+        <button class="btn btn-info btn-sm fw-bold text-white" onclick="enviarCajaEmail()"><i class="bi bi-envelope me-2"></i>Email</button>
+        <button class="btn btn-outline-primary btn-sm fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i>Imprimir / Vista</button>
+        <button class="btn btn-success btn-sm fw-bold shadow-sm px-3 border-2" onclick="cerrarCajaDefinitivo()">
+            <i class="bi bi-check2-circle me-1"></i>CERRAR CAJA (Contabilizar)
+        </button>
+      </div>
+    </div>
+
+    <div class="row align-items-stretch g-3">
+      <!-- Columna Principal (Web) -->
+      <div class="col-md-8 d-flex flex-column">
+        <!-- Datos de Fecha/Turno -->
+        <div class="card mb-3 shadow-sm border-0">
+          <div class="card-body py-2">
+            <div class="row g-3 align-items-center">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar3 me-1"></i>FECHA CONTABLE</label>
+                <div class="input-group input-group-sm">
+                  <input type="date" id="caja_fecha" class="form-control fw-bold text-primary bg-white" readonly />
+                  <button class="btn btn-outline-primary" type="button" onclick="toggleLockCaja('caja_fecha', this)"><i class="bi bi-lock-fill"></i></button>
+                </div>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted mb-1">TURNO DETECTADO</label>
+                <div class="input-group input-group-sm">
+                  <select id="caja_turno" class="form-select fw-bold text-success bg-white" disabled>
+                    <option value="MAÑANA">MAÑANA</option>
+                    <option value="TARDE">TARDE</option>
+                    <option value="NOCHE">NOCHE</option>
+                  </select>
+                  <button class="btn btn-outline-success" type="button" onclick="toggleLockCaja('caja_turno', this)"><i class="bi bi-lock-fill"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Efectivo -->
+        <div class="card mb-3 shadow-sm border-0 flex-grow-1">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-calculator me-2"></i>Efectivo (Billetes, Monedas y Varios)</span>
+            <div>
+              <button class="btn btn-sm btn-outline-danger border-0" onclick="resetearCaja()"><i class="bi bi-trash me-1"></i>Limpiar</button>
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="row flex-grow-1">
+              <div class="col-md-6 border-end" id="billetes-container">
+                <h6 class="text-secondary fw-bold border-bottom pb-2 mb-3">Billetes</h6>
+              </div>
+              <div class="col-md-6" id="monedas-container">
+                <h6 class="text-secondary fw-bold border-bottom pb-2 mb-3">Monedas</h6>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-top" id="otros-container">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-primary fw-bold small mb-0"><i class="bi bi-sliders me-2"></i>OTROS CONCEPTOS</h6>
+                <button class="btn btn-sm btn-success shadow-sm" style="font-size: 0.75rem; padding: 2px 8px;" onclick="agregarNuevoConcepto()">
+                  <i class="bi bi-plus-circle me-1"></i>Añadir concepto
+                </button>
+              </div>
+              <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <div class="input-group input-group-sm flex-nowrap">
+                      <span class="input-group-text"><i class="bi bi-ticket-perforated me-2"></i>Vales</span>
+                      <input type="text" id="caja_vales_total" class="form-control fw-bold bg-white text-primary text-center" value="0.00" readonly />
+                      <button class="btn btn-outline-primary" type="button" onclick="abrirModalVales()"><i class="bi bi-pencil-square"></i></button>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm flex-nowrap">
+                      <span class="input-group-text"><i class="bi bi-dash-circle me-2"></i>Desemb.</span>
+                      <input type="text" id="caja_desembolsos" class="form-control fw-bold bg-white text-primary text-center" value="0.00" readonly />
+                      <button class="btn btn-outline-primary" type="button" onclick="abrirModalDesembolsos()"><i class="bi bi-pencil-square"></i></button>
+                    </div>
+                  </div>
+              </div>
+              <div class="row g-2">
+                  <div class="col-6">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text"><i class="bi bi-postage me-2"></i>Sellos</span>
+                      <input type="number" id="caja_sellos_cant" class="form-control text-center" placeholder="Ej: 5" />
+                      <input type="number" id="caja_sellos_precio" class="form-control text-center" value="2.00" />
+                      <span class="input-group-text fw-bold text-primary bg-white" id="caja_sellos_total_lbl">0.00€</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm flex-nowrap">
+                      <span class="input-group-text"><i class="bi bi-safe me-2"></i>Safe</span>
+                      <input type="number" id="caja_safe" class="form-control fw-bold text-primary text-center" placeholder="Total Safe" step="0.01" onchange="this.value = parseFloat(this.value || 0).toFixed(2)" />
+                      <span class="input-group-text text-primary">€</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm flex-nowrap">
+                      <span class="input-group-text"><i class="bi bi-plus-circle me-2"></i>Extra</span>
+                      <input type="number" id="caja_monedas_extra" class="form-control fw-bold text-primary text-center" placeholder="Ej: Bote" step="0.01" onchange="this.value = parseFloat(this.value || 0).toFixed(2)" />
+                      <span class="input-group-text text-primary">€</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-sm flex-nowrap">
+                      <span class="input-group-text fw-bold text-secondary"><i class="bi bi-bank me-2"></i>Fondo</span>
+                      <input type="text" id="input_fondo_arqueo" class="form-control fw-bold text-primary bg-light text-center" value="-2000.00€" readonly />
+                      <button class="btn btn-outline-secondary" type="button" onclick="toggleLockCaja('input_fondo_arqueo', this)"><i class="bi bi-lock-fill"></i></button>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Lateral (Web) -->
+      <div class="col-md-4 d-flex flex-column">
+        <div class="card mb-3 shadow-sm border-0">
+          <div class="card-body text-center">
+            <h5 class="text-secondary"><i class="bi bi-wallet2 me-2"></i>Total Tesorería</h5>
+            <h1 class="display-4 fw-bold text-dark" id="total_caja">0.00€</h1>
+            <hr class="my-2" />
+            <div class="d-flex justify-content-between small"><span>Billetes:</span><span id="subtotal_billetes" class="fw-bold text-primary">0.00€</span></div>
+            <div class="d-flex justify-content-between small"><span>Monedas:</span><span id="subtotal_monedas" class="fw-bold text-primary">0.00€</span></div>
+            <div class="d-flex justify-content-between small fw-bold border-top pt-1 mb-1 text-primary"><span>TOTAL EFECTIVO:</span><span id="total_efectivo">0.00€</span></div>
+            <div class="d-flex justify-content-between small fw-bold text-primary"><span>OTROS CONCEPTOS:</span><span id="subtotal_otros">0.00€</span></div>
+            <div class="p-3 rounded bg-primary bg-opacity-25 mt-4 border border-primary">
+              <small class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-1"></i>PRODUCCIÓN (VENTA)</small>
+              <h2 class="fw-bold" id="recaudacion_caja">0.00€</h2>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm border-0 flex-grow-1 d-flex flex-column mb-4" id="card-comentarios-caja">
+          <div class="card-body d-flex flex-column">
+            <label class="small fw-bold text-muted mb-2"><i class="bi bi-chat-left-text me-2"></i>COMENTARIOS</label>
+            <textarea id="caja_comentarios_cierre" class="form-control flex-grow-1" style="min-height: 150px" placeholder="Ej: Falta ticket de taxi, sobrante de 2€..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA DE IMPRESIÓN (HARDCODED TABLE - Solo se ve al imprimir) -->
+  <div class="d-none d-print-block" id="caja-print-report-view" style="font-family: Arial, sans-serif;">
+    <div class="report-header-print mb-4" style="border-bottom: 2px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between;">
+      <div>
+          <h2 style="margin:0; color:#0d6efd;">CIERRE DE CAJA</h2>
+          <p style="margin:0; color:#666;">Hotel Garoé - Módulo de Recepción</p>
+      </div>
+      <div style="text-align: right; font-size: 10pt;">
+          <div><strong>Fecha:</strong> <span id="print-date-caja"></span></div>
+          <div><strong>Turno:</strong> <span id="print-turno-label"></span></div>
+          <div><strong>Recepcionista:</strong> <span id="print-repc-nombre-caja"></span></div>
+      </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+      <tr>
+        <!-- COLUMNA IZQUIERDA (Datos Detallados) -->
+        <td style="width: 65%; vertical-align: top; padding-right: 20px;">
+          <h5 style="background:#f8f9fa; padding:5px; border-bottom:1px solid #ccc; margin-top:0;"><i class="bi bi-calculator me-2"></i>DETALLE DE EFECTIVO</h5>
+          <div style="display: flex;">
+              <div style="flex: 1; padding-right:10px;" id="print-billetes-summary">
+                  <h6 style="font-size: 9pt; margin-bottom: 5px; color:#555;"><i class="bi bi-cash me-2"></i>BILLETES</h6>
+                  <!-- JS inyectará aquí el desglose completo -->
+              </div>
+              <div style="flex: 1;" id="print-monedas-summary">
+                  <h6 style="font-size: 9pt; margin-bottom: 5px; color:#555;"><i class="bi bi-coin me-2"></i>MONEDAS</h6>
+                  <!-- JS inyectará aquí el desglose completo -->
+              </div>
+          </div>
+
+          <h5 style="background:#f8f9fa; padding:5px; border-bottom:1px solid #ccc; margin-top:20px;"><i class="bi bi-sliders me-2"></i>OTROS CONCEPTOS</h5>
+          <table style="width: 100%; font-size: 10pt;">
+              <!-- VALES -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-ticket-perforated me-2"></i>Vales Registrados:</td><td style="text-align:right; font-weight:bold;" id="print_vales_total">0.00€</td></tr>
+              <tr><td colspan="2"><div id="print-vales-details" style="margin-bottom:5px; padding-left: 15px;"></div></td></tr>
+
+              <!-- DESEMBOLSOS -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-dash-circle me-2"></i>Desembolsos:</td><td style="text-align:right; font-weight:bold;" id="print_desembolsos_total">0.00€</td></tr>
+              <tr><td colspan="2"><div id="print-desembolsos-details" style="margin-bottom:5px; padding-left: 15px;"></div></td></tr>
+
+              <!-- SELLOS -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-postage me-2"></i>Suma Sellos:</td><td style="text-align:right; font-weight:bold;" id="print_sellos_total">0.00€</td></tr>
+              
+              <!-- SAFE -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-safe me-2"></i>Safe:</td><td style="text-align:right; font-weight:bold;" id="print_safe_total">0.00€</td></tr>
+              
+              <!-- EXTRA -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-plus-circle me-2"></i>Extra / Otros:</td><td style="text-align:right; font-weight:bold;" id="print_monedas_extra_total">0.00€</td></tr>
+
+              <!-- FONDO (AL FINAL) -->
+              <tr><td style="padding:4px 0;"><i class="bi bi-bank me-2"></i>Fondo de Caja:</td><td style="text-align:right; font-weight:bold;" id="print_fondo_total">-2000.00€</td></tr>
+          </table>
+          
+          <div id="print-dynamic-concepts" style="margin-top:10px; font-size: 10pt;"></div>
+        </td>
+
+        <!-- COLUMNA DERECHA (Totales y Comentarios) -->
+        <td style="width: 35%; vertical-align: top; border-left: 2px solid #eee; padding-left: 20px;">
+          <div style="background: #f1f8ff; padding: 15px; border-radius: 8px; border: 1px solid #cfe2ff; text-align: center;">
+              <h4 style="margin:0; color:#004085; font-size: 11pt;"><i class="bi bi-wallet2 me-2"></i>TOTAL TESORERÍA</h4>
+              <div style="font-size: 24pt; font-weight: bold; margin: 10px 0;" id="print_total_caja_main">0.00€</div>
+              <hr style="border:0; border-top:1px solid #ccc;"/>
+              <div style="display:flex; justify-content:space-between; font-size: 9pt; margin-bottom:4px;">
+                  <span>Subtotal Efectivo:</span><span id="print_total_efectivo">0.00€</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size: 9pt;">
+                  <span>Subtotal Otros:</span><span id="print_subtotal_otros">0.00€</span>
+              </div>
+              
+              <div style="margin-top:20px; padding:10px; background:#e2f3e5; border-radius:5px;">
+                  <div style="font-size: 8pt; font-weight:bold; color:#155724;"><i class="bi bi-graph-up-arrow me-1"></i>PRODUCCIÓN (VENTA)</div>
+                  <div style="font-size: 16pt; font-weight:bold; color:#155724;" id="print_recaudacion_final">0.00€</div>
+              </div>
+          </div>
+
+          <div style="margin-top:25px;">
+              <label style="font-size: 8pt; font-weight:bold; color:#666; display:block; margin-bottom:5px;"><i class="bi bi-chat-left-text me-2"></i>OBSERVACIONES / COMENTARIOS</label>
+              <div id="print-comentarios-caja" style="font-size: 9pt; line-height: 1.4; border: 1px solid #eee; padding: 10px; min-height: 150px; background: #fff; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;"></div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="signature-area" style="margin-top: 50px; display: flex; justify-content: space-around; font-size: 9pt;">
+      <div style="border-top: 1px solid #000; width: 150px; text-align: center; padding-top: 5px;">Firma Recepcionista</div>
+      <div style="border-top: 1px solid #000; width: 150px; text-align: center; padding-top: 5px;">Firma Intervención</div>
+    </div>
+  </div>
+
+  <!-- MODAL GESTIÓN DE VALES -->
+  <div class="modal fade" id="modalVales" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h6 class="modal-title fw-bold"><i class="bi bi-ticket-perforated me-2"></i>Gestión de Vales</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-3">
+              <form id="formAddVale" onsubmit="agregarVale(event)">
+                <!-- Fila 1: Receptor y Concepto -->
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="small fw-bold text-muted mb-1"><i class="bi bi-person me-1"></i>Receptor</label>
+                    <input type="text" id="vale_receptor" class="form-control" placeholder="Nombre completo..." required />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="small fw-bold text-muted mb-1"><i class="bi bi-tag me-1"></i>Concepto</label>
+                    <input type="text" id="vale_concepto" class="form-control" placeholder="Razón del vale..." required />
+                  </div>
+                </div>
+                
+                <!-- Fila 2: Comentario (Textarea) e Importe -->
+                <div class="row g-3 align-items-end">
+                  <div class="col-md-8">
+                    <label class="small fw-bold text-muted mb-1"><i class="bi bi-chat-left-text me-1"></i>Comentarios adicionales</label>
+                    <textarea id="vale_comentario" class="form-control" rows="2" placeholder="Detalles, justificación o notas adicionales..."></textarea>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="small fw-bold text-muted mb-1">Importe del Vale</label>
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold text-primary">€</span>
+                      <input type="number" id="vale_importe" class="form-control fw-bold text-primary" step="0.01" min="0.01" placeholder="0.00" required />
+                      <button class="btn btn-primary px-3" type="submit">
+                        <i class="bi bi-plus-lg me-1"></i>Añadir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <h6 class="small fw-bold text-muted mb-2">Vales Registrados</h6>
+          <div class="list-group shadow-sm" id="listaVales">
+            <div class="text-center py-3 text-muted small" id="noValesMsg">No hay vales registrados</div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <span class="me-auto small fw-bold">Total Vales: <span id="modalValesTotal" class="text-primary">0.00€</span></span>
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL GESTIÓN DE DESEMBOLSOS -->
+  <div class="modal fade" id="modalDesembolsos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h6 class="modal-title fw-bold"><i class="bi bi-dash-circle me-2"></i>Gestión de Desembolsos</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-2">
+              <form id="formAddDesembolso" class="row g-3 align-items-end" onsubmit="agregarDesembolso(event)">
+                <div class="col-md-9">
+                  <label class="small fw-bold text-muted mb-1"><i class="bi bi-info-circle me-1"></i>Concepto / Motivo</label>
+                  <input type="text" id="desembolso_concepto" class="form-control" placeholder="Ej: Pago Proveedor, Repuestos..." required />
+                </div>
+                <div class="col-md-3">
+                  <label class="small fw-bold text-muted mb-1">Importe</label>
+                  <div class="input-group">
+                    <input type="number" id="desembolso_importe" class="form-control fw-bold text-primary" step="0.01" min="0.01" placeholder="0.00" required />
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-plus-lg"></i></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <h6 class="small fw-bold text-muted mb-2">Desembolsos Registrados</h6>
+          <div class="list-group shadow-sm" id="listaDesembolsos">
+            <div class="text-center py-3 text-muted small" id="noDesembolsosMsg">No hay desembolsos registrados</div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <span class="me-auto small fw-bold">Total Desembolsos: <span id="modalDesembolsosTotal" class="text-primary">0.00€</span></span>
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

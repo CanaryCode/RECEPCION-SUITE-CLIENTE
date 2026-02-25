@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1769399319343,
+        "titulo": "CLAVE WIFI",
+        "contenido": "no hay wifi y el email puede ser inventado",
+        "color": "note-yellow",
+        "fecha": "26/1/2026 03:48",
+        "rotacion": "-1.8",
+        "protegida": false,
+        "favorito": false,
+        "modifiedAt": 1770700829894
+    },
+    {
+        "id": 1769825471732,
+        "titulo": "Dinero MJ99 Mironov",
+        "contenido": "el dinero de Mironov contrato de alquiler está en nuestra caja",
+        "color": "note-blue",
+        "fecha": "31/1/2026 02:11",
+        "rotacion": "1.4",
+        "protegida": false,
+        "favorito": false,
+        "modifiedAt": 1770700826696
+    },
+    {
+        "id": 1770700108732,
+        "titulo": "prueba",
+        "contenido": "contenido protegido",
+        "color": "note-orange",
+        "protegida": true,
+        "fecha": "10/2/2026 05:08",
+        "rotacion": "1.5",
+        "favorito": false,
+        "modifiedAt": 1771798672950
+    }
+]
