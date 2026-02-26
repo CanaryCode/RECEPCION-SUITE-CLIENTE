@@ -79,4 +79,53 @@ router.post('/list-images', async (req, res) => {
     }
 });
 
+/**
+ * GET /api/system/local-config
+ * Retrieves local configuration elements (Launchers, Gallery) from agent_local_config.json.
+ */
+router.get('/local-config', async (req, res) => {
+    try {
+        const configPath = path.resolve(__dirname, '../agent_local_config.json');
+        try {
+            const data = await fs.readFile(configPath, 'utf8');
+            res.json(JSON.parse(data));
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                return res.json({}); // Default empty config
+            }
+            throw err;
+        }
+    } catch (e) {
+        console.error('[AGENT] Error reading local config:', e);
+        res.status(500).json({ error: 'Could not read local config' });
+    }
+});
+
+/**
+ * POST /api/system/local-config
+ * Saves local configuration elements to agent_local_config.json.
+ */
+router.post('/local-config', async (req, res) => {
+    try {
+        const configPath = path.resolve(__dirname, '../agent_local_config.json');
+
+        let existingConfig = {};
+        try {
+            const data = await fs.readFile(configPath, 'utf8');
+            existingConfig = JSON.parse(data);
+        } catch (err) {
+            // Error ENOENT is fine, means file doesn't exist yet
+        }
+
+        // Merge existing with new payload
+        const updatedConfig = { ...existingConfig, ...req.body };
+
+        await fs.writeFile(configPath, JSON.stringify(updatedConfig, null, 2), 'utf8');
+        res.json({ success: true });
+    } catch (e) {
+        console.error('[AGENT] Error saving local config:', e);
+        res.status(500).json({ error: 'Could not save local config' });
+    }
+});
+
 module.exports = router;

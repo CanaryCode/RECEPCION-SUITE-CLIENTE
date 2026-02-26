@@ -9,7 +9,7 @@ import { configService } from '../services/ConfigService.js?v=V145_VAL_FIX';
 import { Spotify } from './spotify.js?v=V145_VAL_FIX';
 
 let moduloInicializado = false;
-let tempConfig = null; 
+let tempConfig = null;
 let pendingAccordionButton = null;
 
 /**
@@ -37,7 +37,7 @@ export const Configurator = {
                 tempConfig = JSON.parse(JSON.stringify(APP_CONFIG));
             } catch (e) {
                 console.error("Error cloning config:", e);
-                tempConfig = {}; 
+                tempConfig = {};
             }
 
             if (!tempConfig || typeof tempConfig !== 'object') tempConfig = {};
@@ -53,7 +53,7 @@ export const Configurator = {
             Utils.setVal('conf_work_mode', tempConfig.SYSTEM?.MODE || 'local');
             Utils.setVal('conf_api_url', tempConfig.SYSTEM?.API_URL || '');
             this.onWorkModeChange(tempConfig.SYSTEM?.MODE || 'local'); // Ajustar visibilidad
-            
+
             Utils.setVal('conf_admin_pass', tempConfig.SYSTEM?.ADMIN_PASSWORD || '');
             Utils.setVal('conf_safe_precio', tempConfig.SAFE?.PRECIO_DIARIO || 2.00);
             Utils.setVal('conf_caja_fondo', tempConfig.CAJA?.FONDO !== undefined ? tempConfig.CAJA.FONDO : -2000.00);
@@ -153,7 +153,7 @@ export const Configurator = {
     renderAppLaunchers() {
         Ui.renderTable('list-app-launchers', tempConfig.SYSTEM.LAUNCHERS, (l, index) => {
             const isImage = l.icon && (l.icon.startsWith('data:') || l.icon.includes('.') || l.icon.includes('/'));
-            const iconHtml = isImage 
+            const iconHtml = isImage
                 ? `<img src="${l.icon}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 12px;" class="me-3 shadow-sm">`
                 : `<i class="bi bi-${l.icon || 'box-arrow-up-right'}" style="font-size: 2.2rem; color: #444;" class="me-3"></i>`;
 
@@ -164,12 +164,12 @@ export const Configurator = {
                         ${iconHtml}
                         <div class="text-truncate">
                             <div class="fw-bold small text-truncate">
-                                ${l.type === 'folder' 
-                                    ? '<span class="badge bg-warning-subtle text-warning border-warning border-opacity-25 me-1" style="font-size: 0.5rem;">CARPETA</span>' 
-                                    : (l.type === 'url' ? '<span class="badge bg-success-subtle text-success border-success border-opacity-25 me-1" style="font-size: 0.5rem;">WEB</span>' 
-                                    : (l.type === 'maps' ? '<span class="badge bg-danger-subtle text-danger border-danger border-opacity-25 me-1" style="font-size: 0.5rem;">MAPAS</span>'
-                                    : (l.type === 'documentos' ? '<span class="badge bg-info-subtle text-info border-info border-opacity-25 me-1" style="font-size: 0.5rem;">DOCS</span>' 
-                                    : '<span class="badge bg-info-subtle text-info border-info border-opacity-25 me-1" style="font-size: 0.5rem;">APP / ARCHIVO</span>')))}
+                                ${l.type === 'folder'
+                    ? '<span class="badge bg-warning-subtle text-warning border-warning border-opacity-25 me-1" style="font-size: 0.5rem;">CARPETA</span>'
+                    : (l.type === 'url' ? '<span class="badge bg-success-subtle text-success border-success border-opacity-25 me-1" style="font-size: 0.5rem;">WEB</span>'
+                        : (l.type === 'maps' ? '<span class="badge bg-danger-subtle text-danger border-danger border-opacity-25 me-1" style="font-size: 0.5rem;">MAPAS</span>'
+                            : (l.type === 'documentos' ? '<span class="badge bg-info-subtle text-info border-info border-opacity-25 me-1" style="font-size: 0.5rem;">DOCS</span>'
+                                : '<span class="badge bg-info-subtle text-info border-info border-opacity-25 me-1" style="font-size: 0.5rem;">APP / ARCHIVO</span>')))}
                                 ${l.label}
                             </div>
                             <div class="text-muted text-truncate" style="font-size: 0.6rem;">${l.path}</div>
@@ -210,9 +210,9 @@ export const Configurator = {
         let totalRooms = 0;
 
         Ui.renderTable('config-rangos-table', list, (r, index) => {
-             const originalIndex = tempConfig.HOTEL.STATS_CONFIG.RANGOS.indexOf(r);
-             totalRooms += (r.max - r.min) + 1;
-             return `
+            const originalIndex = tempConfig.HOTEL.STATS_CONFIG.RANGOS.indexOf(r);
+            totalRooms += (r.max - r.min) + 1;
+            return `
              <tr>
                  <td>PB ${r.planta}</td>
                  <td>${r.min}</td>
@@ -225,7 +225,7 @@ export const Configurator = {
         });
 
         const totalDisplay = document.getElementById('total-rooms-count');
-        if(totalDisplay) totalDisplay.textContent = totalRooms;
+        if (totalDisplay) totalDisplay.textContent = totalRooms;
 
         if (!data) {
             Ui.enableTableSorting('table-rangos', tempConfig.HOTEL.STATS_CONFIG.RANGOS, (sorted) => this.renderRangos(sorted));
@@ -238,9 +238,9 @@ export const Configurator = {
             const label = item.label || item;
             const icon = item.icon || '';
             const isImage = icon && (icon.startsWith('data:') || icon.includes('.') || icon.includes('/'));
-            const iconHtml = isImage 
+            const iconHtml = isImage
                 ? `<img src="${icon}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 8px;" class="me-2 shadow-sm">`
-                : (icon.length < 5 
+                : (icon.length < 5
                     ? `<span class="me-2" style="font-size: 2.22rem; vertical-align: middle;">${icon}</span>`
                     : `<i class="bi bi-${icon} me-2" style="font-size: 2rem; color: #333; vertical-align: middle;"></i>`);
 
@@ -281,7 +281,7 @@ export const Configurator = {
             </tr>`;
         });
         if (!data) {
-             Ui.enableTableSorting('table-excursiones', tempConfig.EXCURSIONES_CATALOGO, (sorted) => this.renderExcursionesCatalogo(sorted));
+            Ui.enableTableSorting('table-excursiones', tempConfig.EXCURSIONES_CATALOGO, (sorted) => this.renderExcursionesCatalogo(sorted));
         }
     },
 
@@ -421,7 +421,7 @@ export const Configurator = {
     },
 
     // --- EVENTOS ---
-    configurarEventos() {},
+    configurarEventos() { },
 
     pickGalleryFolder() {
         MediaPicker.pickFile({ fileType: 'folder', onSelect: (path) => Utils.setVal('conf_gallery_path', path) });
@@ -525,7 +525,7 @@ export const Configurator = {
         Utils.setVal('newLauncherIcon', '');
         const checkEmbedded = document.getElementById('newLauncherEmbedded');
         if (checkEmbedded) checkEmbedded.checked = false;
-        
+
         Ui.showToast("Lanzador añadido", "success");
     },
 
@@ -535,9 +535,9 @@ export const Configurator = {
         if (type === 'folder') fileType = 'folder';
         if (type === 'documentos') fileType = 'file'; // Any file for docs
 
-        MediaPicker.pickFile({ 
-            fileType: fileType, 
-            onSelect: (path) => Utils.setVal('newLauncherPath', path) 
+        MediaPicker.pickFile({
+            fileType: fileType,
+            onSelect: (path) => Utils.setVal('newLauncherPath', path)
         });
     },
 
@@ -573,12 +573,12 @@ export const Configurator = {
 
     async editAppLauncher(index) {
         const item = tempConfig.SYSTEM.LAUNCHERS[index];
-        
+
         // Cargar datos en el formulario
         Utils.setVal('newLauncherLabel', item.label);
         Utils.setVal('newLauncherPath', item.path);
         Utils.setVal('newLauncherIcon', item.icon || '');
-        
+
         const typeSelect = document.getElementById('newLauncherType');
         if (typeSelect) {
             typeSelect.value = item.type || 'app';
@@ -591,7 +591,7 @@ export const Configurator = {
         // Eliminar del temporal para que al "Añadir" se reemplace o simplemente se mueva
         tempConfig.SYSTEM.LAUNCHERS.splice(index, 1);
         this.renderAppLaunchers();
-        
+
         Ui.showToast("Cargado en el formulario para editar", "info");
     },
 
@@ -628,9 +628,9 @@ export const Configurator = {
             return;
         }
 
-        tempConfig.EXCURSIONES_CATALOGO.push({ 
-            id: `CAT-${Date.now()}`, 
-            nombre, 
+        tempConfig.EXCURSIONES_CATALOGO.push({
+            id: `CAT-${Date.now()}`,
+            nombre,
             operador,
             precioAdulto: pAdulto,
             precioNiño: pNino,
@@ -638,7 +638,7 @@ export const Configurator = {
         });
 
         this.renderExcursionesCatalogo();
-        
+
         // Reset
         Utils.setVal('newExc_nombre', '');
         Utils.setVal('newExc_operador', '');
@@ -686,13 +686,13 @@ export const Configurator = {
             return;
         }
 
-        tempConfig.HOTEL.COCKTAIL_LUGARES.push({ 
-            es, en, de, fr, 
-            default: tempConfig.HOTEL.COCKTAIL_LUGARES.length === 0 
+        tempConfig.HOTEL.COCKTAIL_LUGARES.push({
+            es, en, de, fr,
+            default: tempConfig.HOTEL.COCKTAIL_LUGARES.length === 0
         });
 
         this.renderCocktailLugares();
-        
+
         // Reset
         Utils.setVal('newLugarES', '');
         Utils.setVal('newLugarEN', '');
@@ -704,12 +704,12 @@ export const Configurator = {
         const item = tempConfig.HOTEL.COCKTAIL_LUGARES[index];
         tempConfig.HOTEL.COCKTAIL_LUGARES.splice(index, 1);
         this.renderCocktailLugares();
-        
+
         Utils.setVal('newLugarES', item.es);
         Utils.setVal('newLugarEN', item.en || '');
         Utils.setVal('newLugarDE', item.de || '');
         Utils.setVal('newLugarFR', item.fr || '');
-        
+
         Ui.showToast("Cargado para editar", "info");
     },
 
@@ -884,7 +884,7 @@ export const Configurator = {
         try {
             // Capturar campos básicos de la UI antes de guardar
             tempConfig.HOTEL.NOMBRE = Utils.getVal('conf_hotel_nombre');
-            
+
             if (!tempConfig.SYSTEM) tempConfig.SYSTEM = {};
             tempConfig.SYSTEM.MODE = Utils.getVal('conf_work_mode');
             tempConfig.SYSTEM.API_URL = Utils.getVal('conf_api_url');
@@ -902,7 +902,35 @@ export const Configurator = {
             tempConfig.HOTEL.COCKTAIL_CONFIG.DIA = parseInt(Utils.getVal('conf_cocktail_dia'));
             tempConfig.HOTEL.COCKTAIL_CONFIG.HORA = Utils.getVal('conf_cocktail_hora');
 
-            await configService.saveConfig(tempConfig);
+            // --- GUARDADO LOCAL EN EL AGENTE (PC CLIENTE) ---
+            const localPayload = {
+                LAUNCHERS: tempConfig.SYSTEM.LAUNCHERS,
+                GALLERY_FOLDERS: tempConfig.SYSTEM.GALLERY_FOLDERS,
+                GALLERY_PATH: tempConfig.SYSTEM.GALLERY_PATH
+            };
+
+            try {
+                const localResponse = await fetch('/api/system/local-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(localPayload)
+                });
+                if (!localResponse.ok) {
+                    console.warn(`[AGENT] Guardado local falló con estado ${localResponse.status}`);
+                }
+            } catch (e) {
+                console.warn("[AGENT] No se pudo guardar config local en agente. Se guardarán en global como fallback.", e);
+            }
+
+            // LIMPIEZA PARA ALMACENAMIENTO GLOBAL (OPCIONAL: Limpiar atributos locales de config server)
+            const globalConfigToSave = JSON.parse(JSON.stringify(tempConfig));
+            if (globalConfigToSave.SYSTEM) {
+                delete globalConfigToSave.SYSTEM.LAUNCHERS;
+                delete globalConfigToSave.SYSTEM.GALLERY_FOLDERS;
+                delete globalConfigToSave.SYSTEM.GALLERY_PATH;
+            }
+
+            await configService.saveConfig(globalConfigToSave);
             Ui.showToast("Configuración guardada correctamente", "success");
             setTimeout(() => location.reload(), 1000);
         } catch (e) {
@@ -926,11 +954,11 @@ export const Configurator = {
         const protectedButtons = document.querySelectorAll('button[data-requires-pin="true"]');
         protectedButtons.forEach(btn => {
             btn.removeAttribute('data-bs-toggle');
-            
+
             btn.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const targetId = btn.getAttribute('data-bs-target');
                 const targetEl = document.querySelector(targetId);
                 const isOpening = !targetEl.classList.contains('show');
@@ -957,10 +985,10 @@ export const Configurator = {
         const modalEl = document.getElementById('configPinModal');
         const input = document.getElementById('config-pin-input');
         const errorMsg = document.getElementById('pin-error-msg');
-        
+
         if (input) input.value = '';
         if (errorMsg) errorMsg.classList.add('d-none');
-        
+
         if (typeof bootstrap !== 'undefined') {
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
@@ -990,7 +1018,7 @@ export const Configurator = {
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if (modal) modal.hide();
             }
-            
+
             if (pendingAccordionButton) {
                 this.toggleAccordion(pendingAccordionButton);
                 pendingAccordionButton = null;

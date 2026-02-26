@@ -209,6 +209,25 @@ export const Config = {
                 delete APP_CONFIG.HOTEL.SPOTIFY_URL;
             }
 
+            // --- CARGA DE CONFIGURACIÓN LOCAL (AGENTE) ---
+            try {
+                // Fetch pc-specific configuration via the local agent
+                console.log("Attempting to load local pc-specific config from agent...");
+                const localRes = await fetch('/api/system/local-config');
+                if (localRes.ok) {
+                    const localData = await localRes.json();
+                    if (localData && Object.keys(localData).length > 0) {
+                        console.log("Config loaded via agent local config. Applied overrides for:", Object.keys(localData));
+                        if (!APP_CONFIG.SYSTEM) APP_CONFIG.SYSTEM = {};
+                        if (localData.LAUNCHERS !== undefined) APP_CONFIG.SYSTEM.LAUNCHERS = localData.LAUNCHERS;
+                        if (localData.GALLERY_FOLDERS !== undefined) APP_CONFIG.SYSTEM.GALLERY_FOLDERS = localData.GALLERY_FOLDERS;
+                        if (localData.GALLERY_PATH !== undefined) APP_CONFIG.SYSTEM.GALLERY_PATH = localData.GALLERY_PATH;
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not fetch agent local config (maybe not running locally):", e);
+            }
+
             return true;
         } catch (error) {
             console.error("Crítico: No se pudo cargar config.json", error);
