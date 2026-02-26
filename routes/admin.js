@@ -127,13 +127,14 @@ router.get('/status', async (req, res) => {
         try {
             const localHealth = await fetchUrl('https://localhost:3000/api/health', null, 1500);
             status.local.status = 'online';
+            status.database.local = localHealth.database || 'online';
         } catch (httpsErr) {
             // Fallback to HTTP
             const localHealthHttp = await fetchUrl('http://localhost:3000/api/health', null, 1500);
             status.local.status = 'online';
             status.local.notes = 'Srv en modo HTTP';
+            status.database.local = localHealthHttp.database || 'online';
         }
-        status.database.local = 'missing';
     } catch (e) {
         status.local.status = 'offline';
         console.warn(`[AGENT STATUS] Local Server Offline: ${e.message}`);

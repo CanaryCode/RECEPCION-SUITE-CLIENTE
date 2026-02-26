@@ -1,7 +1,0 @@
-INSTRUCCIONES DE INSTALACION
-============================
-
-1. Copia esta carpeta entera al PC donde quieras usar la web.
-2. Ejecuta 'INICIAR_ESTACION.bat' para empezar.
-
-NOTA: Requiere Node.js instalado en el PC o el archivo node.exe en la carpeta 'agent'.

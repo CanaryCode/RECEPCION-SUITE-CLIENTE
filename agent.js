@@ -170,7 +170,7 @@ app.use('/api/system', systemLocalRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Servir estáticos de la consola de administración sin caché
-app.use('/assets', express.static(path.join(__dirname, '../assets'), {
+app.use('/assets', express.static(path.join(__dirname, 'assets'), {
     setHeaders: (res, path) => {
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Pragma', 'no-cache');

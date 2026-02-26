@@ -29320,3 +29320,6 @@
 [2026-02-26T09:16:37.536Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
 [2026-02-26T09:16:37.539Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
 [2026-02-26T09:16:42.678Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T09:29:57.618Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T09:30:01.998Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T09:37:06.331Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
