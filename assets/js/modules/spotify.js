@@ -1,4 +1,4 @@
-import { APP_CONFIG } from '../core/Config.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
 import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
 import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
 
@@ -41,6 +41,16 @@ export const Spotify = {
         }
 
         this.switchPlaylist(initialUrl);
+
+        // 3. Iniciar Minimizado por defecto
+        if (container) {
+            container.classList.add('minimized');
+            const icon = document.getElementById('spotify-toggle-icon');
+            if (icon) {
+                icon.classList.remove('bi-chevron-up');
+                icon.classList.add('bi-chevron-down');
+            }
+        }
     },
 
     /**

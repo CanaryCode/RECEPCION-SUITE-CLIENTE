@@ -270,3 +270,9 @@ CREATE TABLE IF NOT EXISTS admin_users (
 -- El hash corresponde al SHA-256 de 'gravina82'
 INSERT IGNORE INTO admin_users (username, password_hash) 
 VALUES ('admin', '9e3953e9fea7ab3622aed509723766bff8e7500da19fba8e091d13504913af40');
+
+-- 23. APP CONFIGURACIONES GLOBALES
+CREATE TABLE IF NOT EXISTS app_config (
+    config_key VARCHAR(100) PRIMARY KEY,
+    config_value JSON
+);

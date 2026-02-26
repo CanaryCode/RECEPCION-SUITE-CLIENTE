@@ -7,7 +7,7 @@
  */
 
 import { Utils } from '../core/Utils.js';
-import { APP_CONFIG } from "../core/Config.js?v=V145_VAL_FIX";
+import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
 import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
 
 export function inicializarCobro() {

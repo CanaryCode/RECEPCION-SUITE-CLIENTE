@@ -1,68 +1,68 @@
 {
-  "110": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": true,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
+    "110": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": true,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
+    },
+    "012": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": false,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
+    },
+    "010": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": false,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
+    },
+    "019": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": false,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
+    },
+    "020": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": false,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
+    },
+    "018": {
+        "status": "DISPONIBLE",
+        "comments": "",
+        "extras": {
+            "sofa": false,
+            "sofaCama": false,
+            "cheslong": false,
+            "ruidosa": false,
+            "tranquila": false
+        }
     }
-  },
-  "012": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": false,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
-    }
-  },
-  "010": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": false,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
-    }
-  },
-  "019": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": false,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
-    }
-  },
-  "020": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": false,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
-    }
-  },
-  "018": {
-    "status": "DISPONIBLE",
-    "comments": "",
-    "extras": {
-      "sofa": false,
-      "sofaCama": false,
-      "cheslong": false,
-      "ruidosa": false,
-      "tranquila": false
-    }
-  }
 }

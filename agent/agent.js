@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const crypto = require('crypto');
+const os = require('os');
+const WebSocket = require('ws');
 
 const app = express();
 // const PORT = 3001; // Usamos un puerto diferente al servidor principal para evitar conflictos - REMOVED as it's redefined later
@@ -271,3 +273,84 @@ async function sendAgentHeartbeat() {
 // Enviar primer latido y luego cada 15 segundos
 setTimeout(sendAgentHeartbeat, 2000);
 setInterval(sendAgentHeartbeat, 15000);
+
+// ==========================================
+// TÚNEL WEBSOCKET INVERSO (v4)
+// ==========================================
+
+function getMachineFingerprint() {
+    const interfaces = os.networkInterfaces();
+    let mac = '';
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (!iface.internal && iface.mac && iface.mac !== '00:00:00:00:00:00') {
+                mac = iface.mac; break;
+            }
+        }
+        if (mac) break;
+    }
+    const seed = mac || os.hostname();
+    const fingerprint = crypto.createHash('sha256').update(`${seed}-${os.platform()}-${os.hostname()}`).digest('hex');
+    return { fingerprint, mac, hostname: os.hostname() };
+}
+
+const CENTRAL_SERVER_URL = process.env.CENTRAL_URL || 'wss://localhost:3000/agent-tunnel';
+let wsTunnel = null;
+let reconnectTimeout = null;
+
+function connectToCentral() {
+    const { fingerprint } = getMachineFingerprint();
+    console.log(`[AGENT] Conectando Túnel Central WSS: ${CENTRAL_SERVER_URL}`);
+
+    wsTunnel = new WebSocket(CENTRAL_SERVER_URL, { rejectUnauthorized: false });
+
+    wsTunnel.on('open', () => {
+        console.log('[AGENT] Túnel WS Abierto. Autenticando huella...');
+        wsTunnel.send(JSON.stringify({
+            type: 'auth',
+            payload: { stationKey: config.STATION_KEY, fingerprint: fingerprint }
+        }));
+    });
+
+    wsTunnel.on('message', (message) => {
+        try {
+            const data = JSON.parse(message);
+            if (data.type === 'auth_success') {
+                console.log(`[AGENT] ✅ SECURE TUNNEL ESTABLISHED.`);
+            } else if (data.type === 'auth_fail') {
+                console.error(`[AGENT] ❌ CONEXIÓN WS RECHAZADA: Huella incorrecta.`);
+                wsTunnel.close();
+            } else if (data.type === 'ping') {
+                wsTunnel.send(JSON.stringify({ type: 'pong' }));
+            } else if (data.type === 'command') {
+                console.log('[AGENT] Comando Remoto Recibido:', data.payload);
+                executeRemoteCommand(data.payload);
+            }
+        } catch (e) {
+            console.error('[AGENT] Error parseando WS:', e.message);
+        }
+    });
+
+    wsTunnel.on('close', () => { setTimeout(connectToCentral, 5000); });
+    wsTunnel.on('error', (err) => { wsTunnel.close(); });
+}
+
+function executeRemoteCommand(payload) {
+    const { action } = payload;
+    let result = { action, status: 'success', output: 'Ejecutado localmente.' };
+
+    if (action === 'start-server') {
+        console.log('[AGENT] Orden de Arranque Local del Servidor.');
+        require('child_process').exec('pm2 start server_v4.js --name "recepcion-central"', { cwd: path.join(__dirname, '..') });
+    } else if (action === 'stop-server') {
+        console.log('[AGENT] Orden de Apagado Local del Servidor.');
+        require('child_process').exec('pm2 stop recepcion-central');
+    }
+
+    if (wsTunnel && wsTunnel.readyState === WebSocket.OPEN) {
+        wsTunnel.send(JSON.stringify({ type: 'command_response', payload: result }));
+    }
+}
+
+// Iniciar conexión del túnel
+setTimeout(connectToCentral, 3000);

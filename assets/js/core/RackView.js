@@ -1,4 +1,4 @@
-import { APP_CONFIG } from './Config.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
 
 /**
  * VISTA STANDARD DE RACK (RackView)

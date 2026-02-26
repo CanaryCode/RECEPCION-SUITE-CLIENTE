@@ -35,8 +35,8 @@ import { Spotify } from "./modules/spotify.js?v=V147_PROXY_FIX";
 import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
 
 // --- SISTEMAS CORE (NÚCLEO) ---
-import { APP_CONFIG, Config } from "./core/Config.js?v=V147_PROXY_FIX";
-import { Api } from "./core/Api.js?v=V147_PROXY_FIX";
+import { APP_CONFIG, Config } from "./core/Config.js?v=V153_DB_CONFIG";
+import { Api } from "./core/Api.js?v=V152_HTTP_LOCAL";
 import { Modal } from "./core/Modal.js?v=V147_PROXY_FIX";
 import { Router } from "./core/Router.js?v=V147_PROXY_FIX";
 import { CompLoader } from "./core/CompLoader.js?v=V147_PROXY_FIX";
@@ -107,14 +107,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // 1. VALIDACIÓN DE ESTACIÓN (SEGURIDAD AJPD)
-    let station = await Api.validateStation();
+    // --- 3. VALIDACIÓN DE SEGURIDAD (Con Timeout de Seguridad) ---
+    console.log("Main: Validando estación...");
+    let station = null;
+    try {
+      // Timeout de 3 segundos para no bloquear la UI si el agente no responde
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de Seguridad")), 3000));
+      station = await Promise.race([Api.validateStation(), timeout]);
+    } catch (e) {
+      console.warn("Main: Error o timeout en validación de estación:", e.message);
+    }
 
     if (!station) {
-      if (initialLoader) initialLoader.remove();
+      console.warn("Main: Estación no validada. Mostrando SecurityBarrier.");
+      if (initialLoader) initialLoader.remove(); // Ensure loader is removed even on failure/timeout
       SecurityBarrier.show('AGENT_DOWN');
       return;
     }
+
+    console.log("Main: Estación validada con éxito.");
 
     // Si la seguridad pasa, quitamos la cortina suavemente
     if (initialLoader) {

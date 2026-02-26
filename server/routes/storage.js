@@ -52,7 +52,8 @@ const TABLE_MAP = {
 
     // ALIAS PARA COMPATIBILIDAD O LEGACY
     'riu_agenda_contactos': 'agenda_contactos',
-    'riu_class_db': 'clientes_riu'
+    'riu_class_db': 'clientes_riu',
+    'config': 'app_config'
 };
 
 
@@ -168,6 +169,16 @@ router.get('/:key', async (req, res) => {
                 return res.json(obj);
             }
 
+            // CASO ESPECIAL: CONFIG (Flat Object mapping key->value)
+            if (key === 'config') {
+                const obj = {};
+                processedRows.forEach(row => {
+                    obj[row.config_key] = row.config_value;
+                });
+                if (Object.keys(obj).length === 0) throw new Error('Empty config DB');
+                return res.json(obj);
+            }
+
             // CASO ESPECIAL: GUÍA OPERATIVA (Object of Arrays)
             if (key === 'guia_operativa') {
                 const obj = {};
@@ -185,6 +196,25 @@ router.get('/:key', async (req, res) => {
             // CASO ESPECIAL: ARQUEO DE CAJA (Singleton Object)
             if (key === 'arqueo_caja') {
                 return res.json(processedRows[0] || {});
+            }
+
+            // Mapeo inverso para que el frontend reciba camelCase si la DB tiene snake_case
+            if (key === 'riu_excursiones') {
+                return res.json(processedRows.map(row => ({
+                    id: row.id,
+                    tipoId: row.tipo_id,
+                    huesped: row.huesped,
+                    habitacion: row.habitacion,
+                    fechaExcursion: row.fecha_excursion,
+                    adultos: row.adultos,
+                    niños: row.ninos,
+                    total: row.total,
+                    estado: row.estado,
+                    vendedor: row.vendedor,
+                    autor: row.autor,
+                    fechaVenta: row.fecha_venta,
+                    comments: row.comments
+                })));
             }
 
             return res.json(processedRows);
@@ -237,13 +267,63 @@ router.post('/:key', async (req, res) => {
 
             // 2. Normalizar data a array para inserción
             let itemsToInsert = [];
-            if (key === 'guia_operativa') {
+            if (key === 'config') {
+                itemsToInsert = Object.entries(data).map(([k, v]) => ({ config_key: k, config_value: v }));
+            } else if (key === 'guia_operativa') {
                 itemsToInsert = Object.entries(data).map(([turno, tareas]) => ({ turno, tareas }));
             } else if (key === 'gallery_favorites') {
                 itemsToInsert = Array.isArray(data) ? data.map(path => ({ path })) : [];
             } else if (key === 'arqueo_caja') {
                 // Arqueo es un objeto único que representa una fila
                 itemsToInsert = [data];
+            } else if (key === 'riu_system_alarms') {
+                itemsToInsert = data.map(item => ({
+                    id: item.id,
+                    msg: item.mensaje || item.msg || '',
+                    prioridad: item.prioridad || 'Normal',
+                    activo: item.active !== undefined ? item.active : (item.activo !== undefined ? item.activo : 1)
+                }));
+            } else if (key === 'riu_precios') {
+                itemsToInsert = data.map(item => ({
+                    id: item.id,
+                    nombre: item.nombre,
+                    precio: item.precio,
+                    icono: item.icono,
+                    comentario: item.comentario,
+                    favorito: item.favorito ? 1 : 0
+                }));
+            } else if (key === 'riu_excursiones') {
+                itemsToInsert = data.map(item => ({
+                    id: item.id,
+                    tipo_id: item.tipoId || item.tipo_id,
+                    huesped: item.huesped,
+                    habitacion: item.habitacion,
+                    fecha_excursion: item.fechaExcursion || item.fecha_excursion,
+                    adultos: item.adultos || 0,
+                    ninos: item.niños !== undefined ? item.niños : (item.ninos !== undefined ? item.ninos : 0),
+                    total: item.total || 0,
+                    estado: item.estado || 'Pendiente',
+                    vendedor: item.vendedor,
+                    autor: item.autor,
+                    fecha_venta: item.fechaVenta || item.fecha_venta
+                }));
+            } else if (key === 'riu_rack') {
+                // El rack suele venir como un objeto { "101": { status: '...', comments: '...' }, ... }
+                itemsToInsert = Object.entries(data).map(([num, val]) => ({
+                    habitacion: num,
+                    estado: val.status || val.estado,
+                    comentarios: val.comments || val.comentarios,
+                    extras: val.extras || {}
+                }));
+            } else if (key === 'riu_atenciones_v2') {
+                itemsToInsert = Object.entries(data).map(([num, val]) => ({
+                    id: `ATN-${val.timestamp || Date.now()}-${num}`,
+                    habitacion: num,
+                    comentarios: val.comentario || val.comentarios || '',
+                    tipos: val.tipos || [],
+                    autor: val.autor,
+                    actualizado_en: val.actualizadoEn || val.actualizado_en || new Date().toISOString()
+                }));
             } else if (Array.isArray(data)) {
                 itemsToInsert = data;
             } else if (typeof data === 'object') {

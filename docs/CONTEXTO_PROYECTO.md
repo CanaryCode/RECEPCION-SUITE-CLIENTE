@@ -562,3 +562,27 @@ Para mantener una interfaz limpia, rítmica y profesional, se ha unificado la ic
   - **Documentos / Archivos**: `file-earmark-text-fill` (Turquesa)
   - **Videos / Multimedia**: `play-circle-fill` (Rojo)
   - **Música / Spotify**: `spotify` (Verde)
+
+## 18. Arquitectura de Autenticación y Seguridad (Zero-Trust Local)
+
+Para garantizar que solo el personal autorizado acceda al Panel de Control Web (`https://www.desdetenerife.com:3000`) y controlar los equipos locales (ejecutar apps, etc.), el sistema implementa una arquitectura rigurosa:
+
+### 18.1. Pantalla Inicial de Login Seguro
+- **Concepto**: El Panel de Control Web nunca muestra información ni botones operativos sin validación.
+- **Flujo**: Al acceder a la web, aparece primero una pantalla de Login.
+- **Credenciales**: Solicita contraseña (comprobada contra Hash en DB, ej: `gravina82`). Si no está autorizado, la interfaz deniega el acceso con un mensaje claro.
+
+### 18.2. Huella de Hardware (Device Fingerprinting)
+- **Problema**: Una clave en texto plano es vulnerable si alguien copia el agente a otro PC.
+- **Solución**: El agente local general al instalarse una **Huella de Máquina Única** (MAC, UUID, Hostname).
+- **Proceso**:
+  1. Esta huella sella la Llave de Estación (`STATION_KEY`).
+  2. El Servidor Central Web registra las "Huellas Permitidas". 
+  3. Si la carpeta se copia a un PC distinto, la huella cambiará y el Servidor Web denegará la conexión.
+
+### 18.3. Túnel de Comunicación Inverso (WebSocket)
+- **Concepto**: Se invierte el flujo para evitar bloqueos de navegador (CORS/PNA/Certificados).
+- **Flujo**:
+  1. El Agente Local abre silenciosamente un WebSocket saliente hacia el Servidor Central Público y se autentica con su huella de hardware.
+  2. El Servidor valida y mantiene el "Túnel Abierto".
+  3. Cuando el Admin usa el Panel Web, la orden viaja al Servidor Central y luego hacia el Agente Local a través del túnel preexistente.

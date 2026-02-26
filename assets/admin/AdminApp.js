@@ -47,6 +47,20 @@ class AdminApp {
     }
 
     async init() {
+        if (window.location.port === '3001') {
+            try {
+                this.appendTerminal('RESCUE', 'Comprobando si el servidor principal (3000) está online...', 'info');
+                // Intentar contactar el health del 3000
+                const res = await fetch('https://www.desdetenerife.com:3000/api/health', { method: 'GET', mode: 'cors' });
+                if (res.ok) {
+                    this.appendTerminal('RESCUE', 'Servidor principal online. Redirigiendo automáticamente...', 'success');
+                    window.location.href = 'https://www.desdetenerife.com:3000/admin';
+                    return;
+                }
+            } catch (e) {
+                this.appendTerminal('RESCUE', 'Servidor principal OFFLINE. Estás en Modo Rescate.', 'warning');
+            }
+        }
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
         this.setupEventListeners();
@@ -528,6 +542,8 @@ class AdminApp {
                 this.appendTerminal('AUTH', `Bienvenido, ${username}.`, 'success');
                 this.refreshStatus();
                 this.refreshLogs();
+                this.refreshConnections();
+                this.startPolling();
             } else {
                 this.loginError.textContent = data.message || 'Error';
                 this.loginError.classList.remove('d-none');

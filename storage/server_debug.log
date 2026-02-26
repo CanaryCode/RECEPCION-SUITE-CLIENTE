@@ -28180,3 +28180,849 @@
 [2026-02-25T15:59:15.446Z] [SERVER] [CONN] POST /api/admin/agent-proxy/register - Status: 200 - IP: 192.168.1.1 - UA: node
 [2026-02-25T15:59:30.475Z] [SERVER] [CONN] POST /api/admin/agent-proxy/register - Status: 200 - IP: 192.168.1.1 - UA: node
 [2026-02-25T15:59:45.472Z] [SERVER] [CONN] POST /api/admin/agent-proxy/register - Status: 200 - IP: 192.168.1.1 - UA: node
+[2026-02-25T23:40:30.310Z] [SERVER] Starting Server Lifecycle
+[2026-02-25T23:40:30.440Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-25T23:40:30.453Z] [SERVER] Mounting Storage Routes...
+[2026-02-25T23:40:30.453Z] [SERVER] Mounting System Routes...
+[2026-02-25T23:40:30.453Z] [SERVER] SUCCESS: System Routes mounted at /api/system
+[2026-02-25T23:40:30.454Z] [SERVER] Mounting Heartbeat Routes...
+[2026-02-25T23:40:30.454Z] [SERVER] Mounting Admin Routes...
+[2026-02-25T23:46:55.405Z] [SERVER] [CONN] GET / - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.465Z] [SERVER] [CONN] GET /assets/vendor/bootstrap-icons.css - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.484Z] [SERVER] [CONN] GET /assets/vendor/bootstrap.min.css - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.605Z] [SERVER] [CONN] GET /assets/css/styles.css?v=FINAL_FIX_V2 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.607Z] [SERVER] [CONN] GET /assets/css/layout_fix.css?v=FINAL_FIX_V2 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.613Z] [SERVER] [CONN] GET /assets/css/modules/impresion.css?v=V125_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.741Z] [SERVER] [CONN] GET /assets/css/base.css - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.758Z] [SERVER] [CONN] GET /assets/vendor/chart.min.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.775Z] [SERVER] [CONN] GET /assets/vendor/html2pdf.bundle.min.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.819Z] [SERVER] [CONN] GET /assets/css/components.css - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.877Z] [SERVER] [CONN] GET /assets/css/modules.css - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.948Z] [SERVER] [CONN] GET /assets/vendor/bootstrap.bundle.min.js?v=2 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:55.992Z] [SERVER] [CONN] GET /assets/vendor/chart.min.js?v=2 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.040Z] [SERVER] [CONN] GET /assets/vendor/html2pdf.bundle.min.js?v=2 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.105Z] [SERVER] [CONN] GET /assets/js/core/PrintService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.136Z] [SERVER] [CONN] GET /assets/vendor/fonts/bootstrap-icons.woff2?1bb88866b4085542c8ed5fb61b9393dd - Status: 304 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.146Z] [SERVER] [CONN] GET /assets/js/main.js?v=V150_NETWORK_AUTH - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.155Z] [SERVER] [CONN] GET /assets/css/print.css?v=V144_FINAL_BOSS - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.288Z] [SERVER] [CONN] GET /assets/js/modules/cobro.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.290Z] [SERVER] [CONN] GET /assets/js/modules/agenda.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.294Z] [SERVER] [CONN] GET /assets/js/modules/caja.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.315Z] [SERVER] [CONN] GET /assets/js/core/Ui.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.318Z] [SERVER] [CONN] GET /assets/js/modules/clock.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.328Z] [SERVER] [CONN] GET /assets/js/modules/atenciones.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.347Z] [SERVER] [CONN] GET /assets/js/modules/safe.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.350Z] [SERVER] [CONN] GET /assets/js/modules/despertadores.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.353Z] [SERVER] [CONN] GET /assets/js/modules/desayuno.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.383Z] [SERVER] [CONN] GET /assets/js/modules/estancia.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.386Z] [SERVER] [CONN] GET /assets/js/modules/cena_fria.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.388Z] [SERVER] [CONN] GET /assets/js/modules/novedades.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.410Z] [SERVER] [CONN] GET /assets/js/modules/riu.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.418Z] [SERVER] [CONN] GET /assets/js/modules/ayuda.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.420Z] [SERVER] [CONN] GET /assets/js/modules/transfers.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.439Z] [SERVER] [CONN] GET /assets/js/modules/notas_permanentes.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.449Z] [SERVER] [CONN] GET /assets/js/modules/precios.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.452Z] [SERVER] [CONN] GET /assets/js/modules/alarms.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.466Z] [SERVER] [CONN] GET /assets/js/modules/system_alarms_ui.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.473Z] [SERVER] [CONN] GET /assets/js/modules/lost_found.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.475Z] [SERVER] [CONN] GET /assets/js/modules/rack.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.506Z] [SERVER] [CONN] GET /assets/js/modules/configuracion.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.508Z] [SERVER] [CONN] GET /assets/js/modules/excursiones.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.510Z] [SERVER] [CONN] GET /assets/js/modules/reservas_instalaciones.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.533Z] [SERVER] [CONN] GET /assets/js/modules/gallery.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.545Z] [SERVER] [CONN] GET /assets/js/modules/spotify.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.549Z] [SERVER] [CONN] GET /assets/js/modules/valoracion.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.555Z] [SERVER] [CONN] GET /assets/js/core/IconSelector.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.566Z] [SERVER] [CONN] GET /assets/js/core/Config.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.581Z] [SERVER] [CONN] GET /assets/js/core/Api.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.583Z] [SERVER] [CONN] GET /assets/js/core/Modal.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.589Z] [SERVER] [CONN] GET /assets/js/core/Router.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.606Z] [SERVER] [CONN] GET /assets/js/core/CompLoader.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.607Z] [SERVER] [CONN] GET /assets/js/core/Search.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.613Z] [SERVER] [CONN] GET /assets/js/services/SessionService.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.625Z] [SERVER] [CONN] GET /assets/js/core/Utils.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.632Z] [SERVER] [CONN] GET /assets/js/core/PrintService.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.635Z] [SERVER] [CONN] GET /assets/js/core/RoomDetailModal.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.651Z] [SERVER] [CONN] GET /assets/js/core/SecurityBarrier.js?v=V147_PROXY_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.658Z] [SERVER] [CONN] GET /assets/js/core/Config.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.663Z] [SERVER] [CONN] GET /assets/js/services/AgendaService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.672Z] [SERVER] [CONN] GET /assets/js/core/Utils.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.680Z] [SERVER] [CONN] GET /assets/js/core/Ui.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.686Z] [SERVER] [CONN] GET /assets/js/core/Utils.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.692Z] [SERVER] [CONN] GET /assets/js/core/Ui.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.703Z] [SERVER] [CONN] GET /assets/js/services/SessionService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.711Z] [SERVER] [CONN] GET /assets/js/services/CajaService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.715Z] [SERVER] [CONN] GET /assets/js/services/ValesService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.721Z] [SERVER] [CONN] GET /assets/js/core/Modal.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.734Z] [SERVER] [CONN] GET /assets/js/core/RackView.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.735Z] [SERVER] [CONN] GET /assets/js/core/PdfService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.741Z] [SERVER] [CONN] GET /assets/js/services/AtencionesService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.758Z] [SERVER] [CONN] GET /assets/js/services/SystemAlarmsService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.759Z] [SERVER] [CONN] GET /assets/js/services/DespertadorService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.764Z] [SERVER] [CONN] GET /assets/js/services/SafeService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.782Z] [SERVER] [CONN] GET /assets/js/services/DesayunoService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.785Z] [SERVER] [CONN] GET /assets/js/services/EstanciaService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.788Z] [SERVER] [CONN] GET /assets/js/services/CenaFriaService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.820Z] [SERVER] [CONN] GET /assets/js/services/NovedadesService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.821Z] [SERVER] [CONN] GET /assets/js/services/SessionService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.823Z] [SERVER] [CONN] GET /assets/js/services/RiuService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.842Z] [SERVER] [CONN] GET /assets/js/core/PdfService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.844Z] [SERVER] [CONN] GET /assets/js/core/Config.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.849Z] [SERVER] [CONN] GET /assets/js/services/AyudaService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.867Z] [SERVER] [CONN] GET /assets/js/services/TransfersService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.869Z] [SERVER] [CONN] GET /assets/js/services/NotasService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.874Z] [SERVER] [CONN] GET /assets/js/services/PreciosService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.889Z] [SERVER] [CONN] GET /assets/js/services/LostFoundService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.892Z] [SERVER] [CONN] GET /assets/js/core/MediaPicker.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.901Z] [SERVER] [CONN] GET /assets/js/services/MediaService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.908Z] [SERVER] [CONN] GET /assets/js/services/RackService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.913Z] [SERVER] [CONN] GET /assets/js/core/RackView.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.924Z] [SERVER] [CONN] GET /assets/js/core/IconSelector.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.933Z] [SERVER] [CONN] GET /assets/js/core/Api.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.935Z] [SERVER] [CONN] GET /assets/js/services/ConfigService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.949Z] [SERVER] [CONN] GET /assets/js/modules/spotify.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.956Z] [SERVER] [CONN] GET /assets/js/services/ExcursionService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.958Z] [SERVER] [CONN] GET /assets/js/services/ReservasInstalacionesService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.977Z] [SERVER] [CONN] GET /assets/js/core/LocalStorage.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.980Z] [SERVER] [CONN] GET /assets/js/core/SecurityBarrier.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:56.982Z] [SERVER] [CONN] GET /assets/js/services/RackService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.003Z] [SERVER] [CONN] GET /assets/js/services/RiuService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.005Z] [SERVER] [CONN] GET /assets/js/services/BaseService.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.009Z] [SERVER] [CONN] GET /assets/js/data/AgendaData.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.031Z] [SERVER] [CONN] GET /assets/js/services/BaseService.js?v=V145_VAL_FIX - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.033Z] [SERVER] [CONN] GET /assets/js/data/PreciosData.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.037Z] [SERVER] [CONN] GET /assets/js/core/Api.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.050Z] [SERVER] [CONN] GET /assets/js/core/IconSelector.js - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.088Z] [SERVER] [CONN] GET /storage/config.json?v=1772063215056 - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:46:57.251Z] [SERVER] [CONN] GET /resources/icono.ico - Status: 200 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-25T23:47:02.795Z] [SERVER] [CONN] GET /api/admin/agent-proxy/auth/id - Status: 401 - IP: 88.25.140.131 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+[2026-02-26T00:48:48.937Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T00:51:42.237Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T00:51:44.346Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T00:51:44.358Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:00:34.117Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:00:36.315Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:00:36.324Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:01:56.303Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:04:17.054Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:04:19.355Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:04:19.362Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:09:02.211Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:14:13.003Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:14:15.111Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:14:15.130Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:14:37.046Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:14:37.056Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:19:33.631Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:19:36.319Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:19:36.329Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:22:59.212Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:23:01.214Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:23:01.224Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:23:15.396Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:23:17.532Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:23:17.536Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:23:27.978Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:23:30.082Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:23:30.091Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:25:43.310Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:25:46.312Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:25:46.319Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:35:04.304Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:01.845Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:43:03.954Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:43:03.973Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T01:43:23.678Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:31.552Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:31.753Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:32.375Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:32.994Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:33.620Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:34.269Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:34.907Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:35.545Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:36.173Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:36.799Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:37.417Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:38.040Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:38.654Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:39.268Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:39.895Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:40.611Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:41.226Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:41.840Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:42.496Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:43.128Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:43.747Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:44.363Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:44.978Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:45.597Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:46.221Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:46.848Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:47.460Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:48.067Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:48.695Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:49.309Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:49.917Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:50.521Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:51.164Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:51.776Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:52.386Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:53.026Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:53.642Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:54.271Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:54.905Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:55.521Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:56.136Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:56.748Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:57.382Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:57.989Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:58.622Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:59.261Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:43:59.878Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:00.511Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:01.154Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:01.777Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:02.385Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:03.010Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:03.635Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:04.255Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:04.871Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:05.486Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:06.089Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:06.722Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:07.366Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:07.969Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:08.583Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:09.186Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:09.824Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:10.440Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:11.052Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:11.671Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:12.280Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:12.880Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:13.501Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:14.123Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:14.750Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:15.357Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:15.995Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:16.609Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:17.223Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:17.860Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:18.484Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:19.096Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:19.704Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:20.332Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:20.941Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:21.553Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:22.185Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:22.817Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:23.435Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:24.070Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:24.678Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:25.283Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:25.891Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:26.538Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:27.154Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:27.762Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:28.401Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:29.012Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:29.626Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:30.277Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:30.888Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:31.525Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:32.144Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:32.779Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:33.397Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:34.015Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:34.653Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:35.266Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:35.883Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:36.528Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:37.147Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:37.752Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:38.363Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:38.985Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:39.615Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:40.221Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:40.856Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:41.477Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:42.082Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:42.700Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:43.327Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:43.933Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:44.538Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:45.175Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:45.792Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:46.407Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:47.048Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:47.682Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:48.299Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:48.912Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:49.539Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:50.150Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:50.778Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:51.420Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:52.046Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:52.662Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:53.281Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:53.904Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:54.518Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:55.130Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:55.776Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:56.401Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:57.003Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:57.640Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:58.249Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:58.853Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:44:59.472Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:00.085Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:00.703Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:01.321Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:01.953Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:02.564Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:03.167Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:03.816Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:04.448Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:05.053Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:05.687Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:06.293Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:06.901Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:07.507Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:08.154Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:08.759Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:09.375Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:09.998Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:10.617Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:11.237Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:11.884Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:12.506Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:13.116Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:13.728Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:14.358Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:14.972Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:15.583Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:16.209Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:16.977Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:17.591Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:18.216Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:18.829Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:19.467Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:20.079Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:20.718Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:21.330Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:21.949Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:22.584Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:23.193Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:23.802Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:24.424Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:25.038Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:25.655Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:26.265Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:26.908Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:27.523Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:28.172Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:28.803Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:29.418Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:30.235Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:30.866Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:31.485Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:32.096Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:32.742Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:33.364Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:33.969Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:34.614Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:35.247Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:35.862Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:36.491Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:37.143Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:37.773Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:38.388Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:39.017Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:39.617Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:40.224Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:40.833Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:41.452Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:42.049Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:42.691Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:43.317Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:43.928Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:44.541Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:45.164Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:45.793Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:46.486Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:47.104Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:47.950Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:48.981Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:49.618Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:50.229Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:50.863Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:51.488Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:52.163Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:52.376Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:45:56.730Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:00.042Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:00.230Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:00.840Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:01.462Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:02.116Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:02.750Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:03.368Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:03.985Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:04.644Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:05.263Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:05.976Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:06.672Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:07.290Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:07.907Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:08.558Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:09.168Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:09.779Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:10.396Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:11.028Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:11.653Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:12.269Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:12.908Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:13.652Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:14.298Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:14.920Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:15.572Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:16.185Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:16.811Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:17.438Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:18.056Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:18.670Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:19.316Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:19.927Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:20.534Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:21.162Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:21.777Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:22.387Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:23.019Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:23.662Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:24.273Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:24.880Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:25.510Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:26.120Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:26.723Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:27.372Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:27.999Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:28.607Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:29.216Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:29.844Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:30.455Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:31.054Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:31.712Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:32.342Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:32.973Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:33.602Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:34.216Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:34.825Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:35.438Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:36.183Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:36.814Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:37.440Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:38.169Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:38.775Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:39.408Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:40.031Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:40.641Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:41.247Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:41.874Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:42.507Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:43.130Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:43.745Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:44.381Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:44.996Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:45.621Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:46.248Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:46.909Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:47.548Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:48.280Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:48.896Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:49.518Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:50.116Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:50.738Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:51.356Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:51.963Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:52.595Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:53.210Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:53.822Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:54.457Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:55.074Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:55.748Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:56.356Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:57.062Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:57.766Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:58.397Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:59.011Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:46:59.612Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:00.234Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:00.874Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:01.491Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:02.090Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:02.719Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:03.375Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:03.987Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:04.602Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:05.258Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:05.886Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:06.582Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:07.215Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:07.833Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:08.446Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:09.064Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:09.679Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:10.285Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:10.900Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:11.533Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:12.144Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:12.756Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:13.387Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:13.996Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:14.667Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:15.294Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:15.972Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:16.732Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:17.363Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:17.979Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:18.584Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:19.200Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:20.157Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:20.931Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:21.575Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:22.247Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:22.864Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:23.490Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:24.117Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:24.719Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:25.328Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:25.951Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:26.556Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:27.169Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:27.796Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:28.402Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:29.009Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:29.632Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:30.266Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:30.876Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:31.487Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:32.126Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:32.753Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:33.365Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:33.974Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:34.590Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:35.202Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:35.805Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:36.443Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:37.123Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:37.801Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:38.449Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:39.055Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:39.664Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:40.293Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:40.901Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:41.515Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:42.132Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:42.780Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:43.392Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:44.004Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:44.639Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:45.253Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:45.863Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:46.478Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:47.095Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:47.725Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:48.330Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:48.946Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:49.558Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:50.165Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:50.801Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:51.427Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:52.060Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:52.676Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:53.298Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:53.906Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:54.515Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:55.141Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:55.747Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:56.350Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:56.978Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:57.641Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:58.292Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:47:59.672Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T01:57:39.993Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T01:57:42.124Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T01:57:42.144Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:02:35.553Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T02:04:37.663Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:04:39.897Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:04:39.922Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:05:45.311Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:05:47.416Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:05:47.421Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:06:37.025Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:06:39.138Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:06:39.148Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:08:42.061Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:16:53.063Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:18:34.668Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:19:59.759Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:24:52.530Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:24:52.534Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:24:52.546Z] [Storage] DB Write (Transaction Start): guia_operativa (key: guia_operativa)
+[2026-02-26T02:24:52.553Z] [Storage] DB Write (Transaction Success): guia_operativa (3 rows)
+[2026-02-26T02:24:52.566Z] [Storage] DB Write (Transaction Start): reservas_instalaciones (key: reservas_instalaciones)
+[2026-02-26T02:24:52.571Z] [Storage] DB Write (Transaction Success): reservas_instalaciones (3 rows)
+[2026-02-26T02:24:52.581Z] [Storage] DB Write (Transaction Start): atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:24:52.584Z] [Storage] DB Write (Transaction Success): atenciones (1 rows)
+[2026-02-26T02:24:52.595Z] [Storage] DB Write (Transaction Start): cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:24:52.596Z] [Storage] DB Write (Transaction Success): cenas_frias (0 rows)
+[2026-02-26T02:24:52.602Z] [Storage] DB Write (Transaction Start): desayunos (key: riu_desayunos)
+[2026-02-26T02:24:52.602Z] [Storage] DB Write (Transaction Success): desayunos (0 rows)
+[2026-02-26T02:24:52.607Z] [Storage] DB Write (Transaction Start): estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:24:52.611Z] [Storage] DB Write (Transaction Success): estancia_diaria (2 rows)
+[2026-02-26T02:24:52.626Z] [Storage] DB Write (Transaction Start): registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:24:52.630Z] [Storage] DB Write (Transaction Success): registro_excursiones (2 rows)
+[2026-02-26T02:24:52.643Z] [Storage] DB Write (Transaction Start): lost_found (key: riu_lost_found)
+[2026-02-26T02:24:52.646Z] [Storage] DB Write (Transaction Success): lost_found (1 rows)
+[2026-02-26T02:24:52.657Z] [Storage] DB Write (Transaction Start): notas (key: riu_notas_permanentes)
+[2026-02-26T02:24:52.661Z] [Storage] DB Write (Transaction Success): notas (3 rows)
+[2026-02-26T02:24:52.675Z] [Storage] DB Write (Transaction Start): precios (key: riu_precios)
+[2026-02-26T02:24:52.679Z] [Storage] CRITICAL: Transaction Error for riu_precios: Incorrect integer value: 'pack_minibar_1' for column 'id' at row 1
+[2026-02-26T02:24:52.689Z] [Storage] DB Write (Transaction Start): rack_status (key: riu_rack)
+[2026-02-26T02:24:52.694Z] [Storage] DB Write (Transaction Success): rack_status (6 rows)
+[2026-02-26T02:24:52.707Z] [Storage] DB Write (Transaction Start): system_alarms (key: riu_system_alarms)
+[2026-02-26T02:24:52.710Z] [Storage] CRITICAL: Transaction Error for riu_system_alarms: Field 'msg' doesn't have a default value
+[2026-02-26T02:25:26.322Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T02:28:13.856Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T02:28:23.043Z] [Storage] DB Write (Transaction Start): agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:28:23.550Z] [Storage] DB Write (Transaction Success): agenda_contactos (1233 rows)
+[2026-02-26T02:28:23.577Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:28:23.580Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:28:23.592Z] [Storage] DB Write (Transaction Start): guia_operativa (key: guia_operativa)
+[2026-02-26T02:28:23.599Z] [Storage] DB Write (Transaction Success): guia_operativa (3 rows)
+[2026-02-26T02:28:23.612Z] [Storage] DB Write (Transaction Start): reservas_instalaciones (key: reservas_instalaciones)
+[2026-02-26T02:28:23.616Z] [Storage] DB Write (Transaction Success): reservas_instalaciones (3 rows)
+[2026-02-26T02:28:23.626Z] [Storage] DB Write (Transaction Start): atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:28:23.629Z] [Storage] DB Write (Transaction Success): atenciones (1 rows)
+[2026-02-26T02:28:23.649Z] [Storage] DB Write (Transaction Start): cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:28:23.650Z] [Storage] DB Write (Transaction Success): cenas_frias (0 rows)
+[2026-02-26T02:28:23.656Z] [Storage] DB Write (Transaction Start): desayunos (key: riu_desayunos)
+[2026-02-26T02:28:23.656Z] [Storage] DB Write (Transaction Success): desayunos (0 rows)
+[2026-02-26T02:28:23.662Z] [Storage] DB Write (Transaction Start): estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:28:23.665Z] [Storage] DB Write (Transaction Success): estancia_diaria (2 rows)
+[2026-02-26T02:28:23.678Z] [Storage] DB Write (Transaction Start): registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:28:23.681Z] [Storage] DB Write (Transaction Success): registro_excursiones (2 rows)
+[2026-02-26T02:28:23.693Z] [Storage] DB Write (Transaction Start): lost_found (key: riu_lost_found)
+[2026-02-26T02:28:23.696Z] [Storage] DB Write (Transaction Success): lost_found (1 rows)
+[2026-02-26T02:28:23.709Z] [Storage] DB Write (Transaction Start): notas (key: riu_notas_permanentes)
+[2026-02-26T02:28:23.713Z] [Storage] DB Write (Transaction Success): notas (3 rows)
+[2026-02-26T02:28:23.725Z] [Storage] DB Write (Transaction Start): precios (key: riu_precios)
+[2026-02-26T02:28:23.729Z] [Storage] DB Write (Transaction Success): precios (4 rows)
+[2026-02-26T02:28:23.740Z] [Storage] DB Write (Transaction Start): rack_status (key: riu_rack)
+[2026-02-26T02:28:23.744Z] [Storage] DB Write (Transaction Success): rack_status (6 rows)
+[2026-02-26T02:28:23.757Z] [Storage] DB Write (Transaction Start): system_alarms (key: riu_system_alarms)
+[2026-02-26T02:28:23.760Z] [Storage] DB Write (Transaction Success): system_alarms (1 rows)
+[2026-02-26T02:42:29.954Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:42:30.517Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:42:30.521Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:42:30.523Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:42:30.533Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:42:30.561Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:42:30.605Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:42:30.609Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:42:30.611Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:42:30.619Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:42:30.620Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:42:30.622Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:42:30.701Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:42:30.711Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:42:30.719Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:42:30.727Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:42:30.732Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:42:30.732Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:42:30.733Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:42:30.748Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:42:30.760Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:42:32.798Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:42:32.807Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:43:20.302Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:43:20.700Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:43:20.705Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:43:20.706Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:43:20.710Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:43:20.755Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:43:20.803Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:43:20.808Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:43:20.809Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:43:20.810Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:43:20.816Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:43:20.817Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:43:20.902Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:43:20.903Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:43:20.903Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:43:20.904Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:43:20.915Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:43:20.922Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:43:20.926Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:43:20.935Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:43:20.944Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:43:23.026Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:43:23.034Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:45:11.347Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:45:11.657Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:45:11.662Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:45:11.663Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:45:11.665Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:45:11.714Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:45:11.784Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:45:11.790Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:11.807Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:45:11.808Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:45:11.809Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:45:11.812Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:45:11.850Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:45:11.851Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:45:11.852Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:45:11.853Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:45:11.857Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:45:11.870Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:45:11.886Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:45:11.887Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:45:11.898Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:45:13.992Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:14.000Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:45:16.125Z] [Storage] DB Write (Transaction Start): agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:45:16.594Z] [Storage] DB Write (Transaction Success): agenda_contactos (1233 rows)
+[2026-02-26T02:45:16.617Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:16.620Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:45:16.632Z] [Storage] DB Write (Transaction Start): guia_operativa (key: guia_operativa)
+[2026-02-26T02:45:16.638Z] [Storage] DB Write (Transaction Success): guia_operativa (3 rows)
+[2026-02-26T02:45:16.649Z] [Storage] DB Write (Transaction Start): reservas_instalaciones (key: reservas_instalaciones)
+[2026-02-26T02:45:16.655Z] [Storage] DB Write (Transaction Success): reservas_instalaciones (3 rows)
+[2026-02-26T02:45:16.666Z] [Storage] DB Write (Transaction Start): atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:45:16.670Z] [Storage] DB Write (Transaction Success): atenciones (1 rows)
+[2026-02-26T02:45:16.680Z] [Storage] DB Write (Transaction Start): cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:45:16.680Z] [Storage] DB Write (Transaction Success): cenas_frias (0 rows)
+[2026-02-26T02:45:16.685Z] [Storage] DB Write (Transaction Start): desayunos (key: riu_desayunos)
+[2026-02-26T02:45:16.685Z] [Storage] DB Write (Transaction Success): desayunos (0 rows)
+[2026-02-26T02:45:16.690Z] [Storage] DB Write (Transaction Start): estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:45:16.693Z] [Storage] DB Write (Transaction Success): estancia_diaria (2 rows)
+[2026-02-26T02:45:16.704Z] [Storage] DB Write (Transaction Start): registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:45:16.707Z] [Storage] DB Write (Transaction Success): registro_excursiones (2 rows)
+[2026-02-26T02:45:16.717Z] [Storage] DB Write (Transaction Start): lost_found (key: riu_lost_found)
+[2026-02-26T02:45:16.720Z] [Storage] DB Write (Transaction Success): lost_found (1 rows)
+[2026-02-26T02:45:16.731Z] [Storage] DB Write (Transaction Start): notas (key: riu_notas_permanentes)
+[2026-02-26T02:45:16.735Z] [Storage] DB Write (Transaction Success): notas (3 rows)
+[2026-02-26T02:45:16.746Z] [Storage] DB Write (Transaction Start): precios (key: riu_precios)
+[2026-02-26T02:45:16.750Z] [Storage] DB Write (Transaction Success): precios (4 rows)
+[2026-02-26T02:45:16.763Z] [Storage] DB Write (Transaction Start): rack_status (key: riu_rack)
+[2026-02-26T02:45:16.767Z] [Storage] DB Write (Transaction Success): rack_status (6 rows)
+[2026-02-26T02:45:16.780Z] [Storage] DB Write (Transaction Start): system_alarms (key: riu_system_alarms)
+[2026-02-26T02:45:16.783Z] [Storage] DB Write (Transaction Success): system_alarms (1 rows)
+[2026-02-26T02:45:21.949Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:45:22.259Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:45:22.262Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:45:22.262Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:45:22.267Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:45:22.312Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:45:22.355Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:45:22.358Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:22.369Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:45:22.371Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:45:22.372Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:45:22.418Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:45:22.431Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:45:22.439Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:45:22.442Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:45:22.447Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:45:22.449Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:45:22.463Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:45:22.480Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:45:22.483Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:45:22.488Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:45:24.567Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:24.574Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:45:33.661Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T02:45:34.269Z] [Storage] DB Write (Transaction Start): agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:45:34.791Z] [Storage] DB Write (Transaction Success): agenda_contactos (1233 rows)
+[2026-02-26T02:45:34.816Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:45:34.819Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:45:34.831Z] [Storage] DB Write (Transaction Start): guia_operativa (key: guia_operativa)
+[2026-02-26T02:45:34.836Z] [Storage] DB Write (Transaction Success): guia_operativa (3 rows)
+[2026-02-26T02:45:34.848Z] [Storage] DB Write (Transaction Start): reservas_instalaciones (key: reservas_instalaciones)
+[2026-02-26T02:45:34.852Z] [Storage] DB Write (Transaction Success): reservas_instalaciones (3 rows)
+[2026-02-26T02:45:34.863Z] [Storage] DB Write (Transaction Start): atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:45:34.866Z] [Storage] DB Write (Transaction Success): atenciones (1 rows)
+[2026-02-26T02:45:34.879Z] [Storage] DB Write (Transaction Start): cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:45:34.880Z] [Storage] DB Write (Transaction Success): cenas_frias (0 rows)
+[2026-02-26T02:45:34.886Z] [Storage] DB Write (Transaction Start): desayunos (key: riu_desayunos)
+[2026-02-26T02:45:34.886Z] [Storage] DB Write (Transaction Success): desayunos (0 rows)
+[2026-02-26T02:45:34.893Z] [Storage] DB Write (Transaction Start): estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:45:34.897Z] [Storage] DB Write (Transaction Success): estancia_diaria (2 rows)
+[2026-02-26T02:45:34.908Z] [Storage] DB Write (Transaction Start): registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:45:34.911Z] [Storage] DB Write (Transaction Success): registro_excursiones (2 rows)
+[2026-02-26T02:45:34.923Z] [Storage] DB Write (Transaction Start): lost_found (key: riu_lost_found)
+[2026-02-26T02:45:34.925Z] [Storage] DB Write (Transaction Success): lost_found (1 rows)
+[2026-02-26T02:45:34.940Z] [Storage] DB Write (Transaction Start): notas (key: riu_notas_permanentes)
+[2026-02-26T02:45:34.944Z] [Storage] DB Write (Transaction Success): notas (3 rows)
+[2026-02-26T02:45:34.958Z] [Storage] DB Write (Transaction Start): precios (key: riu_precios)
+[2026-02-26T02:45:34.965Z] [Storage] DB Write (Transaction Success): precios (4 rows)
+[2026-02-26T02:45:34.979Z] [Storage] DB Write (Transaction Start): rack_status (key: riu_rack)
+[2026-02-26T02:45:34.987Z] [Storage] DB Write (Transaction Success): rack_status (6 rows)
+[2026-02-26T02:45:35.004Z] [Storage] DB Write (Transaction Start): system_alarms (key: riu_system_alarms)
+[2026-02-26T02:45:35.009Z] [Storage] DB Write (Transaction Success): system_alarms (1 rows)
+[2026-02-26T02:48:00.811Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:48:01.200Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:48:01.206Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:48:01.212Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:48:01.215Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:48:01.260Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:48:01.290Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:48:01.292Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:48:01.296Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:48:01.298Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:48:01.300Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:48:01.362Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:48:01.387Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:48:01.390Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:48:01.395Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:48:01.398Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:48:01.404Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:48:01.418Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:48:01.423Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:48:01.430Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:48:01.437Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:48:03.515Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:48:03.524Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:49:31.817Z] --- STORAGE SERVICE INITIALIZED (SQL + JSON) ---
+[2026-02-26T02:49:57.722Z] [Storage] DB Read: app_config (key: config)
+[2026-02-26T02:49:58.041Z] [Storage] DB Read: cenas_frias (key: riu_cenas_frias)
+[2026-02-26T02:49:58.045Z] [Storage] DB Read: despertadores (key: riu_despertadores)
+[2026-02-26T02:49:58.057Z] [Storage] DB Read: desayunos (key: riu_desayunos)
+[2026-02-26T02:49:58.061Z] [Storage] DB Read: novedades (key: riu_novedades)
+[2026-02-26T02:49:58.094Z] [Storage] DB Read: gallery_favorites (key: gallery_favorites)
+[2026-02-26T02:49:58.119Z] [Storage] DB Read: arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:49:58.124Z] [Storage] DB Read: agenda_contactos (key: agenda_contactos)
+[2026-02-26T02:49:58.125Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:49:58.126Z] [Storage] DB Read: estancia_diaria (key: riu_estancia_diaria)
+[2026-02-26T02:49:58.127Z] [Storage] DB Read: transfers (key: riu_transfers)
+[2026-02-26T02:49:58.138Z] [Storage] DB Read: atenciones (key: riu_atenciones_v2)
+[2026-02-26T02:49:58.215Z] [Storage] DB Read: clientes_riu (key: riu_clientes)
+[2026-02-26T02:49:58.235Z] [Storage] DB Read: guia_operativa (key: guia_operativa)
+[2026-02-26T02:49:58.245Z] [Storage] DB Read: notas (key: riu_notas_permanentes)
+[2026-02-26T02:49:58.257Z] [Storage] DB Read: precios (key: riu_precios)
+[2026-02-26T02:49:58.261Z] [Storage] DB Read: rack_status (key: riu_rack)
+[2026-02-26T02:49:58.271Z] [Storage] DB Read: lost_found (key: riu_lost_found)
+[2026-02-26T02:49:58.276Z] [Storage] DB Read: registro_excursiones (key: riu_excursiones)
+[2026-02-26T02:49:58.281Z] [Storage] DB Read: safe_rentals (key: riu_safe_rentals)
+[2026-02-26T02:49:58.286Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:50:00.357Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:50:00.373Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:50:41.438Z] [Storage] DB Read: vales (key: vales_data)
+[2026-02-26T02:50:43.471Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:50:43.474Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:50:58.778Z] [Storage] DB Write (Transaction Start): arqueo_caja (key: arqueo_caja)
+[2026-02-26T02:50:58.787Z] [Storage] DB Write (Transaction Success): arqueo_caja (1 rows)
+[2026-02-26T02:51:13.725Z] [Storage] DB Read: app_config (key: config)

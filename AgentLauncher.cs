@@ -12,9 +12,9 @@ namespace RecepcionAgentLauncher
     class Program
     {
         private const int AGENT_PORT = 3001;
-        private const string AGENT_URL = "https://www.desdetenerife.com:3001/assets/admin/index.html";
+        private const string AGENT_URL = "https://www.desdetenerife.com:3000/admin";
         private const string APP_URL = "https://www.desdetenerife.com:3000";
-        private const string AGENT_SCRIPT = "agent.js";
+        private const string AGENT_SCRIPT = "agent_v4.js";
 
         static void Main()
         {

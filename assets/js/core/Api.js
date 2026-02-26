@@ -1,4 +1,4 @@
-import { APP_CONFIG } from './Config.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
 import { SecurityBarrier } from './SecurityBarrier.js?v=V145_VAL_FIX';
 
 /**
@@ -174,11 +174,14 @@ export const Api = {
 
             for (const port of ports) {
                 try {
-                    // Primero intentamos la misma proporción que el sitio actual
-                    const protocols = window.location.protocol === 'https:' ? ['https:', 'http:'] : ['http:', 'https:'];
+                    // Solo intentamos HTTP para evitar el ERR_SSL_PROTOCOL_ERROR en la consola.
+                    // El agente local no tiene certificados SSL válidos, así que HTTPS siempre fallará localmente.
+                    const protocols = ['http:'];
                     for (const proto of protocols) {
                         try {
-                            const res = await fetch(`${proto}//localhost:${port}/local-token`, {
+                            // Usar siempre 127.0.0.1 para evitar que IPv6 (::1) bloquee la respuesta en Windows
+                            const host = '127.0.0.1';
+                            const res = await fetch(`${proto}//${host}:${port}/local-token`, {
                                 mode: 'cors',
                                 cache: 'no-cache'
                             });

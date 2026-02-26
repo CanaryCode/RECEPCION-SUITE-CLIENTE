@@ -125,11 +125,11 @@ router.get('/status', async (req, res) => {
     try {
         // Try HTTPS first
         try {
-            const localHealth = await fetchUrl('https://localhost:3000/api/health', null, 1500);
+            const localHealth = await fetchUrl('https://127.0.0.1:3000/api/health', null, 1500);
             status.local.status = 'online';
         } catch (httpsErr) {
             // Fallback to HTTP
-            const localHealthHttp = await fetchUrl('http://localhost:3000/api/health', null, 1500);
+            const localHealthHttp = await fetchUrl('http://127.0.0.1:3000/api/health', null, 1500);
             status.local.status = 'online';
             status.local.notes = 'Srv en modo HTTP';
         }
@@ -299,21 +299,20 @@ router.post('/execute', async (req, res) => {
 
     switch (action) {
         case 'start-server':
-            // Comando robusto: Matar si existe, luego arrancar SIEMPRE desvinculado
+            // Comando robusto
             if (isWin) {
                 // start "" /b ejecuta en background en windows
-                command = `(for /f "tokens=5" %a in ('netstat -aon ^| findstr :3000') do taskkill /F /PID %a) & cd server && start "" /b node app.js > ../server.log 2>&1`;
+                command = `(for /f "tokens=5" %a in ('netstat -aon ^| findstr :3000') do taskkill /F /PID %a) & start "" /b node server_v4.js > server.log 2>&1`;
             } else {
-                // En Linux lsof es más común para matar puertos específicos. 
-                // nohup ... & asegura el background, pero debemos redirigir stdin/out/err para que no enganche
-                command = 'fuser -k 3000/tcp 2>/dev/null || true; cd server && nohup node app.js > ../server.log 2>&1 </dev/null &';
+                // Usamos pm2 si está disponible, sino el fuser
+                command = 'pm2 start recepcion-central || pm2 restart recepcion-central || (fuser -k 3000/tcp 2>/dev/null; nohup node server_v4.js > server.log 2>&1 </dev/null &)';
             }
             break;
         case 'stop-server':
             if (isWin) {
                 command = 'for /f "tokens=5" %a in (\'netstat -aon ^| findstr :3000\') do taskkill /F /PID %a';
             } else {
-                command = 'fuser -k 3000/tcp 2>/dev/null || true';
+                command = 'pm2 stop recepcion-central || fuser -k 3000/tcp 2>/dev/null || true';
             }
             break;
         case 'restart-server':

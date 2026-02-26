@@ -1,7 +1,7 @@
 import { preciosService } from '../services/PreciosService.js';
 import { Utils } from '../core/Utils.js';
 import { Ui } from '../core/Ui.js';
-import { APP_CONFIG } from "../core/Config.js?v=V145_VAL_FIX";
+import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
 
 /**
  * MÓDULO DE LISTA DE PRECIOS (precios.js)
