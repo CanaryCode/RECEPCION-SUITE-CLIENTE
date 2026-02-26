@@ -85,7 +85,7 @@ if not exist "%~dp0server\node_modules" (
         echo       instalado en este equipo para descargarlos.
         echo.
         echo       SOLUCION: 
-        echo       1. Instala Node.js en este PC (https://nodejs.org/)
+        echo       1. Instala Node.js en este PC ^(https://nodejs.org/^)
         echo       2. O copia el programa desde el PC original INCLUYENDO la carpeta 'server/node_modules'.
         echo.
         pause
