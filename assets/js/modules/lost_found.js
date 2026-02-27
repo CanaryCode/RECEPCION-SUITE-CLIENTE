@@ -21,14 +21,14 @@ export const lostFoundModule = {
         await lostFoundService.init();
         this.renderInterface();
         this.setupEvents();
-        
+
         moduleInitialized = true;
     },
 
     renderInterface() {
         // Reset form
         this.limpiarFormulario();
-        
+
         // Setup View Toggles
         Ui.setupViewToggle({
             buttons: [
@@ -103,7 +103,7 @@ export const lostFoundModule = {
         const statusFilter = document.getElementById('filterLostFoundEstado')?.value || '';
 
         const filtered = items.filter(item => {
-            const matchesSearch = !searchTerm || 
+            const matchesSearch = !searchTerm ||
                 item.objeto.toLowerCase().includes(searchTerm) ||
                 item.lugar.toLowerCase().includes(searchTerm) ||
                 item.quien.toLowerCase().includes(searchTerm);
@@ -120,13 +120,13 @@ export const lostFoundModule = {
 
         // Render Table Function
         const renderTable = (data) => {
-             Ui.renderTable('lostFoundFullBody', data, (item) => `
+            Ui.renderTable('lostFoundFullBody', data, (item) => `
             <tr style="cursor: pointer;" onclick="lostFoundModule.openDetail('${item.id}')">
                 <td class="text-center">
                     <div class="d-flex justify-content-center" style="margin-left: 8px;">
-                        ${item.imagenes && item.imagenes.length > 0 
-                            ? item.imagenes.slice(0, 3).map((img, i) => `<img src="${this.resolveImagePath(img)}" class="rounded-circle border border-white shadow-sm" style="width: 24px; height: 24px; object-fit: cover; margin-left: -8px; z-index: ${10-i}">`).join('')
-                            : '<i class="bi bi-image text-muted"></i>'}
+                        ${item.imagenes && item.imagenes.length > 0
+                    ? item.imagenes.slice(0, 3).map((img, i) => `<img src="${this.resolveImagePath(img)}" class="rounded-circle border border-white shadow-sm" style="width: 24px; height: 24px; object-fit: cover; margin-left: -8px; z-index: ${10 - i}">`).join('')
+                    : '<i class="bi bi-image text-muted"></i>'}
                         ${item.imagenes && item.imagenes.length > 3 ? `<span class="badge bg-light text-dark rounded-circle border small d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; margin-left: -8px; font-size: 0.6rem; z-index: 1;">+${item.imagenes.length - 3}</span>` : ''}
                     </div>
                 </td>
@@ -185,7 +185,7 @@ export const lostFoundModule = {
         if (!path) return '';
         if (path.startsWith('data:image')) return path; // Base64 legacy
         if (path.startsWith('http')) return path;
-        
+
         // Si ya tiene / al principio, lo dejamos
         if (path.startsWith('/')) return path;
 
@@ -223,7 +223,7 @@ export const lostFoundModule = {
         const item = typeof id === 'string' ? await lostFoundService.getById(id) : id;
         if (!item) return;
 
-        const hotelName = "RIU HOTELS & RESORTS"; 
+        const hotelName = "RIU HOTELS & RESORTS";
         const dateStr = Utils.formatDate(item.fecha);
 
         const ticketHTML = `
@@ -283,7 +283,7 @@ export const lostFoundModule = {
      */
     printReport() {
         const isTrabajoActive = !document.getElementById('lost-found-trabajo').classList.contains('d-none');
-        
+
         if (isTrabajoActive) {
             // Imprimir Formulario de Trabajo (Reporte de Edición/Creación)
             if (window.PrintService) {
@@ -309,21 +309,64 @@ export const lostFoundModule = {
 
         for (const file of files) {
             try {
-                // Subir inmediatamente al servidor
-                const relativePath = await MediaService.uploadImage(file, 'lost_found');
-                // IMPORTANTE: Solo añadir si la ruta es válida
-                if (relativePath) {
-                    currentImageArray.push(relativePath);
+                // Leer y comprimir imagen antes de guardar
+                const base64 = await this._processImage(file);
+                if (base64) {
+                    currentImageArray.push(base64);
                 }
             } catch (err) {
-                console.error("Error al subir archivo:", err);
-                Ui.showToast(`Error al subir ${file.name}`, "danger");
+                console.error("Error al procesar imagen:", err);
+                Ui.showToast(`Error al procesar ${file.name}`, "danger");
             }
         }
 
         this.updateImagePreviews();
-        // Limpiar el input para permitir seleccionar los mismos archivos después
         event.target.value = '';
+    },
+
+    /**
+     * Procesa la imagen: la lee como base64 y la comprime usando un canvas.
+     */
+    _processImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Max dimensions
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert to webp/jpeg with quality 0.7 for efficiency
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
     },
 
     updateImagePreviews() {
@@ -350,14 +393,14 @@ export const lostFoundModule = {
     limpiarFormulario() {
         const form = document.getElementById('formLostFound');
         if (form) form.reset();
-        
+
         document.getElementById('lost_found_id').value = '';
         document.getElementById('lost_found_fecha').value = Utils.getTodayISO();
         document.getElementById('lost_found_estado').value = 'Almacenado';
-        
+
         currentImageArray = [];
         this.updateImagePreviews();
-        
+
         // Reset Recent view if we are on Tab Work
         this.renderRecentList();
     },
@@ -397,7 +440,7 @@ export const lostFoundModule = {
         if (!item) return;
 
         const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalLostFoundDetail'));
-        
+
         document.getElementById('lostFoundDetailId').innerText = `#${item.id}`;
         document.getElementById('lostFoundDetailObjeto').innerText = item.objeto;
         document.getElementById('lostFoundDetailFecha').innerText = Utils.formatDate(item.fecha);

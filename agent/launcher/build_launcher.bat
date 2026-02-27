@@ -12,7 +12,7 @@ echo.
 
 set "SOURCE=Launcher.cs"
 set "OUTPUT=RecepcionSuite.exe"
-set "ICON=..\..\assets\resources\images\icono.ico"
+set "ICON=..\resources\images\icono.ico"
 
 if not exist "!SOURCE!" (
     echo [!] ERROR: No se encuentra el archivo fuente '!SOURCE!' en esta carpeta.

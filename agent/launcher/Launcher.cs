@@ -28,75 +28,8 @@ namespace RecepcionSuiteLauncher
             if (!isServerOnline) LaunchProcessSilently(SERVER_SCRIPT);
             if (!isAgentOnline) LaunchProcessSilently(AGENT_SCRIPT);
 
-            // Give a moment for boot
-            if (!isServerOnline || !isAgentOnline) Thread.Sleep(1500);
-
-            // Create Beauty UI Form
-            using (var form = new Form())
-            {
-                form.Text = "Recepción Suite";
-                form.Size = new Size(420, 260);
-                form.StartPosition = FormStartPosition.CenterScreen;
-                form.FormBorderStyle = FormBorderStyle.FixedDialog;
-                form.MaximizeBox = false;
-                form.MinimizeBox = false;
-                form.BackColor = Color.FromArgb(33, 37, 41);
-
-                Label label = new Label();
-                label.Text = "¿Qué módulo deseas abrir?";
-                label.ForeColor = Color.White;
-                label.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
-                label.Location = new Point(0, 30);
-                label.Size = new Size(400, 30);
-                label.TextAlign = ContentAlignment.MiddleCenter;
-                form.Controls.Add(label);
-
-                Button btnWeb = new Button();
-                btnWeb.Text = "💻 Recepción Web";
-                btnWeb.Size = new Size(160, 60);
-                btnWeb.Location = new Point(35, 90);
-                btnWeb.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
-                btnWeb.BackColor = Color.FromArgb(25, 135, 84); // Success BS5
-                btnWeb.ForeColor = Color.White;
-                btnWeb.FlatStyle = FlatStyle.Flat;
-                btnWeb.FlatAppearance.BorderSize = 0;
-                btnWeb.Cursor = Cursors.Hand;
-                btnWeb.Click += (sender, e) => {
-                    OpenUrl("https://www.desdetenerife.com:3000");
-                    form.Close();
-                };
-                form.Controls.Add(btnWeb);
-
-                Button btnAdmin = new Button();
-                btnAdmin.Text = "⚙️ Consola Admin";
-                btnAdmin.Size = new Size(160, 60);
-                btnAdmin.Location = new Point(210, 90);
-                btnAdmin.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
-                btnAdmin.BackColor = Color.FromArgb(13, 110, 253); // Primary BS5
-                btnAdmin.ForeColor = Color.White;
-                btnAdmin.FlatStyle = FlatStyle.Flat;
-                btnAdmin.FlatAppearance.BorderSize = 0;
-                btnAdmin.Cursor = Cursors.Hand;
-                btnAdmin.Click += (sender, e) => {
-                    OpenUrl("https://www.desdetenerife.com:3000/admin");
-                    form.Close();
-                };
-                form.Controls.Add(btnAdmin);
-
-                Label paramLabel = new Label();
-                string statusMsg = (isServerOnline && isAgentOnline) 
-                    ? "(Todo el sistema está en ejecución)" 
-                    : "(Iniciando componentes necesarios...)";
-                paramLabel.Text = statusMsg;
-                paramLabel.ForeColor = (isServerOnline && isAgentOnline) ? Color.LightGreen : Color.LightSalmon;
-                paramLabel.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
-                paramLabel.Location = new Point(0, 175);
-                paramLabel.Size = new Size(400, 30);
-                paramLabel.TextAlign = ContentAlignment.MiddleCenter;
-                form.Controls.Add(paramLabel);
-
-                form.ShowDialog();
-            }
+            // Directly open the web application
+            OpenUrl("https://www.desdetenerife.com:3000");
         }
 
         static bool IsPortOpen(string host, int port)
@@ -130,7 +63,10 @@ namespace RecepcionSuiteLauncher
                     baseDir = parentDir;
                     scriptPath = Path.Combine(baseDir, scriptName);
                 }
-                // 2. Si estamos dentro de 'agent/launcher', retroceder dos niveles si es necesario
+                // 2. Si estamos dentro dset "SOURCE=Launcher.cs"
+// The following lines appear to be from a batch script and cannot be inserted into C# code.
+// set "OUTPUT=RecepcionSuite.exe"
+// set "ICON=..\resources\images\icono.ico"
                 else if (scriptName.Contains("agent/")) {
                     string altPath = Path.Combine(baseDir, "../../", scriptName);
                     if (File.Exists(altPath)) {
