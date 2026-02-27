@@ -307,6 +307,31 @@ router.post('/:key', async (req, res) => {
                     autor: item.autor,
                     fecha_venta: item.fechaVenta || item.fecha_venta
                 }));
+            } else if (key === 'reservas_instalaciones') {
+                itemsToInsert = data.map(item => ({
+                    id: item.id,
+                    instalacion: item.instalacion,
+                    habitacion: item.habitacion,
+                    fecha: item.fecha,
+                    hora_inicio: item.hora_inicio,
+                    hora_fin: item.hora_fin,
+                    personas: item.pax || 1,
+                    nombre: item.nombre_cliente || item.nombre,
+                    autor: item.autor,
+                    comentarios: item.observaciones || item.comentarios
+                }));
+            } else if (key === 'riu_transfers') {
+                itemsToInsert = data.map((item, idx) => ({
+                    id: item.id || item.transfer_id || `TRF-${Date.now()}-${idx}`,
+                    tipo: item.tipo,
+                    pasajeros: item.pax || item.pasajeros || 1,
+                    habitacion: item.habitacion,
+                    hora: item.hora,
+                    lugar_destino: item.destino || item.lugar_destino,
+                    compania: item.compania,
+                    vuelo: item.vuelo,
+                    autor: item.autor
+                }));
             } else if (key === 'riu_rack') {
                 // El rack suele venir como un objeto { "101": { status: '...', comments: '...' }, ... }
                 itemsToInsert = Object.entries(data).map(([num, val]) => ({
@@ -388,6 +413,12 @@ router.post('/:key', async (req, res) => {
         // 5. Solo si la DB tuvo éxito (o no hay mapeo), guardamos el JSON
         const filePath = path.join(STORAGE_DIR, `${key}.json`);
         await fs.writeFile(filePath, JSON.stringify(data, null, 4), 'utf8');
+
+        // 6. Broadcast change to all clients
+        const broadcast = req.app.get('broadcast');
+        if (broadcast) {
+            broadcast({ type: 'data-changed', key });
+        }
 
         res.json({ success: true, source: tableName ? 'db+json' : 'json' });
 

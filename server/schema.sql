@@ -132,9 +132,11 @@ CREATE TABLE IF NOT EXISTS reservas_instalaciones (
     instalacion VARCHAR(100),
     habitacion VARCHAR(10),
     fecha DATE,
-    hora VARCHAR(5),
+    hora_inicio VARCHAR(5),
+    hora_fin VARCHAR(5),
     personas INT DEFAULT 1,
     nombre VARCHAR(255),
+    autor VARCHAR(100),
     comentarios TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

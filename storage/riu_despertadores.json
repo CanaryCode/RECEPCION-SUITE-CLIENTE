@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "habitacion": "102",
+        "hora": "22:02",
+        "comentario": "dfr",
+        "autor": "Javi",
+        "actualizadoEn": "2026-02-27T04:29:44.747Z"
+    }
+]

@@ -38,7 +38,7 @@ import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
 
 // --- SISTEMAS CORE (NÚCLEO) ---
 import { APP_CONFIG, Config } from "./core/Config.js?v=V153_DB_CONFIG";
-import { Api } from "./core/Api.js?v=V152_HTTP_LOCAL";
+import { Api } from "./core/Api.js?v=V155_PNA_FIX";
 import { Modal } from "./core/Modal.js?v=V147_PROXY_FIX";
 import { Router } from "./core/Router.js?v=V147_PROXY_FIX";
 import { CompLoader } from "./core/CompLoader.js?v=V147_PROXY_FIX";
@@ -48,6 +48,7 @@ import { Utils } from "./core/Utils.js?v=V147_PROXY_FIX";
 import { RoomDetailModal } from "./core/RoomDetailModal.js?v=V147_PROXY_FIX";
 import "./core/PrintService.js?v=V147_PROXY_FIX";
 import { SecurityBarrier } from "./core/SecurityBarrier.js?v=V147_PROXY_FIX";
+import { realTimeSync } from "./core/RealTimeSync.js";
 
 // Global debug helper
 window.clearConfigOverride = () => {
@@ -360,6 +361,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         });
     }, 10000);
+
+    // 8. Iniciar sincronización en tiempo real
+    realTimeSync.connect();
   } catch (criticalError) {
     console.error("CRITICAL BOOT ERROR:", criticalError);
     const errorBox = document.getElementById("global-error-box");

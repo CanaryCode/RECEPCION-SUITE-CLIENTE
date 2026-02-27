@@ -1,5 +1,6 @@
 import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
 import { Api } from '../core/Api.js?v=V145_VAL_FIX';
+import { realTimeSync } from '../core/RealTimeSync.js';
 import { LocalStorage } from '../core/LocalStorage.js';
 
 /**
@@ -25,6 +26,11 @@ export class BaseService {
         this._initialized = false;
         /** @type {Object<string, string> | null} */
         this.schema = null; // Opcional: Definido en clases hijas
+
+        // Registrar para refresco automático si la sincronización está activa
+        if (this.syncEnabled) {
+            realTimeSync.registerService(this.endpoint, this);
+        }
     }
 
     /**
@@ -71,7 +77,7 @@ export class BaseService {
                     if (typeof item[key] === 'string' && item[key].trim() !== '' && !isNaN(Number(item[key]))) {
                         // Es un número válido en string
                     } else if (typeof item[key] !== 'number' || isNaN(item[key])) {
-                         throw new Error(`El campo '${key}' debe ser un número válido.`);
+                        throw new Error(`El campo '${key}' debe ser un número válido.`);
                     }
                 } else if (actualType !== type && type !== 'any') {
                     throw new Error(`Tipo de dato inválido para '${key}': esperado ${type}, recibido ${actualType}`);
@@ -156,7 +162,7 @@ export class BaseService {
 
         this.cache = data;
         LocalStorage.set(this.endpoint, data);
-        
+
         // Push a la cola de sincronización (SyncManager)
         if (this.syncEnabled) {
             import('../core/SyncManager.js').then(({ syncManager }) => {
@@ -173,7 +179,7 @@ export class BaseService {
      */
     _ensureArray(data) {
         if (Array.isArray(data)) return data;
-        
+
         if (data && typeof data === 'object') {
             // Si el objeto tiene campos que parecen de esquema (ej: habitacion, texto...), es un solo item.
             const isSingleItem = this.schema && Object.keys(this.schema).some(k => k in data);
@@ -183,7 +189,7 @@ export class BaseService {
             // Si no, asumimos que es un diccionario { id: item } y extraemos los valores
             return Object.values(data);
         }
-        
+
         return [];
     }
 
@@ -209,7 +215,7 @@ export class BaseService {
 
         const index = array.findIndex(x => x[idField] == id);
         if (index === -1) return this.add(data);
-        
+
         const newAll = [...array];
         newAll[index] = { ...newAll[index], ...data };
         return this.save(newAll);
@@ -221,7 +227,7 @@ export class BaseService {
     async delete(id, idField = 'id') {
         const all = await this.init();
         const array = this._ensureArray(all);
-        
+
         const newAll = array.filter(x => x[idField] != id);
         return this.save(newAll);
     }
@@ -290,7 +296,7 @@ export class BaseService {
         if (!this.syncEnabled || !APP_CONFIG.SYSTEM.USE_SYNC_SERVER) return;
         try {
             const { syncManager } = await import('../core/SyncManager.js');
-            
+
             // CRITICO: No descargar si tenemos cambios locales pendientes de subir
             // para evitar sobrescribir con datos antiguos del servidor (Race Condition)
             if (syncManager.hasPending(this.endpoint)) {
@@ -299,13 +305,14 @@ export class BaseService {
             }
 
             const remoteData = await syncManager.pull(this.endpoint);
-            
+
             if (remoteData) {
-                const localStr = JSON.stringify(this.cache);
+                // Validación rápida: Solo actualizar si hay cambios reales
                 const remoteStr = JSON.stringify(remoteData);
+                const localStr = JSON.stringify(this.cache);
 
                 if (localStr !== remoteStr) {
-
+                    console.log(`[BaseService] ${this.endpoint} actualizado desde servidor`);
                     this.cache = remoteData;
                     LocalStorage.set(this.endpoint, remoteData);
                     // Emitir evento global por si el UI necesita refrescarse

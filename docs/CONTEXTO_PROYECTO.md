@@ -593,3 +593,22 @@ Para garantizar que solo el personal autorizado acceda al Panel de Control Web (
   1. El Agente Local abre silenciosamente un WebSocket saliente hacia el Servidor Central Público y se autentica con su huella de hardware.
   2. El Servidor valida y mantiene el "Túnel Abierto".
   3. Cuando el Admin usa el Panel Web, la orden viaja al Servidor Central y luego hacia el Agente Local a través del túnel preexistente.
+
+## 19. Sincronización en Tiempo Real (WebSockets)
+
+Para mantener los datos actualizados en todas las estaciones de trabajo sin necesidad de recargar la página, el sistema implementa un mecanismo de "Push" basado en WebSockets.
+
+### 19.1. Servidor de Notificaciones
+- **Ubicación**: Integrado en `server/app.js`.
+- **Puerto**: Utiliza el mismo puerto que la API (3000).
+- **Funcionamiento**: El servidor mantiene una lista de clientes conectados. Cuando se produce una escritura en el disco (MariaDB/JSON) a través de `storage.js`, se emite un evento `data-changed` incluyendo la `key` (endpoint) del recurso modificado.
+
+### 19.2. Cliente de Tiempo Real (`RealTimeSync.js`)
+- **Conexión**: El cliente establece una conexión automática al iniciar la app (`main.js`).
+- **Gestión de Reconexión**: Implementa lógica de reintento automático si la conexión se pierde.
+- **Protocolo**: Utiliza `wss://` si el sitio se sirve por HTTPS, o `ws://` por HTTP.
+
+### 19.3. Refresco Selectivo y Silencioso
+- **Registro**: Cada `BaseService` se registra en el `RealTimeSync` al inicializarse.
+- **Acción**: Al recibir una notificación de cambio para su endpoint, el servicio ejecuta `syncWithServer()` en segundo plano.
+- **Optimización**: El sistema solo dispara eventos de actualización de UI (`service-synced`) si los datos remotos son realmente distintos de los locales (comparación de contenido JSON), evitando parpadeos innecesarios en la interfaz.

@@ -99,13 +99,21 @@ export const ReservasInstalaciones = {
             mapData: (data) => {
                 const now = Date.now();
                 const esExterno = !!data.externo_switch;
+                // Extraemos explícitamente cada campo para garantizar tipos correctos
+                // (los inputs de tipo time a veces se pasan como objetos en lugar de strings)
+                const toStr = (v) => (v && typeof v === 'object' && v.value !== undefined) ? v.value : String(v || '');
                 return {
-                    ...data,
                     id: data.id || `RES-${now}`,
+                    instalacion: toStr(data.instalacion),
+                    habitacion: esExterno ? 'EXTERNO' : toStr(data.habitacion).padStart(3, '0'),
+                    fecha: toStr(data.fecha),
+                    hora_inicio: toStr(data.hora_inicio),
+                    hora_fin: toStr(data.hora_fin),
+                    pax: parseInt(data.pax) || 1,
+                    nombre_cliente: toStr(data.nombre_cliente),
+                    observaciones: toStr(data.observaciones),
                     externo: esExterno,
-                    habitacion: esExterno ? 'EXTERNO' : data.habitacion.toString().padStart(3, '0'),
                     timestamp: now,
-                    pax: parseInt(data.pax) || 1
                 };
             },
             onSuccess: () => {

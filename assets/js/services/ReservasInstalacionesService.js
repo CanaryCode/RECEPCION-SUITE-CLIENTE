@@ -11,15 +11,10 @@ class ReservasInstalacionesService extends BaseService {
         
         this.schema = {
             id: 'string',
-            habitacion: 'string', // A veces las habs pueden tener letras o ser tratadas como string
             instalacion: 'string',
             fecha: 'string',
             hora_inicio: 'string',
             hora_fin: 'string',
-            pax: 'number',
-            observaciones: 'string',
-            autor: 'string',
-            timestamp: 'number'
         };
     }
 

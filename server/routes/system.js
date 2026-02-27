@@ -35,35 +35,12 @@ const isWin = process.platform === 'win32';
  * Proxies the request to the Local Agent (3001) to get PC-specific config.
  */
 router.get('/local-config', async (req, res) => {
-    const ports = [3001, 3002];
-    const protocols = ['https', 'http'];
-    let lastError = null;
-
-    for (const port of ports) {
-        for (const protocol of protocols) {
-            try {
-                const agentUrl = `${protocol}://127.0.0.1:${port}/api/system/local-config`;
-                const adminPass = req.headers['x-admin-password'];
-
-                console.log(`[SYSTEM PROXY] Trying local-config on ${agentUrl}...`);
-                const response = await fetch(agentUrl, {
-                    headers: { 'x-admin-password': adminPass },
-                    dispatcher: protocol === 'https' ? new (require('undici').Agent)({ connect: { rejectUnauthorized: false } }) : undefined,
-                    signal: AbortSignal.timeout(2000)
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    return res.json(data);
-                }
-            } catch (err) {
-                lastError = err;
-            }
-        }
-    }
-
-    console.error('[SYSTEM PROXY] All attempts failed for local-config:', lastError?.message);
-    res.status(502).json({ error: 'No se pudo obtener la configuración local del agente.', details: lastError?.message });
+    // El agente corre en el PC del CLIENTE, no en el servidor.
+    // El servidor no puede hacer proxy a la red privada del cliente.
+    // Config local se gestiona únicamente a través del heartbeat del agente.
+    // Devolvemos config vacía para que el cliente continúe sin bloqueo.
+    console.log('[SYSTEM] local-config: devolviendo config vacía (el agente está en red del cliente)');
+    return res.json({});
 });
 
 /**

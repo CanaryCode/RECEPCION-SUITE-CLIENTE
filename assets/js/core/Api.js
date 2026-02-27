@@ -167,33 +167,20 @@ export const Api = {
      */
     async validateStation() {
         try {
-            // 1. Obtener el Local Token del Agente (prueba local)
-            // Intentamos HTTP y HTTPS para saltar bloqueos de Mixed Content si el sitio es seguro
+            // 1. Obtener el Local Token del Agente via proxy del servidor central
+            // El navegador NO puede acceder a 127.0.0.1 desde HTTPS (Private Network Access policy).
+            // En su lugar, el servidor conoce el token del agente a través del heartbeat.
             let localToken = null;
-            const ports = ['3001', '3000']; // El agente suele estar en 3001
-
-            for (const port of ports) {
-                try {
-                    // Solo intentamos HTTP para evitar el ERR_SSL_PROTOCOL_ERROR en la consola.
-                    // El agente local no tiene certificados SSL válidos, así que HTTPS siempre fallará localmente.
-                    const protocols = ['http:'];
-                    for (const proto of protocols) {
-                        try {
-                            // Usar siempre 127.0.0.1 para evitar que IPv6 (::1) bloquee la respuesta en Windows
-                            const host = '127.0.0.1';
-                            const res = await fetch(`${proto}//${host}:${port}/local-token`, {
-                                mode: 'cors',
-                                cache: 'no-cache'
-                            });
-                            if (res.ok) {
-                                const data = await res.json();
-                                localToken = data.token;
-                                break;
-                            }
-                        } catch (e) { }
-                    }
-                    if (localToken) break;
-                } catch (err) { }
+            try {
+                const proxyBase = APP_CONFIG.SYSTEM.API_URL ? APP_CONFIG.SYSTEM.API_URL.replace(/\/api$/, '') : '';
+                const tokenUrl = `${proxyBase}/api/admin/agent-proxy/local-token?_t=${Date.now()}`;
+                const tokenRes = await fetch(tokenUrl, { headers: { 'Accept': 'application/json' } });
+                if (tokenRes.ok) {
+                    const tokenData = await tokenRes.json();
+                    localToken = tokenData.token || null;
+                }
+            } catch (e) {
+                // Silently fail - will try proxy auth without token
             }
 
             console.log(`[AUTH] Local Handshake Token: ${localToken ? 'Obtenido' : 'FALLO'}`);

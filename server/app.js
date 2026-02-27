@@ -2,8 +2,9 @@ const express = require('express'); // Force restart 2
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs'); // Changed from fsSync to fs
-const https = require('https'); // Added https
-const crypto = require('crypto'); // Added crypto
+const https = require('https');
+const crypto = require('crypto');
+const WebSocket = require('ws');
 
 const STORAGE_DIR = path.resolve(__dirname, '../storage');
 const LOG_FILE = path.join(STORAGE_DIR, 'server_debug.log');
@@ -43,7 +44,7 @@ const AUTHORIZED_STATIONS = ['RS-SECRET-8291-AJPD'];
 app.use('/api', (req, res, next) => {
     // Excluir endpoints públicos y de autenticación de la validación de estación
     // Incluimos 'storage' porque el App Guest necesita leer configuración y datos
-    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage/.test(req.originalUrl);
+    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];
@@ -180,6 +181,21 @@ app.use((err, req, res, next) => {
     });
 });
 
+// --- BROADCAST SYSTEM (WebSockets) ---
+let wss;
+const broadcast = (data) => {
+    if (!wss) return;
+    const msg = JSON.stringify(data);
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(msg);
+        }
+    });
+};
+
+// Export broadcast for routes to use
+app.set('broadcast', broadcast);
+
 // --- INICIO DE SERVIDOR ---
 const PORT = 3000;
 const certPath = '/etc/letsencrypt/live/www.desdetenerife.com/fullchain.pem';
@@ -191,21 +207,27 @@ try {
             cert: fs.readFileSync(certPath),
             key: fs.readFileSync(keyPath)
         };
-        https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
+        const server = https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
             console.log(`[SERVER] HTTPS iniciado en puerto ${PORT} (SSL ACTIVO)`);
             console.log(`========================================`);
             console.log(`  HOTEL MANAGER SERVER v5.0 [EXPRESS]`);
             console.log(`  Running at https://localhost:${PORT}`);
             console.log(`========================================`);
         });
+        wss = new WebSocket.Server({ server });
+        wss.on('connection', (ws) => {
+            console.log('[WSS] Cliente conectado');
+            ws.on('close', () => console.log('[WSS] Cliente desconectado'));
+        });
     } else {
-        app.listen(PORT, '0.0.0.0', () => {
+        const server = app.listen(PORT, '0.0.0.0', () => {
             console.log(`[SERVER] HTTP iniciado en puerto ${PORT} (AVISO: SSL No encontrado en ${certPath})`);
             console.log(`========================================`);
             console.log(`  HOTEL MANAGER SERVER v5.0 [EXPRESS]`);
             console.log(`  Running at http://localhost:${PORT}`);
             console.log(`========================================`);
         });
+        wss = new WebSocket.Server({ server });
     }
 } catch (err) {
     console.error(`[SERVER] Fallo al iniciar HTTPS: ${err.message}`);

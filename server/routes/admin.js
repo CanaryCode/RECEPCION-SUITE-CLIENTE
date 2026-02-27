@@ -66,7 +66,7 @@ const activeAgents = new Map();
  * Middleware de Autenticación Admin
  */
 function authMiddleware(req, res, next) {
-    if (req.path === '/login' || req.path === '/login/' || req.path === '/agent-proxy/auth/id' || req.path === '/agent-proxy/auth/id/' || req.path === '/agent-proxy/register' || req.path === '/agent-proxy/register/') return next();
+    if (req.path === '/login' || req.path === '/login/' || req.path === '/agent-proxy/auth/id' || req.path === '/agent-proxy/auth/id/' || req.path === '/agent-proxy/register' || req.path === '/agent-proxy/register/' || req.path === '/agent-proxy/local-token' || req.path === '/agent-proxy/local-token/') return next();
 
     // v4 Session Verification
     if (req.session && req.session.authenticated) {
@@ -354,6 +354,24 @@ function getClientIp(req) {
  * coincide con algún Agente Local registrado mediante heartbeat reciente.
  * hard-logic: El cliente debe proveer el localToken de su agente para demostrar cercanía.
  */
+/**
+ * GET /agent-proxy/local-token
+ * Server-side proxy to retrieve the local agent token for the requesting client IP.
+ * This bypasses the browser Private Network Access (PNA) policy which blocks
+ * direct HTTPS -> loopback (127.0.0.1) requests.
+ */
+router.get('/agent-proxy/local-token', (req, res) => {
+    const ip = getClientIp(req);
+    const agent = activeAgents.get(ip);
+    const isActive = agent && (Date.now() - agent.lastSeen < 60000);
+
+    if (isActive && agent.localToken) {
+        res.json({ token: agent.localToken });
+    } else {
+        res.status(404).json({ error: 'No agent registered for this IP', ip });
+    }
+});
+
 router.get('/agent-proxy/auth/id', (req, res) => {
     const ip = getClientIp(req);
     const agent = activeAgents.get(ip);

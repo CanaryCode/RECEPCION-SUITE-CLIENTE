@@ -88,18 +88,30 @@ class ValesService extends BaseService {
 
     async init() {
         await super.init();
-        
+
         // MIGRACIÓN: Asegurar que todos los registros antiguos cumplan con el nuevo esquema
         // Si no hacemos esto, BaseService.validate fallará al intentar añadir un nuevo vale
         if (Array.isArray(this.cache) && this.cache.length > 0) {
             let needsRepair = false;
             this.cache.forEach(v => {
                 // Campos que han sido añadidos progresivamente
+                if (v.fecha_creacion === undefined) {
+                    // Si el ID parece un timestamp (numérico y grande), lo usamos como fecha
+                    if (typeof v.id === 'number' && v.id > 1000000000000) {
+                        v.fecha_creacion = new Date(v.id).toISOString();
+                    } else {
+                        v.fecha_creacion = new Date().toISOString();
+                    }
+                    needsRepair = true;
+                }
                 if (v.usuario === undefined) { v.usuario = 'Anónimo'; needsRepair = true; }
                 if (v.firmado === undefined) { v.firmado = false; needsRepair = true; }
                 if (v.comentario === undefined) { v.comentario = ''; needsRepair = true; }
                 if (v.estado === undefined) { v.estado = 'Pendiente'; needsRepair = true; }
-                if (v.receptor === undefined && v.nombre) { v.receptor = v.nombre; needsRepair = true; }
+                if (v.receptor === undefined) {
+                    v.receptor = v.nombre || 'No especificado';
+                    needsRepair = true;
+                }
                 if (v.concepto === undefined) { v.concepto = 'Varios'; needsRepair = true; }
             });
 
@@ -108,7 +120,7 @@ class ValesService extends BaseService {
                 this.save(this.cache);
             }
         }
-        
+
         return this.cache;
     }
 }

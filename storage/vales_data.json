@@ -1,1 +1,16 @@
-[]
+[
+    {
+        "id": "1772166924024",
+        "habitacion": null,
+        "concepto": "gasolina",
+        "importe": "20.00",
+        "autor": null,
+        "created_at": "2026-02-27T04:35:24.000Z",
+        "fecha_creacion": "2026-02-27T16:23:21.286Z",
+        "usuario": "Anónimo",
+        "firmado": false,
+        "comentario": "",
+        "estado": "Pendiente",
+        "receptor": "No especificado"
+    }
+]
