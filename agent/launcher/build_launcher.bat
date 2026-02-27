@@ -14,7 +14,7 @@ set "SOURCE=Launcher.cs"
 set "OUTPUT=RecepcionSuite.exe"
 set "ICON=..\resources\images\icono.ico"
 
-:: 1. Cerrar el proceso si ya está abierto (evita error de acceso denegado)
+:: 1. Cerrar el proceso si ya está abierto
 echo [i] Cerrando instancias previas de !OUTPUT!...
 taskkill /f /im "!OUTPUT!" >nul 2>&1
 
@@ -27,10 +27,11 @@ if not exist "!SOURCE!" (
 echo [i] Intentando compilar !OUTPUT! via PowerShell...
 echo.
 
-:: 2. Asegurar que no haya restos de ejecuciones fallidas
-if exist compile_tmp.ps1 del /f /q compile_tmp.ps1 >nul 2>&1
+:: 2. Generar un nombre único para el script temporal para evitar bloqueos
+set "TEMP_PS1=compile_%RANDOM%.ps1"
+if exist "!TEMP_PS1!" del /f /q "!TEMP_PS1!" >nul 2>&1
 
-:: 3. Crear el script de PowerShell de forma más limpia
+:: 3. Crear el script de PowerShell
 (
 echo $source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8
 echo $params = New-Object System.CodeDom.Compiler.CompilerParameters
@@ -51,14 +52,14 @@ echo    exit 1
 echo } else {
 echo    exit 0
 echo }
-) > compile_tmp.ps1
+) > "!TEMP_PS1!"
 
 :: 4. Ejecutar el script de PowerShell
-powershell -ExecutionPolicy Bypass -File compile_tmp.ps1
+powershell -ExecutionPolicy Bypass -File "!TEMP_PS1!"
 set "EXIT_CODE=%errorlevel%"
 
 :: 5. Limpiar
-if exist compile_tmp.ps1 del /f /q compile_tmp.ps1 >nul 2>&1
+if exist "!TEMP_PS1!" del /f /q "!TEMP_PS1!" >nul 2>&1
 
 echo.
 if !EXIT_CODE! equ 0 (
@@ -69,7 +70,7 @@ if !EXIT_CODE! equ 0 (
 ) else (
     echo.
     echo [!] ERROR: La compilacion ha fallado. 
-    echo     Asegurate de que "!OUTPUT!" no este abierto.
+    echo     Si el error es "Acceso denegado", asegúrate de que "!OUTPUT!" no esté en uso.
     echo.
 )
 
