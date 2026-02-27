@@ -97,7 +97,21 @@ namespace RecepcionSuiteLauncher
                 WorkingDirectory = baseDir
             };
 
-            try { Process.Start(startInfo); } catch { }
+            try 
+            { 
+                Process.Start(startInfo); 
+            } 
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "No se pudo iniciar el Agente (Node.js).\n\n" +
+                    "Asegúrese de que Node.js está instalado y disponible en el sistema.\n" +
+                    "Error: " + ex.Message,
+                    "Error de Lanzamiento",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
         }
 
         static void OpenUrl(string url)

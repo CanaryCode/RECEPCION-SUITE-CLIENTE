@@ -2,9 +2,9 @@
     "name": "recepcion-suite-agent",
     "version": "1.0.0",
     "description": "Local Hardware Agent for Recepcion Suite",
-    "main": "agent.js",
+    "main": "src/index.js",
     "scripts": {
-        "start": "node agent.js"
+        "start": "node src/index.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
