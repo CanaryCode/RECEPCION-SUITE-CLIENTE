@@ -14,42 +14,51 @@ set "SOURCE=Launcher.cs"
 set "OUTPUT=RecepcionSuite.exe"
 set "ICON=..\resources\images\icono.ico"
 
+:: 1. Cerrar el proceso si ya está abierto (evita error de acceso denegado)
+echo [i] Cerrando instancias previas de !OUTPUT!...
+taskkill /f /im "!OUTPUT!" >nul 2>&1
+
 if not exist "!SOURCE!" (
     echo [!] ERROR: No se encuentra el archivo fuente '!SOURCE!' en esta carpeta.
     pause
     exit /b
 )
 
-echo [i] Intentando compilar !OUTPUT! via PowerShell (Metodo Universal)...
+echo [i] Intentando compilar !OUTPUT! via PowerShell...
 echo.
 
-:: Crear un pequeño script de PowerShell temporal para la compilación
-echo $source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8 > compile_tmp.ps1
-echo $params = New-Object System.CodeDom.Compiler.CompilerParameters >> compile_tmp.ps1
-echo $params.GenerateExecutable = $true >> compile_tmp.ps1
-echo $params.OutputAssembly = "!OUTPUT!" >> compile_tmp.ps1
-echo $params.CompilerOptions = "/target:winexe /codepage:65001" >> compile_tmp.ps1
-if exist "!ICON!" (
-    echo $params.CompilerOptions += " /win32icon:!ICON!" >> compile_tmp.ps1
-)
-echo $params.ReferencedAssemblies.Add("System.Windows.Forms.dll") ^| Out-Null >> compile_tmp.ps1
-echo $params.ReferencedAssemblies.Add("System.Drawing.dll") ^| Out-Null >> compile_tmp.ps1
-echo $params.ReferencedAssemblies.Add("System.dll") ^| Out-Null >> compile_tmp.ps1
-echo $provider = New-Object Microsoft.CSharp.CSharpCodeProvider >> compile_tmp.ps1
-echo $results = $provider.CompileAssemblyFromSource($params, $source) >> compile_tmp.ps1
-echo if ($results.Errors.Count -gt 0) { >> compile_tmp.ps1
-echo    $results.Errors ^| ForEach-Object { Write-Error $_.ErrorText } >> compile_tmp.ps1
-echo    exit 1 >> compile_tmp.ps1
-echo } else { >> compile_tmp.ps1
-echo    exit 0 >> compile_tmp.ps1
-echo } >> compile_tmp.ps1
+:: 2. Asegurar que no haya restos de ejecuciones fallidas
+if exist compile_tmp.ps1 del /f /q compile_tmp.ps1 >nul 2>&1
 
-:: Ejecutar el script de PowerShell
+:: 3. Crear el script de PowerShell de forma más limpia
+(
+echo $source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8
+echo $params = New-Object System.CodeDom.Compiler.CompilerParameters
+echo $params.GenerateExecutable = $true
+echo $params.OutputAssembly = "!OUTPUT!"
+echo $params.CompilerOptions = "/target:winexe /codepage:65001"
+echo if (Test-Path "!ICON!"^) {
+echo     $params.CompilerOptions += " /win32icon:!ICON!"
+echo }
+echo $params.ReferencedAssemblies.Add("System.Windows.Forms.dll"^) ^| Out-Null
+echo $params.ReferencedAssemblies.Add("System.Drawing.dll"^) ^| Out-Null
+echo $params.ReferencedAssemblies.Add("System.dll"^) ^| Out-Null
+echo $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+echo $results = $provider.CompileAssemblyFromSource($params, $source^)
+echo if ($results.Errors.Count -gt 0^) {
+echo    $results.Errors ^| ForEach-Object { Write-Error $_.ErrorText }
+echo    exit 1
+echo } else {
+echo    exit 0
+echo }
+) > compile_tmp.ps1
+
+:: 4. Ejecutar el script de PowerShell
 powershell -ExecutionPolicy Bypass -File compile_tmp.ps1
 set "EXIT_CODE=%errorlevel%"
 
-:: Limpiar
-if exist compile_tmp.ps1 del compile_tmp.ps1
+:: 5. Limpiar
+if exist compile_tmp.ps1 del /f /q compile_tmp.ps1 >nul 2>&1
 
 echo.
 if !EXIT_CODE! equ 0 (
@@ -59,8 +68,8 @@ if !EXIT_CODE! equ 0 (
     echo.
 ) else (
     echo.
-    echo [!] ERROR: La compilación ha fallado. 
-    echo     Asegúrate de tener .NET Framework 4.0 o superior activado.
+    echo [!] ERROR: La compilacion ha fallado. 
+    echo     Asegurate de que "!OUTPUT!" no este abierto.
     echo.
 )
 
