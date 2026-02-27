@@ -35,31 +35,59 @@ const isWin = process.platform === 'win32';
  * Proxies the request to the Local Agent (3001) to get PC-specific config.
  */
 router.get('/local-config', async (req, res) => {
-    try {
-        // En el servidor central, intentamos contactar con el agente local (3001)
-        const agentUrl = 'https://127.0.0.1:3001/api/system/local-config';
-        const adminPass = req.headers['x-admin-password'];
+    const ports = [3001, 3002];
+    const protocols = ['https', 'http'];
+    let lastError = null;
 
-        const response = await fetch(agentUrl, {
-            headers: { 'x-admin-password': adminPass },
-            dispatcher: new (require('undici').Agent)({ connect: { rejectUnauthorized: false } })
-        });
+    for (const port of ports) {
+        for (const protocol of protocols) {
+            try {
+                const agentUrl = `${protocol}://127.0.0.1:${port}/api/system/local-config`;
+                const adminPass = req.headers['x-admin-password'];
 
-        const data = await response.json();
-        res.json(data);
-    } catch (err) {
-        console.error('[SYSTEM PROXY] Error fetching local-config:', err.message);
-        res.status(502).json({ error: 'No se pudo obtener la configuración local del agente.', details: err.message });
+                console.log(`[SYSTEM PROXY] Trying local-config on ${agentUrl}...`);
+                const response = await fetch(agentUrl, {
+                    headers: { 'x-admin-password': adminPass },
+                    dispatcher: protocol === 'https' ? new (require('undici').Agent)({ connect: { rejectUnauthorized: false } }) : undefined,
+                    signal: AbortSignal.timeout(2000)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return res.json(data);
+                }
+            } catch (err) {
+                lastError = err;
+            }
+        }
     }
+
+    console.error('[SYSTEM PROXY] All attempts failed for local-config:', lastError?.message);
+    res.status(502).json({ error: 'No se pudo obtener la configuración local del agente.', details: lastError?.message });
 });
 
 /**
  * POST /api/system/launch
- * Opens an executable or path on the system.
+ * Proxies to local agent to open an executable or path.
  */
-router.post('/launch', (req, res) => {
-    // En el Servidor (Ubuntu), el lanzamiento local suele estar desactivado o redirigido
-    res.status(501).json({ error: 'Launch functionality is only available via Local Agent' });
+router.post('/launch', async (req, res) => {
+    try {
+        const agentUrl = 'http://127.0.0.1:3001/api/system/launch';
+        const response = await fetch(agentUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-station-key': req.headers['x-station-key'] || ''
+            },
+            body: JSON.stringify(req.body)
+        });
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (err) {
+        // Fallback or error if agent is down
+        res.status(502).json({ error: 'El Agente Local no responde a la petición de lanzamiento.' });
+    }
 });
 
 /**

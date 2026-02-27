@@ -115,7 +115,7 @@ export const Ui = {
         if (append && (!data || data.length === 0)) return;
 
         const html = data.map((item, index) => rowRenderer(item, index)).join('');
-        
+
         if (append) {
             // Eliminar sentinels viejos antes de añadir
             const oldLoader = container.querySelector('[id^="sentinel-"]');
@@ -166,7 +166,7 @@ export const Ui = {
 
         const { Utils } = await import('./Utils.js');
         const habs = Utils.getHabitaciones();
-        
+
         datalist.innerHTML = habs.map(h => `<option value="${h.num}">`).join('');
     },
 
@@ -239,7 +239,7 @@ export const Ui = {
             // Limpiar instancia previa si existe
             const old = bootstrap.Tooltip.getInstance(el);
             if (old) old.dispose();
-            
+
             new bootstrap.Tooltip(el, {
                 trigger: 'hover',
                 boundary: 'window'
@@ -256,7 +256,19 @@ export const Ui = {
      */
     getFormData: (formEl) => {
         const form = typeof formEl === 'string' ? document.getElementById(formEl) : formEl;
-        if (!form) return {};
+        if (!form) {
+            console.warn(`[Ui] getFormData: Element or ID '${formEl}' not found.`);
+            return {};
+        }
+
+        // Defensive check: if form.id is '[object HTMLInputElement]', it's a bug elsewhere
+        if (form.id === '[object HTMLInputElement]') {
+            console.error('[Ui] CRITICAL: Form ID is "[object HTMLInputElement]". This indicates an element was assigned to an .id property somewhere.');
+        }
+
+        if (form.tagName !== 'FORM' && form.tagName !== 'DIV') {
+            console.warn(`[Ui] getFormData: Extracting from a non-form element (${form.tagName}). ID: ${form.id || 'unknown'}`);
+        }
 
         console.log(`[Ui] Extracting data from form: ${form.id || 'unknown'}`);
         const data = {};
@@ -316,7 +328,7 @@ export const Ui = {
 
             // FIX: Prevent crash if idValue is undefined/null
             if (idValue === undefined || idValue === null) {
-                idValue = ''; 
+                idValue = '';
             } else {
                 idValue = String(idValue).trim();
             }
@@ -336,10 +348,10 @@ export const Ui = {
             // 4. Mapear datos (Añadir autor por defecto)
             let finalData = mapData ? mapData(rawData) : rawData;
             if (!finalData) return; // Validación interna fallida
-            
+
             // FIX: Ensure pax is a number if present
-            if ('pax' in finalData) { 
-                finalData.pax = parseInt(finalData.pax) || 0; 
+            if ('pax' in finalData) {
+                finalData.pax = parseInt(finalData.pax) || 0;
                 if (finalData.pax < 0) finalData.pax = 0;
             }
 
@@ -358,25 +370,25 @@ export const Ui = {
                 const originalId = form.dataset.originalId;
 
                 if (originalId) {
-                     // Borrado forzoso del registro anterior para asegurar limpieza total
-                     // especialmente si la clave (hab) ha cambiado.
-                     await service.removeByKey(originalId.toString().trim(), targetKeyField);
+                    // Borrado forzoso del registro anterior para asegurar limpieza total
+                    // especialmente si la clave (hab) ha cambiado.
+                    await service.removeByKey(originalId.toString().trim(), targetKeyField);
                 }
-                
+
                 // Guardar el registro NUEVO (o actualizado)
                 await service.setByKey(finalId, finalData, targetKeyField);
-                
+
                 // Cleanup dataset
                 delete form.dataset.originalId;
 
                 // 6. Feedback
                 Ui.showToast("Registro guardado correctamente.", "success");
                 form.reset();
-                
+
                 // Limpiar campos ocultos o visuales especiales
                 const hiddenId = form.querySelector(`input[type="hidden"]#${idField}`);
                 if (hiddenId) hiddenId.value = '';
-                
+
                 // 7. Success logic (ej: mostrarLista)
                 if (onSuccess) onSuccess(finalId, finalData);
             } catch (err) {
@@ -445,8 +457,8 @@ export const Ui = {
         try {
             // 1. Eliminar elementos visuales del DOM (Tooltips huérfanos)
             const tooltips = document.querySelectorAll('.tooltip');
-            tooltips.forEach(t => t.remove()); 
-            
+            tooltips.forEach(t => t.remove());
+
             // 2. Cerrar instancias de Bootstrap
             const triggers = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             triggers.forEach(trigger => {
@@ -513,7 +525,7 @@ export const Ui = {
         thead.querySelectorAll('th[data-sort]').forEach(th => {
             // Ensure cursor pointer
             th.style.cursor = 'pointer';
-            
+
             // Add icon initially
             if (!th.querySelector('.sort-icon')) {
                 const i = document.createElement('i');
@@ -524,10 +536,10 @@ export const Ui = {
             // Remove old listeners (cloning is a quick way, but might break other listeners. 
             // Better to check if already initialized or use a specific class).
             // For now, we assume this is called once per table init.
-            
+
             th.onclick = () => {
                 const column = th.dataset.sort;
-                
+
                 if (currentSortColumn === column) {
                     currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
                 } else {
