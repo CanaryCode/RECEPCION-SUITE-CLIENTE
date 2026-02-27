@@ -4,39 +4,55 @@ title AGENTE LOCAL - RECEPCION SUITE
 cd /d "%~dp0"
 
 echo ===================================================
-echo   LANZADOR AUTOMATICO - AGENTE LOCAL
+echo   INSTALADOR Y LANZADOR - AGENTE LOCAL
 echo ===================================================
 echo.
 
-:: 1. Verificar si Node.js está instalado
-echo [i] Verificando Node.js...
+:: 1. Verificar Node.js
+echo [1/3] Verificando Node.js...
 node -v >nul 2>&1
 if !errorlevel! neq 0 (
-    echo [!] ERROR: Node.js no esta instalado. 
-    echo     Por favor, instalelo desde https://nodejs.org/
+    echo [!] ERROR: Node.js NO esta instalado. 
+    echo     Por favor, instalelo desde: https://nodejs.org/
+    echo.
     pause
     exit /b
+) else (
+    for /f "tokens=*" %%a in ('node -v') do set NODE_VER=%%a
+    echo [OK] Node.js detectado: !NODE_VER!
 )
 
-:: 2. Verificar carpeta node_modules
+:: 2. Verificar dependencias
 if not exist "node_modules" (
-    echo [i] No se encontraron dependencias (node_modules). 
-    echo     Instalando librerias necesarias (npm install)...
+    echo [2/3] No se encontraron dependencias. Instalando...
+    echo     Esto puede tardar un minuto...
     echo.
+    
+    :: Comprobar si existe package.json
+    if not exist "package.json" (
+        echo [!] ERROR: No se encuentra el archivo 'package.json'.
+        echo     Asegurate de haber extraido la carpeta 'agent' completa.
+        pause
+        exit /b
+    )
+
+    :: Ejecutar instalacion
     call npm install
     if !errorlevel! neq 0 (
         echo.
         echo [!] ERROR: La instalacion de dependencias ha fallado.
-        echo     Asegurese de tener conexion a internet.
+        echo     Comprueba tu conexion a internet o si tienes permisos.
         pause
         exit /b
     )
     echo.
-    echo [i] Dependencias instaladas con exito.
+    echo [OK] Dependencias instaladas con exito.
+) else (
+    echo [2/3] Dependencias ya instaladas.
 )
 
 :: 3. Iniciar el Agente
-echo [i] Iniciando Agente Local (src/index.js)...
+echo [3/3] Iniciando Agente Local...
 echo.
 node src/index.js
 
