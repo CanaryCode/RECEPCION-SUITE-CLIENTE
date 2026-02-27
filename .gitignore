@@ -34,3 +34,7 @@ server/app_v*
 server/wsManager*
 agent/agent_v*
 server/routes/admin_v*
+.agent_token
+agent/.agent_token
+agent/agent.log
+/storage/*.log
