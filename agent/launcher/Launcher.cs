@@ -63,10 +63,7 @@ namespace RecepcionSuiteLauncher
                     baseDir = parentDir;
                     scriptPath = Path.Combine(baseDir, scriptName);
                 }
-                // 2. Si estamos dentro dset "SOURCE=Launcher.cs"
-// The following lines appear to be from a batch script and cannot be inserted into C# code.
-// set "OUTPUT=RecepcionSuite.exe"
-// set "ICON=..\resources\images\icono.ico"
+                // 2. Si estamos dentro de 'agent/launcher', retroceder dos niveles si es necesario
                 else if (scriptName.Contains("agent/")) {
                     string altPath = Path.Combine(baseDir, "../../", scriptName);
                     if (File.Exists(altPath)) {
