@@ -72,11 +72,32 @@
                                 </div>
                             </div>
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1">RECURSOS PC (Local)</label>
-                                <div class="progress bg-dark mb-1" style="height: 4px;">
-                                    <div id="mem-bar" class="progress-bar bg-primary" style="width: 0%"></div>
+                                <label class="text-secondary small mb-1"><i class="bi bi-cpu me-1"></i>USO DE
+                                    CPU</label>
+                                <div class="progress bg-dark mb-1" style="height: 6px; border-radius: 10px;">
+                                    <div id="cpu-bar" class="progress-bar bg-info"
+                                        style="width: 0%; transition: width 0.5s ease;"></div>
                                 </div>
-                                <span class="small text-secondary" id="mem-text">Mem: 0 / 0 MB</span>
+                                <span class="small text-secondary" id="cpu-text">0%</span>
+                            </div>
+                            <div class="status-item mb-4">
+                                <label class="text-secondary small mb-1"><i class="bi bi-memory me-1"></i>MEMORIA
+                                    RAM</label>
+                                <div class="progress bg-dark mb-1" style="height: 6px; border-radius: 10px;">
+                                    <div id="mem-bar" class="progress-bar bg-primary"
+                                        style="width: 0%; transition: width 0.5s ease;"></div>
+                                </div>
+                                <span class="small text-secondary" id="mem-text">RAM: 0 / 0 MB</span>
+                            </div>
+                            <div class="status-item mb-2">
+                                <label class="text-secondary small mb-1"><i class="bi bi-globe2 me-1"></i>TRÁFICO
+                                    RED</label>
+                                <div class="d-flex justify-content-between align-items-center small mt-1">
+                                    <span class="text-success fw-bold"><i class="bi bi-download me-1"></i><span
+                                            id="net-rx">0</span> KB/s</span>
+                                    <span class="text-primary fw-bold"><i class="bi bi-upload me-1"></i><span
+                                            id="net-tx">0</span> KB/s</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -100,12 +121,13 @@
                                     <label class="text-secondary small mb-2 d-block">SERVIDOR LOCAL (TENERIFE
                                         PC)</label>
                                     <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-success" id="btn-start-server"
-                                            title="Arrancar server/app.js local">
-                                            <i class="bi bi-play-fill me-2"></i>Iniciar Local
+                                        <button class="btn btn-success rounded-pill px-4 shadow-sm"
+                                            id="btn-start-server" title="Arrancar server/app.js local">
+                                            <i class="bi bi-lightning-charge-fill me-2"></i>Iniciar Local
                                         </button>
-                                        <button class="btn btn-danger" id="btn-stop-server" title="Apagar server local">
-                                            <i class="bi bi-stop-fill me-2"></i>Apagar Local
+                                        <button class="btn btn-danger rounded-pill px-4 shadow-sm" id="btn-stop-server"
+                                            title="Apagar server local">
+                                            <i class="bi bi-power me-2"></i>Apagar Local
                                         </button>
                                     </div>
                                 </div>
@@ -114,27 +136,32 @@
                                     <label class="text-secondary small mb-2 d-block">SERVIDOR REMOTO (WEB
                                         TENERIFE)</label>
                                     <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-outline-success" id="btn-start-remote">
+                                        <button class="btn btn-outline-success rounded-pill px-4 shadow-sm"
+                                            id="btn-start-remote">
                                             <i class="bi bi-cloud-upload-fill me-2"></i>Iniciar Remoto
                                         </button>
-                                        <button class="btn btn-outline-danger" id="btn-stop-remote">
+                                        <button class="btn btn-outline-danger rounded-pill px-4 shadow-sm"
+                                            id="btn-stop-remote">
                                             <i class="bi bi-cloud-slash-fill me-2"></i>Apagar Remoto
                                         </button>
-                                        <button class="btn btn-outline-info" id="btn-db-remote-check">
+                                        <button class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+                                            id="btn-db-remote-check">
                                             <i class="bi bi-database-check me-2"></i>Check DB Remota
                                         </button>
                                     </div>
                                 </div>
                                 <hr class="border-secondary opacity-25">
                                 <div class="d-flex flex-wrap gap-2">
-                                    <button class="btn btn-warning" id="btn-run-tests">
+                                    <button class="btn btn-warning rounded-pill px-4 shadow-sm text-dark fw-bold"
+                                        id="btn-run-tests">
                                         <i class="bi bi-shield-check me-2"></i>Pruebas Integridad
                                     </button>
-                                    <button class="btn btn-outline-info" id="btn-logs-refresh">
+                                    <button class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+                                        id="btn-logs-refresh">
                                         <i class="bi bi-clock-history me-2"></i>Refrescar Logs
                                     </button>
-                                    <a href="http://localhost:3000" target="_blank"
-                                        class="btn btn-outline-secondary ms-auto">
+                                    <a href="https://www.desdetenerife.com:3000" target="_blank"
+                                        class="btn btn-dark border-secondary rounded-pill px-4 ms-auto shadow-sm">
                                         <i class="bi bi-box-arrow-up-right me-2"></i>Abrir Aplicación
                                     </a>
                                 </div>
@@ -277,7 +304,7 @@
 
     <!-- Footer -->
     <footer class="mt-auto py-3 text-center border-top border-secondary opacity-50 small">
-        &copy; 2026 Recepción Suite Admin layer | <span id="server-version">v5.0</span>
+        &copy; 2026 Recepción Suite Admin layer | <span id="server-version">v6.0 [MODERN]</span>
     </footer>
 
     <!-- Login Overlay -->

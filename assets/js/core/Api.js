@@ -197,33 +197,49 @@ export const Api = {
             }
 
             console.log(`[AUTH] Local Handshake Token: ${localToken ? 'Obtenido' : 'FALLO'}`);
+            if (!localToken) {
+                console.warn("[AUTH] No se pudo obtener el token local del Agente. ¿Está el proceso iniciado?");
+            }
 
             // 2. Validar con el Servidor Central enviando el Token
-            // ANTI-PNA SERVER REGISTRY: Para saltar las prohibiciones de red privada (PNA) y IPv6 del navegador,
-            // usamos un proxy hacia nuestro Servidor Ubuntu. El Servidor verificará si el IP de nuestra conexión
-            // ha emitido un latido (Heartbeat) de un Agente Local activo recientemente.
             let proxyUrl = APP_CONFIG.SYSTEM.API_URL ? `${APP_CONFIG.SYSTEM.API_URL}/admin/agent-proxy/auth/id` : '/api/admin/agent-proxy/auth/id';
+            if (localToken) proxyUrl += `?token=${localToken}`;
 
-            if (localToken) {
-                proxyUrl += `?token=${localToken}`;
+            // --- BUCLE DE REINTENTO (Retry 401) ---
+            // Si el PC acaba de encender, el Agente puede tener un token nuevo que el servidor central 
+            // aún no conoce (el heartbeat tarda unos segundos). Reintentamos 3 veces antes de rendirnos.
+            let attempts = 0;
+            let response = null;
+
+            while (attempts < 3) {
+                attempts++;
+                response = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
+
+                if (response.ok) break;
+
+                if (response.status === 401 && attempts < 3) {
+                    console.warn(`[AUTH] Intento ${attempts}/3: 401 Unauthorized. Esperando sincronización del Agente...`);
+                    await new Promise(r => setTimeout(r, 4000)); // Esperar 4s para dar tiempo al heartbeat
+                    continue;
+                }
+                break;
             }
 
-            const response = await fetch(proxyUrl, {
-                headers: {
-                    'Accept': 'application/json'
+            if (!response || !response.ok) {
+                const errData = await response?.json().catch(() => ({}));
+                console.error(`[AUTH] Error en validación Proxy (${response?.status}):`, errData?.message || 'Error desconocido');
+
+                if (response?.status === 401) {
+                    sessionStorage.removeItem('RS_STATION_KEY');
                 }
-            });
-            if (!response.ok) {
-                sessionStorage.removeItem('RS_STATION_KEY');
                 return null;
             }
+
             const data = await response.json();
-            // Guardamos la clave en sesión para enviarla en futuras peticiones al server Ubuntu
             sessionStorage.setItem('RS_STATION_KEY', data.stationKey);
             return data;
         } catch (e) {
-            console.error("[AUTH] Error en handshake:", e);
-            sessionStorage.removeItem('RS_STATION_KEY');
+            console.error("[AUTH] Error crítico en handshake:", e);
             return null;
         }
     }

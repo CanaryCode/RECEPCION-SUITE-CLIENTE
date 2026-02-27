@@ -12,6 +12,8 @@ namespace RecepcionSuiteLauncher
     {
         private const int SERVER_PORT = 3000;
         private const string SERVER_SCRIPT = "server_v4.js";
+        private const int AGENT_PORT = 3001;
+        private const string AGENT_SCRIPT = "agent/src/index.js";
 
         [STAThread]
         static void Main()
@@ -19,18 +21,20 @@ namespace RecepcionSuiteLauncher
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             
-            // Check Server State and Boot if Needed
+            // Check Server & Agent States
             bool isServerOnline = IsPortOpen("127.0.0.1", SERVER_PORT);
-            if (!isServerOnline)
-            {
-                // Tries to auto-start the local server
-                LaunchServerSilently();
-            }
+            bool isAgentOnline = IsPortOpen("127.0.0.1", AGENT_PORT);
+
+            if (!isServerOnline) LaunchProcessSilently(SERVER_SCRIPT);
+            if (!isAgentOnline) LaunchProcessSilently(AGENT_SCRIPT);
+
+            // Give a moment for boot
+            if (!isServerOnline || !isAgentOnline) Thread.Sleep(1500);
 
             // Create Beauty UI Form
             using (var form = new Form())
             {
-                form.Text = "Recepción Suite - Modo " + (isServerOnline ? "Conectado" : "Local");
+                form.Text = "Recepción Suite";
                 form.Size = new Size(420, 260);
                 form.StartPosition = FormStartPosition.CenterScreen;
                 form.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -58,7 +62,7 @@ namespace RecepcionSuiteLauncher
                 btnWeb.FlatAppearance.BorderSize = 0;
                 btnWeb.Cursor = Cursors.Hand;
                 btnWeb.Click += (sender, e) => {
-                    OpenUrl("http://localhost:3000");
+                    OpenUrl("https://www.desdetenerife.com:3000");
                     form.Close();
                 };
                 form.Controls.Add(btnWeb);
@@ -74,16 +78,17 @@ namespace RecepcionSuiteLauncher
                 btnAdmin.FlatAppearance.BorderSize = 0;
                 btnAdmin.Cursor = Cursors.Hand;
                 btnAdmin.Click += (sender, e) => {
-                    OpenUrl("http://localhost:3000/admin");
+                    OpenUrl("https://www.desdetenerife.com:3000/admin");
                     form.Close();
                 };
                 form.Controls.Add(btnAdmin);
 
                 Label paramLabel = new Label();
-                paramLabel.Text = isServerOnline 
-                    ? "(El servidor local ya está en ejecución)" 
-                    : "(El servidor local se está iniciando de fondo)";
-                paramLabel.ForeColor = isServerOnline ? Color.LightGreen : Color.LightSalmon;
+                string statusMsg = (isServerOnline && isAgentOnline) 
+                    ? "(Todo el sistema está en ejecución)" 
+                    : "(Iniciando componentes necesarios...)";
+                paramLabel.Text = statusMsg;
+                paramLabel.ForeColor = (isServerOnline && isAgentOnline) ? Color.LightGreen : Color.LightSalmon;
                 paramLabel.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
                 paramLabel.Location = new Point(0, 175);
                 paramLabel.Size = new Size(400, 30);
@@ -110,14 +115,37 @@ namespace RecepcionSuiteLauncher
             catch { return false; }
         }
 
-        static void LaunchServerSilently()
+        static void LaunchProcessSilently(string scriptName)
         {
-            string serverPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SERVER_SCRIPT);
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string scriptPath = Path.Combine(baseDir, scriptName);
+
+            // Búsqueda inteligente para estructura agent/src/index.js
+            if (!File.Exists(scriptPath))
+            {
+                // 1. Probar en directorio superior
+                string parentDir = Path.GetDirectoryName(baseDir.TrimEnd(Path.DirectorySeparatorChar));
+                if (File.Exists(Path.Combine(parentDir, scriptName)))
+                {
+                    baseDir = parentDir;
+                    scriptPath = Path.Combine(baseDir, scriptName);
+                }
+                // 2. Si estamos dentro de 'agent/launcher', retroceder dos niveles si es necesario
+                else if (scriptName.Contains("agent/")) {
+                    string altPath = Path.Combine(baseDir, "../../", scriptName);
+                    if (File.Exists(altPath)) {
+                        scriptPath = altPath;
+                        baseDir = Path.GetDirectoryName(Path.GetDirectoryName(altPath));
+                    }
+                }
+            }
+
+            if (!File.Exists(scriptPath)) return;
 
             string nodePath = "node.exe";
             string[] possibleNodePaths = {
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "node.exe"),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "node.exe"),
+                Path.Combine(baseDir, "node.exe"),
+                Path.Combine(baseDir, "bin", "node.exe"),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "nodejs", "node.exe")
             };
 
@@ -129,14 +157,14 @@ namespace RecepcionSuiteLauncher
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = nodePath,
-                Arguments = "\"" + serverPath + "\"",
+                Arguments = "\"" + scriptPath + "\"",
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
+                WorkingDirectory = baseDir
             };
 
-            try { Process.Start(startInfo); Thread.Sleep(1500); } catch { }
+            try { Process.Start(startInfo); } catch { }
         }
 
         static void OpenUrl(string url)

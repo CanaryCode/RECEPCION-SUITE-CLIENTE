@@ -32,6 +32,8 @@ import { ReservasInstalaciones } from "./modules/reservas_instalaciones.js?v=V14
 import { Gallery } from "./modules/gallery.js?v=V147_PROXY_FIX";
 import { inicializarValoracion } from "./modules/valoracion.js?v=V147_PROXY_FIX";
 import { Spotify } from "./modules/spotify.js?v=V147_PROXY_FIX";
+import { inicializarTiempo } from "./modules/tiempo.js?v=V1_TIEMPO";
+import { inicializarOCR } from "./modules/ocr_datafonos.js?v=V1_OCR";
 import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
 
 // --- SISTEMAS CORE (NÚCLEO) ---
@@ -111,8 +113,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Main: Validando estación...");
     let station = null;
     try {
-      // Timeout de 3 segundos para no bloquear la UI si el agente no responde
-      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de Seguridad")), 3000));
+      // Aumentamos el timeout a 20s para permitir que el bucle de retries de Api.js funcione
+      // sin bloquear definitivamente el arranque si hay una desincronización de tokens.
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de Seguridad")), 20000));
       station = await Promise.race([Api.validateStation(), timeout]);
     } catch (e) {
       console.warn("Main: Error o timeout en validación de estación:", e.message);
@@ -193,6 +196,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         path: "assets/templates/configuracion.html",
       },
       { id: "valoracion-content", path: "assets/templates/valoracion.html" },
+      { id: "tiempo-content", path: "assets/templates/tiempo.html" },
+      { id: "ocr-datafonos-content", path: "assets/templates/ocr_datafonos.html" },
     ];
 
     await CompLoader.loadAll(componentes);
@@ -209,11 +214,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- 5.5 WATCHDOG DE SEGURIDAD (Refresco de Handshake) ---
     // Verifica cada 30 segundos si el agente local sigue vivo
+    let consecutiveAuthFailures = 0;
     setInterval(async () => {
       const stillValid = await Api.validateStation();
       if (!stillValid) {
-        console.warn("[AUTH] Agente Local perdido. Bloqueando acceso por seguridad.");
-        SecurityBarrier.show('AGENT_DOWN');
+        consecutiveAuthFailures++;
+        console.warn(`[AUTH] Fallo en refresco de Agente (${consecutiveAuthFailures}/3).`);
+
+        if (consecutiveAuthFailures >= 3) {
+          console.error("[AUTH] Agente Local perdido permanentemente. Bloqueando acceso.");
+          SecurityBarrier.show('AGENT_DOWN');
+        }
+      } else {
+        // Si vuelve a ser válido, reseteamos el contador de fallos
+        if (consecutiveAuthFailures > 0) {
+          console.log("[AUTH] Conexión con Agente restaurada.");
+        }
+        consecutiveAuthFailures = 0;
       }
     }, 30000);
 
@@ -229,6 +246,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       { nombre: "Ayuda", init: inicializarAyuda },
       { nombre: "Notas Permanentes", init: inicializarNotasPermanentes },
       { nombre: "Precios", init: inicializarPrecios },
+      { nombre: "Tiempo", init: inicializarTiempo },
+      { nombre: "OCR Datafonos", init: inicializarOCR },
       { nombre: "Rack", init: inicializarRack },
       { nombre: "Lost & Found", init: inicializarLostFound },
       { nombre: "Excursiones", init: () => Excursiones.init() },
@@ -767,29 +786,7 @@ function inicializarSesionGlobal() {
     document.body.style.overflow = "";
     alert("UI Limpia");
   };
-
-  // Utilidades de Respaldo y Agenda
-  window.ejecutarRespaldoManual = async () => {
-    if (!(await Modal.showConfirm("¿Forzar respaldo?"))) return;
-    try {
-      const { backupService } = await import("./services/BackupService.js");
-      await backupService.performFullBackup();
-      await Modal.showAlert("Respaldo completado", "success");
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  window.ejecutarRestauracionAgenda = async () => {
-    if (!(await Modal.showConfirm("¿Restaurar contactos?"))) return;
-    try {
-      const { agendaService } = await import("./services/AgendaService.js");
-      await agendaService.restaurarAgendaForzada();
-    } catch (e) {
-      console.error(e);
-    }
-  };
-}
+};
 
 // --- TOOLTIP HELPERS ---
 

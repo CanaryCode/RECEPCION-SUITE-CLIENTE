@@ -88,27 +88,77 @@ function authMiddleware(req, res, next) {
 
 router.use(authMiddleware);
 
+// --- MONITORES DE RENDIMIENTO (Globales para deltas) ---
+let lastNetStats = { rx: 0, tx: 0, time: Date.now() };
+let lastCpuStats = os.cpus();
+
 /**
  * GET /status
- * Returns system and database health.
+ * Returns system, database, CPU and Network health.
  */
 router.get('/status', async (req, res) => {
+    // 1. CALCULAR USO DE CPU (%)
+    const currentCpu = os.cpus();
+    let totalDiff = 0;
+    let idleDiff = 0;
+
+    for (let i = 0; i < currentCpu.length; i++) {
+        const last = lastCpuStats[i].times;
+        const curr = currentCpu[i].times;
+
+        totalDiff += (curr.user - last.user) + (curr.nice - last.nice) +
+            (curr.sys - last.sys) + (curr.irq - last.irq) + (curr.idle - last.idle);
+        idleDiff += (curr.idle - last.idle);
+    }
+    const cpuUsage = totalDiff > 0 ? Math.round(100 * (1 - idleDiff / totalDiff)) : 0;
+    lastCpuStats = currentCpu;
+
+    // 2. CALCULAR TRÁFICO DE RED (KB/s)
+    let netUsage = { rx: 0, tx: 0 };
+    try {
+        const netData = await fs.readFile('/proc/net/dev', 'utf8');
+        const lines = netData.split('\n');
+        let rxTotal = 0;
+        let txTotal = 0;
+
+        lines.forEach(line => {
+            if (line.includes('enp') || line.includes('eth') || line.includes('wlp')) {
+                const parts = line.trim().split(/\s+/);
+                rxTotal += parseInt(parts[1], 10);
+                txTotal += parseInt(parts[9], 10);
+            }
+        });
+
+        const now = Date.now();
+        const timeDiff = (now - lastNetStats.time) / 1000; // segundos
+        if (timeDiff > 0 && lastNetStats.rx > 0) {
+            netUsage.rx = Math.round(((rxTotal - lastNetStats.rx) / 1024) / timeDiff); // KB/s
+            netUsage.tx = Math.round(((txTotal - lastNetStats.tx) / 1024) / timeDiff); // KB/s
+        }
+        lastNetStats = { rx: rxTotal, tx: txTotal, time: now };
+    } catch (e) { /* No linux/proc support */ }
+
+    // 3. ESTADO DE AGENTES Y SERVIDORES
+    const agents = Array.from(activeAgents.values());
+    const isAnyAgentOnline = agents.length > 0;
+
     const stats = {
+        local: { status: isAnyAgentOnline ? 'online' : 'offline', agents: agents.length },
+        remote: { status: 'offline' }, // Se puede mejorar con un ping real si el server tiene acceso
         os: {
             platform: os.platform(),
-            release: os.release(),
             uptime: os.uptime(),
             totalMem: Math.round(os.totalmem() / 1024 / 1024),
             freeMem: Math.round(os.freemem() / 1024 / 1024),
-            cpuLoad: os.loadavg()
+            cpuUsage: cpuUsage,
+            netUsage: netUsage
         },
         database: {
-            status: 'unknown',
+            remote: 'unknown',
             message: ''
         },
         pm2: {
             status: 'unknown',
-            uptime: 0,
             instances: 0
         }
     };
@@ -116,30 +166,22 @@ router.get('/status', async (req, res) => {
     // Check MySQL
     try {
         const conn = await db.pool.getConnection();
-        stats.database.status = 'connected';
+        stats.database.remote = 'online';
         conn.release();
     } catch (err) {
-        stats.database.status = 'error';
+        stats.database.remote = 'offline';
         stats.database.message = err.message;
     }
 
-    // Check PM2
+    // Check PM2 (Opcional, consume recursos, pero útil)
     exec('pm2 jlist', (error, stdout) => {
         if (!error && stdout) {
             try {
                 const processes = JSON.parse(stdout);
                 stats.pm2.status = 'active';
                 stats.pm2.instances = processes.length;
-                const hotelProc = processes.find(p => p.name === 'hotel-manager');
-                if (hotelProc) {
-                    stats.pm2.uptime = hotelProc.pm2_env.pm_uptime;
-                    stats.pm2.status = hotelProc.pm2_env.status;
-                }
-            } catch (e) {
-                stats.pm2.status = 'error parsing';
-            }
-        } else {
-            stats.pm2.status = 'missing';
+                stats.remote.status = 'online'; // Si PM2 está vivo y servimos esta peticion, estamos online
+            } catch (e) { }
         }
         res.json(stats);
     });
@@ -325,6 +367,9 @@ router.get('/agent-proxy/auth/id', (req, res) => {
     const isValid = isIpActive && isTokenValid;
 
     console.log(`[AUTH PROXY] IP: ${ip} - TokenValid: ${isTokenValid} | ActiveAgents Count: ${activeAgents.size}`);
+    if (!isTokenValid && agent) {
+        console.log(`[AUTH DEBUG] Token Mismatch: Client[${clientToken}] vs Agent[${agent.localToken}]`);
+    }
 
     if (isValid) {
         res.json({

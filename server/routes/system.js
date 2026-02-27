@@ -31,6 +31,29 @@ const logToFile = (msg) => {
 const isWin = process.platform === 'win32';
 
 /**
+ * GET /api/system/local-config
+ * Proxies the request to the Local Agent (3001) to get PC-specific config.
+ */
+router.get('/local-config', async (req, res) => {
+    try {
+        // En el servidor central, intentamos contactar con el agente local (3001)
+        const agentUrl = 'https://127.0.0.1:3001/api/system/local-config';
+        const adminPass = req.headers['x-admin-password'];
+
+        const response = await fetch(agentUrl, {
+            headers: { 'x-admin-password': adminPass },
+            dispatcher: new (require('undici').Agent)({ connect: { rejectUnauthorized: false } })
+        });
+
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        console.error('[SYSTEM PROXY] Error fetching local-config:', err.message);
+        res.status(502).json({ error: 'No se pudo obtener la configuración local del agente.', details: err.message });
+    }
+});
+
+/**
  * POST /api/system/launch
  * Opens an executable or path on the system.
  */

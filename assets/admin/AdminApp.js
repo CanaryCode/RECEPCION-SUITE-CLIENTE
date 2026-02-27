@@ -27,8 +27,12 @@ class AdminApp {
         this.remoteTxt = document.getElementById('remote-text');
         this.dbRemoteInd = document.getElementById('db-remote-indicator');
         this.dbRemoteTxt = document.getElementById('db-remote-text');
+        this.cpuBar = document.getElementById('cpu-bar');
+        this.cpuTxt = document.getElementById('cpu-text');
         this.memBar = document.getElementById('mem-bar');
         this.memTxt = document.getElementById('mem-text');
+        this.netRx = document.getElementById('net-rx');
+        this.netTx = document.getElementById('net-tx');
         this.terminalLocal = document.getElementById('terminal-body-local');
         this.terminalRemote = document.getElementById('terminal-body-remote');
         this.localLogStatus = document.getElementById('local-log-status');
@@ -110,15 +114,37 @@ class AdminApp {
     }
 
     updateStatusUI(data) {
-        this.setStatusItem(this.localInd, this.localTxt, data.local.status === 'online', 'Local (3000)');
-        this.setStatusItem(this.remoteInd, this.remoteTxt, data.remote.status === 'online', 'Tenerife (Cloud)');
+        if (!data) return;
+
+        // Indicadores de Estado
+        this.setStatusItem(this.localInd, this.localTxt, data.local && data.local.status === 'online', 'Local (3000)');
+        this.setStatusItem(this.remoteInd, this.remoteTxt, data.remote && data.remote.status === 'online', 'Tenerife (Cloud)');
         if (this.dbRemoteInd) this.setStatusItem(this.dbRemoteInd, this.dbRemoteTxt, data.database.remote === 'online', 'DB Remota');
 
-        if (this.memBar && this.memTxt) {
+        // CPU
+        if (this.cpuBar && this.cpuTxt && data.os.hasOwnProperty('cpuUsage')) {
+            const cpuVal = data.os.cpuUsage;
+            this.cpuBar.style.width = `${cpuVal}%`;
+            this.cpuTxt.textContent = `${cpuVal}%`;
+
+            // Cambiar color según carga
+            if (cpuVal > 80) this.cpuBar.className = 'progress-bar bg-danger';
+            else if (cpuVal > 50) this.cpuBar.className = 'progress-bar bg-warning';
+            else this.cpuBar.className = 'progress-bar bg-info';
+        }
+
+        // MEMORIA RAM
+        if (this.memBar && this.memTxt && data.os.totalMem) {
             const memUsed = data.os.totalMem - data.os.freeMem;
             const memPerc = Math.round((memUsed / data.os.totalMem) * 100);
             this.memBar.style.width = `${memPerc}%`;
             this.memTxt.textContent = `RAM: ${memUsed} / ${data.os.totalMem} MB (${memPerc}%)`;
+        }
+
+        // RED / TRÁFICO
+        if (this.netRx && this.netTx && data.os.netUsage) {
+            this.netRx.textContent = data.os.netUsage.rx;
+            this.netTx.textContent = data.os.netUsage.tx;
         }
     }
 

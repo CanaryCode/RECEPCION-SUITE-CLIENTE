@@ -1,0 +1,104 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Reporte de Arqueo de Datáfonos</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div><strong>Fecha:</strong> <span id="print-date-ocr"></span></div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Módulo de Auditoría OCR</div>
+    </div>
+</div>
+
+<h4 class="module-title-discrete"><i class="bi bi-camera-fill me-2"></i>Lector de Datáfonos (OCR)</h4>
+
+<div class="module-toolbar no-print">
+    <div class="btn-group" role="group" id="ocr-bank-selector">
+        <input type="radio" class="btn-check" name="ocrBank" id="bank-caixa" value="caixa" checked>
+        <label class="btn btn-outline-primary" for="bank-caixa">
+            <i class="bi bi-bank me-2"></i>La Caixa
+        </label>
+
+        <input type="radio" class="btn-check" name="ocrBank" id="bank-bbva" value="bbva">
+        <label class="btn btn-outline-info" for="bank-bbva">
+            <i class="bi bi-bank2 me-2"></i>BBVA
+        </label>
+    </div>
+
+    <div class="btn-print-wrapper">
+        <button class="btn btn-outline-danger btn-sm fw-bold me-2" onclick="window.limpiarOCR()">
+            <i class="bi bi-trash me-2"></i>Limpiar Todo
+        </button>
+        <button class="btn btn-primary btn-sm fw-bold" onclick="window.imprimirOCR()">
+            <i class="bi bi-printer me-2"></i>Imprimir Resumen
+        </button>
+    </div>
+</div>
+
+<div class="content-panel animate-fade-in">
+    <div class="row g-4">
+        <!-- Columna de Carga -->
+        <div class="col-md-4 no-print">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-upload me-2 text-primary"></i>Cargar Documentos</h6>
+
+                    <div id="ocr-dropzone" class="ocr-dropzone mb-3"
+                        onclick="document.getElementById('ocr-file-input').click()">
+                        <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                        <p class="mt-2 mb-0">Arrastra fotos o PDFs aquí</p>
+                        <span class="text-muted small">o haz clic para buscar</span>
+                        <input type="file" id="ocr-file-input" class="d-none" multiple accept="image/*,.pdf">
+                    </div>
+
+                    <div id="ocr-status-list" class="mt-3">
+                        <!-- Items de procesamiento se inyectan aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna de Resultados -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-list-check me-2 text-success"></i>Transacciones Detectadas
+                    </h6>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="window.ocrAnadirFila()">
+                        <i class="bi bi-plus-lg me-1"></i>Añadir Manual
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="tabla-ocr-resultados">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 15%">Banco</th>
+                                    <th style="width: 25%">Fecha / Hora</th>
+                                    <th style="width: 25%">Tarjeta (Últ. 4)</th>
+                                    <th style="width: 20%">Importe (€)</th>
+                                    <th class="text-end" style="width: 15%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-ocr-resultados">
+                                <!-- Resultados se inyectan aquí -->
+                            </tbody>
+                            <tfoot class="bg-light fw-bold" id="tfoot-ocr-totales">
+                                <tr>
+                                    <td colspan="3" class="text-end">TOTAL DETECTADO:</td>
+                                    <td id="ocr-total-monto" class="text-primary fs-5">0.00€</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div id="ocr-empty-state" class="text-center py-5 text-muted">
+                        <i class="bi bi-search fs-1 opacity-25 d-block mb-3"></i>
+                        <p>No hay transacciones procesadas aún.</p>
+                        <small>Sube una foto del datáfono para comenzar.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

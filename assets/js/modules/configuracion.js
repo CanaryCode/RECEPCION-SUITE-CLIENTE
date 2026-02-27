@@ -939,13 +939,6 @@ export const Configurator = {
         }
     },
 
-    exportConfig() {
-        const blob = new Blob([JSON.stringify(tempConfig, null, 4)], { type: "application/json" });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = "config.json";
-        a.click();
-    },
 
     /**
      * PROTECCIÓN POR PIN
@@ -1033,24 +1026,6 @@ export const Configurator = {
         }
     },
 
-    /**
-     * BLOQUEO MANUAL (Cerrar todo)
-     */
-    lockConfig() {
-        const protectedCollapses = document.querySelectorAll('.accordion-collapse');
-        protectedCollapses.forEach(el => {
-            const btn = document.querySelector(`button[data-bs-target="#${el.id}"]`);
-            if (btn && btn.getAttribute('data-requires-pin') === 'true') {
-                if (typeof bootstrap !== 'undefined') {
-                    const bsCollapse = bootstrap.Collapse.getInstance(el);
-                    if (bsCollapse) bsCollapse.hide();
-                } else {
-                    el.classList.remove('show');
-                }
-            }
-        });
-        Ui.showToast("Secciones protegidas cerradas", "info");
-    },
 
     toggleAccordion(btn) {
         const targetId = btn.getAttribute('data-bs-target');
@@ -1066,7 +1041,6 @@ export const Configurator = {
 
 window.Configurator = Configurator;
 window.saveConfigLocal = () => Configurator.saveConfigLocal();
-window.exportConfig = () => Configurator.exportConfig();
 window.addRecepcionista = () => Configurator.addRecepcionista();
 window.addDestinoTransfer = () => Configurator.addDestinoTransfer();
 window.addDepartamentoGlobal = () => Configurator.addDepartamentoGlobal();

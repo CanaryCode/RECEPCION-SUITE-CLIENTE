@@ -254,6 +254,13 @@
                     class="bi bi-credit-card-2-front me-2"></i>Gestión RIU Class</span>
               </button>
             </li>
+            <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#ocr-datafonos-content">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Lector OCR para tickets de datáfono"><i class="bi bi-camera-fill me-2"></i>Lector de
+                  Datáfonos</span>
+              </button>
+            </li>
           </ul>
         </li>
 
@@ -279,6 +286,13 @@
                     class="bi bi-tags-fill me-2"></i>Lista de Precios</span>
               </button>
             </li>
+            <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#tiempo-content">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Pronóstico del tiempo (SC de Tenerife)"><i class="bi bi-cloud-sun me-2"></i>El
+                  Tiempo</span>
+              </button>
+            </li>
           </ul>
         </li>
 
@@ -291,26 +305,6 @@
             </span>
           </button>
           <ul class="dropdown-menu shadow border-0">
-            <li>
-              <button class="dropdown-item text-primary" onclick="window.ejecutarRespaldoManual()">
-                <span data-tooltip="true" data-bs-placement="left" data-bs-container="body"
-                  data-bs-title="Forzar copia manual al servidor"><i class="bi bi-cloud-arrow-up-fill me-2"></i>Forzar
-                  Respaldo</span>
-              </button>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <button class="dropdown-item text-secondary" onclick="window.ejecutarRestauracionAgenda()">
-                <span data-tooltip="true" data-bs-placement="left" data-bs-container="body"
-                  data-bs-title="Añadir contactos originales"><i class="bi bi-bandaid mb-1 me-2"></i>Recuperar
-                  Contactos</span>
-              </button>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
             <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#configuracion-content">
                 <span data-tooltip="true" data-bs-placement="left" data-bs-container="body"
@@ -1353,6 +1347,9 @@
           <p class="mt-2 text-muted">Cargando Reservas de Instalaciones...</p>
         </div>
       </div>
+      <div class="tab-pane fade" id="ocr-datafonos-content" role="tabpanel">
+        <!-- Cargado vía CompLoader desde assets/templates/ocr_datafonos.html -->
+      </div>
       <div class="tab-pane fade" id="despertadores-content" role="tabpanel">
         <div class="d-none report-header-print">
           <div class="report-info-left">
@@ -1767,6 +1764,12 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="tab-pane fade" id="tiempo-content" role="tabpanel">
+        <!-- Cargado vía CompLoader desde assets/templates/tiempo.html -->
+      </div>
+      <div class="tab-pane fade" id="ocr-datafonos-content" role="tabpanel">
+        <!-- Cargado vía CompLoader desde assets/templates/ocr_datafonos.html -->
       </div>
       <div class="tab-pane fade" id="desayuno-content" role="tabpanel">
         <div class="d-none d-print-block report-header-print">

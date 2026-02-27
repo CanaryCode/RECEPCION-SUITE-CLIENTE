@@ -1,5 +1,8 @@
 # REGLAS Y CONTEXTO DEL PROYECTO (RECEPCIÓN SUITE)
 
+> [!IMPORTANT]
+> **Arquitectura Cliente/Servidor**: La carpeta `agent/` contiene la aplicación **cliente** (la que se instala en el PC de recepción). El resto de carpetas constituyen el **servidor**. Al desplegar, solo es necesario llevar la carpeta `agent/` al terminal del cliente.
+
 ## 1. Descripción del Proyecto
 
 - **Nombre**: Recepción Suite (Hotel Garoé).
@@ -33,6 +36,10 @@
   - El objetivo es que la aplicación sea "multihotel" o fácilmente adaptable a otro establecimiento sin tocar código fuente.
 - **Módulos**: Uso estricto de ES Modules (`import/export`).
 - **CSS**: Estilos centralizados pero modulares. Evitar estilos en línea excesivos.
+- **Prioridad de Cómputo en Cliente (Procesamiento Distribuido)**:
+  - Para evitar la saturación del servidor principal y aprovechar el hardware local del PC de recepción, todo procesamiento pesado que sea técnicamente viable (OCR, generación de reportes PDF, algoritmos de comparación complejos, tratamiento de imágenes) **DEBE realizarse en el lado del cliente (Navegador/Agente)**.
+  - El servidor debe quedar reservado principalmente para persistencia (DB/JSON), orquestación mínima y seguridad. 
+  - Esta regla solo se romperá si el cómputo en cliente compromete críticamente la seguridad de los datos maestros o la clave de cifrado.
 
 ## 4. Flujo de Trabajo
 
