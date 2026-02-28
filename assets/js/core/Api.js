@@ -176,18 +176,28 @@ export const Api = {
             // Cualquier otro equipo de la misma red → ECONNREFUSED → null → bloqueado.
             // El agente envía Access-Control-Allow-Private-Network: true en el preflight PNA.
             let localToken = null;
-            try {
-                const directUrl = `http://localhost:3001/local-token?_t=${Date.now()}`;
-                const directRes = await fetch(directUrl, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                if (directRes.ok) {
-                    const data = await directRes.json();
-                    localToken = data.token || null;
-                    console.log('[AUTH] Token obtenido vía acceso DIRECTO a agente local (device-specific)');
+            const testUrls = [
+                `http://localhost:3001/local-token?_t=${Date.now()}`,
+                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`
+            ];
+
+            for (const url of testUrls) {
+                try {
+                    console.log(`[AUTH] Intentando obtener token de: ${url}`);
+                    const directRes = await fetch(url, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (directRes.ok) {
+                        const data = await directRes.json();
+                        localToken = data.token || null;
+                        if (localToken) {
+                            console.log(`[AUTH] Token obtenido con éxito de: ${url}`);
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    console.warn(`[AUTH] Fallo al conectar con ${url}:`, e.message);
                 }
-            } catch (e) {
-                console.warn('[AUTH] Acceso directo a localhost fallido:', e.message);
             }
 
             if (!localToken) {

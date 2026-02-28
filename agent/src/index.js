@@ -27,13 +27,25 @@ function logToFile(msg) {
 }
 
 // Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
+// Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    
+    // Echo origin if present, otherwise fallback to *
+    if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+    
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Max-Age', '86400'); // 24 horas
 
     if (req.method === 'OPTIONS') {
+        // Para PNA preflights, Chrome requiere un 200 o 204 con los headers correctos
         return res.status(204).end();
     }
     next();
