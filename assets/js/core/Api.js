@@ -171,14 +171,14 @@ export const Api = {
     async validateStation() {
         try {
             // 1. Obtener token DIRECTAMENTE del agente local (device-specific)
-            // El agente responde a http://localhost:3001/local-token.
+            // El agente responde a https://localhost:3001/local-token (HTTPS para evitar bloqueo PNA).
             // Solo el equipo que tiene el agente instalado puede acceder a localhost.
             // Cualquier otro equipo de la misma red → ECONNREFUSED → null → bloqueado.
-            // El agente envía Access-Control-Allow-Private-Network: true en el preflight PNA.
+            // El agente usa certificado SSL del servidor para cumplir con Private Network Access.
             let localToken = null;
             const testUrls = [
-                `http://localhost:3001/local-token?_t=${Date.now()}`,
-                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`
+                `https://localhost:3001/local-token?_t=${Date.now()}`,
+                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`
             ];
 
             for (const url of testUrls) {

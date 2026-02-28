@@ -67,6 +67,24 @@
 
 ---
 
+### [2026-02-28] Bloqueo PNA: Fetch HTTP desde HTTPS
+
+**Síntoma**: Chrome/Edge bloqueaban el acceso a `http://localhost:3001` desde `https://www.desdetenerife.com:3000` con error:
+```
+Access to fetch at 'http://localhost:3001/...' has been blocked by CORS policy:
+Permission was denied for this request to access the `loopback` address space.
+```
+
+**Causa raíz**: Private Network Access (PNA) impide que páginas HTTPS accedan a recursos HTTP en localhost, incluso con headers `Access-Control-Allow-Private-Network: true`. El navegador requiere que **ambos extremos usen el mismo protocolo** (HTTPS ↔ HTTPS).
+
+**Solución**: Cambiar las URLs en `Api.js` de `http://localhost:3001` a `https://localhost:3001`. El agente ya estaba corriendo en HTTPS (puerto 3001) con certificados SSL válidos, solo faltaba usar el protocolo correcto desde el navegador.
+
+**Archivos afectados**: `assets/js/core/Api.js` (líneas 180-181)
+
+**Lección**: PNA no se resuelve solo con headers CORS. Si la página es HTTPS, **todos** los recursos de red privada (localhost, 192.168.x.x, etc.) también deben ser HTTPS. Verificar siempre el protocolo del agente antes de culpar a PNA.
+
+---
+
 **Síntoma**: El `StorageService` se inicializaba repetidamente en bucle. Los módulos que dependían de él nunca terminaban de cargar.
 
 **Causa raíz**: Un evento `service-synced` emitido durante `init()` desencadenaba otro `init()` en el listener del mismo servicio. Bucle infinito de inicialización.
