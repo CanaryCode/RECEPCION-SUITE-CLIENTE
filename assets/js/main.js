@@ -1,40 +1,11 @@
 // --- STARTUP ---
 
-// --- IMPORTACIÓN DE MÓDULOS OPERATIVOS ---
-// --- IMPORTACIÓN DE MÓDULOS OPERATIVOS ---
-// --- IMPORTACIÓN DE MÓDULOS OPERATIVOS ---
-// Cada módulo gestiona una funcionalidad específica (Agenda, Caja, etc.)
-import { inicializarAgenda } from "./modules/agenda.js?v=V147_PROXY_FIX";
-import { inicializarCaja } from "./modules/caja.js?v=V147_PROXY_FIX";
-import { inicializarCobro } from "./modules/cobro.js?v=V147_PROXY_FIX";
+// --- IMPORTACIÓN DE MÓDULOS CORE ---
 import { Ui } from "./core/Ui.js?v=V147_PROXY_FIX"; // Import Ui FIRST
-
 import { clock } from "./modules/clock.js?v=V147_PROXY_FIX";
-import { inicializarAtenciones } from "./modules/atenciones.js?v=V147_PROXY_FIX";
-import { inicializarSafe } from "./modules/safe.js?v=V147_PROXY_FIX"; // Force Reload
-import { inicializarDespertadores } from "./modules/despertadores.js?v=V147_PROXY_FIX";
-import { inicializarDesayuno } from "./modules/desayuno.js?v=V147_PROXY_FIX";
-import { inicializarEstancia } from "./modules/estancia.js?v=V147_PROXY_FIX";
-import { inicializarNovedades } from "./modules/novedades.js?v=V147_PROXY_FIX";
-import { inicializarCenaFria } from "./modules/cena_fria.js?v=V147_PROXY_FIX";
-import { inicializarRiu } from "./modules/riu.js?v=V147_PROXY_FIX"; // Force Reload
-import { inicializarAyuda } from "./modules/ayuda.js?v=V147_PROXY_FIX";
-import { inicializarTransfers } from "./modules/transfers.js?v=V147_PROXY_FIX"; // Force Reload
-import { inicializarNotasPermanentes } from "./modules/notas_permanentes.js?v=V147_PROXY_FIX";
-import { inicializarPrecios } from "./modules/precios.js?v=V147_PROXY_FIX";
-import { inicializarSystemAlarms } from "./modules/alarms.js?v=V147_PROXY_FIX";
-import { inicializarSystemAlarmsUI } from "./modules/system_alarms_ui.js?v=V147_PROXY_FIX";
-import { inicializarLostFound } from "./modules/lost_found.js?v=V147_PROXY_FIX";
-import { inicializarRack } from "./modules/rack.js?v=V147_PROXY_FIX";
-import { inicializarConfiguracion } from "./modules/configuracion.js?v=V147_PROXY_FIX";
-import { Excursiones } from "./modules/excursiones.js?v=V147_PROXY_FIX";
-import { ReservasInstalaciones } from "./modules/reservas_instalaciones.js?v=V147_PROXY_FIX";
-import { Gallery } from "./modules/gallery.js?v=V147_PROXY_FIX";
-import { inicializarValoracion } from "./modules/valoracion.js?v=V147_PROXY_FIX";
 import { Spotify } from "./modules/spotify.js?v=V147_PROXY_FIX";
-import { inicializarTiempo } from "./modules/tiempo.js?v=V1_TIEMPO";
-import { inicializarOCR } from "./modules/ocr_datafonos.js?v=V1_OCR";
 import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
+import { ModuleLoader } from "./core/ModuleLoader.js";
 
 // --- SISTEMAS CORE (NÚCLEO) ---
 import { APP_CONFIG, Config } from "./core/Config.js?v=V153_DB_CONFIG";
@@ -207,15 +178,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await CompLoader.loadAll(componentes);
 
-    // 5. Inicialización de Módulos (Escalonada)
-    const modulosPrioritarios = [
-      { nombre: "Despertadores", init: inicializarDespertadores },
-      { nombre: "Novedades", init: inicializarNovedades },
-      { nombre: "Cena Fría", init: inicializarCenaFria },
-      { nombre: "Desayuno", init: inicializarDesayuno },
-      { nombre: "SystemAlarms", init: inicializarSystemAlarms },
-      { nombre: "SystemAlarmsUI", init: inicializarSystemAlarmsUI },
-    ];
+    // 5. Inicialización de Módulos CRÍTICOS (Lazy Loading)
+    console.log('[STARTUP] Cargando módulos críticos...');
+    await ModuleLoader.loadCriticalModules();
+    console.log('[STARTUP] Módulos críticos cargados. Los demás se cargarán bajo demanda.');
+
+    // Exponer ModuleLoader globalmente para el Router
+    window.ModuleLoader = ModuleLoader;
 
     // --- 5.5 WATCHDOG DE SEGURIDAD (Refresco de Handshake) ---
     // Verifica cada 30 segundos si el agente local sigue vivo
@@ -239,49 +208,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }, 30000);
 
-    const modulosSecundarios = [
-      { nombre: "Agenda", init: inicializarAgenda },
-      { nombre: "Caja", init: inicializarCaja },
-      { nombre: "Cobro", init: inicializarCobro },
-      { nombre: "Safe", init: inicializarSafe },
-      { nombre: "Estancia", init: inicializarEstancia },
-      { nombre: "Atenciones", init: inicializarAtenciones },
-      { nombre: "Transfers", init: inicializarTransfers },
-      { nombre: "Riu", init: inicializarRiu },
-      { nombre: "Ayuda", init: inicializarAyuda },
-      { nombre: "Notas Permanentes", init: inicializarNotasPermanentes },
-      { nombre: "Precios", init: inicializarPrecios },
-      { nombre: "Tiempo", init: inicializarTiempo },
-      { nombre: "OCR Datafonos", init: inicializarOCR },
-      { nombre: "Rack", init: inicializarRack },
-      { nombre: "Lost & Found", init: inicializarLostFound },
-      { nombre: "Excursiones", init: () => Excursiones.init() },
-      {
-        nombre: "Reservas Instalaciones",
-        init: () => ReservasInstalaciones.init(),
-      },
-      { nombre: "Valoración", init: inicializarValoracion },
-      { nombre: "Configuración", init: inicializarConfiguracion },
-      { nombre: "Galería", init: () => Gallery.inicializar() },
-    ];
-
-    modulosPrioritarios.forEach((m) => {
-      try {
-        m.init();
-      } catch (e) {
-        console.error(`Error en ${m.nombre}:`, e);
-      }
-    });
-
+    // 6. Inicialización de UI Global (no depende de módulos)
     setTimeout(() => {
-      modulosSecundarios.forEach((m) => {
-        try {
-          m.init();
-        } catch (e) {
-          console.error(`Error en ${m.nombre}:`, e);
-        }
-      });
-
       inicializarSesionGlobal();
       initGlobalTooltips();
       window.renderLaunchPad("", "app", "tab");
@@ -293,18 +221,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (webModal)
         webModal.addEventListener("hidden.bs.modal", window.stopWebViewer);
 
-      // 8. Deep Linking (Vínculos directos)
+      // 7. Deep Linking (Vínculos directos)
       const initialHash = window.location.hash;
       if (initialHash && initialHash.length > 2) {
         console.log(`[Router] Detectado hash inicial: ${initialHash}`);
-        // Pequeño delay extra para asegurar que el DOM y módulos secundarios estén listos
+        // El Router cargará el módulo bajo demanda si es necesario
         setTimeout(() => {
           Router.navegarA(initialHash);
         }, 50);
       }
+
+      // Mostrar estadísticas de carga en consola
+      const stats = ModuleLoader.getStats();
+      console.log(`[STARTUP] ✓ Arranque completo. Módulos: ${stats.loaded}/${stats.total} cargados.`);
     }, 100);
 
-    // 6. Reactividad
+    // 8. Reactividad (WebSocket push events)
     window.addEventListener("service-synced", (e) => {
       const currentHash = window.location.hash;
       if (
@@ -333,7 +265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    // 7. Heartbeat
+    // 9. Heartbeat del servidor
     let heartbeatFailures = 0;
     const maxFailures = 5;
     setInterval(() => {
@@ -366,7 +298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }, 10000);
 
-    // 8. Iniciar sincronización en tiempo real
+    // 10. Iniciar sincronización en tiempo real
     realTimeSync.connect();
   } catch (criticalError) {
     console.error("CRITICAL BOOT ERROR:", criticalError);

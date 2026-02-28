@@ -92,8 +92,15 @@ export const Router = {
   /**
    * GESTIÓN DE RECARGAS DE MÓDULOS
    * Se llama cuando una pestaña se activa para asegurar que los datos estén frescos.
+   * Ahora también carga módulos bajo demanda (lazy loading).
    */
-  handleModuleReload: (selector) => {
+  handleModuleReload: async (selector) => {
+    // LAZY LOADING: Cargar módulo si no está cargado aún
+    if (window.ModuleLoader) {
+      await window.ModuleLoader.loadBySelector(selector);
+    }
+
+    // Refrescos específicos para módulos ya cargados
     if (selector === "#gallery-content") {
       if (window.Gallery) window.Gallery.loadImages(true);
     } else if (selector === "#impresion-content") {
@@ -105,7 +112,6 @@ export const Router = {
         if (m.initVales) m.initVales();
       });
     }
-    // Aquí se pueden añadir otros módulos que necesiten refresco al abrir
   },
 
   /**
