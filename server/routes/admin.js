@@ -349,6 +349,17 @@ function getClientIp(req) {
 }
 
 /**
+ * Helper que encuentra el agente para una petición.
+ * ESTRICTO: solo emparejamiento exacto de IP.
+ * El agente debe estar registrado desde la misma red pública que el cliente.
+ */
+function findAgentForRequest(req) {
+    const ip = getClientIp(req);
+    const agent = activeAgents.get(ip);
+    return { agent: agent || null, matchedIp: ip, mode: agent ? 'exact' : 'none' };
+}
+
+/**
  * GET /agent-proxy/auth/id
  * Resuelve la validación de seguridad del cliente web validando si su IP 
  * coincide con algún Agente Local registrado mediante heartbeat reciente.
@@ -361,45 +372,49 @@ function getClientIp(req) {
  * direct HTTPS -> loopback (127.0.0.1) requests.
  */
 router.get('/agent-proxy/local-token', (req, res) => {
-    const ip = getClientIp(req);
-    const agent = activeAgents.get(ip);
+    const { agent, matchedIp, mode } = findAgentForRequest(req);
     const isActive = agent && (Date.now() - agent.lastSeen < 60000);
 
     if (isActive && agent.localToken) {
-        res.json({ token: agent.localToken });
+        res.json({ token: agent.localToken, mode });
     } else {
-        res.status(404).json({ error: 'No agent registered for this IP', ip });
+        const clientIp = getClientIp(req);
+        res.status(404).json({ error: 'No agent registered for this IP', ip: clientIp });
     }
 });
 
 router.get('/agent-proxy/auth/id', (req, res) => {
-    const ip = getClientIp(req);
-    const agent = activeAgents.get(ip);
     const clientToken = req.query.token;
 
-    // Validar si la red tiene un agente que ha dado señales en los últimos 45s
-    // Y si el token del cliente coincide con el registrado para esa IP
-    const isIpActive = agent && (Date.now() - agent.lastSeen < 45000);
-    const isTokenValid = agent && agent.localToken === clientToken;
-
-    const isValid = isIpActive && isTokenValid;
-
-    console.log(`[AUTH PROXY] IP: ${ip} - TokenValid: ${isTokenValid} | ActiveAgents Count: ${activeAgents.size}`);
-    if (!isTokenValid && agent) {
-        console.log(`[AUTH DEBUG] Token Mismatch: Client[${clientToken}] vs Agent[${agent.localToken}]`);
+    if (!clientToken) {
+        return res.status(401).json({ error: 'No autorizado', message: 'Token requerido.' });
     }
 
-    if (isValid) {
+    // Buscar cualquier agente activo cuyo token coincida
+    // La seguridad de dispositivo está garantizada EN EL CLIENTE:
+    //   solo el equipo con el agente puede llamar a localhost:3001/local-token para obtener el token.
+    // Aquí solo verificamos que el token es válido y corresponde a un agente activo.
+    let matchedAgent = null;
+    for (const [agentIp, agentData] of activeAgents.entries()) {
+        if (agentData.localToken === clientToken && (Date.now() - agentData.lastSeen < 45000)) {
+            matchedAgent = agentData;
+            break;
+        }
+    }
+
+    console.log(`[AUTH] Token-only check: ${clientToken?.substring(0, 8)}... | Match: ${!!matchedAgent} | Agents: ${activeAgents.size}`);
+
+    if (matchedAgent) {
         res.json({
-            stationId: agent.stationId,
-            stationKey: agent.stationKey,
-            proxyMethod: 'IP_WHITELIST_STRICT'
+            stationId: matchedAgent.stationId,
+            stationKey: matchedAgent.stationKey,
+            proxyMethod: 'DEVICE_LOCAL_TOKEN'
         });
     } else {
-        const msg = !isIpActive ? 'No hay agente activo en esta red.' : 'Token local inválido o caducado.';
-        res.status(401).json({ error: 'No autorizado', message: msg });
+        res.status(401).json({ error: 'No autorizado', message: 'Token inválido, no encontrado o agente caducado.' });
     }
 });
+
 
 /**
  * POST /agent-proxy/register

@@ -182,24 +182,25 @@ app.get('/health', (req, res) => {
 
 // --- INICIO DE SERVIDOR ---
 const PORT = 3001;
+const BIND_ADDRESS = config.LOCAL_ONLY ? '127.0.0.1' : '0.0.0.0';
 const certPath = '/etc/letsencrypt/live/www.desdetenerife.com/fullchain.pem';
 const keyPath = '/etc/letsencrypt/live/www.desdetenerife.com/privkey.pem';
 
 try {
     if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
         const options = { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) };
-        https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
-            console.log(`[AGENT] Servidor HTTPS iniciado en puerto ${PORT} (SSL ACTIVO)`);
+        https.createServer(options, app).listen(PORT, BIND_ADDRESS, () => {
+            console.log(`[AGENT] Servidor HTTPS iniciado en ${BIND_ADDRESS}:${PORT} (SSL ACTIVO)`);
         });
     } else {
-        app.listen(PORT, '0.0.0.0', () => {
-            console.log(`[AGENT] Servidor HTTP iniciado en puerto ${PORT} (AVISO: SSL No encontrado)`);
+        app.listen(PORT, BIND_ADDRESS, () => {
+            console.log(`[AGENT] Servidor HTTP iniciado en ${BIND_ADDRESS}:${PORT} (AVISO: SSL No encontrado)`);
         });
     }
 } catch (err) {
     console.error(`[AGENT] Fallo al iniciar servidor: ${err.message} `);
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`[AGENT] Servidor HTTP iniciado como fallback en puerto ${PORT} `);
+    app.listen(PORT, BIND_ADDRESS, () => {
+        console.log(`[AGENT] Servidor HTTP iniciado como fallback en ${BIND_ADDRESS}:${PORT}`);
     });
 }
 
@@ -223,32 +224,41 @@ try {
 mainServerUrl = mainServerUrl.replace(/\/api$/, '').replace(/\/api\/$/, '');
 
 async function sendAgentHeartbeat() {
-    try {
-        const payload = {
-            stationId: config.STATION_ID,
-            stationKey: config.STATION_KEY,
-            localToken: localToken,
-            port: PORT
-        };
-        let dispatcher;
-        try { dispatcher = new (require('undici').Agent)({ connect: { rejectUnauthorized: false } }); } catch (e) { }
+    const payload = {
+        stationId: config.STATION_ID,
+        stationKey: config.STATION_KEY,
+        localToken: localToken,
+        port: PORT
+    };
+    let dispatcher;
+    try { dispatcher = new (require('undici').Agent)({ connect: { rejectUnauthorized: false } }); } catch (e) { }
 
-        const registerUrl = `${mainServerUrl}/api/admin/agent-proxy/register`;
-        const response = await fetch(registerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            dispatcher
-        });
+    // Si el agente corre en el mismo servidor (LOCAL_ONLY), registrar vía localhost
+    // para que el servidor nos vea como 127.0.0.1 → activa el localhost-fallback en admin.js
+    const localUrl = `https://127.0.0.1:${3000}/api/admin/agent-proxy/register`;
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log(`[AGENT] Heartbeat OK - Registered as IP: ${data.ip}`);
-        } else {
-            console.warn(`[AGENT] Heartbeat Failed (${response.status}): ${response.statusText}`);
+    const tryUrls = config.LOCAL_ONLY
+        ? [localUrl, `${mainServerUrl}/api/admin/agent-proxy/register`]
+        : [`${mainServerUrl}/api/admin/agent-proxy/register`];
+
+    for (const registerUrl of tryUrls) {
+        try {
+            const response = await fetch(registerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                dispatcher
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`[AGENT] Heartbeat OK via ${registerUrl} - IP: ${data.ip}`);
+                return; // éxito, no seguir con el siguiente
+            } else {
+                console.warn(`[AGENT] Heartbeat Failed (${response.status}) on ${registerUrl}`);
+            }
+        } catch (err) {
+            console.error(`[AGENT] Heartbeat Error on ${registerUrl}: ${err.message}`);
         }
-    } catch (err) {
-        console.error(`[AGENT] Heartbeat Error connecting to ${mainServerUrl}: ${err.message}`);
     }
 }
 

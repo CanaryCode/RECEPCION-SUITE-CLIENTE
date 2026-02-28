@@ -162,51 +162,57 @@ export const Api = {
     },
 
     /**
-     * HANDSHAKE DE ESTACIÓN
-     * Verifica si el Agente Local está presente y obtiene su clave.
+     * HANDSHAKE DE ESTACIÓN (device-level)
+     * Llama directamente al Agente Local en localhost:3001.
+     * Solo funciona en el equipo donde está instalado el agente.
+     * INTENCIONADO: NO hay fallback al proxy del servidor.
+     * Si el agente no está en este equipo → bloqueado.
      */
     async validateStation() {
         try {
-            // 1. Obtener el Local Token del Agente via proxy del servidor central
-            // El navegador NO puede acceder a 127.0.0.1 desde HTTPS (Private Network Access policy).
-            // En su lugar, el servidor conoce el token del agente a través del heartbeat.
+            // 1. Obtener token DIRECTAMENTE del agente local (device-specific)
+            // El agente responde a http://localhost:3001/local-token.
+            // Solo el equipo que tiene el agente instalado puede acceder a localhost.
+            // Cualquier otro equipo de la misma red → ECONNREFUSED → null → bloqueado.
+            // El agente envía Access-Control-Allow-Private-Network: true en el preflight PNA.
             let localToken = null;
             try {
-                const proxyBase = APP_CONFIG.SYSTEM.API_URL ? APP_CONFIG.SYSTEM.API_URL.replace(/\/api$/, '') : '';
-                const tokenUrl = `${proxyBase}/api/admin/agent-proxy/local-token?_t=${Date.now()}`;
-                const tokenRes = await fetch(tokenUrl, { headers: { 'Accept': 'application/json' } });
-                if (tokenRes.ok) {
-                    const tokenData = await tokenRes.json();
-                    localToken = tokenData.token || null;
+                const directUrl = `http://localhost:3001/local-token?_t=${Date.now()}`;
+                const directRes = await fetch(directUrl, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (directRes.ok) {
+                    const data = await directRes.json();
+                    localToken = data.token || null;
+                    console.log('[AUTH] Token obtenido vía acceso DIRECTO a agente local (device-specific)');
                 }
             } catch (e) {
-                // Silently fail - will try proxy auth without token
+                console.warn('[AUTH] Acceso directo a localhost fallido:', e.message);
             }
 
-            console.log(`[AUTH] Local Handshake Token: ${localToken ? 'Obtenido' : 'FALLO'}`);
             if (!localToken) {
-                console.warn("[AUTH] No se pudo obtener el token local del Agente. ¿Está el proceso iniciado?");
+                console.warn('[AUTH] No se pudo obtener token. El agente debe estar instalado EN ESTE EQUIPO.');
+                return null;
             }
 
             // 2. Validar con el Servidor Central enviando el Token
-            let proxyUrl = APP_CONFIG.SYSTEM.API_URL ? `${APP_CONFIG.SYSTEM.API_URL}/admin/agent-proxy/auth/id` : '/api/admin/agent-proxy/auth/id';
-            if (localToken) proxyUrl += `?token=${localToken}`;
+            // El servidor verifica que el token corresponde a un agente activo.
+            // Ya no valida IP — la seguridad de dispositivo la da el paso 1 (localhost).
+            const authUrl = APP_CONFIG.SYSTEM.API_URL
+                ? `${APP_CONFIG.SYSTEM.API_URL}/admin/agent-proxy/auth/id?token=${localToken}`
+                : `/api/admin/agent-proxy/auth/id?token=${localToken}`;
 
-            // --- BUCLE DE REINTENTO (Retry 401) ---
-            // Si el PC acaba de encender, el Agente puede tener un token nuevo que el servidor central 
-            // aún no conoce (el heartbeat tarda unos segundos). Reintentamos 3 veces antes de rendirnos.
+            // Retry 401: el agente puede tardar unos segundos en registrar su token
             let attempts = 0;
             let response = null;
 
             while (attempts < 3) {
                 attempts++;
-                response = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
-
+                response = await fetch(authUrl, { headers: { 'Accept': 'application/json' } });
                 if (response.ok) break;
-
                 if (response.status === 401 && attempts < 3) {
-                    console.warn(`[AUTH] Intento ${attempts}/3: 401 Unauthorized. Esperando sincronización del Agente...`);
-                    await new Promise(r => setTimeout(r, 4000)); // Esperar 4s para dar tiempo al heartbeat
+                    console.warn(`[AUTH] Intento ${attempts}/3: 401. Esperando heartbeat del agente...`);
+                    await new Promise(r => setTimeout(r, 4000));
                     continue;
                 }
                 break;
@@ -214,11 +220,8 @@ export const Api = {
 
             if (!response || !response.ok) {
                 const errData = await response?.json().catch(() => ({}));
-                console.error(`[AUTH] Error en validación Proxy (${response?.status}):`, errData?.message || 'Error desconocido');
-
-                if (response?.status === 401) {
-                    sessionStorage.removeItem('RS_STATION_KEY');
-                }
+                console.error(`[AUTH] Error validación (${response?.status}):`, errData?.message || 'Error');
+                if (response?.status === 401) sessionStorage.removeItem('RS_STATION_KEY');
                 return null;
             }
 
@@ -226,7 +229,7 @@ export const Api = {
             sessionStorage.setItem('RS_STATION_KEY', data.stationKey);
             return data;
         } catch (e) {
-            console.error("[AUTH] Error crítico en handshake:", e);
+            console.error('[AUTH] Error crítico en handshake:', e);
             return null;
         }
     }

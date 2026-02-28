@@ -122,9 +122,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.warn("Main: Error o timeout en validación de estación:", e.message);
     }
 
-    if (!station) {
-      console.warn("Main: Estación no validada. Mostrando SecurityBarrier.");
-      if (initialLoader) initialLoader.remove(); // Ensure loader is removed even on failure/timeout
+    // SECURITY DEBUG — ver qué devuelve validateStation para diagnosticar bypasses
+    console.log('[SECURITY] validateStation result:', station, '| stationId:', station?.stationId);
+
+    // Defensive check: un objeto vacío {} sería truthy pero inválido → forzamos validar stationId
+    if (!station || !station.stationId) {
+      console.warn("Main: Estación no validada o sin stationId. Mostrando SecurityBarrier.");
+      if (initialLoader) initialLoader.remove();
       SecurityBarrier.show('AGENT_DOWN');
       return;
     }

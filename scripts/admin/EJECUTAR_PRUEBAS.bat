@@ -47,6 +47,16 @@ exit /b
 :: ---------------------------------------------------------
 :RunTests
 
+echo   [i] Iniciando pruebas UNITARIAS (Utils + Logica de Servicio)...
+echo.
+
+"!NODE_EXEC!" tests/unit/utils.test.js
+if %errorlevel% neq 0 goto :TestFailed
+
+"!NODE_EXEC!" tests/unit/service_logic.test.js
+if %errorlevel% neq 0 goto :TestFailed
+
+echo.
 echo   [i] Iniciando pruebas de INTEGRIDAD (Storage + Transactions)...
 echo.
 

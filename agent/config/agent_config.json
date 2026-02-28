@@ -1,5 +1,6 @@
 {
     "STATION_ID": "REPC-01",
     "STATION_KEY": "RS-SECRET-8291-AJPD",
-    "DESCRIPTION": "PC Recepción Principal"
+    "DESCRIPTION": "PC Recepción Principal",
+    "LOCAL_ONLY": true
 }
