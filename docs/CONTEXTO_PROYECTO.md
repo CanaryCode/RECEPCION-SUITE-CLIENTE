@@ -10,13 +10,13 @@
 
 > **Actualizar en cada SELLADO.**
 
-| Campo                      | Valor                                                              |
-| -------------------------- | ------------------------------------------------------------------ |
-| **Última versión**         | v.beta 10                                                          |
-| **Módulo en foco**         | Barrera de seguridad (auth device-level)                           |
-| **Deuda técnica conocida** | PNA puede bloquear `fetch('http://localhost:3001')` en Chrome/Edge |
-| **Próximo objetivo**       | Ver `roadmap.md`                                                   |
-| **Última sesión**          | 2026-02-28 — Autenticación device-level, fix main.js, tests seg.   |
+| Campo                      | Valor                                                                     |
+| -------------------------- | ------------------------------------------------------------------------- |
+| **Última versión**         | v.beta 10.1                                                               |
+| **Módulo en foco**         | Barrera de seguridad (auth device-level via HTTPS)                        |
+| **Deuda técnica conocida** | Ninguna conocida (PNA resuelto con protocolo HTTPS uniforme)              |
+| **Próximo objetivo**       | Ver `roadmap.md`                                                          |
+| **Última sesión**          | 2026-02-28 — Fix PNA: Cambio de http:// a https:// en validación agente. |
 
 ---
 
