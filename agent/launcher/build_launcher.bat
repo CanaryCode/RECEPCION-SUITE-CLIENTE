@@ -33,21 +33,21 @@ if exist "!TEMP_PS1!" del /f /q "!TEMP_PS1!" >nul 2>&1
 
 :: 3. Crear el script de PowerShell
 (
-echo $source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8
-echo $params = New-Object System.CodeDom.Compiler.CompilerParameters
-echo $params.GenerateExecutable = $true
-echo $params.OutputAssembly = "!OUTPUT!"
-echo $params.CompilerOptions = "/target:winexe /codepage:65001"
+echo $$source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8
+echo $$params = New-Object System.CodeDom.Compiler.CompilerParameters
+echo $$params.GenerateExecutable = $$true
+echo $$params.OutputAssembly = "!OUTPUT!"
+echo $$params.CompilerOptions = "/target:winexe /codepage:65001"
 echo if (Test-Path "!ICON!"^) {
-echo     $params.CompilerOptions += " /win32icon:!ICON!"
+echo     $$params.CompilerOptions += " /win32icon:!ICON!"
 echo }
-echo $params.ReferencedAssemblies.Add("System.Windows.Forms.dll"^) ^| Out-Null
-echo $params.ReferencedAssemblies.Add("System.Drawing.dll"^) ^| Out-Null
-echo $params.ReferencedAssemblies.Add("System.dll"^) ^| Out-Null
-echo $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
-echo $results = $provider.CompileAssemblyFromSource($params, $source^)
-echo if ($results.Errors.Count -gt 0^) {
-echo    $results.Errors ^| ForEach-Object { Write-Error $_.ErrorText }
+echo $$params.ReferencedAssemblies.Add("System.Windows.Forms.dll"^) ^| Out-Null
+echo $$params.ReferencedAssemblies.Add("System.Drawing.dll"^) ^| Out-Null
+echo $$params.ReferencedAssemblies.Add("System.dll"^) ^| Out-Null
+echo $$provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+echo $$results = $$provider.CompileAssemblyFromSource($$params, $$source^)
+echo if ($$results.Errors.Count -gt 0^) {
+echo    $$results.Errors ^| ForEach-Object { Write-Error $$_.ErrorText }
 echo    exit 1
 echo } else {
 echo    exit 0
