@@ -173,5 +173,49 @@ export const Utils = {
      */
     checkOverlap: (startA, endA, startB, endB) => {
         return (startA < endB) && (startB < endA);
+    },
+
+    /**
+     * COMPRIMIR IMAGEN (Base64)
+     * Redimensiona y comprime una imagen usando un Canvas para reducir peso.
+     * @param {File} file - El objeto File de la imagen.
+     * @param {Object} options - Opciones: maxWidth, maxHeight, quality.
+     * @returns {Promise<string>} - Base64 de la imagen comprimida.
+     */
+    compressImage(file, { maxWidth = 800, maxHeight = 800, quality = 0.7 } = {}) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
     }
 };

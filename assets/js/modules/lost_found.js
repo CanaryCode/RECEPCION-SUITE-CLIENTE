@@ -309,8 +309,8 @@ export const lostFoundModule = {
 
         for (const file of files) {
             try {
-                // Leer y comprimir imagen antes de guardar
-                const base64 = await this._processImage(file);
+                // Leer y comprimir imagen usando utilidad centralizada
+                const base64 = await Utils.compressImage(file, { quality: 0.7 });
                 if (base64) {
                     currentImageArray.push(base64);
                 }
@@ -324,50 +324,6 @@ export const lostFoundModule = {
         event.target.value = '';
     },
 
-    /**
-     * Procesa la imagen: la lee como base64 y la comprime usando un canvas.
-     */
-    _processImage(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-
-                    // Max dimensions
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Convert to webp/jpeg with quality 0.7 for efficiency
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));
-                };
-                img.onerror = reject;
-            };
-            reader.onerror = reject;
-        });
-    },
 
     updateImagePreviews() {
         const container = document.getElementById('lost_found_image_previews');

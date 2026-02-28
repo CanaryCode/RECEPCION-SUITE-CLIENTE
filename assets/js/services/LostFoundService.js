@@ -19,7 +19,9 @@ class LostFoundService extends BaseService {
             objeto: 'string',
             lugar: 'string',
             quien: 'string',
-            estado: 'string'
+            estado: 'string',
+            comments: 'string',
+            imagenes: 'any'
         };
     }
 
