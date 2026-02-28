@@ -69,6 +69,13 @@ export async function inicializarDespertadores() {
 
     mostrarDespertadores();
 
+    // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
+    window.addEventListener('service-synced', (e) => {
+        if (e.detail.endpoint === 'despertadores') {
+            mostrarDespertadores();
+        }
+    });
+
     /**
      * "DESBLOQUEO" DE AUDIO
      */

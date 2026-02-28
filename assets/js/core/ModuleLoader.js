@@ -234,13 +234,13 @@ export class ModuleLoader {
                     // Módulo de clase (Gallery, Excursiones, etc.)
                     const ModuleClass = module[config.className];
                     if (ModuleClass && typeof ModuleClass[config.initFunction] === 'function') {
-                        ModuleClass[config.initFunction]();
+                        await ModuleClass[config.initFunction]();
                     }
                 } else {
                     // Módulo de función (mayoría)
                     const initFn = module[config.initFunction];
                     if (typeof initFn === 'function') {
-                        initFn();
+                        await initFn();
                     }
                 }
 

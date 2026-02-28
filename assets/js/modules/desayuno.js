@@ -54,6 +54,13 @@ export async function inicializarDesayuno() {
     });
 
     mostrarDesayunos();
+
+    // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
+    window.addEventListener('service-synced', (e) => {
+        if (e.detail.endpoint === 'desayunos') {
+            mostrarDesayunos();
+        }
+    });
 }
 
 /**

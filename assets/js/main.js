@@ -186,6 +186,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Exponer ModuleLoader globalmente para el Router
     window.ModuleLoader = ModuleLoader;
 
+    // 5.1 Forzar refresh del dashboard después de cargar módulos críticos
+    // Los módulos críticos (Despertadores, Transfers, etc.) renderizan sus widgets
+    // pero necesitamos asegurar que el dashboard esté visible si hay datos
+    setTimeout(() => {
+      // Llamar a las funciones de mostrar para cada módulo crítico que tenga widget
+      if (window.mostrarDespertadores) window.mostrarDespertadores();
+      if (window.mostrarTransfers) window.mostrarTransfers();
+      if (window.mostrarCenasFrias) window.mostrarCenasFrias();
+      if (window.mostrarDesayunos) window.mostrarDesayunos();
+      if (window.mostrarNovedades) window.mostrarNovedades();
+    }, 100);
+
     // --- 5.5 WATCHDOG DE SEGURIDAD (Refresco de Handshake) ---
     // Verifica cada 30 segundos si el agente local sigue vivo
     let consecutiveAuthFailures = 0;

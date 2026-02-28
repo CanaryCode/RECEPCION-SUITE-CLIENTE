@@ -41,10 +41,17 @@ export async function inicializarCenaFria() {
 
     // Ocultar selectores antiguos del DOM (Ya usa global)
     document.getElementById('cena_autor')?.parentElement?.classList.add('d-none');
-    
+
     // Paneles con estilo estándar
     document.getElementById('cena-fria-trabajo')?.classList.add('content-panel');
     document.getElementById('cena-fria-rack')?.classList.add('content-panel');
+
+    // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
+    window.addEventListener('service-synced', (e) => {
+        if (e.detail.endpoint === 'cenas') {
+            mostrarCenasFrias();
+        }
+    });
 }
 
 /**

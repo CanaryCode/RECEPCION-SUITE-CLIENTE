@@ -150,6 +150,13 @@ export async function inicializarTransfers() {
     
     mostrarTransfers();
     setupIntersectionObserverTransfers();
+
+    // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
+    window.addEventListener('service-synced', (e) => {
+        if (e.detail.endpoint === 'transfers' || e.detail.endpoint === 'riu_transfers') {
+            mostrarTransfers();
+        }
+    });
 }
 
 /**
