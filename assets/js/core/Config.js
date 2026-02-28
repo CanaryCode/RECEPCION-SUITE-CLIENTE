@@ -211,9 +211,13 @@ export const Config = {
 
             // --- CARGA DE CONFIGURACIÓN LOCAL (AGENTE) ---
             try {
-                // Fetch pc-specific configuration via the local agent
+                // Fetch pc-specific configuration via the local agent (HTTP, no HTTPS)
                 console.log("Attempting to load local pc-specific config from agent...");
-                const localRes = await fetch('/api/system/local-config');
+                const localRes = await fetch('http://localhost:3001/api/system/local-config', {
+                    headers: {
+                        'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                    }
+                });
                 if (localRes.ok) {
                     const localData = await localRes.json();
                     if (localData && Object.keys(localData).length > 0) {

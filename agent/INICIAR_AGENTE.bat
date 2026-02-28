@@ -51,8 +51,21 @@ if not exist "node_modules" (
     echo [2/3] Dependencias ya instaladas.
 )
 
-:: 3. Iniciar el Agente
-echo [3/3] Iniciando Agente Local...
+:: 3. Verificar y cerrar procesos antiguos del puerto 3001
+echo [3/4] Verificando si hay procesos antiguos en el puerto 3001...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3001" ^| findstr "LISTENING"') do (
+    echo     - Encontrado proceso antiguo en puerto 3001 (PID: %%a). Cerrando...
+    taskkill /F /PID %%a >nul 2>&1
+    if !errorlevel! equ 0 (
+        echo     [OK] Proceso anterior cerrado.
+    ) else (
+        echo     [!] No se pudo cerrar el proceso. Continuando...
+    )
+)
+echo.
+
+:: 4. Iniciar el Agente
+echo [4/4] Iniciando Agente Local...
 echo.
 node src/index.js
 

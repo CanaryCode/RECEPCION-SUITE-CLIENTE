@@ -20,13 +20,45 @@ namespace RecepcionSuiteLauncher
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
             // Check Server & Agent States
             bool isServerOnline = IsPortOpen("127.0.0.1", SERVER_PORT);
             bool isAgentOnline = IsPortOpen("127.0.0.1", AGENT_PORT);
 
-            if (!isServerOnline) LaunchProcessSilently(SERVER_SCRIPT);
-            if (!isAgentOnline) LaunchProcessSilently(AGENT_SCRIPT);
+            // Si no están online, intentar lanzarlos
+            // Si fallan al lanzar porque el puerto está ocupado, limpiar y reintentar
+            if (!isServerOnline)
+            {
+                LaunchProcessSilently(SERVER_SCRIPT);
+                Thread.Sleep(1500);
+                isServerOnline = IsPortOpen("127.0.0.1", SERVER_PORT);
+
+                // Si sigue sin responder, limpiar puerto y reintentar
+                if (!isServerOnline)
+                {
+                    KillProcessOnPort(SERVER_PORT);
+                    Thread.Sleep(1000);
+                    LaunchProcessSilently(SERVER_SCRIPT);
+                }
+            }
+
+            if (!isAgentOnline)
+            {
+                LaunchProcessSilently(AGENT_SCRIPT);
+                Thread.Sleep(1500);
+                isAgentOnline = IsPortOpen("127.0.0.1", AGENT_PORT);
+
+                // Si sigue sin responder, limpiar puerto y reintentar
+                if (!isAgentOnline)
+                {
+                    KillProcessOnPort(AGENT_PORT);
+                    Thread.Sleep(1000);
+                    LaunchProcessSilently(AGENT_SCRIPT);
+                }
+            }
+
+            // Esperar un poco para que los servicios arranquen
+            Thread.Sleep(2000);
 
             // Directly open the web application
             OpenUrl("https://www.desdetenerife.com:3000");
@@ -114,10 +146,56 @@ namespace RecepcionSuiteLauncher
             }
         }
 
+        static void KillProcessOnPort(int port)
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c netstat -ano | findstr :{port}",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                Process process = Process.Start(psi);
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                if (!string.IsNullOrEmpty(output))
+                {
+                    string[] lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string line in lines)
+                    {
+                        if (line.Contains("LISTENING"))
+                        {
+                            string[] parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length > 0)
+                            {
+                                string pidString = parts[parts.Length - 1];
+                                if (int.TryParse(pidString, out int pid))
+                                {
+                                    try
+                                    {
+                                        Process oldProcess = Process.GetProcessById(pid);
+                                        oldProcess.Kill();
+                                        oldProcess.WaitForExit(2000);
+                                    }
+                                    catch { /* Proceso ya no existe */ }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { /* Si falla, continuar */ }
+        }
+
         static void OpenUrl(string url)
         {
             try { Process.Start(url); }
-            catch 
+            catch
             {
                 try { Process.Start(new ProcessStartInfo("cmd", "/c start " + url.Replace("&", "^&")) { CreateNoWindow = true }); }
                 catch { Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true }); }

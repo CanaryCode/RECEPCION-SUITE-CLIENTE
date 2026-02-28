@@ -177,6 +177,53 @@ router.post('/list-docs', async (req, res) => {
 });
 
 /**
+ * POST /api/system/list-files
+ * Lista archivos y carpetas del sistema de archivos del cliente local.
+ */
+router.post('/list-files', async (req, res) => {
+    try {
+        const { currentPath } = req.body;
+        if (!currentPath) return res.status(400).json({ error: 'No path provided' });
+
+        const fsPath = path.resolve(currentPath);
+
+        try {
+            await fs.access(fsPath);
+        } catch (err) {
+            return res.status(404).json({ error: 'Path not found or not accessible' });
+        }
+
+        const dirents = await fs.readdir(fsPath, { withFileTypes: true });
+
+        const items = await Promise.all(dirents.map(async (dirent) => {
+            const itemPath = path.join(fsPath, dirent.name);
+            let size = 0;
+
+            try {
+                if (dirent.isFile()) {
+                    const stats = await fs.stat(itemPath);
+                    size = stats.size;
+                }
+            } catch (err) {
+                // Ignore items we can't stat
+            }
+
+            return {
+                name: dirent.name,
+                path: itemPath.replace(/\\/g, '/'),
+                isDirectory: dirent.isDirectory(),
+                size: size
+            };
+        }));
+
+        res.json({ items });
+    } catch (err) {
+        console.error('[AGENT] Error listing files:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+/**
  * POST /api/system/web-proxy
  * Proxy para cargar páginas web externas evitando bloqueos CSP/X-Frame
  */

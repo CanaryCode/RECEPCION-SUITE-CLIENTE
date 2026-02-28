@@ -910,13 +910,18 @@ export const Configurator = {
             };
 
             try {
-                const localResponse = await fetch('/api/system/local-config', {
+                const localResponse = await fetch('http://localhost:3001/api/system/local-config', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                    },
                     body: JSON.stringify(localPayload)
                 });
                 if (!localResponse.ok) {
                     console.warn(`[AGENT] Guardado local falló con estado ${localResponse.status}`);
+                } else {
+                    console.log('[AGENT] ✓ Configuración local guardada en el agente');
                 }
             } catch (e) {
                 console.warn("[AGENT] No se pudo guardar config local en agente. Se guardarán en global como fallback.", e);
