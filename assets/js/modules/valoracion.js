@@ -82,6 +82,9 @@ export function inicializarValoracion() {
 
     // Primer renderizado
     resetearValoracion(true);
+
+    // Adjuntar validador de habitación
+    Ui.attachRoomValidator('val-meta-room');
     
     moduloInicializado = true;
 }
@@ -514,24 +517,6 @@ function actualizarValoracion() {
                 </div>`;
         }
     });
-
-    const roomInput = document.getElementById('val-meta-room');
-    if (!roomInput) return;
-    const room = roomInput.value.trim();
-    const rooms = Utils.getHabitaciones() || [];
-    
-    // Debug rooms if needed
-    if (room && rooms.length === 0) {
-        console.warn("Valuación: Utils.getHabitaciones() devolvió vacío. Verificando Config...");
-    }
-
-    const isValidRoom = !room || rooms.some(h => {
-        const numH = (h.num || h.numero || "").toString().padStart(3, '0');
-        return numH === room.padStart(3, '0');
-    });
-    
-    roomInput.classList.toggle('is-invalid', !isValidRoom);
-    roomInput.classList.toggle('is-valid', isValidRoom && room !== '');
 
     document.getElementById('valoracion-total-global').innerText = Utils.formatCurrency(totalGlobal);
     document.getElementById('valoracion-total-dias').innerText = `${diasTotales} noches`;

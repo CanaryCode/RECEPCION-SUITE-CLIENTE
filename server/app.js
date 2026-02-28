@@ -44,7 +44,7 @@ const AUTHORIZED_STATIONS = ['RS-SECRET-8291-AJPD'];
 app.use('/api', (req, res, next) => {
     // Excluir endpoints públicos y de autenticación de la validación de estación
     // Incluimos 'storage' porque el App Guest necesita leer configuración y datos
-    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config/.test(req.originalUrl);
+    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config|system\/web-proxy/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];

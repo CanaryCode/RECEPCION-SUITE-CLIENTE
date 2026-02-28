@@ -22,6 +22,7 @@ export async function inicializarDesayuno() {
 
     // 2. AUTOCOMPLETE DE HABITACIONES
     Ui.initRoomAutocomplete('lista-habs-desayuno');
+    Ui.attachRoomValidator('desayuno_hab', { allowEmpty: false });
 
     // 3. GESTIÓN DE FORMULARIO (Asistente)
     Ui.handleFormSubmission({

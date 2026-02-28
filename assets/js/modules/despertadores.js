@@ -40,6 +40,7 @@ export async function inicializarDespertadores() {
 
     // 2. AUTOCOMPLETE DE HABITACIONES
     Ui.initRoomAutocomplete('lista-habs-desp');
+    Ui.attachRoomValidator('desp_hab', { allowEmpty: false });
 
     // 3. GESTIÓN DE FORMULARIO (Asistente)
     Ui.handleFormSubmission({

@@ -31,6 +31,7 @@ export const ReservasInstalaciones = {
         });
         
         moduloInicializado = true;
+        Ui.attachRoomValidator('res_habitacion', { allowEmpty: false });
         this.showView('form');
     },
 

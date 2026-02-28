@@ -1,18 +1,242 @@
 [
     {
-        "fecha": "2026-02-10",
-        "ocupadas": 56,
-        "vacias": 134,
-        "totalHab": 190,
-        "autor": "Anadelia",
-        "actualizadoEn": "2026-02-10T09:12:29.805Z"
+        "fecha": "2026-01-29T00:00:00.000Z",
+        "ocupadas": 100,
+        "vacias": 50,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
     },
     {
-        "fecha": "2026-02-28",
-        "ocupadas": 56,
-        "vacias": 134,
-        "totalHab": 190,
-        "autor": "Anadelia",
-        "actualizadoEn": "2026-02-10T09:35:04.044Z"
+        "fecha": "2026-01-30T00:00:00.000Z",
+        "ocupadas": 105,
+        "vacias": 45,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-01-31T00:00:00.000Z",
+        "ocupadas": 110,
+        "vacias": 40,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-01T00:00:00.000Z",
+        "ocupadas": 115,
+        "vacias": 35,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-02T00:00:00.000Z",
+        "ocupadas": 120,
+        "vacias": 30,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-03T00:00:00.000Z",
+        "ocupadas": 125,
+        "vacias": 25,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-04T00:00:00.000Z",
+        "ocupadas": 130,
+        "vacias": 20,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-05T00:00:00.000Z",
+        "ocupadas": 135,
+        "vacias": 15,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-06T00:00:00.000Z",
+        "ocupadas": 140,
+        "vacias": 10,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-07T00:00:00.000Z",
+        "ocupadas": 145,
+        "vacias": 5,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-08T00:00:00.000Z",
+        "ocupadas": 142,
+        "vacias": 8,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-09T00:00:00.000Z",
+        "ocupadas": 148,
+        "vacias": 2,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-10T00:00:00.000Z",
+        "ocupadas": 140,
+        "vacias": 10,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-11T00:00:00.000Z",
+        "ocupadas": 130,
+        "vacias": 20,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-12T00:00:00.000Z",
+        "ocupadas": 120,
+        "vacias": 30,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-13T00:00:00.000Z",
+        "ocupadas": 110,
+        "vacias": 40,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-14T00:00:00.000Z",
+        "ocupadas": 100,
+        "vacias": 50,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-15T00:00:00.000Z",
+        "ocupadas": 95,
+        "vacias": 55,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-16T00:00:00.000Z",
+        "ocupadas": 90,
+        "vacias": 60,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-17T00:00:00.000Z",
+        "ocupadas": 85,
+        "vacias": 65,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-18T00:00:00.000Z",
+        "ocupadas": 80,
+        "vacias": 70,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-19T00:00:00.000Z",
+        "ocupadas": 82,
+        "vacias": 68,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-20T00:00:00.000Z",
+        "ocupadas": 88,
+        "vacias": 62,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-21T00:00:00.000Z",
+        "ocupadas": 95,
+        "vacias": 55,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-22T00:00:00.000Z",
+        "ocupadas": 105,
+        "vacias": 45,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-23T00:00:00.000Z",
+        "ocupadas": 115,
+        "vacias": 35,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-24T00:00:00.000Z",
+        "ocupadas": 125,
+        "vacias": 25,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-25T00:00:00.000Z",
+        "ocupadas": 135,
+        "vacias": 15,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-26T00:00:00.000Z",
+        "ocupadas": 145,
+        "vacias": 5,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
+    },
+    {
+        "fecha": "2026-02-27T00:00:00.000Z",
+        "ocupadas": 140,
+        "vacias": 10,
+        "total_hab": 150,
+        "created_at": "2026-02-28T15:56:43.000Z",
+        "totalHab": 150
     }
 ]

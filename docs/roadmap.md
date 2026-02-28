@@ -23,14 +23,16 @@ _Actualmente nada en progreso activo._
 
 ## ✅ Completado
 
-| Versión  | Qué se hizo                                                            |
-| -------- | ---------------------------------------------------------------------- |
-| beta 1-5 | Módulos base: Novedades, Despertadores, Cenas Frías, Desayunos, Agenda |
-| beta 6   | Router silencioso, Navegación sin parpadeos de navbar                  |
-| beta 7   | Arquitectura dual DB+JSON, transacciones atómicas, WebSocket sync      |
-| beta 8   | Seguridad: Login + Huella de hardware + Túnel inverso WebSocket        |
-| beta 9   | Modernización Admin Console (CPU, red, indicadores de estado)          |
-| beta 10  | Lanzador: iconografía unificada por categoría, integración Spotify     |
-| beta 10  | Módulo Objetos Perdidos con imágenes Base64 en DB                      |
-| beta 10  | Agent Launcher (C# → exe) con firma hardware                           |
-| —        | Sistema de documentación modular (este sistema)                        |
+| Versión   | Qué se hizo                                                            |
+| --------- | ---------------------------------------------------------------------- |
+| beta 1-5  | Módulos base: Novedades, Despertadores, Cenas Frías, Desayunos, Agenda |
+| beta 6    | Router silencioso, Navegación sin parpadeos de navbar                  |
+| beta 7    | Arquitectura dual DB+JSON, transacciones atómicas, WebSocket sync      |
+| beta 8    | Seguridad: Login + Huella de hardware + Túnel inverso WebSocket        |
+| beta 9    | Modernización Admin Console (CPU, red, indicadores de estado)          |
+| beta 10   | Lanzador: iconografía unificada por categoría, integración Spotify     |
+| beta 10   | Módulo Objetos Perdidos con imágenes Base64 en DB                      |
+| beta 10   | Agent Launcher (C# → exe) con firma hardware                           |
+| beta 10.2 | Quick Login Screen (one-click) y Refuerzo de Seguridad Barrier         |
+| beta 10.2 | Fix Impresión PDF (Proxy CORS) y Handshake Agente (Híbrido HTTP/S)     |
+| —         | Sistema de documentación modular (este sistema)                        |

@@ -128,4 +128,75 @@ router.post('/local-config', async (req, res) => {
     }
 });
 
+/**
+ * POST /api/system/list-docs
+ * Lista archivos de documentos en carpetas locales.
+ */
+router.post('/list-docs', async (req, res) => {
+    try {
+        let { folderPaths } = req.body;
+        if (!folderPaths || !Array.isArray(folderPaths)) folderPaths = [];
+
+        const allDocs = [];
+        const docExtensions = ['.pdf', '.doc', '.docx', '.txt', '.xlsx', '.xls', '.odt', '.rtf'];
+
+        for (let targetPath of folderPaths) {
+            try {
+                const fsPath = path.resolve(targetPath);
+                await fs.access(fsPath);
+                const dirents = await fs.readdir(fsPath, { withFileTypes: true });
+
+                const docItems = dirents
+                    .filter(d => {
+                        const ext = path.extname(d.name).toLowerCase();
+                        return d.isFile() && docExtensions.includes(ext);
+                    })
+                    .map(async (d) => {
+                        const fullPath = path.join(fsPath, d.name);
+                        const stats = await fs.stat(fullPath);
+                        return {
+                            label: d.name,
+                            path: fullPath.replace(/\\/g, '/'),
+                            type: 'documentos',
+                            mtime: stats.mtime,
+                            size: stats.size
+                        };
+                    });
+
+                const resolvedDocs = await Promise.all(docItems);
+                allDocs.push(...resolvedDocs);
+            } catch (e) {
+                console.warn(`[AGENT] Skip folder: ${targetPath} - ${e.message}`);
+            }
+        }
+        res.json({ documents: allDocs });
+    } catch (err) {
+        console.error('[AGENT] Error listing docs:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+/**
+ * POST /api/system/web-proxy
+ * Proxy para cargar páginas web externas evitando bloqueos CSP/X-Frame
+ */
+router.get('/web-proxy', async (req, res) => {
+    try {
+        const { url } = req.query;
+        if (!url) return res.status(400).send('URL is required');
+
+        const fetch = (await import('node-fetch')).default;
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Añadir headers para permitir la carga en iframe
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('X-Frame-Options', 'ALLOWALL');
+        res.send(html);
+    } catch (err) {
+        console.error('[AGENT] Web proxy error:', err);
+        res.status(500).send('Error loading external page');
+    }
+});
+
 module.exports = router;

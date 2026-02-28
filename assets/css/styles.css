@@ -110,3 +110,107 @@
 
     /* En móviles pequeños, apilar controles si es necesario o dejar que el flex-wrap actúe natural */
 }
+
+/* ==========================================================================
+   PANTALLA DE LOGIN (SELECTOR DE USUARIO)
+   ========================================================================== */
+
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999; /* Por encima de todo */
+    color: white;
+}
+
+.login-container {
+    padding: 3rem;
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.login-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 4rem;
+    letter-spacing: -1px;
+}
+
+.login-users-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+}
+
+.login-user-card {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    width: 160px;
+    outline: none;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.login-user-avatar {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 4px solid transparent;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.login-user-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-user-card:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.login-user-card:hover .login-user-avatar {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: white;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+}
+
+.login-user-card:focus .login-user-avatar {
+    border-color: var(--bs-primary, #007bff);
+}
+
+/* Success State */
+.login-user-card.active .login-user-avatar {
+    background: var(--bs-success, #28a745);
+    border-color: white;
+}
+
+@media (max-width: 768px) {
+    .login-user-card {
+        width: 120px;
+    }
+    .login-user-avatar {
+        font-size: 3.5rem;
+    }
+}

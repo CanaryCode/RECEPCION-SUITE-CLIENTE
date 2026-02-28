@@ -20,6 +20,7 @@ import { RoomDetailModal } from "./core/RoomDetailModal.js?v=V147_PROXY_FIX";
 import "./core/PrintService.js?v=V147_PROXY_FIX";
 import { SecurityBarrier } from "./core/SecurityBarrier.js?v=V147_PROXY_FIX";
 import { realTimeSync } from "./core/RealTimeSync.js";
+import { Login } from "./core/Login.js";
 
 // Global debug helper
 window.clearConfigOverride = () => {
@@ -114,6 +115,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log(`[AUTH] Estación validada: ${station.stationId}`);
+
+    if (!sessionService.isAuthenticated()) {
+      console.log("Main: No hay sesión activa. Mostrando selector de usuario...");
+      await Login.showSelector();
+    }
+    const currentUser = sessionService.getUser();
+    console.log(`[AUTH] Usuario identificado: ${currentUser}`);
+    
+    // Actualizar UI inmediatamente después de login
+    updateUserUI(currentUser);
 
     // 2. MULTIMEDIA INIT (Spotify)...
     Spotify.initPlayer();
@@ -646,24 +657,7 @@ function inicializarSesionGlobal() {
   const userBtnName = document.getElementById("globalUserName");
   const userBtn = document.getElementById("globalUserBtn");
 
-  if (!userList || !userBtnName) return;
-
-  // 1. Cargar usuarios del config
-  const users = APP_CONFIG.HOTEL.RECEPCIONISTAS;
-  const divider = userList.querySelector("hr.dropdown-divider").parentElement;
-
-  users.forEach((u) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<button class="dropdown-item" onclick="window.setGlobalUser('${u}')">${u}</button>`;
-    userList.insertBefore(li, divider);
-  });
-
-  // Añadir "Otro..."
-  const liOtro = document.createElement("li");
-  liOtro.innerHTML = `<button class="dropdown-item" onclick="window.promptGlobalUser()">Otro...</button>`;
-  userList.insertBefore(liOtro, divider);
-
-  // 2. Restaurar sesión
+  // 2. Restaurar sesión (Ya se hace en el arranque bloqueante, pero sincronizamos aquí también)
   const currentUser = sessionService.getUser();
   if (currentUser) {
     updateUserUI(currentUser);
@@ -782,10 +776,11 @@ function updateUserUI(name) {
   const userBtn = document.getElementById("globalUserBtn");
   if (userBtnName) userBtnName.innerText = name;
   if (userBtn) {
-    userBtn.classList.remove("btn-outline-secondary", "btn-outline-danger");
+    userBtn.classList.remove("btn-outline-secondary", "btn-outline-danger", "animation-pulse");
     userBtn.classList.add("btn-success", "text-white");
   }
 }
+window.updateUserUI = updateUserUI;
 
 window.checkDailySummaryVisibility = () => {
   const section = document.getElementById("dashboard-resumen-seccion");
@@ -871,4 +866,17 @@ window.openExternalWeb = () => {
 window.stopWebViewer = () => {
   const iframe = document.getElementById("webViewerIframe");
   if (iframe) iframe.src = "";
+};
+
+/**
+ * LAZY-LOADED MODULE WRAPPERS
+ * Funciones globales que cargan módulos bajo demanda antes de ejecutar acciones
+ */
+window.abrirCaja = async function() {
+  const originalFn = window.abrirCaja;
+  await ModuleLoader.loadModule('caja');
+  // Después de cargar el módulo, window.abrirCaja habrá sido reemplazado por la función real
+  if (window.abrirCaja && window.abrirCaja !== originalFn) {
+    window.abrirCaja();
+  }
 };

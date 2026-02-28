@@ -4,7 +4,7 @@ import { Ui } from '../core/Ui.js';
 /**
  * MÓDULO DE TIEMPO (tiempo.js)
  * ----------------------------
- * Visualiza e imprime el PDF del tiempo de eltiempo.es
+ * Visualiza e imprime el PDF del tiempo de eltiempo.es (Santa Cruz y Puerto de la Cruz)
  */
 
 let moduloInicializado = false;
@@ -14,63 +14,75 @@ export function inicializarTiempo() {
 
     console.log("Modulo Tiempo inicializado");
 
-    // No validamos usuario al inicializar para evitar la alerta al arrancar la app.
-    // Solo actualizamos el nombre si ya hay alguien en sesión.
-    const user = sessionService.getUser ? sessionService.getUser() : null;
+    const user = Utils.validateUser ? Utils.validateUser() : null;
     if (user) {
         const el = document.getElementById('print-repc-nombre-tiempo');
         if (el) el.textContent = user;
     }
 
-    // Timer de seguridad: si en 5 segundos no parece haber cargado, mostramos el fallback
     setTimeout(() => {
-        const iframe = document.getElementById('iframe-tiempo');
+        const iframes = document.querySelectorAll('iframe[id^="iframe-tiempo"]');
         const fallback = document.getElementById('tiempo-fallback');
-        if (iframe && fallback) {
-            try {
-                // Si no podemos acceder al contenido (CORS), es probable que esté bloqueado o cargando
-                // Pero si el iframe tiene altura 0 o algo raro, mostramos el botón
-                if (!iframe.offsetHeight || iframe.offsetHeight < 100) {
-                    fallback.classList.remove('d-none');
-                }
-            } catch (e) {
-                // Ignorar error de CORS
-            }
+        if (iframes.length > 0 && fallback) {
+            let someFailed = false;
+            iframes.forEach(iframe => {
+                try {
+                    if (!iframe.offsetHeight || iframe.offsetHeight < 100) someFailed = true;
+                } catch (e) {}
+            });
+            if (someFailed) fallback.classList.remove('d-none');
         }
     }, 5000);
 
     moduloInicializado = true;
 }
 
-/**
- * Actualiza el iframe del tiempo
- */
 window.actualizarTiempo = () => {
-    const iframe = document.getElementById('iframe-tiempo');
-    if (iframe) {
+    const iframes = document.querySelectorAll('iframe[id^="iframe-tiempo"]');
+    iframes.forEach(iframe => {
         const currentSrc = iframe.src.split('?')[0];
         iframe.src = `${currentSrc}?t=${Date.now()}`;
-        Ui.showToast("Recargando pronóstico del tiempo...", "info");
-    }
+    });
+    Ui.showToast("Recargando pronósticos del tiempo...", "info");
 };
 
 /**
- * Imprime la sección del tiempo
+ * Imprime la sección del tiempo usando Print.js para evitar páginas en blanco
  */
 window.imprimirTiempo = () => {
     const user = Utils.validateUser();
     if (!user) return;
 
-    // Ponemos la fecha actual en el reporte de impresión
-    const printDate = document.getElementById('print-date-tiempo');
-    if (printDate) {
-        printDate.textContent = Utils.formatDate(Utils.getTodayISO());
-    }
+    Ui.showToast("Preparando documentos para impresión...", "info");
 
-    // Usamos el servicio de impresión si está disponible o el estándar
-    if (window.PrintService) {
-        PrintService.printElement('tiempo-content-wrapper', `El Tiempo - Santa Cruz de Tenerife - ${Utils.getTodayISO()}`);
-    } else {
-        window.print();
-    }
+    const pdfs = [
+        "/api/system/web-proxy?url=" + encodeURIComponent("https://www.eltiempo.es/pdf/santa-cruz-de-tenerife.pdf"),
+        "/api/system/web-proxy?url=" + encodeURIComponent("https://www.eltiempo.es/pdf/puerto-de-la-cruz.pdf")
+    ];
+
+    // Función recursiva para imprimir uno por uno (Print.js abre un diálogo por PDF)
+    const printSequential = (index) => {
+        if (index >= pdfs.length) {
+            Ui.showToast("Proceso de impresión finalizado", "success");
+            return;
+        }
+
+        printJS({
+            printable: pdfs[index],
+            type: 'pdf',
+            showModal: true,
+            modalMessage: `Preparando PDF ${index + 1} de ${pdfs.length}...`,
+            onPrintDialogClose: () => {
+                // Pequeña pausa para que el navegador respire antes del siguiente
+                setTimeout(() => printSequential(index + 1), 500);
+            },
+            onError: (err) => {
+                console.error("Error imprimiendo PDF:", err);
+                Ui.showToast("Error al cargar uno de los PDFs", "danger");
+                printSequential(index + 1);
+            }
+        });
+    };
+
+    printSequential(0);
 };

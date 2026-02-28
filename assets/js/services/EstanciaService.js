@@ -39,6 +39,19 @@ class EstanciaService extends BaseService {
             this.save(flatList); 
             return flatList;
         }
+
+        // NORMALIZACIÓN: Asegurar que totalHab siempre esté disponible
+        if (Array.isArray(data) && data.length > 0) {
+            let fixed = false;
+            data.forEach(r => {
+                if (r.totalHab === undefined && r.total_hab !== undefined) {
+                    r.totalHab = r.total_hab;
+                    fixed = true;
+                }
+            });
+            if (fixed) this.save(data);
+        }
+
         return data;
     }
 

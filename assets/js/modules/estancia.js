@@ -221,21 +221,25 @@ function mostrarEstancia() {
         Ui.renderTable('tablaEstanciaCuerpo', sortedData, renderRow);
     });
 
-    if (diasContados > 0) {
+    if (diasContados > 0 && sumaTotal > 0) {
         const promOcupacion = ((sumaOcupadas / sumaTotal) * 100).toFixed(1);
         pie.innerHTML = `
             <tr>
                 <td class="text-start ps-4">PROMEDIO MENSUAL</td>
                 <td>${sumaOcupadas}</td>
                 <td>${sumaVacias}</td>
-                <td>${sumaTotal - sumaOcupadas - sumaVacias}</td>
+                <td>${Math.max(0, sumaTotal - sumaOcupadas - sumaVacias)}</td>
                 <td>${promOcupacion}%</td>
                 <td></td>
             </tr>`;
         renderStatsAnual(year, promOcupacion, sumaOcupadas, diasContados);
     } else {
-        pie.innerHTML = '';
-        renderStatsAnual(year, 0, 0, 0); // Limpiar stats
+        pie.innerHTML = `
+            <tr>
+                <td class="text-start ps-4">PROMEDIO MENSUAL</td>
+                <td colspan="5" class="text-center text-muted">Datos insuficientes para cálculos</td>
+            </tr>`;
+        renderStatsAnual(year, 0, sumaOcupadas, diasContados); 
     }
 }
 
@@ -293,7 +297,11 @@ function renderGraficaEstancia() {
         for (let d = 1; d <= diasEnMes; d++) {
             labels.push(d);
             const dData = dataByDay[d];
-            dataPoints.push(dData ? ((dData.ocupadas / dData.totalHab) * 100).toFixed(1) : null);
+            if (dData && dData.totalHab > 0) {
+                dataPoints.push(((dData.ocupadas / dData.totalHab) * 100).toFixed(1));
+            } else {
+                dataPoints.push(null);
+            }
         }
 
         if (chartEstancia) {

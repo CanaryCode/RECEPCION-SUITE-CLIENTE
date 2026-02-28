@@ -31,6 +31,7 @@ export async function inicializarSafe() {
 
     // 2. AUTOCOMPLETE DE HABITACIONES
     Ui.initRoomAutocomplete('lista-habs-safe');
+    Ui.attachRoomValidator('safe_hab', { allowEmpty: false });
 
     // 3. GESTIÓN DE FORMULARIO (Asistente)
     Ui.handleFormSubmission({

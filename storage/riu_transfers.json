@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "transfer_id": 1772289656585,
+        "fecha": "2026-02-28",
+        "hora": "03:33",
+        "habitacion": "222",
+        "nombre_cliente": "",
+        "externo": false,
+        "tipo": "TAXI",
+        "pax": 1,
+        "destino": "Aeropuerto Norte",
+        "notas": "",
+        "autor": "Marta",
+        "creadoEn": "2026-02-28T14:40:56.585Z",
+        "actualizadoEn": "2026-02-28T14:40:56.585Z"
+    }
+]

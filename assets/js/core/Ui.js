@@ -171,6 +171,43 @@ export const Ui = {
     },
 
     /**
+     * ADJUNTAR VALIDADOR DE HABITACIÓN (Visual & Logic)
+     * Proporciona feedback visual (Bootstrap is-valid/is-invalid) en tiempo real.
+     * 
+     * @param {string} inputId - ID del input de habitación
+     * @param {Object} options - { onValidate: (isValid, room) => void, allowEmpty: boolean }
+     */
+    attachRoomValidator: async (inputId, { onValidate, allowEmpty = true } = {}) => {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        const { Utils } = await import('./Utils.js');
+        const validRooms = Utils.getHabitaciones().map(h => h.num);
+
+        const validate = () => {
+            const val = input.value.trim().padStart(3, '0');
+            const isEmpty = input.value.trim() === '';
+            
+            let isValid = false;
+            if (isEmpty) {
+                isValid = allowEmpty;
+            } else {
+                isValid = validRooms.includes(val);
+            }
+
+            // Aplicar clases de Bootstrap
+            input.classList.toggle('is-valid', isValid && !isEmpty);
+            input.classList.toggle('is-invalid', !isValid && !isEmpty);
+
+            if (onValidate) onValidate(isValid, isEmpty ? '' : val);
+        };
+
+        input.addEventListener('input', validate);
+        // Validar inicialmente si hay valor
+        if (input.value) validate();
+    },
+
+    /**
      * CONFIGURAR CONMUTADOR DE VISTAS (Tabs/Panels)
      * Automatiza el cambio entre vista de Lista, Formulario o Rack.
      * 

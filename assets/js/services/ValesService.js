@@ -93,26 +93,43 @@ class ValesService extends BaseService {
         // Si no hacemos esto, BaseService.validate fallará al intentar añadir un nuevo vale
         if (Array.isArray(this.cache) && this.cache.length > 0) {
             let needsRepair = false;
-            this.cache.forEach(v => {
-                // Campos que han sido añadidos progresivamente
-                if (v.fecha_creacion === undefined) {
-                    // Si el ID parece un timestamp (numérico y grande), lo usamos como fecha
-                    if (typeof v.id === 'number' && v.id > 1000000000000) {
-                        v.fecha_creacion = new Date(v.id).toISOString();
+            this.cache = this.cache.map(v => {
+                let repaired = { ...v };
+
+                // 1. Validar ID (Debe ser número)
+                if (typeof repaired.id !== 'number') {
+                    const numericId = parseInt(repaired.id);
+                    if (!isNaN(numericId)) {
+                        repaired.id = numericId;
                     } else {
-                        v.fecha_creacion = new Date().toISOString();
+                        repaired.id = Date.now() + Math.floor(Math.random() * 1000);
                     }
                     needsRepair = true;
                 }
-                if (v.usuario === undefined) { v.usuario = 'Anónimo'; needsRepair = true; }
-                if (v.firmado === undefined) { v.firmado = false; needsRepair = true; }
-                if (v.comentario === undefined) { v.comentario = ''; needsRepair = true; }
-                if (v.estado === undefined) { v.estado = 'Pendiente'; needsRepair = true; }
-                if (v.receptor === undefined) {
-                    v.receptor = v.nombre || 'No especificado';
+
+                // 2. Validar Importe (Debe ser número)
+                if (typeof repaired.importe !== 'number') {
+                    const val = parseFloat(repaired.importe);
+                    repaired.importe = isNaN(val) ? 0 : val;
+                    if (typeof v.importe !== 'number') needsRepair = true;
+                }
+
+                // 3. Otros campos obligatorios
+                if (!repaired.fecha_creacion) {
+                    repaired.fecha_creacion = repaired.created_at || new Date().toISOString();
                     needsRepair = true;
                 }
-                if (v.concepto === undefined) { v.concepto = 'Varios'; needsRepair = true; }
+                if (!repaired.usuario) { repaired.usuario = repaired.autor || 'Anónimo'; needsRepair = true; }
+                if (repaired.firmado === undefined || repaired.firmado === null) { repaired.firmado = true; needsRepair = true; }
+                if (repaired.comentario === undefined || repaired.comentario === null) { repaired.comentario = ''; needsRepair = true; }
+                if (repaired.estado === undefined || repaired.estado === null) { repaired.estado = 'Pendiente'; needsRepair = true; }
+                if (repaired.receptor === undefined || repaired.receptor === null) {
+                    repaired.receptor = repaired.habitacion || 'No especificado';
+                    needsRepair = true;
+                }
+                if (repaired.concepto === undefined || repaired.concepto === null) { repaired.concepto = 'Varios'; needsRepair = true; }
+
+                return repaired;
             });
 
             if (needsRepair) {

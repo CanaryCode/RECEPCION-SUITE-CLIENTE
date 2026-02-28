@@ -178,7 +178,9 @@ export const Api = {
             let localToken = null;
             const testUrls = [
                 `https://localhost:3001/local-token?_t=${Date.now()}`,
-                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`
+                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`,
+                `http://localhost:3001/local-token?_t=${Date.now()}`,
+                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`
             ];
 
             for (const url of testUrls) {

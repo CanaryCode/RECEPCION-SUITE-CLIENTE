@@ -5,7 +5,7 @@
     </div>
     <div class="report-info-right">
         <div><strong>Fecha:</strong> <span id="print-date-tiempo"></span></div>
-        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Informativo - Santa Cruz de Tenerife
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px;">Documento Informativo - Tenerife
         </div>
     </div>
 </div>
@@ -30,20 +30,41 @@
 </div>
 
 <div id="tiempo-content-wrapper" class="content-panel animate-fade-in">
-    <div class="card shadow-sm border-0 h-100">
+    <!-- Santa Cruz de Tenerife -->
+    <div class="card shadow-sm border-0 mb-4 no-break">
         <div class="card-body p-0" style="min-height: 700px;">
-            <iframe id="iframe-tiempo" src="https://www.eltiempo.es/pdf/santa-cruz-de-tenerife.pdf"
-                style="width: 100%; height: 800px; border: none; border-radius: 8px;"
+            <iframe id="iframe-tiempo-sc" src="https://www.eltiempo.es/pdf/santa-cruz-de-tenerife.pdf"
+                style="width: 100%; height: 850px; border: none; border-radius: 8px;"
                 title="El Tiempo en Santa Cruz de Tenerife">
             </iframe>
-            <div id="tiempo-fallback" class="d-none text-center p-5">
-                <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3"></i>
-                <p>No se pudo cargar el PDF directamente desde eltiempo.es.</p>
-                <a href="https://www.eltiempo.es/pdf/santa-cruz-de-tenerife.pdf" target="_blank"
-                    class="btn btn-primary">
-                    Abrir en nueva pestaña
-                </a>
-            </div>
+        </div>
+    </div>
+
+    <!-- Salto de página para impresión -->
+    <div class="d-none d-print-block" style="page-break-after: always;"></div>
+
+    <!-- Puerto de la Cruz -->
+    <div class="card shadow-sm border-0 no-break">
+        <div class="card-body p-0" style="min-height: 700px;">
+            <iframe id="iframe-tiempo-pc" src="https://www.eltiempo.es/pdf/puerto-de-la-cruz.pdf"
+                style="width: 100%; height: 850px; border: none; border-radius: 8px;"
+                title="El Tiempo en Puerto de la Cruz">
+            </iframe>
+        </div>
+    </div>
+
+    <div id="tiempo-fallback" class="d-none text-center p-5">
+        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3"></i>
+        <p>No se pudo cargar el PDF directamente desde eltiempo.es.</p>
+        <div class="btn-group">
+            <a href="https://www.eltiempo.es/pdf/santa-cruz-de-tenerife.pdf" target="_blank"
+                class="btn btn-outline-primary">
+                Santa Cruz
+            </a>
+            <a href="https://www.eltiempo.es/pdf/puerto-de-la-cruz.pdf" target="_blank"
+                class="btn btn-outline-primary">
+                Puerto de la Cruz
+            </a>
         </div>
     </div>
 </div>

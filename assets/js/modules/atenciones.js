@@ -31,6 +31,7 @@ export async function inicializarAtenciones() {
 
     // 2. AUTOCOMPLETE
     Ui.initRoomAutocomplete('lista-habs-atenciones');
+    Ui.attachRoomValidator('atencion_hab', { allowEmpty: false });
 
     // 3. GESTIÓN DE FORMULARIO (Ui.handleFormSubmission)
     Ui.handleFormSubmission({

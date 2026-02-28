@@ -12,11 +12,11 @@
 
 | Campo                      | Valor                                                                     |
 | -------------------------- | ------------------------------------------------------------------------- |
-| **Última versión**         | v.beta 10.1                                                               |
-| **Módulo en foco**         | Barrera de seguridad (auth device-level via HTTPS)                        |
-| **Deuda técnica conocida** | Ninguna conocida (PNA resuelto con protocolo HTTPS uniforme)              |
+| **Última versión**         | v.beta 10.2                                                               |
+| **Módulo en foco**         | Quick Login (Selector de Usuario) + Optimización de Impresión             |
+| **Deuda técnica conocida** | Ninguna conocida                                                          |
 | **Próximo objetivo**       | Ver `roadmap.md`                                                          |
-| **Última sesión**          | 2026-02-28 — Fix PNA: Cambio de http:// a https:// en validación agente. |
+| **Última sesión**          | 2026-02-28 — SELLADO: Quick Login, recuperación de lanzadores y fix CORS. |
 
 ---
 

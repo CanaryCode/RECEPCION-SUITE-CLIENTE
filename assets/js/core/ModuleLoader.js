@@ -20,49 +20,49 @@ export class ModuleLoader {
         // MÓDULOS CRÍTICOS (se cargan al inicio)
         'despertadores': {
             selector: '#despertadores-content',
-            importPath: './modules/despertadores.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/despertadores.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarDespertadores',
             critical: true
         },
         'novedades': {
             selector: '#novedades-content',
-            importPath: './modules/novedades.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/novedades.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarNovedades',
             critical: true
         },
         'cena-fria': {
             selector: '#cena-fria-content',
-            importPath: './modules/cena_fria.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/cena_fria.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarCenaFria',
             critical: true
         },
         'desayuno': {
             selector: '#desayuno-content',
-            importPath: './modules/desayuno.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/desayuno.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarDesayuno',
             critical: true
         },
         'transfers': {
             selector: '#transfers-content',
-            importPath: './modules/transfers.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/transfers.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarTransfers',
             critical: true
         },
         'alarms': {
             selector: '#system-alarms-content',
-            importPath: './modules/alarms.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/alarms.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarSystemAlarms',
             critical: true
         },
         'alarms-ui': {
             selector: '#system-alarms-content',
-            importPath: './modules/system_alarms_ui.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/system_alarms_ui.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarSystemAlarmsUI',
             critical: true
         },
         'configuracion': {
             selector: '#configuracion-content',
-            importPath: './modules/configuracion.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/configuracion.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarConfiguracion',
             critical: true
         },
@@ -70,112 +70,112 @@ export class ModuleLoader {
         // MÓDULOS LAZY (se cargan bajo demanda)
         'agenda': {
             selector: '#agenda-content',
-            importPath: './modules/agenda.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/agenda.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarAgenda',
             critical: false
         },
         'caja': {
             selector: '#caja-content',
-            importPath: './modules/caja.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/caja.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarCaja',
             critical: false
         },
         'cobro': {
             selector: '#cobro-content',
-            importPath: './modules/cobro.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/cobro.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarCobro',
             critical: false
         },
         'safe': {
             selector: '#safe-content',
-            importPath: './modules/safe.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/safe.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarSafe',
             critical: false
         },
         'atenciones': {
             selector: '#atenciones-content',
-            importPath: './modules/atenciones.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/atenciones.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarAtenciones',
             critical: false
         },
         'estancia': {
             selector: '#estancia-content',
-            importPath: './modules/estancia.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/estancia.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarEstancia',
             critical: false
         },
         'riu': {
             selector: '#riu-content',
-            importPath: './modules/riu.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/riu.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarRiu',
             critical: false
         },
         'ayuda': {
             selector: '#ayuda-content',
-            importPath: './modules/ayuda.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/ayuda.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarAyuda',
             critical: false
         },
         'notas-permanentes': {
             selector: '#notas-content',
-            importPath: './modules/notas_permanentes.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/notas_permanentes.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarNotasPermanentes',
             critical: false
         },
         'precios': {
             selector: '#precios-content',
-            importPath: './modules/precios.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/precios.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarPrecios',
             critical: false
         },
         'lost-found': {
             selector: '#lost-found-content',
-            importPath: './modules/lost_found.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/lost_found.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarLostFound',
             critical: false
         },
         'rack': {
             selector: '#rack-content',
-            importPath: './modules/rack.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/rack.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarRack',
             critical: false
         },
         'excursiones': {
             selector: '#excursiones-content',
-            importPath: './modules/excursiones.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/excursiones.js?v=V147_PROXY_FIX',
             initFunction: 'init',
             className: 'Excursiones',
             critical: false
         },
         'reservas-instalaciones': {
             selector: '#reservas-instalaciones-content',
-            importPath: './modules/reservas_instalaciones.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/reservas_instalaciones.js?v=V147_PROXY_FIX',
             initFunction: 'init',
             className: 'ReservasInstalaciones',
             critical: false
         },
         'valoracion': {
             selector: '#valoracion-content',
-            importPath: './modules/valoracion.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/valoracion.js?v=V147_PROXY_FIX',
             initFunction: 'inicializarValoracion',
             critical: false
         },
         'gallery': {
             selector: '#gallery-content',
-            importPath: './modules/gallery.js?v=V147_PROXY_FIX',
+            importPath: '/assets/js/modules/gallery.js?v=V147_PROXY_FIX',
             initFunction: 'inicializar',
             className: 'Gallery',
             critical: false
         },
         'tiempo': {
             selector: '#tiempo-content',
-            importPath: './modules/tiempo.js?v=V1_TIEMPO',
+            importPath: '/assets/js/modules/tiempo.js?v=V1_TIEMPO',
             initFunction: 'inicializarTiempo',
             critical: false
         },
         'ocr': {
             selector: '#ocr-datafonos-content',
-            importPath: './modules/ocr_datafonos.js?v=V1_OCR',
+            importPath: '/assets/js/modules/ocr_datafonos.js?v=V1_OCR',
             initFunction: 'inicializarOCR',
             critical: false
         }

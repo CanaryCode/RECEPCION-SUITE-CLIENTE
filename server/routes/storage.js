@@ -199,21 +199,58 @@ router.get('/:key', async (req, res) => {
             }
 
             // Mapeo inverso para que el frontend reciba camelCase si la DB tiene snake_case
+            if (key === 'riu_estancia_diaria') {
+                return res.json(processedRows.map(row => ({
+                    fecha: row.fecha,
+                    ocupadas: row.ocupadas ?? 0,
+                    vacias: row.vacias ?? 0,
+                    totalHab: row.total_hab ?? row.totalHab ?? row.TOTAL_HAB ?? 0, 
+                    createdAt: row.created_at
+                })));
+            }
+
+            if (key === 'riu_transfers') {
+                return res.json(processedRows.map(row => ({
+                    transfer_id: row.id,
+                    fecha: row.fecha,
+                    hora: row.hora,
+                    habitacion: row.habitacion,
+                    pax: row.pasajeros ?? row.pax ?? row.PASAJEROS ?? 0,
+                    destino: row.lugar_destino ?? row.destino ?? row.LUGAR_DESTINO ?? '',
+                    nombre_cliente: row.nombre_cliente,
+                    externo: row.externo === 1,
+                    notas: row.notas,
+                    compania: row.compania,
+                    vuelo: row.vuelo,
+                    autor: row.autor
+                })));
+            }
+
+            if (key === 'vales_data') {
+                return res.json(processedRows.map(row => {
+                    const id = row.id;
+                    return {
+                        ...row,
+                        id: (typeof id === 'string' && !isNaN(Number(id))) ? Number(id) : id
+                    };
+                }));
+            }
+
             if (key === 'riu_excursiones') {
                 return res.json(processedRows.map(row => ({
                     id: row.id,
-                    tipoId: row.tipo_id,
+                    tipoId: row.tipo_id ?? row.tipoId,
                     huesped: row.huesped,
                     habitacion: row.habitacion,
-                    fechaExcursion: row.fecha_excursion,
-                    adultos: row.adultos,
-                    niños: row.ninos,
-                    total: row.total,
+                    fechaExcursion: row.fecha_excursion ?? row.fechaExcursion,
+                    adultos: row.adultos ?? 0,
+                    niños: row.ninos ?? row.niños ?? 0,
+                    total: row.total ?? 0,
                     estado: row.estado,
                     vendedor: row.vendedor,
                     autor: row.autor,
-                    fechaVenta: row.fecha_venta,
-                    comments: row.comments
+                    fechaVenta: row.fecha_venta ?? row.fechaVenta,
+                    comments: row.comments || row.comentario || ''
                 })));
             }
 
@@ -255,6 +292,11 @@ router.post('/:key', async (req, res) => {
         return res.status(400).json({ error: 'Body is required' });
     }
 
+    // DEBUG: Log para diagnosticar transfers vacíos
+    if (key === 'riu_transfers') {
+        logToFile(`[Storage] DEBUG riu_transfers - Received data type: ${typeof data}, is Array: ${Array.isArray(data)}, length: ${Array.isArray(data) ? data.length : 'N/A'}`);
+    }
+
     const connection = await db.pool.getConnection();
     try {
         await connection.beginTransaction();
@@ -262,170 +304,182 @@ router.post('/:key', async (req, res) => {
         if (tableName) {
             logToFile(`[Storage] DB Write (Transaction Start): ${tableName} (key: ${key})`);
 
-            // 1. Limpiar tabla actual
-            await connection.query(`DELETE FROM \`${tableName}\``);
-
-            // 2. Normalizar data a array para inserción
-            let itemsToInsert = [];
+            // CASO ESPECIAL: CONFIG (No queremos borrar todo, sino hacer UPSERT)
             if (key === 'config') {
-                itemsToInsert = Object.entries(data).map(([k, v]) => ({ config_key: k, config_value: v }));
-            } else if (key === 'guia_operativa') {
-                itemsToInsert = Object.entries(data).map(([turno, tareas]) => ({ turno, tareas }));
-            } else if (key === 'gallery_favorites') {
-                itemsToInsert = Array.isArray(data) ? data.map(path => ({ path })) : [];
-            } else if (key === 'arqueo_caja') {
-                // Arqueo es un objeto único que representa una fila
-                itemsToInsert = [data];
-            } else if (key === 'riu_system_alarms') {
-                itemsToInsert = data.map(item => ({
-                    id: item.id,
-                    msg: item.mensaje || item.msg || '',
-                    prioridad: item.prioridad || 'Normal',
-                    activo: item.active !== undefined ? item.active : (item.activo !== undefined ? item.activo : 1)
-                }));
-            } else if (key === 'riu_precios') {
-                itemsToInsert = data.map(item => ({
-                    id: item.id,
-                    nombre: item.nombre,
-                    precio: item.precio,
-                    icono: item.icono,
-                    comentario: item.comentario,
-                    favorito: item.favorito ? 1 : 0
-                }));
-            } else if (key === 'riu_excursiones') {
-                itemsToInsert = data.map(item => ({
-                    id: item.id,
-                    tipo_id: item.tipoId || item.tipo_id,
-                    huesped: item.huesped,
-                    habitacion: item.habitacion,
-                    fecha_excursion: item.fechaExcursion || item.fecha_excursion,
-                    adultos: item.adultos || 0,
-                    ninos: item.niños !== undefined ? item.niños : (item.ninos !== undefined ? item.ninos : 0),
-                    total: item.total || 0,
-                    estado: item.estado || 'Pendiente',
-                    vendedor: item.vendedor,
-                    autor: item.autor,
-                    fecha_venta: item.fechaVenta || item.fecha_venta
-                }));
-            } else if (key === 'reservas_instalaciones') {
-                itemsToInsert = data.map(item => ({
-                    id: item.id,
-                    instalacion: item.instalacion,
-                    habitacion: item.habitacion,
-                    fecha: item.fecha,
-                    hora_inicio: item.hora_inicio,
-                    hora_fin: item.hora_fin,
-                    personas: item.pax || 1,
-                    nombre: item.nombre_cliente || item.nombre,
-                    autor: item.autor,
-                    comentarios: item.observaciones || item.comentarios
-                }));
-            } else if (key === 'riu_transfers') {
-                itemsToInsert = data.map((item, idx) => ({
-                    id: item.id || item.transfer_id || `TRF-${Date.now()}-${idx}`,
-                    tipo: item.tipo,
-                    pasajeros: item.pax || item.pasajeros || 1,
-                    habitacion: item.habitacion,
-                    hora: item.hora,
-                    lugar_destino: item.destino || item.lugar_destino,
-                    compania: item.compania,
-                    vuelo: item.vuelo,
-                    autor: item.autor
-                }));
-            } else if (key === 'riu_rack') {
-                // El rack suele venir como un objeto { "101": { status: '...', comments: '...' }, ... }
-                itemsToInsert = Object.entries(data).map(([num, val]) => ({
-                    habitacion: num,
-                    estado: val.status || val.estado,
-                    comentarios: val.comments || val.comentarios,
-                    extras: val.extras || {}
-                }));
-            } else if (key === 'riu_atenciones_v2') {
-                itemsToInsert = Object.entries(data).map(([num, val]) => ({
-                    id: `ATN-${val.timestamp || Date.now()}-${num}`,
-                    habitacion: num,
-                    comentarios: val.comentario || val.comentarios || '',
-                    tipos: val.tipos || [],
-                    autor: val.autor,
-                    actualizado_en: val.actualizadoEn || val.actualizado_en || new Date().toISOString()
-                }));
-            } else if (Array.isArray(data)) {
-                itemsToInsert = data;
-            } else if (typeof data === 'object') {
-                itemsToInsert = Object.entries(data).map(([pk, val]) => {
-                    if (typeof val === 'object' && val !== null) {
-                        // Normalizar: si viene como 'hab', convertir a 'habitacion'
-                        const item = { habitacion: pk, ...val };
-                        if (item.hab && !item.habitacion) item.habitacion = item.hab;
-                        return item;
+                logToFile('[Storage] Special handling for config - UPSERT mode');
+                for (const [k, v] of Object.entries(data)) {
+                    // Si el valor ya es un objeto, lo stringificamos para la DB
+                    const valStr = (typeof v === 'object' && v !== null) ? JSON.stringify(v) : v;
+                    await connection.query(
+                        'INSERT INTO app_config (config_key, config_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE config_value = ?',
+                        [k, valStr, valStr]
+                    );
+                }
+
+                // Recuperar la configuración completa para el archivo JSON y para el broadcast
+                const [allRows] = await connection.query('SELECT * FROM app_config');
+                const fullConfig = {};
+                allRows.forEach(r => {
+                    let val = r.config_value;
+                    // Asegurar que devolvemos objetos si están guardados como JSON string
+                    if (typeof val === 'string' && (val.startsWith('{') || val.startsWith('['))) {
+                        try { val = JSON.parse(val); } catch (e) { }
                     }
-                    return { habitacion: pk, value: val };
+                    fullConfig[r.config_key] = val;
                 });
-            }
+                
+                // Actualizamos 'data' para que el guardado en JSON y el broadcast sean completos
+                Object.keys(data).forEach(k => delete data[k]);
+                Object.assign(data, fullConfig);
+                
+            } else {
+                // 1. Limpiar tabla actual para otros módulos (comportamiento estándar actual)
+                await connection.query(`DELETE FROM \`${tableName}\``);
 
-            // Normalización adicional para casos donde data es un Array de objetos
-            if (Array.isArray(itemsToInsert)) {
-                itemsToInsert = itemsToInsert.map(item => {
-                    if (item.hab && !item.habitacion) return { ...item, habitacion: item.hab };
-                    return item;
-                });
-            }
-
-            // 3. Ejecutar inserciones
-            if (itemsToInsert.length > 0) {
-                // Obtener las columnas válidas de la tabla en DB
-                const [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
-                const validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
-
-                // Seleccionar solo columnas válidas
-                const allColumns = new Set();
-                itemsToInsert.forEach(item => Object.keys(item).forEach(col => {
-                    if (validDbColumns.has(col)) allColumns.add(col);
-                }));
-                const columns = Array.from(allColumns);
-
-                const placeholders = columns.map(() => '?').join(', ');
-                const sql = `INSERT INTO \`${tableName}\` (\`${columns.join('\`, \`')}\`) VALUES (${placeholders})`;
-
-                for (const item of itemsToInsert) {
-                    const values = columns.map(col => {
-                        let val = item[col];
-
-                        // Parsear fechas ISO a formato compatible con MariaDB
-                        if (typeof val === 'string' && val.includes('T') && val.endsWith('Z')) {
-                            const dateMatch = val.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/);
-                            if (dateMatch) return `${dateMatch[1]} ${dateMatch[2]}`;
+                // 2. Normalizar data a array para inserción
+                let itemsToInsert = [];
+                if (key === 'guia_operativa') {
+                    itemsToInsert = Object.entries(data).map(([turno, tareas]) => ({ turno, tareas }));
+                } else if (key === 'gallery_favorites') {
+                    itemsToInsert = Array.isArray(data) ? data.map(path => ({ path })) : [];
+                } else if (key === 'arqueo_caja') {
+                    itemsToInsert = [data];
+                } else if (key === 'riu_estancia_diaria') {
+                    itemsToInsert = data.map(item => ({
+                        fecha: item.fecha,
+                        ocupadas: item.ocupadas || 0,
+                        vacias: item.vacias || 0,
+                        total_hab: item.totalHab || item.total_hab || 0
+                    }));
+                } else if (key === 'riu_system_alarms') {
+                    itemsToInsert = data.map(item => ({
+                        id: item.id,
+                        msg: item.mensaje || item.msg || '',
+                        prioridad: item.prioridad || 'Normal',
+                        activo: item.active !== undefined ? item.active : (item.activo !== undefined ? item.activo : 1)
+                    }));
+                } else if (key === 'riu_precios') {
+                    itemsToInsert = data.map(item => ({
+                        id: item.id,
+                        nombre: item.nombre,
+                        precio: item.precio,
+                        icono: item.icono,
+                        comentario: item.comentario,
+                        favorito: item.favorito ? 1 : 0
+                    }));
+                } else if (key === 'riu_excursiones') {
+                    itemsToInsert = data.map(item => ({
+                        id: item.id,
+                        tipo_id: item.tipoId || item.tipo_id,
+                        huesped: item.huesped,
+                        habitacion: item.habitacion,
+                        fecha_excursion: item.fechaExcursion || item.fecha_excursion,
+                        adultos: item.adultos || 0,
+                        ninos: item.niños !== undefined ? item.niños : (item.ninos !== undefined ? item.ninos : 0),
+                        total: item.total || 0,
+                        estado: item.estado || 'Pendiente',
+                        vendedor: item.vendedor,
+                        autor: item.autor,
+                        fecha_venta: item.fechaVenta || item.fecha_venta
+                    }));
+                } else if (key === 'reservas_instalaciones') {
+                    itemsToInsert = data.map(item => ({
+                        id: item.id,
+                        instalacion: item.instalacion,
+                        habitacion: item.habitacion,
+                        fecha: item.fecha,
+                        hora_inicio: item.hora_inicio,
+                        hora_fin: item.hora_fin,
+                        personas: item.pax || 1,
+                        nombre: item.nombre_cliente || item.nombre,
+                        autor: item.autor,
+                        comentarios: item.observaciones || item.comentarios
+                    }));
+                } else if (key === 'riu_transfers') {
+                    itemsToInsert = data.map((item, idx) => ({
+                        id: item.transfer_id || item.id || `TRF-${Date.now()}-${idx}`,
+                        fecha: item.fecha || new Date().toISOString().split('T')[0],
+                        tipo: item.tipo,
+                        pasajeros: item.pax || item.pasajeros || 1,
+                        habitacion: item.habitacion,
+                        hora: item.hora,
+                        lugar_destino: item.destino || item.lugar_destino,
+                        nombre_cliente: item.nombre_cliente || '',
+                        externo: item.externo ? 1 : 0,
+                        notas: item.notas || '',
+                        compania: item.compania || '',
+                        vuelo: item.vuelo || '',
+                        autor: item.autor
+                    }));
+                } else if (key === 'riu_rack') {
+                    itemsToInsert = Object.entries(data).map(([num, val]) => ({
+                        habitacion: num,
+                        estado: val.status || val.estado,
+                        comentarios: val.comments || val.comentarios,
+                        extras: val.extras || {}
+                    }));
+                } else if (key === 'riu_atenciones_v2') {
+                    itemsToInsert = Object.entries(data).map(([num, val]) => ({
+                        habitacion: num,
+                        comentarios: val.comentario || val.comentarios || '',
+                        tipos: val.tipos || [],
+                        autor: val.autor,
+                        actualizado_en: val.actualizadoEn || val.actualizado_en || new Date().toISOString()
+                    }));
+                } else if (Array.isArray(data)) {
+                    itemsToInsert = data;
+                } else if (typeof data === 'object') {
+                    itemsToInsert = Object.entries(data).map(([pk, val]) => {
+                        if (typeof val === 'object' && val !== null) {
+                            const item = { habitacion: pk, ...val };
+                            if (item.hab && !item.habitacion) item.habitacion = item.hab;
+                            return item;
                         }
-
-                        if (typeof val === 'boolean') return val ? 1 : 0;
-                        if (typeof val === 'object' && val !== null) return JSON.stringify(val);
-                        return (val === undefined || val === '') ? null : val;
+                        return { habitacion: pk, value: val };
                     });
-                    await connection.query(sql, values);
+                }
+
+                // Inserción genérica con validación de columnas
+                if (itemsToInsert.length > 0) {
+                    const [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
+                    const validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+
+                    for (const item of itemsToInsert) {
+                        const itemColumns = Object.keys(item).filter(col => validDbColumns.has(col));
+                        if (itemColumns.length === 0) continue;
+
+                        const placeholders = itemColumns.map(() => '?').join(', ');
+                        const sql = `INSERT INTO \`${tableName}\` (\`${itemColumns.join('\`, \`')}\`) VALUES (${placeholders})`;
+                        
+                        const values = itemColumns.map(col => {
+                            let val = item[col];
+                            if (typeof val === 'string' && val.includes('T') && val.endsWith('Z')) {
+                                const dateMatch = val.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/);
+                                if (dateMatch) return `${dateMatch[1]} ${dateMatch[2]}`;
+                            }
+                            if (typeof val === 'boolean') return val ? 1 : 0;
+                            if (typeof val === 'object' && val !== null) return JSON.stringify(val);
+                            return (val === undefined || val === '') ? null : val;
+                        });
+                        await connection.query(sql, values);
+                    }
                 }
             }
-            logToFile(`[Storage] DB Write (Transaction Success): ${tableName} (${itemsToInsert.length} rows)`);
+            logToFile(`[Storage] DB Write (Transaction Success): ${tableName}`);
         }
 
-        // 4. Confirmar cambios en DB
         await connection.commit();
-
-        // 5. Solo si la DB tuvo éxito (o no hay mapeo), guardamos el JSON
         const filePath = path.join(STORAGE_DIR, `${key}.json`);
         await fs.writeFile(filePath, JSON.stringify(data, null, 4), 'utf8');
 
-        // 6. Broadcast change to all clients
         const broadcast = req.app.get('broadcast');
-        if (broadcast) {
-            broadcast({ type: 'data-changed', key });
-        }
+        if (broadcast) broadcast({ type: 'data-changed', key });
 
         res.json({ success: true, source: tableName ? 'db+json' : 'json' });
 
     } catch (err) {
         if (connection) await connection.rollback();
         logToFile(`[Storage] CRITICAL: Transaction Error for ${key}: ${err.message}`);
-        console.error(`[Storage] Transaction Error:`, err);
         res.status(500).json({ error: 'Transaction error', details: err.message });
     } finally {
         if (connection) connection.release();

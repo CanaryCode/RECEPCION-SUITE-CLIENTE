@@ -22,6 +22,7 @@ export async function inicializarCenaFria() {
 
     // 2. AUTOCOMPLETE DE HABITACIONES
     Ui.initRoomAutocomplete('lista-habs-cena');
+    Ui.attachRoomValidator('cena_hab', { allowEmpty: false });
 
     // 3. GESTIÓN DE FORMULARIO (Asistente)
     Ui.handleFormSubmission({

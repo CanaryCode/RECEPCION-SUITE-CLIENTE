@@ -70,6 +70,7 @@
 ### [2026-02-28] Bloqueo PNA: Fetch HTTP desde HTTPS
 
 **Síntoma**: Chrome/Edge bloqueaban el acceso a `http://localhost:3001` desde `https://www.desdetenerife.com:3000` con error:
+
 ```
 Access to fetch at 'http://localhost:3001/...' has been blocked by CORS policy:
 Permission was denied for this request to access the `loopback` address space.
@@ -165,4 +166,30 @@ Permission was denied for this request to access the `loopback` address space.
 
 **Archivos afectados**: `index.html`, cualquier módulo con botones toolbar duales
 
-**Lección**: Ver Regla U9 en `reglas_de_oro.md`. Nunca mezclar `data-bs-toggle` en el mismo elemento.
+### [2026-02-28] Quick Login: Grid de Usuarios vacío
+
+**Síntoma**: La pantalla "¿Quién eres hoy?" aparecía pero sin tarjetas de usuario (grid vacío).
+**Causa raíz**: Inconsistencia en las versiones de los módulos (`Config.js?v=XXX`). `main.js` importaba una versión y `Login.js` otra (o ninguna), lo que provocaba que el navegador cargara dos instancias separadas de `APP_CONFIG`. La instancia de `Login.js` permanecía con el estado inicial (vacío).
+**Solución**: Estandarizar todos los imports core en `Login.js` para usar los mismos query strings de versión que `main.js`, garantizando que compartan el mismo objeto en memoria.
+**Archivos afectados**: `assets/js/core/Login.js`
+**Lección**: En una arquitectura de ES Modules sin bundler (Vite/Webpack), el versionado por URL debe ser **idéntico** en todo el grafo de dependencias para evitar duplicidad de singletons.
+
+---
+
+### [2026-02-28] Error CORS en Impresión de PDFs Externos
+
+**Síntoma**: Al intentar imprimir el tiempo, la consola mostraba error de CORS bloqueando el acceso a `eltiempo.es`.
+**Causa raíz**: `printJS` intenta descargar el PDF mediante `XMLHttpRequest` para procesarlo. El servidor remoto no incluye cabeceras `Access-Control-Allow-Origin` para nuestro dominio.
+**Solución**: Enrutar la descarga a través del `web-proxy` interno del servidor (`/api/system/web-proxy?url=...`). El servidor descarga el binario y lo sirve como recurso propio, eliminando el conflicto de CORS.
+**Archivos afectados**: `assets/js/modules/tiempo.js`, `server/app.js` (se excluyó el proxy de la validación de estación para permitir la descarga directa).
+**Lección**: Para recursos externos que deban ser procesados por JS (impresión, manipulación), siempre usar el proxy del servidor.
+
+---
+
+### [2026-02-28] ERR_SSL_PROTOCOL_ERROR en Validación de Agente
+
+**Síntoma**: La app se bloqueaba antes de entrar mostrando error de protocolo SSL al conectar con el agente local (`localhost:3001`).
+**Causa raíz**: El frontend forzaba la conexión vía `https://localhost:3001`, pero el agente estaba corriendo en `http` (puerto 3001 pero sin SSL activo en ese entorno).
+**Solución**: Implementar fallback automático en `Api.js`. El handshake ahora intenta `https` primero y, si falla, reintenta por `http` antes de denegar el acceso.
+**Archivos afectados**: `assets/js/core/Api.js`
+**Lección**: No asumir que el entorno local siempre tiene SSL. El handshake debe ser resiliente a ambos protocolos.

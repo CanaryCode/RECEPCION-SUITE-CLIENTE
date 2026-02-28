@@ -1,395 +1,401 @@
 {
-    "SYSTEM": {
-        "USE_API": false,
-        "USE_SYNC_SERVER": true,
-        "API_URL": "/api",
-        "SYNC_INTERVAL": 10000,
-        "LAUNCHERS": [
+    "AGENDA": {
+        "PAISES": [
             {
-                "label": "SIHOT",
-                "path": "",
-                "icon": "display"
+                "c": "+34",
+                "f": "🇪🇸",
+                "n": "España"
             },
             {
-                "label": "ALTA RIU",
-                "path": "",
-                "icon": "house"
+                "c": "+49",
+                "f": "🇩🇪",
+                "n": "Alemania"
             },
             {
-                "label": "GESTATUR",
-                "path": "",
-                "icon": "receipt"
+                "c": "+44",
+                "f": "🇬🇧",
+                "n": "Reino Unido"
             },
             {
-                "label": "SUPREMO",
-                "path": "",
-                "icon": "tablet"
+                "c": "+33",
+                "f": "🇫🇷",
+                "n": "Francia"
             },
             {
-                "label": "ATLANTICO EXCURSIONES",
-                "path": "",
-                "icon": "camera"
+                "c": "+39",
+                "f": "🇮🇹",
+                "n": "Italia"
             },
             {
-                "label": "EXTRANET RIU",
-                "path": "",
-                "icon": "globe"
+                "c": "+351",
+                "f": "🇵🇹",
+                "n": "Portugal"
             },
             {
-                "label": "Aeropuerto norte",
-                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Norte&query_place_id=ChIJbx3s_vTNQQwReLBTc3mRXBw",
-                "icon": "geo-alt-fill",
-                "type": "maps"
+                "c": "+1",
+                "f": "🇺🇸",
+                "n": "EE.UU."
             },
             {
-                "label": "Aeropuerto sur",
-                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Sur&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Anaga",
-                "path": "https://www.google.com/maps/search/?api=1&query=Mirador+Cruz+del+Carmen+Anaga&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Masca",
-                "path": "https://www.google.com/maps/search/?api=1&query=Caserio+de+Masca&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Punta de teno",
-                "path": "https://www.google.com/maps/search/?api=1&query=Punta+de+Teno&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "La laguna",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Adelantado+La+Laguna&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Santa cruz",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+Espana+Santa+Cruz+de+Tenerife&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "La orotava",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Constitucion+La+Orotava&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Puerto de la cruz",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Charco+Puerto+de+la+Cruz&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Los gigantes",
-                "path": "https://www.google.com/maps/search/?api=1&query=Acantilados+de+Los+Gigantes&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Garachico",
-                "path": "https://www.google.com/maps/search/?api=1&query=El+Caleton+Garachico&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Candelaria",
-                "path": "https://www.google.com/maps/search/?api=1&query=Basilica+Candelaria+Tenerife&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Las Teresitas",
-                "path": "https://www.google.com/maps/search/?api=1&query=Playa+Las+Teresitas&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Auditorio",
-                "path": "https://www.google.com/maps/search/?api=1&query=Auditorio+Tenerife&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Siam Park",
-                "path": "https://www.google.com/maps/search/?api=1&query=Siam+Park&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Loro parque",
-                "path": "https://www.google.com/maps/search/?api=1&query=Loro+Parque&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Los Cristianos",
-                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+Los+Cristianos&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Puerto de los Cristianos",
-                "path": "http://www.google.com/maps/search/?api=1&query=Puerto+de+Los+Cristianos+Ferry&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Playa de las Americas",
-                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+las+Americas+Tenerife&t=k",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Centro de visitantes Teide",
-                "path": "https://maps.google.com/?cid=13862698318489807873&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Cueva del viento",
-                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDE_6jr0QE!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Barranco del infierno",
-                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIABIhA2DnIstRL_eDiCxzsrgNMJ!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf Abama",
-                "path": "https://maps.google.com/?cid=761971844405859170&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf Costa Adeje",
-                "path": "https://maps.google.com/?cid=1821567396275382399&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf Las Americas",
-                "path": "https://maps.google.com/?cid=4012408393901694028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf del sur",
-                "path": "https://maps.google.com/?cid=14379514915312051412&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf Amarilla",
-                "path": "https://maps.google.com/?cid=1203249720886280057&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf Los Palos",
-                "path": "https://maps.google.com/?cid=13023968755834190814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf El Peñon",
-                "path": "https://maps.google.com/?cid=8046334199755273567&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Golf La Rosaleda",
-                "path": "https://maps.google.com/?cid=6795739325682155554&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "EL Médano",
-                "path": "https://maps.google.com/?cid=5073196173529580874&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Piramides de Guimar",
-                "path": "https://maps.google.com/?cid=3256704489302261413&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Hotel Riu Garoé",
-                "path": "https://www.google.com/maps/place/Hotel+Riu+Garoe/@28.4127299,-16.5342366,765m/data=!3m1!1e3!4m9!3m8!1s0xc41d55edeab4ccf:0x8c61247370e092d4!5m2!4m1!1i2!8m2!3d28.4127252!4d-16.5316617!16s%2Fg%2F1td9xcm9?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D",
-                "icon": "geo-alt-fill",
-                "type": "maps"
-            },
-            {
-                "label": "Download",
-                "path": "C:\\Users\\jesus\\Downloads",
-                "icon": "save",
-                "type": "documentos"
-            },
-            {
-                "label": "Royal Delfín",
-                "path": "https://www.youtube.com/watch?v=1MXizg-PQFI",
-                "icon": "video",
-                "type": "video",
-                "embedded": true
-            },
-            {
-                "label": "RECEPCIÓN",
-                "path": "Z:\\RECEPCIÓN",
-                "icon": "briefcase",
-                "type": "folder",
-                "embedded": false
-            },
-            {
-                "label": "BOOKING MENSUAL PARA DEPARTAMENTOS",
-                "path": "Z:\\BOOKING MENSUAL PARA DEPARTAMENTOS",
-                "icon": "briefcase",
-                "type": "folder",
-                "embedded": false
-            },
-            {
-                "label": "FICHA POLICIA",
-                "path": "Z:\\FICHA POLICIA",
-                "icon": "briefcase",
-                "type": "folder",
-                "embedded": false
-            },
-            {
-                "label": "RECEPCIÓN (Docs)",
-                "path": "Z:\\RECEPCIÓN",
-                "icon": "clipboard-data",
-                "type": "documentos",
-                "embedded": false
-            }
-        ],
-        "GALLERY_PATH": "C:/Users/usuario/Desktop/ANTONIO/RECURSOS/INFORMACIÓN",
-        "ADMIN_PASSWORD": "1234",
-        "GALLERY_FOLDERS": [
-            {
-                "label": "ESCANER",
-                "path": "Z:\\\\ESCANER"
-            },
-            {
-                "label": "DESCARGAS",
-                "path": "C:\\Users\\jesus\\Downloads"
+                "c": "+52",
+                "f": "🇲🇽",
+                "n": "México"
             }
         ]
     },
+    "CAJA": {
+        "FONDO": -2000,
+        "MONEDAS": [
+            2,
+            1,
+            0.5,
+            0.2,
+            0.1,
+            0.05,
+            0.02,
+            0.01
+        ],
+        "BILLETES": [
+            500,
+            200,
+            100,
+            50,
+            20,
+            10,
+            5
+        ]
+    },
+    "COBRO": {
+        "VALORES": [
+            500,
+            200,
+            100,
+            50,
+            20,
+            10,
+            5,
+            2,
+            1,
+            0.5,
+            0.2,
+            0.1,
+            0.05,
+            0.02,
+            0.01
+        ]
+    },
+    "EXCURSIONES_CATALOGO": [
+        {
+            "id": "CAT-1769894964475",
+            "nombre": "loro parque",
+            "esTicket": false,
+            "operador": "atlantico",
+            "precioGrupo": 0,
+            "precioNiño": 12,
+            "precioAdulto": 23
+        }
+    ],
     "HOTEL": {
-        "NOMBRE": "Hotel Garoé",
-        "ALARMAS_SISTEMA": [
+        "NOMBRE": "",
+        "TO_LISTS": {
+            "DE": [
+                "TUI DEUTSCHLAND GMBH"
+            ],
+            "ES": [],
+            "FR": [],
+            "UK": [
+                "TUI UK"
+            ]
+        },
+        "HABITACIONES": [
             {
-                "hora": "23:30",
-                "mensaje": "Realizar lecturas de las VISAS",
-                "dias": "todos"
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "101"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "102"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "103"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "104"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "105"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "106"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "107"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "108"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "109"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "110"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "201"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "202"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "203"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "204"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "205"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "206"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "207"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "208"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "209"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "210"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "301"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "302"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "303"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "304"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "305"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "306"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "307"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "308"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "309"
+            },
+            {
+                "tipo": "Estándar",
+                "vista": "Jardín",
+                "estado": "Limpia",
+                "numero": "310"
             }
         ],
         "STATS_CONFIG": {
             "RANGOS": [
                 {
-                    "planta": 0,
+                    "max": 28,
                     "min": 10,
-                    "max": 28
+                    "planta": 0
                 },
                 {
-                    "planta": 1,
+                    "max": 153,
                     "min": 101,
-                    "max": 153
+                    "planta": 1
                 },
                 {
-                    "planta": 2,
+                    "max": 253,
                     "min": 201,
-                    "max": 253
+                    "planta": 2
                 },
                 {
-                    "planta": 3,
+                    "max": 349,
                     "min": 301,
-                    "max": 349
+                    "planta": 3
                 },
                 {
-                    "planta": 4,
+                    "max": 416,
                     "min": 401,
-                    "max": 416
+                    "planta": 4
                 }
             ],
             "FILTROS": {
                 "TIPOS": [
                     {
-                        "label": "Estándar",
-                        "icon": "🛏️"
+                        "icon": "🛏️",
+                        "label": "Estándar"
                     },
                     {
-                        "label": "Doble Superior",
-                        "icon": "🌟"
+                        "icon": "🌟",
+                        "label": "Doble Superior"
                     },
                     {
-                        "label": "Suite Estándar",
-                        "icon": "🛋️"
+                        "icon": "🛋️",
+                        "label": "Suite Estándar"
                     },
                     {
-                        "label": "Master Suite",
-                        "icon": "👑"
+                        "icon": "👑",
+                        "label": "Master Suite"
                     }
                 ],
                 "VISTAS": [
                     {
-                        "label": "Vista Mar",
-                        "icon": "🌊"
+                        "icon": "🌊",
+                        "label": "Vista Mar"
                     },
                     {
-                        "label": "Vista Piscina",
-                        "icon": "🏊"
+                        "icon": "🏊",
+                        "label": "Vista Piscina"
                     },
                     {
-                        "label": "Vista Calle",
-                        "icon": "🏙️"
+                        "icon": "🏙️",
+                        "label": "Vista Calle"
                     }
                 ],
                 "CARACTERISTICAS": [
                     {
-                        "label": "Sofá Cama",
-                        "icon": "🛋️"
+                        "icon": "🛋️",
+                        "label": "Sofá Cama"
                     },
                     {
-                        "label": "Cheslong",
-                        "icon": "🛋️"
+                        "icon": "🛋️",
+                        "label": "Cheslong"
                     },
                     {
-                        "label": "Sofá Estándar",
-                        "icon": "🛋️"
+                        "icon": "🛋️",
+                        "label": "Sofá Estándar"
                     },
                     {
-                        "label": "Adaptada",
-                        "icon": "♿"
+                        "icon": "♿",
+                        "label": "Adaptada"
                     },
                     {
-                        "label": "Comunicada",
-                        "icon": "↔️"
+                        "icon": "↔️",
+                        "label": "Comunicada"
                     },
                     {
-                        "label": "Ruidosa",
-                        "icon": "🔇"
+                        "icon": "🔇",
+                        "label": "Ruidosa"
                     },
                     {
-                        "label": "Tranquila",
-                        "icon": "🔇"
+                        "icon": "🔇",
+                        "label": "Tranquila"
                     }
                 ]
             }
         },
+        "INSTALACIONES": [
+            {
+                "icono": "🏠",
+                "cierre": "18:00",
+                "nombre": "Cancha de tennis",
+                "apertura": "08:00"
+            },
+            {
+                "icono": "calendar",
+                "cierre": "18:00",
+                "nombre": "Cancha de squash",
+                "apertura": "08:00"
+            }
+        ],
         "RECEPCIONISTAS": [
             "Pavel",
             "Javi",
@@ -402,18 +408,11 @@
             "Domingo",
             "Antonio"
         ],
-        "INSTALACIONES": [
+        "ALARMAS_SISTEMA": [
             {
-                "nombre": "Cancha de tennis",
-                "apertura": "08:00",
-                "cierre": "18:00",
-                "icono": "🏠"
-            },
-            {
-                "nombre": "Cancha de squash",
-                "apertura": "08:00",
-                "cierre": "18:00",
-                "icono": "calendar"
+                "dias": "todos",
+                "hora": "23:30",
+                "mensaje": "Realizar lecturas de las VISAS"
             }
         ],
         "COCKTAIL_CONFIG": {
@@ -421,280 +420,44 @@
             "HORA": "12:15",
             "LUGAR": "LA ÑAMERA"
         },
-        "TO_LISTS": {
-            "ES": [],
-            "DE": [
-                "TUI DEUTSCHLAND GMBH"
-            ],
-            "FR": [],
-            "UK": [
-                "TUI UK"
-            ]
-        },
         "COCKTAIL_LUGARES": [
             {
-                "es": "Terraza del restaurante",
-                "en": "Restaurant Terrace",
                 "de": "Restaurantterrasse",
+                "en": "Restaurant Terrace",
+                "es": "Terraza del restaurante",
                 "fr": "Terrasse du restaurant",
                 "default": true
             },
             {
-                "es": "Salón la paz",
-                "en": "Paz Lounge",
                 "de": "Paz Lounge",
+                "en": "Paz Lounge",
+                "es": "Salón la paz",
                 "fr": "Salon la paix",
                 "default": false
             },
             {
-                "es": "Jardín del restaurante",
-                "en": "Restaurant Garden",
                 "de": "Restaurantgarten",
+                "en": "Restaurant Garden",
+                "es": "Jardín del restaurante",
                 "fr": "Jardin du restaurant",
                 "default": false
             },
             {
-                "es": "Piscina",
-                "en": "Pool area",
                 "de": "Poolbereich",
+                "en": "Pool area",
+                "es": "Piscina",
                 "fr": "Piscine",
                 "default": false
             }
         ],
         "SPOTIFY_PLAYLISTS": [
             {
-                "label": "lounge",
-                "url": "https://open.spotify.com/intl-es/album/45aM2tOgzYmkwhQR9pIqDy?si=U10H-GrbTv-jl5mhKzWRiQ"
+                "url": "https://open.spotify.com/intl-es/album/45aM2tOgzYmkwhQR9pIqDy?si=U10H-GrbTv-jl5mhKzWRiQ",
+                "label": "lounge"
             },
             {
-                "label": "Lounge 2",
-                "url": "https://open.spotify.com/playlist/5gWj5xviSHBlnSPmFpLFPJ?si=ad2abcbe33c1451e"
-            }
-        ],
-        "HABITACIONES": [
-            {
-                "numero": "101",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "102",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "103",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "104",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "105",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "106",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "107",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "108",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "109",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "110",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "201",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "202",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "203",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "204",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "205",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "206",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "207",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "208",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "209",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "210",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "301",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "302",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "303",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "304",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "305",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "306",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "307",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "308",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "309",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            },
-            {
-                "numero": "310",
-                "tipo": "Estándar",
-                "estado": "Limpia",
-                "vista": "Jardín"
-            }
-        ]
-    },
-    "AGENDA": {
-        "PAISES": [
-            {
-                "c": "+34",
-                "n": "España",
-                "f": "🇪🇸"
-            },
-            {
-                "c": "+49",
-                "n": "Alemania",
-                "f": "🇩🇪"
-            },
-            {
-                "c": "+44",
-                "n": "Reino Unido",
-                "f": "🇬🇧"
-            },
-            {
-                "c": "+33",
-                "n": "Francia",
-                "f": "🇫🇷"
-            },
-            {
-                "c": "+39",
-                "n": "Italia",
-                "f": "🇮🇹"
-            },
-            {
-                "c": "+351",
-                "n": "Portugal",
-                "f": "🇵🇹"
-            },
-            {
-                "c": "+1",
-                "n": "EE.UU.",
-                "f": "🇺🇸"
-            },
-            {
-                "c": "+52",
-                "n": "México",
-                "f": "🇲🇽"
+                "url": "https://open.spotify.com/playlist/5gWj5xviSHBlnSPmFpLFPJ?si=ad2abcbe33c1451e",
+                "label": "Lounge 2"
             }
         ]
     },
@@ -717,49 +480,298 @@
             "Externo"
         ]
     },
-    "CAJA": {
-        "BILLETES": [
-            500,
-            200,
-            100,
-            50,
-            20,
-            10,
-            5
-        ],
-        "MONEDAS": [
-            2,
-            1,
-            0.5,
-            0.2,
-            0.1,
-            0.05,
-            0.02,
-            0.01
-        ],
-        "FONDO": -2000
-    },
-    "COBRO": {
-        "VALORES": [
-            500,
-            200,
-            100,
-            50,
-            20,
-            10,
-            5,
-            2,
-            1,
-            0.5,
-            0.2,
-            0.1,
-            0.05,
-            0.02,
-            0.01
-        ]
-    },
     "SAFE": {
         "PRECIO_DIARIO": 2
+    },
+    "SYSTEM": {
+        "MODE": "local",
+        "API_URL": "/api",
+        "USE_API": false,
+        "LAUNCHERS": [
+            {
+                "icon": "display",
+                "path": "",
+                "label": "SIHOT"
+            },
+            {
+                "icon": "house",
+                "path": "",
+                "label": "ALTA RIU"
+            },
+            {
+                "icon": "receipt",
+                "path": "",
+                "label": "GESTATUR"
+            },
+            {
+                "icon": "tablet",
+                "path": "",
+                "label": "SUPREMO"
+            },
+            {
+                "icon": "camera",
+                "path": "",
+                "label": "ATLANTICO EXCURSIONES"
+            },
+            {
+                "icon": "globe",
+                "path": "",
+                "label": "EXTRANET RIU"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Norte&query_place_id=ChIJbx3s_vTNQQwReLBTc3mRXBw",
+                "type": "maps",
+                "label": "Aeropuerto norte"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Sur&t=k",
+                "type": "maps",
+                "label": "Aeropuerto sur"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Mirador+Cruz+del+Carmen+Anaga&t=k",
+                "type": "maps",
+                "label": "Anaga"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Caserio+de+Masca&t=k",
+                "type": "maps",
+                "label": "Masca"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Punta+de+Teno&t=k",
+                "type": "maps",
+                "label": "Punta de teno"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Adelantado+La+Laguna&t=k",
+                "type": "maps",
+                "label": "La laguna"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+Espana+Santa+Cruz+de+Tenerife&t=k",
+                "type": "maps",
+                "label": "Santa cruz"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Constitucion+La+Orotava&t=k",
+                "type": "maps",
+                "label": "La orotava"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Charco+Puerto+de+la+Cruz&t=k",
+                "type": "maps",
+                "label": "Puerto de la cruz"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Acantilados+de+Los+Gigantes&t=k",
+                "type": "maps",
+                "label": "Los gigantes"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=El+Caleton+Garachico&t=k",
+                "type": "maps",
+                "label": "Garachico"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Basilica+Candelaria+Tenerife&t=k",
+                "type": "maps",
+                "label": "Candelaria"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Playa+Las+Teresitas&t=k",
+                "type": "maps",
+                "label": "Las Teresitas"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Auditorio+Tenerife&t=k",
+                "type": "maps",
+                "label": "Auditorio"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Siam+Park&t=k",
+                "type": "maps",
+                "label": "Siam Park"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/search/?api=1&query=Loro+Parque&t=k",
+                "type": "maps",
+                "label": "Loro parque"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+Los+Cristianos&t=k",
+                "type": "maps",
+                "label": "Los Cristianos"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "http://www.google.com/maps/search/?api=1&query=Puerto+de+Los+Cristianos+Ferry&t=k",
+                "type": "maps",
+                "label": "Puerto de los Cristianos"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+las+Americas+Tenerife&t=k",
+                "type": "maps",
+                "label": "Playa de las Americas"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=13862698318489807873&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Centro de visitantes Teide"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDE_6jr0QE!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
+                "type": "maps",
+                "label": "Cueva del viento"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIABIhA2DnIstRL_eDiCxzsrgNMJ!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
+                "type": "maps",
+                "label": "Barranco del infierno"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=761971844405859170&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf Abama"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=1821567396275382399&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf Costa Adeje"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=4012408393901694028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf Las Americas"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=14379514915312051412&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf del sur"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=1203249720886280057&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf Amarilla"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=13023968755834190814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf Los Palos"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=8046334199755273567&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf El Peñon"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=6795739325682155554&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Golf La Rosaleda"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=5073196173529580874&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "EL Médano"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://maps.google.com/?cid=3256704489302261413&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
+                "type": "maps",
+                "label": "Piramides de Guimar"
+            },
+            {
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps/place/Hotel+Riu+Garoe/@28.4127299,-16.5342366,765m/data=!3m1!1e3!4m9!3m8!1s0xc41d55edeab4ccf:0x8c61247370e092d4!5m2!4m1!1i2!8m2!3d28.4127252!4d-16.5316617!16s%2Fg%2F1td9xcm9?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D",
+                "type": "maps",
+                "label": "Hotel Riu Garoé"
+            },
+            {
+                "icon": "save",
+                "path": "C:\\Users\\jesus\\Downloads",
+                "type": "documentos",
+                "label": "Download"
+            },
+            {
+                "icon": "video",
+                "path": "https://www.youtube.com/watch?v=1MXizg-PQFI",
+                "type": "video",
+                "label": "Royal Delfín",
+                "embedded": true
+            },
+            {
+                "icon": "briefcase",
+                "path": "Z:\\RECEPCIÓN",
+                "type": "folder",
+                "label": "RECEPCIÓN",
+                "embedded": false
+            },
+            {
+                "icon": "briefcase",
+                "path": "Z:\\BOOKING MENSUAL PARA DEPARTAMENTOS",
+                "type": "folder",
+                "label": "BOOKING MENSUAL PARA DEPARTAMENTOS",
+                "embedded": false
+            },
+            {
+                "icon": "briefcase",
+                "path": "Z:\\FICHA POLICIA",
+                "type": "folder",
+                "label": "FICHA POLICIA",
+                "embedded": false
+            },
+            {
+                "icon": "clipboard-data",
+                "path": "Z:\\RECEPCIÓN",
+                "type": "documentos",
+                "label": "RECEPCIÓN (Docs)",
+                "embedded": false
+            }
+        ],
+        "GALLERY_PATH": "C:/Users/usuario/Desktop/ANTONIO/RECURSOS/INFORMACIÓN",
+        "SYNC_INTERVAL": 10000,
+        "ADMIN_PASSWORD": "1234",
+        "GALLERY_FOLDERS": [
+            {
+                "path": "Z:\\\\ESCANER",
+                "label": "ESCANER"
+            },
+            {
+                "path": "C:\\Users\\jesus\\Downloads",
+                "label": "DESCARGAS"
+            }
+        ],
+        "USE_SYNC_SERVER": true
     },
     "TRANSFERS": {
         "DESTINOS": [
@@ -767,17 +779,6 @@
             "Aeropuerto Sur"
         ]
     },
-    "EXCURSIONES_CATALOGO": [
-        {
-            "id": "CAT-1769894964475",
-            "nombre": "loro parque",
-            "operador": "atlantico",
-            "precioAdulto": 23,
-            "precioNiño": 12,
-            "precioGrupo": 0,
-            "esTicket": false
-        }
-    ],
     "VALORACION": {
         "PRECIOS": [
             {
@@ -789,10 +790,10 @@
                 "valor": 162.29
             }
         ],
-        "SUPLEMENTOS_INDIVIDUAL": [
+        "SUPLEMENTOS_NINO": [
             {
-                "label": "individual tui",
-                "valor": 55
+                "label": "niño tui",
+                "valor": 45
             }
         ],
         "DESCUENTOS_TRIPLE": [
@@ -801,10 +802,10 @@
                 "valor": -56
             }
         ],
-        "SUPLEMENTOS_NINO": [
+        "SUPLEMENTOS_INDIVIDUAL": [
             {
-                "label": "niño tui",
-                "valor": 45
+                "label": "individual tui",
+                "valor": 55
             }
         ]
     }

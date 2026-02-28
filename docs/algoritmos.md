@@ -38,11 +38,13 @@
 ```
 
 **Beneficios**:
+
 - ✅ **Arranque 60-70% más rápido**: Solo 8 módulos críticos vs 25+ totales
 - ✅ **Menos memoria**: Solo se cargan módulos que el usuario usa
 - ✅ **Scroll infinito no afectado**: Agenda, etc. siguen usando lazy rendering
 
 **Archivos**:
+
 - `assets/js/core/ModuleLoader.js` — Sistema de carga lazy
 - `assets/js/core/Router.js` — Integración de lazy load en navegación
 - `assets/js/main.js` — Arranque con módulos críticos
@@ -205,12 +207,45 @@ if (remoteStr !== localStr) {
 
 **Solución en `Router.js`**:
 
-```javascript
-// En vez de: Bootstrap.Tab.getOrCreateInstance(target).show()
-// Hacer manualmente:
-panelAnterior.classList.remove("show", "active");
-panelNuevo.classList.add("show", "active");
-tabAnterior.classList.remove("active");
-tabNuevo.classList.add("active");
-// Sin disparar eventos de Bootstrap → sin efectos colaterales en navbar
+---
+
+## 9. Handshake de Agente Resiliente (Fallback HTTP/S)
+
+**Problema**: Las políticas de PNA (Private Network Access) requieren que el protocolo coincida, pero no siempre es posible asegurar HTTPS en todos los agentes locales.
+
+**Algoritmo**:
+
 ```
+[Api.validateStation()]
+1. Definir lista de URLs de prueba ordenada por seguridad:
+   - https://localhost:3001 / https://127.0.0.1:3001
+   - http://localhost:3001 / http://127.0.0.1:3001
+2. Intentar fetch() secuencialmente.
+3. El primer 200 OK con token válido detiene el bucle.
+4. Si fallan todos los protocolos, se asume que el agente no está presente.
+```
+
+**Por qué**: Maximiza la compatibilidad. Intenta cumplir con PNA (HTTPS) pero permite el funcionamiento en HTTP si la configuración local lo requiere.
+
+---
+
+## 10. Bloqueo de Arranque con Selector de Usuario (Quick Login)
+
+**Problema**: Garantizar la trazabilidad del usuario (recepcionista) desde el primer segundo de uso, sin permitir el acceso a módulos operativos sin identificación previa.
+
+**Algoritmo**:
+
+```
+[main.js - Flujo de Arranque]
+1. Handshake de Estación (Barrera de hardware)
+2. Si éxito:
+   a. Verificar sessionService.isAuthenticated()
+   b. Si NO:
+      - await Login.showSelector() (Promesa bloqueante)
+      - Se inyecta overlay modal full-screen
+      - Al elegir perfil: resolve() y cerrar overlay
+   c. ModuleLoader.loadCritical() (Carga de módulos operativos)
+3. Si fallo: SecurityBarrier.show()
+```
+
+**Por qué**: A diferencia de un login tradicional, este selector es "one-click" para facilitar la operativa del hotel, manteniendo el bloqueo total de la app hasta la selección.

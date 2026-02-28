@@ -24,6 +24,7 @@ export const Excursiones = {
         this.setupEvents();
         
         moduleInitialized = true;
+        Ui.attachRoomValidator('exc_habitacion', { allowEmpty: false });
     },
 
     /**
