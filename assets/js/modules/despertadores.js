@@ -71,7 +71,7 @@ export async function inicializarDespertadores() {
 
     // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
     window.addEventListener('service-synced', (e) => {
-        if (e.detail.endpoint === 'despertadores') {
+        if (e.detail.endpoint === 'riu_despertadores') {
             mostrarDespertadores();
         }
     });

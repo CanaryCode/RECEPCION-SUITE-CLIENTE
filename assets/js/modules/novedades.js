@@ -94,7 +94,7 @@ export async function inicializarNovedades() {
 
     // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
     window.addEventListener('service-synced', (e) => {
-        if (e.detail.endpoint === 'novedades') {
+        if (e.detail.endpoint === 'riu_novedades') {
             mostrarNovedades();
         }
     });

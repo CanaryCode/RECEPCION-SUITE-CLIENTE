@@ -57,7 +57,7 @@ export async function inicializarDesayuno() {
 
     // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
     window.addEventListener('service-synced', (e) => {
-        if (e.detail.endpoint === 'desayunos') {
+        if (e.detail.endpoint === 'riu_desayunos') {
             mostrarDesayunos();
         }
     });

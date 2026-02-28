@@ -48,7 +48,7 @@ export async function inicializarCenaFria() {
 
     // Suscribirse a cambios del servicio para actualizar dashboard en tiempo real
     window.addEventListener('service-synced', (e) => {
-        if (e.detail.endpoint === 'cenas') {
+        if (e.detail.endpoint === 'riu_cenas_frias') {
             mostrarCenasFrias();
         }
     });
