@@ -3,8 +3,8 @@ import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
 import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
 
 import { IconSelector } from '../core/IconSelector.js?v=V145_VAL_FIX';
-import { MediaPicker } from '../core/MediaPicker.js?v=V145_VAL_FIX';
-import { Api } from '../core/Api.js?v=V145_VAL_FIX';
+import { MediaPicker } from '../core/MediaPicker.js?v=V155_AGENT_FIX';
+import { Api } from '../core/Api.js?v=V155_AGENT_FIX';
 import { configService } from '../services/ConfigService.js?v=V145_VAL_FIX';
 import { Spotify } from './spotify.js?v=V145_VAL_FIX';
 
@@ -115,6 +115,15 @@ export const Configurator = {
         if (!tempConfig.VALORACION.SUPLEMENTOS_INDIVIDUAL) tempConfig.VALORACION.SUPLEMENTOS_INDIVIDUAL = [];
         if (!tempConfig.VALORACION.DESCUENTOS_TRIPLE) tempConfig.VALORACION.DESCUENTOS_TRIPLE = [];
         if (!tempConfig.VALORACION.SUPLEMENTOS_NINO) tempConfig.VALORACION.SUPLEMENTOS_NINO = [];
+
+        if (!tempConfig.SYSTEM.LAUNCHERS || tempConfig.SYSTEM.LAUNCHERS.length === 0) {
+            tempConfig.SYSTEM.LAUNCHERS = [
+                { label: 'Spotify', path: 'https://open.spotify.com/', type: 'url', icon: 'spotify', embedded: true },
+                { label: 'Google Maps', path: 'https://www.google.com/maps', type: 'maps', icon: 'geo-alt-fill', embedded: true },
+                { label: 'WhatsApp', path: 'https://web.whatsapp.com/', type: 'url', icon: 'whatsapp', embedded: true },
+                { label: 'El Tiempo', path: 'https://www.eltiempo.es/', type: 'url', icon: 'cloud-sun', embedded: true }
+            ];
+        }
     },
 
     // --- RENDERERS ---
@@ -909,32 +918,42 @@ export const Configurator = {
                 GALLERY_PATH: tempConfig.SYSTEM.GALLERY_PATH
             };
 
-            try {
-                const localResponse = await fetch('http://localhost:3001/api/system/local-config', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
-                    },
-                    body: JSON.stringify(localPayload)
-                });
-                if (!localResponse.ok) {
-                    console.warn(`[AGENT] Guardado local falló con estado ${localResponse.status}`);
-                } else {
-                    console.log('[AGENT] ✓ Configuración local guardada en el agente');
+            // Intentar HTTP primero (PCs sin SSL), luego HTTPS (servidores con SSL)
+            const agentUrls = [
+                'http://localhost:3001/api/system/local-config',
+                'https://localhost:3001/api/system/local-config'
+            ];
+
+            let localSaved = false;
+            for (const url of agentUrls) {
+                try {
+                    const localResponse = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                        },
+                        body: JSON.stringify(localPayload)
+                    });
+                    if (localResponse.ok) {
+                        console.log(`[AGENT] ✓ Configuración local guardada en ${url}`);
+                        localSaved = true;
+                        break;
+                    } else {
+                        console.warn(`[AGENT] Guardado local falló en ${url} con estado ${localResponse.status}`);
+                    }
+                } catch (e) {
+                    console.warn(`[AGENT] Error guardando en ${url}:`, e.message);
                 }
-            } catch (e) {
-                console.warn("[AGENT] No se pudo guardar config local en agente. Se guardarán en global como fallback.", e);
             }
 
-            // LIMPIEZA PARA ALMACENAMIENTO GLOBAL (OPCIONAL: Limpiar atributos locales de config server)
+            if (!localSaved) {
+                console.warn("[AGENT] No se pudo guardar config local en agente (HTTP ni HTTPS). Se guardarán en global como fallback.");
+            }
+
+            // --- GUARDADO GLOBAL (Copia de seguridad en servidor) ---
             const globalConfigToSave = JSON.parse(JSON.stringify(tempConfig));
-            if (globalConfigToSave.SYSTEM) {
-                delete globalConfigToSave.SYSTEM.LAUNCHERS;
-                delete globalConfigToSave.SYSTEM.GALLERY_FOLDERS;
-                delete globalConfigToSave.SYSTEM.GALLERY_PATH;
-            }
-
+            
             await configService.saveConfig(globalConfigToSave);
             Ui.showToast("Configuración guardada correctamente", "success");
             setTimeout(() => location.reload(), 1000);

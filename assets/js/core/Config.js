@@ -140,8 +140,8 @@ export const Config = {
                     const localConfig = JSON.parse(safeOverride);
 
                     // SEGURIDAD: Si el override es muy viejo o parcial (le faltan secciones), lo ignoramos/limpiamos
-                    if (localConfig && (!localConfig.NOVEDADES || !localConfig.AGENDA)) {
-                        console.warn("Se detectó un override de configuración antiguo o incompleto. Limpiando para evitar errores.");
+                    if (localConfig && (!localConfig.NOVEDADES || !localConfig.AGENDA || !localConfig.SYSTEM?.LAUNCHERS)) {
+                        console.warn("Se detectó un override de configuración antiguo o incompleto. Limpiando para recuperar datos del servidor.");
                         localStorage.removeItem('app_config_override');
                     } else {
                         // DEBUG: Log what we are overriding
@@ -210,26 +210,34 @@ export const Config = {
             }
 
             // --- CARGA DE CONFIGURACIÓN LOCAL (AGENTE) ---
-            try {
-                // Fetch pc-specific configuration via the local agent (HTTP, no HTTPS)
-                console.log("Attempting to load local pc-specific config from agent...");
-                const localRes = await fetch('http://localhost:3001/api/system/local-config', {
-                    headers: {
-                        'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+            // Intentar HTTP primero (PCs sin SSL), luego HTTPS (servidores con SSL)
+            const agentUrls = [
+                'http://localhost:3001/api/system/local-config',
+                'https://localhost:3001/api/system/local-config'
+            ];
+
+            for (const url of agentUrls) {
+                try {
+                    console.log(`Attempting to load local config from ${url}...`);
+                    const localRes = await fetch(url, {
+                        headers: {
+                            'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                        }
+                    });
+                    if (localRes.ok) {
+                        const localData = await localRes.json();
+                        if (localData && Object.keys(localData).length > 0) {
+                            console.log(`✓ Config loaded from ${url}. Applied overrides:`, Object.keys(localData));
+                            if (!APP_CONFIG.SYSTEM) APP_CONFIG.SYSTEM = {};
+                            if (localData.LAUNCHERS !== undefined) APP_CONFIG.SYSTEM.LAUNCHERS = localData.LAUNCHERS;
+                            if (localData.GALLERY_FOLDERS !== undefined) APP_CONFIG.SYSTEM.GALLERY_FOLDERS = localData.GALLERY_FOLDERS;
+                            if (localData.GALLERY_PATH !== undefined) APP_CONFIG.SYSTEM.GALLERY_PATH = localData.GALLERY_PATH;
+                            break; // Éxito, salir del loop
+                        }
                     }
-                });
-                if (localRes.ok) {
-                    const localData = await localRes.json();
-                    if (localData && Object.keys(localData).length > 0) {
-                        console.log("Config loaded via agent local config. Applied overrides for:", Object.keys(localData));
-                        if (!APP_CONFIG.SYSTEM) APP_CONFIG.SYSTEM = {};
-                        if (localData.LAUNCHERS !== undefined) APP_CONFIG.SYSTEM.LAUNCHERS = localData.LAUNCHERS;
-                        if (localData.GALLERY_FOLDERS !== undefined) APP_CONFIG.SYSTEM.GALLERY_FOLDERS = localData.GALLERY_FOLDERS;
-                        if (localData.GALLERY_PATH !== undefined) APP_CONFIG.SYSTEM.GALLERY_PATH = localData.GALLERY_PATH;
-                    }
+                } catch (e) {
+                    console.warn(`Could not fetch from ${url}:`, e.message);
                 }
-            } catch (e) {
-                console.warn("Could not fetch agent local config (maybe not running locally):", e);
             }
 
             return true;

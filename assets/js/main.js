@@ -1,7 +1,7 @@
 // --- STARTUP ---
 
 // --- IMPORTACIÓN DE MÓDULOS CORE ---
-import { Ui } from "./core/Ui.js?v=V147_PROXY_FIX"; // Import Ui FIRST
+import { Ui } from "./core/Ui.js?v=V155_AGENT_FIX"; // Bump version
 import { clock } from "./modules/clock.js?v=V147_PROXY_FIX";
 import { Spotify } from "./modules/spotify.js?v=V147_PROXY_FIX";
 import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
@@ -579,7 +579,9 @@ function renderGridItems(container, items, query = "", append = false) {
       iconColor = "text-danger";
     }
 
-    const iconHtml = `<div class="mb-2 ${iconColor} text-center"><i class="bi bi-${specificIcon} fs-1"></i></div>`;
+    const iconHtml = app.icon && (app.icon.startsWith('data:') || app.icon.includes('.') || app.icon.includes('/'))
+      ? `<div class="mb-2 text-center"><img src="${app.icon}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 12px;" class="shadow-sm"></div>`
+      : `<div class="mb-2 ${iconColor} text-center"><i class="bi bi-${app.icon || specificIcon} fs-1"></i></div>`;
 
     let clickHandler = `window.launchExternalApp('${pathStr}', '${app.type || "app"}', '${app.label.replace(/'/g, "\\'")}', ${isEmbedded})`;
     if (isVideo && isEmbedded)
@@ -612,6 +614,8 @@ window.launchExternalApp = async (
   label = "",
   embedded = false,
 ) => {
+  console.log('[LAUNCH] Called with:', { command, type, label, embedded });
+
   // Si es una URL o el comando parece una URL
   if (
     type === "url" ||
@@ -639,16 +643,14 @@ window.launchExternalApp = async (
     return;
   }
 
+  console.log('[LAUNCH] Sending command to agent:', command);
   try {
-    const response = await fetch("/api/system/launch", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command }),
-    });
-    if (!response.ok) throw new Error("Server error");
+    // FIX: Usar Api.post para asegurar que se envía el X-Station-Key y se rutea correctamente
+    const result = await Api.post("system/launch", { command });
+    console.log('[LAUNCH] Success:', result);
   } catch (e) {
-    console.error("Fallo al lanzar:", e);
-    alert("Error al lanzar aplicación.");
+    console.error("[LAUNCH] Fallo al lanzar:", e);
+    alert("Error al lanzar aplicación: " + (e.message || e));
   }
 };
 
