@@ -44,7 +44,8 @@ const AUTHORIZED_STATIONS = ['RS-SECRET-8291-AJPD'];
 app.use('/api', (req, res, next) => {
     // Excluir endpoints públicos y de autenticación de la validación de estación
     // Incluimos 'storage' porque el App Guest necesita leer configuración y datos
-    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config|system\/web-proxy/.test(req.originalUrl);
+    // Incluimos 'system/launch' porque se valida internamente vía túnel o localhost
+    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config|system\/web-proxy|system\/launch/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];
@@ -215,10 +216,57 @@ try {
             console.log(`========================================`);
         });
         wss = new WebSocket.Server({ server });
+        
+        // --- AGENT TUNNEL TRACKING ---
+        global.agentTunnels = new Map();
+
         wss.on('connection', (ws) => {
-            console.log('[WSS] Cliente conectado');
-            ws.on('close', () => console.log('[WSS] Cliente desconectado'));
+            console.log('[WSS] Nuevo cliente conectado');
+            
+            ws.on('message', (message) => {
+                try {
+                    // Convert buffer to string to avoid parse errors in some Node/WS versions
+                    const data = JSON.parse(message.toString());
+                    if (data.type === 'auth') {
+                        const { stationKey } = data.payload;
+                        if (stationKey) {
+                            console.log(`[WSS] Agente autenticado para túnel: ${stationKey}`);
+                            global.agentTunnels.set(stationKey, ws);
+                            ws.stationKey = stationKey;
+                            ws.send(JSON.stringify({ type: 'auth_success' }));
+                        }
+                    } else if (data.type === 'pong') {
+                        ws.isAlive = true;
+                    }
+                } catch (e) {
+                    // Ignorar mensajes no JSON (mensajes de broadcast normales)
+                }
+            });
+
+            ws.on('close', () => {
+                if (ws.stationKey) {
+                    console.log(`[WSS] Agente desconectado: ${ws.stationKey}`);
+                    global.agentTunnels.delete(ws.stationKey);
+                }
+            });
+
+            ws.isAlive = true;
+            ws.on('pong', () => { ws.isAlive = true; });
         });
+
+        // Keep-alive para los túneles
+        const interval = setInterval(() => {
+            wss.clients.forEach((ws) => {
+                if (ws.isAlive === false) {
+                    if (ws.stationKey) global.agentTunnels.delete(ws.stationKey);
+                    return ws.terminate();
+                }
+                ws.isAlive = false;
+                ws.send(JSON.stringify({ type: 'ping' }));
+            });
+        }, 30000);
+
+        wss.on('close', () => clearInterval(interval));
     } else {
         const server = app.listen(PORT, '0.0.0.0', () => {
             console.log(`[SERVER] HTTP iniciado en puerto ${PORT} (AVISO: SSL No encontrado en ${certPath})`);

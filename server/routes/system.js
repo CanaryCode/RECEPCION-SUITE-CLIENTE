@@ -49,21 +49,75 @@ router.get('/local-config', async (req, res) => {
  */
 router.post('/launch', async (req, res) => {
     try {
-        const agentUrl = 'http://127.0.0.1:3001/api/system/launch';
-        const response = await fetch(agentUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-station-key': req.headers['x-station-key'] || ''
-            },
-            body: JSON.stringify(req.body)
-        });
+        const stationKey = req.headers['x-station-key'];
+        const { command } = req.body;
 
-        const data = await response.json();
-        res.status(response.status).json(data);
+        // 1. Intentar vía Túnel WebSocket (Arquitectura Distribuida/Remota)
+        if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
+            console.log(`[SYSTEM] Enviando comando de lanzamiento vía Túnel WS para: ${stationKey}`);
+            const ws = global.agentTunnels.get(stationKey);
+            if (ws.readyState === 1) { // WebSocket.OPEN
+                ws.send(JSON.stringify({
+                    type: 'command',
+                    payload: { action: 'launch', command }
+                }));
+                return res.json({ success: true, method: 'WS_TUNNEL' });
+            } else {
+                console.warn(`[SYSTEM] Túnel WS para ${stationKey} no está listo (state: ${ws.readyState})`);
+                global.agentTunnels.delete(stationKey);
+            }
+        }
+
+        // 2. Fallback a Localhost (Arquitectura Local/Mismo Servidor)
+        // Intentar HTTP primero (mayoría de PCs), luego HTTPS (servers con SSL)
+        const { Agent: UndiciAgent } = require('undici');
+        const httpsAgent = new UndiciAgent({ connect: { rejectUnauthorized: false } });
+
+        const agentUrls = [
+            'http://127.0.0.1:3001/api/system/launch',  // Prioridad 1: HTTP (PCs sin SSL)
+            'https://127.0.0.1:3001/api/system/launch'  // Prioridad 2: HTTPS (servers con SSL)
+        ];
+
+        let lastError;
+        for (const agentUrl of agentUrls) {
+            try {
+                const fetchOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-station-key': stationKey || ''
+                    },
+                    body: JSON.stringify(req.body)
+                };
+
+                // Solo añadir dispatcher (agent) si es HTTPS
+                if (agentUrl.startsWith('https')) {
+                    fetchOptions.dispatcher = httpsAgent;
+                }
+
+                const response = await fetch(agentUrl, fetchOptions);
+                const data = await response.json();
+                return res.status(response.status).json(data);
+            } catch (err) {
+                lastError = err;
+                console.warn(`[SYSTEM] Fallback failed on ${agentUrl}: ${err.message}`);
+            }
+        }
+
+        // Si ambos fallaron, lanzar el último error
+        throw lastError;
     } catch (err) {
         // Fallback or error if agent is down
-        res.status(502).json({ error: 'El Agente Local no responde a la petición de lanzamiento.' });
+        console.error('[SYSTEM] Error en launch:', err.message);
+        
+        const stationKey = req.headers['x-station-key'];
+        const isTunnelMissing = stationKey && (!global.agentTunnels || !global.agentTunnels.has(stationKey));
+        
+        const errorMsg = isTunnelMissing 
+            ? `Tu Agente Local no está conectado al servidor. Por favor, asegúrate de que el Agente esté abierto en tu PC.`
+            : `Fallo crítico al contactar con el Agente Local: ${err.message}`;
+
+        res.status(502).json({ error: errorMsg });
     }
 });
 
