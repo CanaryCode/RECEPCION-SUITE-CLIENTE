@@ -50,21 +50,30 @@ router.get('/local-config', async (req, res) => {
 router.post('/launch', async (req, res) => {
     try {
         const stationKey = req.headers['x-station-key'];
+        const fingerprint = req.headers['x-fingerprint'];
         const { command } = req.body;
 
         // 1. Intentar vía Túnel WebSocket (Arquitectura Distribuida/Remota)
-        if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
-            console.log(`[SYSTEM] Enviando comando de lanzamiento vía Túnel WS para: ${stationKey}`);
-            const ws = global.agentTunnels.get(stationKey);
-            if (ws.readyState === 1) { // WebSocket.OPEN
-                ws.send(JSON.stringify({
-                    type: 'command',
-                    payload: { action: 'launch', command }
-                }));
-                return res.json({ success: true, method: 'WS_TUNNEL' });
+        if (stationKey && fingerprint && global.agentTunnels) {
+            const tunnelKey = `${stationKey}::${fingerprint}`;
+            console.log(`[SYSTEM] Buscando túnel WS: ${tunnelKey}`);
+
+            if (global.agentTunnels.has(tunnelKey)) {
+                console.log(`[SYSTEM] ✓ Túnel encontrado. Enviando comando de lanzamiento.`);
+                const ws = global.agentTunnels.get(tunnelKey);
+                if (ws.readyState === 1) { // WebSocket.OPEN
+                    ws.send(JSON.stringify({
+                        type: 'command',
+                        payload: { action: 'launch', command }
+                    }));
+                    return res.json({ success: true, method: 'WS_TUNNEL', tunnelKey });
+                } else {
+                    console.warn(`[SYSTEM] Túnel WS ${tunnelKey} no está listo (state: ${ws.readyState})`);
+                    global.agentTunnels.delete(tunnelKey);
+                }
             } else {
-                console.warn(`[SYSTEM] Túnel WS para ${stationKey} no está listo (state: ${ws.readyState})`);
-                global.agentTunnels.delete(stationKey);
+                console.warn(`[SYSTEM] No se encontró túnel WS para: ${tunnelKey}`);
+                console.warn(`[SYSTEM] Túneles disponibles:`, Array.from(global.agentTunnels.keys()));
             }
         }
 

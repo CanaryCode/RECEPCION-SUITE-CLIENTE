@@ -74,7 +74,8 @@ export const Api = {
             const url = this._getFinalUrl(endpoint);
             const headers = {
                 'Content-Type': 'application/json',
-                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || ''
             };
             const response = await fetch(url, {
                 method: 'POST',
@@ -98,7 +99,8 @@ export const Api = {
             const url = this._getFinalUrl(endpoint);
             const headers = {
                 'Content-Type': 'application/json',
-                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || ''
             };
             const response = await fetch(url, {
                 method: 'PUT',
@@ -192,8 +194,13 @@ export const Api = {
                     if (directRes.ok) {
                         const data = await directRes.json();
                         localToken = data.token || null;
+                        const fingerprint = data.fingerprint;
                         if (localToken) {
                             console.log(`[AUTH] Token obtenido con éxito de: ${url}`);
+                            if (fingerprint) {
+                                sessionStorage.setItem('RS_FINGERPRINT', fingerprint);
+                                console.log(`[AUTH] Fingerprint guardado: ${fingerprint.substring(0, 12)}...`);
+                            }
                             break;
                         }
                     }

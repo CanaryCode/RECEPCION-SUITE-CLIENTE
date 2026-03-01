@@ -8,6 +8,7 @@ const os = require('os');
 const WebSocket = require('ws');
 
 const app = express();
+app.set('trust proxy', true);
 
 const LOG_FILE = path.join(__dirname, '../logs/agent.log');
 
@@ -75,12 +76,23 @@ if (!localToken || localToken.length !== 32) {
     console.log(`[AGENT] New Local Token generated: ${localToken}`);
 }
 
-// Endpoint público para que el navegador obtenga su token local
+// Endpoint público para que el navegador obtenga su token local y fingerprint
 app.get('/local-token', (req, res) => {
-    res.json({ token: localToken });
+    const { fingerprint } = getMachineFingerprint();
+    res.json({ token: localToken, fingerprint: fingerprint });
 });
 
 app.use(express.json());
+
+// RUTA DE PRUEBA ABSOLUTA (Para verificar si el agente corre esta versión)
+app.get('/debug-agent', (req, res) => {
+    res.json({ 
+        status: 'online', 
+        version: 'DEBUG-V1', 
+        time: new Date().toISOString(),
+        config_key: config.STATION_KEY ? 'DEFINED' : 'MISSING'
+    });
+});
 
 // Logging básico para depuración
 app.use((req, res, next) => {
@@ -104,9 +116,26 @@ try {
 
 // Middleware de Estación (Seguridad AJPD)
 app.use('/api', (req, res, next) => {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const stationKey = req.headers['x-station-key'];
+    
+    // Log ultra-detallado para cazar ese 403/404
+    const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'}`;
+    console.log(`[AGENT] ${msg}`);
+    logToFile(msg);
+
+    // 1. Endpoints públicos
     if (req.path === '/auth/id' || req.path === '/auth/id/') return next();
 
-    const stationKey = req.headers['x-station-key'];
+    // 2. Bypass para peticiones LOCALES a /system/
+    const isLocal = isLocalRequest(req);
+    const isSystem = req.originalUrl.includes('/api/system/');
+    
+    if (isLocal && isSystem) {
+        console.log(`[AGENT] ✅ Bypass LOCAL concedido para: ${req.originalUrl} (IP detectada: ${ip})`);
+        return next();
+    }
+
     if (stationKey === config.STATION_KEY) {
         return next();
     }
@@ -176,8 +205,18 @@ app.get('/api/auth/id', (req, res) => {
     });
 });
 
-app.use('/api/system', systemLocalRoutes);
+app.use('/api/system', (req, res, next) => {
+    console.log(`[AGENT] Request moving into system routes: ${req.method} ${req.url}`);
+    next();
+}, systemLocalRoutes);
+
 app.use('/api/admin', adminRoutes);
+
+// Fallback para rutas no encontradas bajo /api
+app.use('/api', (req, res) => {
+    console.warn(`[AGENT] 404 on API: ${req.method} ${req.url}`);
+    res.status(404).json({ error: 'API route not found on Agent', path: req.url });
+});
 
 // Servir estáticos (ajustado para la nueva estructura)
 app.use('/assets', express.static(path.join(__dirname, '../../assets'), {
@@ -299,7 +338,9 @@ function getMachineFingerprint() {
     return { fingerprint, mac, hostname: os.hostname() };
 }
 
-const CENTRAL_SERVER_URL = process.env.CENTRAL_URL || 'wss://localhost:3000/agent-tunnel';
+// Determinar URL del túnel basada en el servidor principal detectado
+const wsBaseUrl = mainServerUrl.replace(/^http/, 'ws');
+const CENTRAL_SERVER_URL = process.env.CENTRAL_URL || `${wsBaseUrl}/agent-tunnel`;
 let wsTunnel = null;
 
 function connectToCentral() {
@@ -340,8 +381,23 @@ function connectToCentral() {
 }
 
 function executeRemoteCommand(payload) {
-    const { action } = payload;
-    if (action === 'start-server') {
+    const { action, command } = payload;
+
+    // Detectar OS del agente (donde corre este código)
+    const isWin = process.platform === 'win32';
+
+    if (action === 'launch') {
+        const launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
+        console.log(`[AGENT] Executing Remote Launch (Platform: ${process.platform}): ${launchCmd}`);
+        require('child_process').exec(launchCmd, (err, stdout, stderr) => {
+            if (err) {
+                console.error(`[AGENT] Launch error: ${err.message}`);
+                console.error(`[AGENT] stderr: ${stderr}`);
+            } else {
+                console.log(`[AGENT] Launch success for: ${command}`);
+            }
+        });
+    } else if (action === 'start-server') {
         require('child_process').exec('pm2 start server_v4.js --name "recepcion-central"', { cwd: path.join(__dirname, '../..') });
     } else if (action === 'stop-server') {
         require('child_process').exec('pm2 stop recepcion-central');

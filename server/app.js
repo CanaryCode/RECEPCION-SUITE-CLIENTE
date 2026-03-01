@@ -228,12 +228,19 @@ try {
                     // Convert buffer to string to avoid parse errors in some Node/WS versions
                     const data = JSON.parse(message.toString());
                     if (data.type === 'auth') {
-                        const { stationKey } = data.payload;
-                        if (stationKey) {
-                            console.log(`[WSS] Agente autenticado para túnel: ${stationKey}`);
-                            global.agentTunnels.set(stationKey, ws);
+                        const { stationKey, fingerprint } = data.payload;
+                        if (stationKey && fingerprint) {
+                            // Usar stationKey + fingerprint como clave única del túnel
+                            const tunnelKey = `${stationKey}::${fingerprint}`;
+                            console.log(`[WSS] Agente autenticado para túnel: ${tunnelKey}`);
+                            global.agentTunnels.set(tunnelKey, ws);
+                            ws.tunnelKey = tunnelKey;
                             ws.stationKey = stationKey;
+                            ws.fingerprint = fingerprint;
                             ws.send(JSON.stringify({ type: 'auth_success' }));
+                        } else {
+                            console.warn(`[WSS] Autenticación rechazada: falta stationKey o fingerprint`);
+                            ws.send(JSON.stringify({ type: 'auth_fail', reason: 'Missing credentials' }));
                         }
                     } else if (data.type === 'pong') {
                         ws.isAlive = true;
@@ -244,9 +251,9 @@ try {
             });
 
             ws.on('close', () => {
-                if (ws.stationKey) {
-                    console.log(`[WSS] Agente desconectado: ${ws.stationKey}`);
-                    global.agentTunnels.delete(ws.stationKey);
+                if (ws.tunnelKey) {
+                    console.log(`[WSS] Agente desconectado: ${ws.tunnelKey}`);
+                    global.agentTunnels.delete(ws.tunnelKey);
                 }
             });
 
@@ -258,7 +265,7 @@ try {
         const interval = setInterval(() => {
             wss.clients.forEach((ws) => {
                 if (ws.isAlive === false) {
-                    if (ws.stationKey) global.agentTunnels.delete(ws.stationKey);
+                    if (ws.tunnelKey) global.agentTunnels.delete(ws.tunnelKey);
                     return ws.terminate();
                 }
                 ws.isAlive = false;
