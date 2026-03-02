@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       { id: "valoracion-content", path: "assets/templates/valoracion.html" },
       { id: "tiempo-content", path: "assets/templates/tiempo.html" },
       { id: "ocr-datafonos-content", path: "assets/templates/ocr_datafonos.html" },
+      { id: "calendario-content", path: "assets/templates/calendario.html" },
     ];
 
     await CompLoader.loadAll(componentes);
@@ -646,7 +647,11 @@ window.launchExternalApp = async (
   console.log('[LAUNCH] Sending command to agent:', command);
   try {
     // FIX: Usar Api.post para asegurar que se envía el X-Station-Key y se rutea correctamente
-    const result = await Api.post("system/launch", { command });
+    // Para carpetas, enviar el tipo para que el agente use el comando correcto (explorer en Windows)
+    const result = await Api.post("system/launch", {
+      command,
+      type: type === 'folder' ? 'folder' : 'app'
+    });
     console.log('[LAUNCH] Success:', result);
   } catch (e) {
     console.error("[LAUNCH] Fallo al lanzar:", e);

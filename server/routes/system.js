@@ -51,7 +51,21 @@ router.post('/launch', async (req, res) => {
     try {
         const stationKey = req.headers['x-station-key'];
         const fingerprint = req.headers['x-fingerprint'];
-        const { command } = req.body;
+        const { command, type } = req.body;
+
+        console.log(`[SYSTEM] Launch request - stationKey: ${stationKey}, fingerprint: ${fingerprint}, command: ${command}, type: ${type}`);
+
+        // DEBUG: Mostrar toda la información disponible
+        console.log(`[SYSTEM] ═══════════════════════════════════════════`);
+        console.log(`[SYSTEM] LAUNCH REQUEST DEBUG:`);
+        console.log(`[SYSTEM] - StationKey: ${stationKey}`);
+        console.log(`[SYSTEM] - Fingerprint: ${fingerprint}`);
+        console.log(`[SYSTEM] - Command: ${command}`);
+        console.log(`[SYSTEM] - Túneles disponibles: ${global.agentTunnels ? global.agentTunnels.size : 0}`);
+        if (global.agentTunnels && global.agentTunnels.size > 0) {
+            console.log(`[SYSTEM] - Lista de túneles:`, Array.from(global.agentTunnels.keys()));
+        }
+        console.log(`[SYSTEM] ═══════════════════════════════════════════`);
 
         // 1. Intentar vía Túnel WebSocket (Arquitectura Distribuida/Remota)
         if (stationKey && fingerprint && global.agentTunnels) {
@@ -64,7 +78,7 @@ router.post('/launch', async (req, res) => {
                 if (ws.readyState === 1) { // WebSocket.OPEN
                     ws.send(JSON.stringify({
                         type: 'command',
-                        payload: { action: 'launch', command }
+                        payload: { action: 'launch', command, type }
                     }));
                     return res.json({ success: true, method: 'WS_TUNNEL', tunnelKey });
                 } else {

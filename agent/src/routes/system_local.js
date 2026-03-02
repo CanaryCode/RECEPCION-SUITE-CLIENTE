@@ -7,19 +7,37 @@ const { exec } = require('child_process');
 const isWin = process.platform === 'win32';
 
 /**
+ * GET /api/system/ping
+ */
+router.get('/ping', (req, res) => {
+    res.json({ pong: true, time: new Date().toISOString() });
+});
+
+/**
  * POST /api/system/launch
  * Abre un ejecutable o ruta en el PC local.
  */
 router.post('/launch', (req, res) => {
-    const { command } = req.body;
+    const { command, type } = req.body;
     if (!command) return res.status(400).json({ error: 'No command provided' });
 
-    const launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
+    let launchCmd;
 
-    console.log(`[AGENT] Executing: ${launchCmd}`);
+    // Para carpetas, usar explorer en Windows o xdg-open en Linux
+    if (type === 'folder') {
+        launchCmd = isWin ? `explorer "${command}"` : `xdg-open "${command}"`;
+    } else {
+        // Para aplicaciones y archivos, usar start en Windows o xdg-open en Linux
+        launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
+    }
+
+    console.log(`[AGENT] Executing (${type || 'app'}): ${launchCmd}`);
 
     exec(launchCmd, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error(`[AGENT] Launch error:`, err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ success: true });
     });
 });
@@ -186,11 +204,13 @@ router.post('/list-files', async (req, res) => {
         if (!currentPath) return res.status(400).json({ error: 'No path provided' });
 
         const fsPath = path.resolve(currentPath);
+        console.log(`[AGENT] Listing files for path: ${fsPath} (Raw: ${currentPath})`);
 
         try {
             await fs.access(fsPath);
         } catch (err) {
-            return res.status(404).json({ error: 'Path not found or not accessible' });
+            console.warn(`[AGENT] Path not found or not accessible: ${fsPath}`);
+            return res.status(404).json({ error: 'Path not found or not accessible', path: fsPath });
         }
 
         const dirents = await fs.readdir(fsPath, { withFileTypes: true });

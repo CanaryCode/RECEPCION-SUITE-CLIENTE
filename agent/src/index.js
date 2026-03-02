@@ -325,16 +325,31 @@ setInterval(sendAgentHeartbeat, 15000);
 function getMachineFingerprint() {
     const interfaces = os.networkInterfaces();
     let mac = '';
+    let allMacs = [];
+
+    // Recolectar TODAS las MACs (no solo la primera)
     for (const name of Object.keys(interfaces)) {
         for (const iface of interfaces[name]) {
             if (!iface.internal && iface.mac && iface.mac !== '00:00:00:00:00:00') {
-                mac = iface.mac; break;
+                allMacs.push(iface.mac);
+                if (!mac) mac = iface.mac;
             }
         }
-        if (mac) break;
     }
-    const seed = mac || os.hostname();
-    const fingerprint = crypto.createHash('sha256').update(`${seed}-${os.platform()}-${os.hostname()}`).digest('hex');
+
+    // Ordenar MACs para consistencia
+    allMacs.sort();
+    const macString = allMacs.join('-');
+
+    // Incluir más datos únicos: MACs, hostname, platform, CPUs, memoria total
+    const cpuModel = os.cpus()[0]?.model || 'unknown';
+    const totalMem = os.totalmem();
+    const seed = `${macString}-${os.hostname()}-${os.platform()}-${cpuModel}-${totalMem}`;
+
+    const fingerprint = crypto.createHash('sha256').update(seed).digest('hex');
+
+    console.log(`[AGENT] Fingerprint generado con seed: ${mac}-${os.hostname()}-${os.platform()}`);
+
     return { fingerprint, mac, hostname: os.hostname() };
 }
 
@@ -381,14 +396,23 @@ function connectToCentral() {
 }
 
 function executeRemoteCommand(payload) {
-    const { action, command } = payload;
+    const { action, command, type } = payload;
 
     // Detectar OS del agente (donde corre este código)
     const isWin = process.platform === 'win32';
 
     if (action === 'launch') {
-        const launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
-        console.log(`[AGENT] Executing Remote Launch (Platform: ${process.platform}): ${launchCmd}`);
+        let launchCmd;
+
+        // Para carpetas, usar explorer en Windows o xdg-open en Linux
+        if (type === 'folder') {
+            launchCmd = isWin ? `explorer "${command}"` : `xdg-open "${command}"`;
+        } else {
+            // Para aplicaciones y archivos, usar start en Windows o xdg-open en Linux
+            launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
+        }
+
+        console.log(`[AGENT] Executing Remote Launch (Platform: ${process.platform}, Type: ${type || 'app'}): ${launchCmd}`);
         require('child_process').exec(launchCmd, (err, stdout, stderr) => {
             if (err) {
                 console.error(`[AGENT] Launch error: ${err.message}`);
