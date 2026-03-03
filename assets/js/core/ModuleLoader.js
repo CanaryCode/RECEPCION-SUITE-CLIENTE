@@ -98,6 +98,12 @@ export class ModuleLoader {
             initFunction: 'inicializarSafe',
             critical: false
         },
+        'calculadora': {
+            selector: '#calculadora-flotante',
+            importPath: 'assets/js/modules/calculadora.js',
+            initFunction: 'init',
+            critical: false
+        },
         'atenciones': {
             selector: '#atenciones-content',
             importPath: 'assets/js/modules/atenciones.js',

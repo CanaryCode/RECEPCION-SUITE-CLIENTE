@@ -287,8 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Actualizar widget de Calendario sin cargar el módulo completo
       await actualizarWidgetCalendario();
 
-      // Inicializar Calculadora y Chat
-      import("./modules/calculadora.js").then((m) => m.calculadora && m.calculadora.init());
+      // Inicializar Chat
       import("./modules/chat.js").then((m) => m.chat && m.chat.init());
     }, 100);
 
@@ -988,8 +987,16 @@ window.stopWebViewer = () => {
 window.abrirCaja = async function() {
   const originalFn = window.abrirCaja;
   await ModuleLoader.loadModule('caja');
-  // Después de cargar el módulo, window.abrirCaja habrá sido reemplazado por la función real
   if (window.abrirCaja && window.abrirCaja !== originalFn) {
     window.abrirCaja();
+  }
+};
+
+window.abrirCalculadora = async function() {
+  // Carga e inicializa el módulo de forma perezosa
+  const m = await import("./modules/calculadora.js");
+  if (m.calculadora) {
+    await m.calculadora.init();
+    m.calculadora.abrir();
   }
 };

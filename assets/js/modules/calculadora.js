@@ -14,9 +14,16 @@ let calcState = {
     lastResult: null
 };
 
-export const Calculadora = {
-    init() {
+const Calculadora = {
+    async init() {
         console.log('[Calculadora] Inicializando...');
+        
+        // Cargar template si no existe
+        if (!document.getElementById('calculadora-flotante')) {
+            const html = await fetch('/assets/templates/calculadora.html').then(r => r.text());
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
         this.setupDragAndDrop();
         this.setupResizing();
         this.attachEvents();
@@ -24,8 +31,16 @@ export const Calculadora = {
 
     abrir() {
         const win = document.getElementById('calculadora-flotante');
-        if (!win) return;
+        if (!win) {
+            // Si por alguna razón se llama antes de init, inicializar rápido
+            this.init().then(() => this._abrirEfectivo());
+            return;
+        }
+        this._abrirEfectivo();
+    },
 
+    _abrirEfectivo() {
+        const win = document.getElementById('calculadora-flotante');
         win.classList.remove('d-none');
         win.classList.add('animate-pop-in');
         this.updateDisplay();
@@ -247,4 +262,5 @@ export const Calculadora = {
     }
 };
 
-window.abrirCalculadora = () => Calculadora.abrir();
+export const calculadora = Calculadora;
+window.abrirCalculadora = () => calculadora.abrir();
