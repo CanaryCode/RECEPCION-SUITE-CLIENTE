@@ -493,7 +493,7 @@ export const Gallery = {
             : `<div class="d-flex flex-column align-items-center justify-content-center h-100 bg-light text-muted overflow-hidden" id="${thumbId}">
                  <div class="spinner-border spinner-border-sm" role="status"></div>
                </div>
-               <img id="img-${thumbId}" class="card-img-top d-none" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">`;
+               <img id="img-${thumbId}" class="card-img-top d-none" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">`;
 
         col.innerHTML = `
             <div class="card h-100 shadow-sm border-0 gallery-card overflow-hidden ${isSelected ? 'selected' : ''} ${selectionMode ? 'selection-active' : ''} animate__animated animate__fadeIn" 
@@ -537,10 +537,8 @@ export const Gallery = {
             
             const blob = await response.blob();
             imgEl.src = URL.createObjectURL(blob);
-            imgEl.onload = () => {
-                imgEl.classList.remove('d-none');
-                if (spinner) spinner.classList.add('d-none');
-            };
+            imgEl.classList.remove('d-none');
+            if (spinner) spinner.classList.add('d-none');
         } catch (e) {
             console.error('[Gallery] Image blob fetch failed:', e);
             imgEl.src = absoluteUrl; // Fallback
