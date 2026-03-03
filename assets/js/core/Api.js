@@ -25,7 +25,7 @@ export const Api = {
         if (remoteUrl && !isLocalOnly) {
             baseUrl = remoteUrl;
         } else if (isLocalOnly) {
-            baseUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            baseUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3002';
             isForcedLocal = true;
         }
 
@@ -40,7 +40,13 @@ export const Api = {
             baseUrl += '/api';
         }
 
-        let finalUrl = `${baseUrl}/${cleanEndpoint}`;
+        // Si el endpoint ya contiene 'api/', no duplicar - usar solo el endpoint
+        let finalUrl;
+        if (cleanEndpoint.startsWith('api/')) {
+            finalUrl = `/${cleanEndpoint}`;
+        } else {
+            finalUrl = `${baseUrl}/${cleanEndpoint}`;
+        }
 
         // CRITICAL FIX: Si la URL es relativa y estamos en HTTP, forzar HTTPS
         // porque el servidor solo funciona en HTTPS (puerto 3000)
@@ -289,7 +295,7 @@ export const Api = {
      */
     async getFromAgent(endpoint) {
         try {
-            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            let agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3002';
             const cleanEndpoint = endpoint.replace(/^\/+/, '');
             const url = `${agentUrl}/${cleanEndpoint}`;
 
@@ -318,7 +324,7 @@ export const Api = {
      */
     async postToAgent(endpoint, data) {
         try {
-            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            let agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3002';
             const cleanEndpoint = endpoint.replace(/^\/+/, '');
             const url = `${agentUrl}/${cleanEndpoint}`;
 

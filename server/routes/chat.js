@@ -72,4 +72,31 @@ router.post('/message', async (req, res) => {
     }
 });
 
+/**
+ * DELETE /api/chat/message/:id
+ * Deletes a message by ID.
+ */
+router.delete('/message/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log(`[DEBUG CHAT] DELETE /api/chat/message/${id} hit`);
+
+    try {
+        await db.query('DELETE FROM chat_messages WHERE id = ?', [id]);
+        
+        // Broadcast deletion to all WS clients
+        const broadcast = req.app.get('broadcast');
+        if (broadcast) {
+            broadcast({
+                type: 'chat_delete',
+                payload: { id }
+            });
+        }
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[CHAT ERROR]', err);
+        res.status(500).json({ error: 'Fallo al borrar mensaje' });
+    }
+});
+
 module.exports = router;

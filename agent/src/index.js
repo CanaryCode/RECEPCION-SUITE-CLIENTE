@@ -130,11 +130,12 @@ app.use('/api', (req, res, next) => {
     // 2. Admin endpoints use their own authentication (x-admin-password)
     if (req.path.startsWith('/admin')) return next();
 
-    // 3. Bypass para peticiones LOCALES a /system/
+    // 3. Bypass para peticiones LOCALES a /system/ y /agent/updates/
     const isLocal = isLocalRequest(req);
     const isSystem = req.originalUrl.includes('/api/system/');
+    const isUpdates = req.originalUrl.includes('/api/agent/updates/');
 
-    if (isLocal && isSystem) {
+    if (isLocal && (isSystem || isUpdates)) {
         console.log(`[AGENT] ✅ Bypass LOCAL concedido para: ${req.originalUrl} (IP detectada: ${ip})`);
         return next();
     }
@@ -250,9 +251,17 @@ const keyPath = '/etc/letsencrypt/live/www.desdetenerife.com/privkey.pem';
 
 try {
     if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
+        // Servidor HTTPS para conexiones externas
         const options = { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) };
         https.createServer(options, app).listen(PORT, BIND_ADDRESS, () => {
             console.log(`[AGENT] Servidor HTTPS iniciado en ${BIND_ADDRESS}:${PORT} (SSL ACTIVO)`);
+        });
+
+        // Servidor HTTP adicional SOLO para localhost (sin problemas SSL)
+        const http = require('http');
+        const HTTP_PORT = 3002;
+        http.createServer(app).listen(HTTP_PORT, '127.0.0.1', () => {
+            console.log(`[AGENT] Servidor HTTP local iniciado en 127.0.0.1:${HTTP_PORT} (solo localhost)`);
         });
     } else {
         app.listen(PORT, BIND_ADDRESS, () => {

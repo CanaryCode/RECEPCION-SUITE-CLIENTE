@@ -362,3 +362,19 @@ try {
         console.log(`========================================`);
     });
 }
+
+// --- CHAT MESSAGE CLEANUP (30 MINUTE EXPIRATION) ---
+// Ejecutar cada 5 minutos para eliminar mensajes de más de 30 min
+setInterval(async () => {
+    try {
+        const db = require('./db');
+        const [result] = await db.query(
+            'DELETE FROM chat_messages WHERE created_at < NOW() - INTERVAL 30 MINUTE'
+        );
+        if (result.affectedRows > 0) {
+            console.log(`[CLEANUP] Borrados ${result.affectedRows} mensajes de chat expirados.`);
+        }
+    } catch (err) {
+        // Silencioso para no ensuciar logs de arranque si la DB no está lista
+    }
+}, 5 * 60 * 1000);

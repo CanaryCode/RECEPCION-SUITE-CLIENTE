@@ -106,6 +106,8 @@ class ChatModule {
                 const data = JSON.parse(event.data);
                 if (data.type === 'chat_message') {
                     this.handleIncomingMessage(data.payload);
+                } else if (data.type === 'chat_delete') {
+                    this.handleDeletedMessage(data.payload.id);
                 } else if (data.type === 'user_connected') {
                     this.handleUserPresence(data.payload);
                 } else if (data.type === 'online_users') {
@@ -190,6 +192,15 @@ class ChatModule {
         }
     }
 
+    handleDeletedMessage(messageId) {
+        console.log(`[CHAT] Removing deleted message: ${messageId}`);
+        const el = this.list.querySelector(`[data-id="${messageId}"]`);
+        if (el) {
+            el.classList.add('animate__animated', 'animate__fadeOutRight');
+            setTimeout(() => el.remove(), 500);
+        }
+    }
+
     sendMessage() {
         const text = this.input.value.trim();
         if (!text) return;
@@ -214,20 +225,24 @@ class ChatModule {
     }
 
     appendMessage(msg, scroll = true) {
+        if (!msg.id) return; // Ignore messages without ID
+
         const isOwn = msg.sender === this.currentUser;
         const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         const div = document.createElement('div');
-        div.className = `message-entry ${isOwn ? 'own-message' : ''}`;
+        div.className = `message-entry ${isOwn ? 'own-message message-sent' : 'message-received'}`;
+        div.dataset.id = msg.id;
 
         if (msg.is_system) {
             div.innerHTML = `<div class="system-message">${msg.message}</div>`;
         } else {
             div.innerHTML = `
                 ${!isOwn ? `<div class="message-sender">${msg.sender}${msg.recipient ? ' (Privado)' : ''}</div>` : ''}
-                <div class="message-bubble shadow-sm">
+                <div class="message-bubble shadow-sm animate__animated animate__fadeInUp">
+                    ${isOwn ? `<button class="btn btn-delete-msg" onclick="chat.deleteMessage('${msg.id}')" title="Borrar mensaje"><i class="bi bi-trash"></i></button>` : ''}
                     <div class="message-text">${this.escapeHtml(msg.message)}</div>
-                    <div class="message-time text-end">${time}</div>
+                    <div class="message-time">${time}</div>
                 </div>
             `;
         }
@@ -275,6 +290,20 @@ class ChatModule {
             audio.volume = 0.4;
             audio.play();
         } catch (e) {}
+    }
+
+    async deleteMessage(id) {
+        if (!confirm('¿Estás seguro de que quieres borrar este mensaje?')) return;
+
+        try {
+            const result = await Api.delete(`/chat/message/${id}`);
+            if (result.success) {
+                this.handleDeletedMessage(id);
+            }
+        } catch (err) {
+            console.error("[CHAT] Error deleting message:", err);
+            Ui.showToast("No se pudo borrar el mensaje", "danger");
+        }
     }
 }
 
