@@ -1,6 +1,6 @@
 import { Utils } from "../core/Utils.js";
 import { Ui } from "../core/Ui.js";
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
+import { APP_CONFIG } from "../core/Config.js";
 import { excursionService } from "../services/ExcursionService.js";
 
 /**
@@ -116,7 +116,7 @@ export const Excursiones = {
                     huesped: huesped,
                     habitacion: hab,
                     externo: esExterno,
-                    fechaExcursion: data.exc_fecha_actividad,
+                    fechaExcursion: Utils.parseDate(data.exc_fecha_actividad),
                     adultos: parseInt(data.exc_adultos) || 0,
                     niños: parseInt(data.exc_ninos) || 0,
                     grupos: parseInt(data.exc_grupos) || 0,

@@ -32,15 +32,18 @@
       cursor: pointer !important;
     }
   </style>
-  <link rel="stylesheet" href="assets/css/styles.css?v=FINAL_FIX_V2" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
   <!-- FIX FINAL LAYOUT: Carga forzada al final -->
-  <link rel="stylesheet" href="assets/css/layout_fix.css?v=FINAL_FIX_V2" />
+  <link rel="stylesheet" href="assets/css/layout_fix.css" />
 
   <!-- MÓDULO DE IMPRESIÓN -->
-  <link rel="stylesheet" href="assets/css/modules/impresion.css?v=V125_FIX" />
+  <link rel="stylesheet" href="assets/css/modules/impresion.css" />
+
+  <!-- MÓDULO DE CALENDARIO -->
+  <link rel="stylesheet" href="assets/css/modules/calendario.css" />
 
   <!-- CARGA FINAL DE ESTILOS DE IMPRESIÓN (PRIORIDAD MÁXIMA) -->
-  <link rel="stylesheet" href="assets/css/print.css?v=V144_FINAL_BOSS" media="print" />
+  <link rel="stylesheet" href="assets/css/print.css" media="print" />
 
   <script></script>
   <script src="assets/vendor/chart.min.js"></script>
@@ -87,7 +90,7 @@
     data-bs-target="#system-alarms-content"></button>
 
   <!-- UI STRUCTURE -->
-  <div id="app-layout" class="container py-4">
+  <div id="app-layout" class="container-fluid py-4">
     <!-- App Header Panel -->
     <div id="app-header" class="app-header-panel text-center" onclick="Router.handleHeaderClick(event)"
       style="cursor: pointer">
@@ -192,8 +195,14 @@
               </button>
             </li>
             <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#calendario-content">
+                <span data-tooltip="true" data-bs-placement="right" data-bs-title="Calendario de eventos"><i
+                    class="bi bi-calendar3 me-2"></i>Calendario</span>
+              </button>
+            </li>
+            <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#impresion-content" onclick="
-                    import('./assets/js/modules/Impresion.js?v=V140_MODS').then(
+                    import('./assets/js/modules/Impresion.js').then(
                       (m) => m.inicializarImpresion(),
                     )
                   ">
@@ -417,6 +426,7 @@
             </a>
           </div>
 
+
           <div class="col-6 col-md">
             <a href="javascript:void(0)" onclick="openLaunchPad()" class="btn-shortcut shortcut-dark"
               data-bs-toggle="tooltip" data-bs-title="Herramientas y Configuración">
@@ -627,6 +637,13 @@
         <div class="text-center p-5">
           <div class="spinner-border text-primary" role="status"></div>
           <p class="mt-2 text-muted">Cargando Gestión RIU Class...</p>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="calendario-content" role="tabpanel">
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Calendario...</p>
         </div>
       </div>
 
@@ -1610,170 +1627,15 @@
         </style>
       </div>
       <div class="tab-pane fade" id="estancia-content" role="tabpanel">
-        <div class="d-none d-print-block report-header-print">
-          <div class="report-info-left">
-            <h2>Reporte de Estancia</h2>
-            <p>Hotel Garoé • Recepción</p>
-          </div>
-          <div class="report-info-right">
-            <div>
-              <strong>Fecha:</strong> <span id="print-date-estancia"></span>
-            </div>
-            <div>
-              <strong>Generado por:</strong>
-              <span id="print-repc-nombre-estancia"></span>
-            </div>
-            <div class="text-muted" style="font-size: 7pt; margin-top: 5px">
-              Documento Interno de Uso Operativo
-            </div>
-          </div>
-        </div>
-
-        <h4 class="module-title-discrete">
-          <i class="bi bi-bar-chart-line-fill"></i>Control de Estancia
-        </h4>
-
-        <div class="module-toolbar no-print">
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-primary active" id="btnVistaTrabajoEstancia"
-              data-bs-toggle="tooltip" data-bs-title="Ver Formulario y Tabla">
-              <i class="bi bi-pencil-square me-2"></i>Vista de Trabajo
-            </button>
-            <button type="button" class="btn btn-outline-primary" id="btnVistaGraficasEstancia" data-bs-toggle="tooltip"
-              data-bs-title="Ver Gráficas de Ocupación">
-              <i class="bi bi-graph-up me-2"></i>Vista de Gráficas
-            </button>
-          </div>
-
-          <div class="btn-print-wrapper d-flex gap-2">
-            <button class="btn btn-outline-info btn-sm fw-bold shadow-sm bg-white" onclick="imprimirGraficasEstancia()"
-              data-bs-toggle="tooltip" data-bs-title="Imprimir Gráficas y Estadísticas">
-              <i class="bi bi-camera me-2"></i>Imprimir Gráficas
-            </button>
-            <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="imprimirEstancia()"
-              data-bs-toggle="tooltip" data-bs-title="Imprimir Listado Mensual">
-              <i class="bi bi-printer me-2"></i>Imprimir Listado
-            </button>
-          </div>
-        </div>
-
-        <!-- VISTA DE TRABAJO -->
-        <div id="estancia-trabajo">
-          <div class="card mb-4 shadow-sm border-0">
-            <div class="card-header py-3">
-              <h6 class="sub-title-dynamic mb-0">
-                <i class="bi bi-plus-circle"></i>Registrar Ocupación Diaria
-              </h6>
-            </div>
-            <div class="card-body">
-              <form id="formEstancia" class="row g-3 align-items-end">
-                <div class="col-md-3">
-                  <label class="form-label small fw-bold"><i class="bi bi-calendar-event me-1"></i>Fecha
-                    Registro</label>
-                  <div class="input-group">
-                    <input type="date" id="estancia_fecha" class="form-control" required readonly
-                      data-bs-toggle="tooltip" data-bs-title="Fecha del Registro" />
-                    <button class="btn btn-outline-secondary" type="button" id="btnToggleLockFecha"
-                      title="Desbloquear fecha para editar anteriores" data-bs-toggle="tooltip">
-                      <i class="bi bi-lock-fill" id="iconLockFecha"></i>
-                    </button>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label small fw-bold">Hab. Ocupadas</label>
-                  <input type="number" id="estancia_ocupadas" class="form-control" min="0" max="190" required
-                    data-bs-toggle="tooltip" data-bs-title="Total Habitaciones Ocupadas" />
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label small fw-bold">Total Hotel</label>
-                  <input type="text" id="estancia_total_ref" class="form-control bg-light" value="190" readonly />
-                </div>
-                <div class="col-md-2">
-                  <button type="submit" class="btn btn-primary w-100 fw-bold py-2" data-bs-toggle="tooltip"
-                    data-bs-title="Guardar Datos">
-                    <i class="bi bi-save-fill me-2"></i>Guardar Registro
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="card shadow-sm border-0">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-              <h6 class="mb-0 fw-bold">Listado Diario del Mes</h6>
-              <div class="d-flex gap-2">
-                <select id="filtroMonthEstancia" class="form-select form-select-sm" style="width: 130px"
-                  onchange="mostrarEstancia()" data-bs-toggle="tooltip" data-bs-title="Filtrar Mes">
-                  <option value="0">Enero</option>
-                  <option value="1">Febrero</option>
-                  <option value="2">Marzo</option>
-                  <option value="3">Abril</option>
-                  <option value="4">Mayo</option>
-                  <option value="5">Junio</option>
-                  <option value="6">Julio</option>
-                  <option value="7">Agosto</option>
-                  <option value="8">Septiembre</option>
-                  <option value="9">Octubre</option>
-                  <option value="10">Noviembre</option>
-                  <option value="11">Diciembre</option>
-                </select>
-                <select id="filtroYearEstancia" class="form-select form-select-sm" style="width: 90px"
-                  onchange="mostrarEstancia()"></select>
-                <button class="btn btn-sm btn-outline-success" onclick="exportarEstanciaExcel()"
-                  data-bs-toggle="tooltip" data-bs-title="Descargar Excel (.xlsx)">
-                  <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar
-                  Excel
-                </button>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0 text-center">
-                <thead class="table-light">
-                  <tr>
-                    <th>Día</th>
-                    <th>Ocupadas</th>
-                    <th>Vacías/Bloq.</th>
-                    <th>Libres</th>
-                    <th>% Ocupación</th>
-                    <th class="text-end">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody id="tablaEstanciaCuerpo"></tbody>
-                <tfoot class="table-light fw-bold" id="tablaEstanciaPie"></tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- VISTA DE GRÁFICAS -->
-        <div id="estancia-graficas" class="d-none">
-          <div class="row g-4">
-            <div class="col-md-8">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-header py-3">
-                  <h6 class="mb-0 fw-bold">Evolución de Ocupación (%)</h6>
-                </div>
-                <div class="card-body">
-                  <div style="height: 300px">
-                    <canvas id="chartEstanciaEvolucion"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card border-0 shadow-sm bg-primary bg-gradient text-white h-100" id="estancia_anual_stats">
-                <!-- Inyectado por JS -->
-              </div>
-            </div>
-          </div>
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Control de Estancia...</p>
         </div>
       </div>
       <div class="tab-pane fade" id="tiempo-content" role="tabpanel">
         <!-- Cargado vía CompLoader desde assets/templates/tiempo.html -->
       </div>
-      <div class="tab-pane fade" id="ocr-datafonos-content" role="tabpanel">
-        <!-- Cargado vía CompLoader desde assets/templates/ocr_datafonos.html -->
-      </div>
+
       <div class="tab-pane fade" id="desayuno-content" role="tabpanel">
         <div class="d-none d-print-block report-header-print">
           <div class="report-info-left">
@@ -2966,142 +2828,9 @@
         </div>
       </div>
       <div class="tab-pane fade" id="system-alarms-content" role="tabpanel">
-        <h4 class="module-title-discrete">
-          <i class="bi bi-broadcast"></i>Alarmas del Sistema
-        </h4>
-
-        <div class="module-toolbar no-print d-flex justify-content-between align-items-center">
-          <!-- View Toggles (Standardized Placeholder) -->
-          <div class="btn-group shadow-sm" role="group">
-            <button type="button" class="btn btn-outline-primary active fw-bold" id="btnVistaTrabajoAlarms"
-              data-bs-toggle="tooltip" data-bs-title="Configuración">
-              <i class="bi bi-pencil-square me-2"></i>Vista de Trabajo
-            </button>
-            <button type="button" class="btn btn-outline-primary fw-bold" id="btnVistaListaAlarms"
-              data-bs-toggle="tooltip" data-bs-title="Histórico">
-              <i class="bi bi-list-ul me-2"></i>Vista de Lista
-            </button>
-          </div>
-
-          <div class="btn-print-wrapper">
-            <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="window.imprimirCobro()"
-              data-bs-toggle="tooltip" data-bs-title="Imprimir Alertas">
-              <i class="bi bi-printer me-2"></i>Imprimir
-            </button>
-          </div>
-        </div>
-
-        <div class="row g-4">
-          <!-- Formulario de Creación -->
-          <div class="col-md-5" id="formSystemAlarm-col">
-            <div class="content-panel h-100">
-              <h6 class="sub-title-dynamic mb-3">
-                <i class="bi bi-gear-wide"></i>Configurar Alerta
-              </h6>
-              <form id="formSystemAlarm">
-                <input type="hidden" id="sys_alarm_id" />
-
-                <div class="mb-3">
-                  <label class="form-label small fw-bold">Mensaje / Tarea</label>
-                  <textarea id="sys_alarm_msg" class="form-control" rows="2"
-                    placeholder="Ej: Realizar cierre de caja..." required></textarea>
-                </div>
-
-                <div class="row">
-                  <div class="col-6 mb-3">
-                    <label class="form-label small fw-bold">Hora</label>
-                    <input type="time" id="sys_alarm_hora" class="form-control text-center fw-bold" required />
-                  </div>
-                  <div class="col-6 mb-3">
-                    <label class="form-label small fw-bold">Periodicidad</label>
-                    <select id="sys_alarm_type" class="form-select" onchange="togglePeriodicidadInputs()">
-                      <option value="daily">Diaria</option>
-                      <option value="weekly">Semanal</option>
-                      <option value="date">Una Fecha</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Input Condicional: Fecha -->
-                <div class="mb-3 d-none" id="group-date">
-                  <label class="form-label small fw-bold">Fecha Específica</label>
-                  <input type="date" id="sys_alarm_date" class="form-control" />
-                </div>
-
-                <!-- Input Condicional: Días Semana -->
-                <div class="mb-3 d-none" id="group-days">
-                  <label class="form-label small fw-bold mb-1">Días de la Semana</label>
-                  <div class="d-flex justify-content-between bg-light p-2 rounded border">
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-1" value="1" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-1">L</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-2" value="2" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-2">M</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-3" value="3" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-3">X</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-4" value="4" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-4">J</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-5" value="5" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-5">V</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-6" value="6" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-6">S</label>
-                    </div>
-                    <div class="form-check form-check-inline p-0 m-0">
-                      <input type="checkbox" class="btn-check" id="day-0" value="0" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm p-1 px-2" for="day-0">D</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-check form-switch mb-3">
-                  <input class="form-check-input" type="checkbox" id="sys_alarm_active" checked />
-                  <label class="form-check-label" for="sys_alarm_active">Alarma Activa</label>
-                </div>
-
-                <div class="d-grid gap-2 mt-4">
-                  <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save me-2"></i>Guardar Alarma
-                  </button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetFormSystemAlarm()">
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!-- Lista de Alarmas -->
-          <div class="col-md-7" id="systemAlarms-list-col">
-            <div class="content-panel h-100">
-              <h5 class="fw-bold mb-3">Alertas Programadas</h5>
-              <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                  <thead class="table-light">
-                    <tr>
-                      <th style="width: 80px">Hora</th>
-                      <th>Mensaje</th>
-                      <th>Frecuencia</th>
-                      <th class="text-center" style="width: 50px">Activa</th>
-                      <th class="text-end" style="width: 100px">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tableSystemAlarmsBody">
-                    <!-- JS Injection -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <div class="p-5 text-center text-muted">
+          <div class="spinner-border spinner-border-sm me-2"></div>
+          Cargando configuración de alarmas...
         </div>
       </div>
       <div class="tab-pane fade" id="rack-content" role="tabpanel">
@@ -3348,237 +3077,6 @@
           <p class="mt-2 text-muted">Cargando Traslados...</p>
         </div>
       </div>
-    </div>
-    <div class="tab-pane fade" id="rack-content" role="tabpanel">
-      <h4 class="module-title-discrete px-3">
-        <i class="bi bi-grid-3x3-gap"></i>Rack de Habitaciones
-      </h4>
-
-      <!-- Module Toolbar (Print) -->
-      <div class="module-toolbar d-flex justify-content-end align-items-center p-2 mb-3 border-bottom d-print-none">
-        <div class="btn-print-wrapper gap-2">
-          <button class="btn btn-primary btn-sm fw-bold" onclick="window.imprimirRack()" data-bs-toggle="tooltip"
-            data-bs-title="Imprimir Rack">
-            <i class="bi bi-printer me-2"></i>Imprimir Rack
-          </button>
-        </div>
-      </div>
-
-      <div class="row h-100 g-0">
-        <!-- Sidebar Filters -->
-        <div class="col-md-3 col-lg-2 bg-light border-end p-3 overflow-auto d-print-none"
-          style="height: calc(100vh - 120px)">
-          <!-- Search Input -->
-          <div class="mb-4">
-            <h6 class="sub-title-dynamic mb-3">
-              <i class="bi bi-search"></i>Buscar
-            </h6>
-            <input type="search" id="room-search-input" class="form-control" placeholder="Buscar habitación..."
-              autocomplete="off" />
-          </div>
-
-          <h6 class="sub-title-dynamic mb-3 border-top pt-3">
-            <i class="bi bi-funnel-fill"></i>Filtros
-          </h6>
-
-          <div class="d-grid gap-2 mb-4">
-            <button class="btn btn-sm btn-outline-secondary" id="btn-reset-filters">
-              <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar Filtros
-            </button>
-          </div>
-
-          <!-- Tipos -->
-          <div class="mb-4">
-            <h6 class="fw-bold text-primary small text-uppercase">
-              Tipo de Habitación
-            </h6>
-            <div id="filter-tipos-container" class="d-flex flex-column gap-2">
-              <!-- Checkboxes injected by JS -->
-            </div>
-          </div>
-
-          <!-- Estados -->
-          <div class="mb-4">
-            <h6 class="fw-bold text-primary small text-uppercase">Estado</h6>
-            <div id="filter-estados-container" class="d-flex flex-column gap-2">
-              <!-- Checkboxes injected by JS -->
-            </div>
-          </div>
-
-          <!-- Vistas -->
-          <div class="mb-4">
-            <h6 class="fw-bold text-primary small text-uppercase">Vistas</h6>
-            <div id="filter-vistas-container" class="d-flex flex-column gap-2">
-              <!-- Checkboxes injected by JS -->
-            </div>
-          </div>
-
-          <!-- Extras -->
-          <div class="mb-4">
-            <h6 class="fw-bold text-primary small text-uppercase">
-              Características
-            </h6>
-            <div id="filter-extras-container" class="d-flex flex-column gap-2">
-              <!-- Checkboxes injected by JS -->
-            </div>
-          </div>
-
-          <div class="alert alert-info small mt-4 p-2">
-            <i class="bi bi-info-circle me-1"></i>
-            Mostrando <strong id="rack-count-display">0</strong> habitaciones
-          </div>
-        </div>
-
-        <!-- Main Rack Grid -->
-        <div class="col-md-9 col-lg-10 p-0 bg-white overflow-auto" style="height: calc(100vh - 120px)">
-          <!-- Print Header (Hidden on screen) -->
-          <div class="report-header-print d-none d-print-block p-4 mb-2">
-            <div class="d-flex justify-content-between align-items-end border-bottom pb-2">
-              <div>
-                <h2 class="m-0 text-primary">RACK DE HABITACIONES</h2>
-                <p class="m-0 text-muted">Hotel Garoé - Estado Actual</p>
-              </div>
-              <div class="text-end small">
-                <div>
-                  <strong>Fecha:</strong> <span id="print-date-rack"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="px-4 pt-3 pb-0 no-print">
-            <h6 class="sub-title-dynamic mb-3">
-              <i class="bi bi-grid-3x3-gap"></i>Estado de Habitaciones
-            </h6>
-          </div>
-
-          <div class="p-4 pt-0" id="rack-grid-container">
-            <!-- Grid injected by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Room Details Modal -->
-      <div class="modal fade" id="roomDetailsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-light">
-              <h5 class="modal-title fw-bold">
-                <i class="bi bi-door-open me-2"></i>Habitación
-                <span id="modal-room-number"></span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form id="room-details-form">
-                <fieldset id="room-details-fieldset" disabled>
-                  <!-- Read-only Info -->
-                  <div class="row mb-3">
-                    <div class="col-6">
-                      <label class="form-label text-muted small text-uppercase" data-bs-toggle="tooltip"
-                        title="Tipo de habitación">Tipo</label>
-                      <input type="text" class="form-control form-control-sm" id="modal-room-type" readonly disabled
-                        data-bs-toggle="tooltip" title="Este campo no se puede editar" />
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label text-muted small text-uppercase" data-bs-toggle="tooltip"
-                        title="Vista principal">Vista</label>
-                      <input type="text" class="form-control form-control-sm" id="modal-room-view" readonly disabled
-                        data-bs-toggle="tooltip" title="Este campo no se puede editar" />
-                    </div>
-                  </div>
-
-                  <!-- Editable Status -->
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase" data-bs-toggle="tooltip"
-                      title="Estado actual de limpieza/ocupación">Estado</label>
-                    <select class="form-select" id="modal-room-status" data-bs-toggle="tooltip"
-                      title="Selecciona el estado de la habitación">
-                      <option value="DISPONIBLE" class="text-success fw-bold">
-                        Disponible
-                      </option>
-                      <option value="BLOQUEADA" class="text-danger fw-bold">
-                        Bloqueada / Fuera de servicio
-                      </option>
-                    </select>
-                  </div>
-
-                  <!-- Editable Comments -->
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase">Observaciones</label>
-                    <textarea class="form-control" id="modal-room-comments" rows="3"
-                      placeholder="Añadir notas sobre la habitación..." data-bs-toggle="tooltip"
-                      title="Escribe aquí observaciones internas sobre la habitación"></textarea>
-                  </div>
-
-                  <!-- Toggle Features (Manual Overrides) -->
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase mb-2" data-bs-toggle="tooltip"
-                      title="Modificar características manualmente">Características Extra (Override)</label>
-                    <div class="d-flex flex-wrap gap-2">
-                      <input type="checkbox" class="btn-check" id="check-sofa" autocomplete="off" />
-                      <label class="btn btn-outline-warning btn-sm" for="check-sofa" data-bs-toggle="tooltip"
-                        data-bs-title="Habitación con Sofá"><i class="bi bi-journal-bookmark-fill me-1"></i>Sofá</label>
-
-                      <input type="checkbox" class="btn-check" id="check-sofaCama" autocomplete="off" />
-                      <label class="btn btn-outline-warning btn-sm" for="check-sofaCama" data-bs-toggle="tooltip"
-                        data-bs-title="Habitación con Sofá Cama"><i class="bi bi-archive-fill me-1"></i>Sofá
-                        Cama</label>
-
-                      <input type="checkbox" class="btn-check" id="check-cheslong" autocomplete="off" />
-                      <label class="btn btn-outline-primary btn-sm" for="check-cheslong" data-bs-toggle="tooltip"
-                        data-bs-title="Habitación con Cheslong"><i
-                          class="bi bi-layout-sidebar me-1"></i>Cheslong</label>
-
-                      <input type="checkbox" class="btn-check" id="check-ruidosa" autocomplete="off" />
-                      <label class="btn btn-outline-secondary btn-sm" for="check-ruidosa" data-bs-toggle="tooltip"
-                        data-bs-title="Habitación Ruidosa"><i class="bi bi-speaker-fill me-1"></i>Ruidosa</label>
-
-                      <input type="checkbox" class="btn-check" id="check-tranquila" autocomplete="off" />
-                      <label class="btn btn-outline-success btn-sm" for="check-tranquila" data-bs-toggle="tooltip"
-                        data-bs-title="Habitación Tranquila"><i class="bi bi-soundwave me-1"></i>Tranquila</label>
-                    </div>
-                    <div class="form-text small mt-1">
-                      <i class="bi bi-info-circle me-1"></i>Estas casillas
-                      permiten sobrescribir manualmente si una habitación
-                      tiene un extra que no está en la base de datos.
-                    </div>
-                  </div>
-                </fieldset>
-                <!-- Closed Fieldset here to prevent disabling security inputs -->
-              </form>
-
-              <!-- Security Access Section -->
-              <form onsubmit="return false;">
-                <div id="security-check-container" class="mt-4 border-top pt-3">
-                  <label class="form-label small fw-bold text-danger"><i
-                      class="bi bi-shield-lock-fill me-1"></i>Seguridad
-                    Requerida</label>
-                  <div class="input-group input-group-sm mb-2">
-                    <input type="password" class="form-control" id="security-pin-input"
-                      placeholder="Introducir código para editar" autocomplete="off" data-bs-toggle="tooltip"
-                      title="Introduce el código de supervisor" />
-                    <button class="btn btn-outline-danger" type="button" id="btn-unlock-details"
-                      data-bs-toggle="tooltip" title="Desbloquear edición de formulario">
-                      <i class="bi bi-unlock-fill me-1"></i>Desbloquear
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Cerrar
-              </button>
-              <button type="button" class="btn btn-primary" id="btn-save-room-details" disabled
-                onclick="window.saveRoomDetails()" data-bs-toggle="tooltip" title="Guardar cambios permanentemente">
-                <i class="bi bi-save me-1"></i>Guardar Cambios
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="tab-pane fade" id="configuracion-content" role="tabpanel">
       <!-- Loaded via CompLoader from assets/templates/configuracion.html -->
       <div class="text-center p-5">
@@ -3752,9 +3250,9 @@
       if (pdfjsLib.verbosity !== undefined) pdfjsLib.verbosity = 0;
     }
   </script>
-  <script src="assets/vendor/bootstrap.bundle.min.js?v=2"></script>
-  <script src="assets/vendor/chart.min.js?v=2"></script>
-  <script src="assets/vendor/html2pdf.bundle.min.js?v=2"></script>
+  <script src="assets/vendor/bootstrap.bundle.min.js?v=1772430687"></script>
+  <script src="assets/vendor/chart.min.js?v=1772430687"></script>
+  <script src="assets/vendor/html2pdf.bundle.min.js?v=1772430687"></script>
   <!-- CORE (Servicios fundamentales - Cargados como módulos vía main.js) -->
   <script src="assets/js/core/PrintService.js"></script>
   <script>
@@ -3836,7 +3334,7 @@
   </div>
 
   <!-- ARCHIVO JS PRINCIPAL (Punto de entrada) -->
-  <script type="module" src="assets/js/main.js?v=V154_MAPPING_FIX"></script>
+  <script type="module" src="assets/js/main.js"></script>
 
   <!-- Spotify Footer Player (Minimizable) -->
   <div id="spotify-footer-player" class="spotify-footer-player no-print">

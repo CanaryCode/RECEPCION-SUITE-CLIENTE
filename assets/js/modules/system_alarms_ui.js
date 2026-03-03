@@ -102,8 +102,18 @@ window.toggleViewAlarms = (vista) => {
  * Muestra u oculta los selectores de fecha o días de la semana según el 
  * tipo de periodicidad seleccionado (diaria, semanal o fecha fija).
  */
-function togglePeriodicidadInputs() {
-    const type = document.getElementById('sys_alarm_type').value;
+function togglePeriodicidadInputs(retryCount = 0) {
+    const typeEl = document.getElementById('sys_alarm_type');
+    if (!typeEl) {
+        if (retryCount < 5) {
+            console.warn(`[AlarmsUI] Selector 'sys_alarm_type' no encontrado. Reintentando (${retryCount + 1}/5)...`);
+            setTimeout(() => togglePeriodicidadInputs(retryCount + 1), 200);
+        } else {
+            console.error("[AlarmsUI] Error: Selector 'sys_alarm_type' no encontrado tras varios intentos.");
+        }
+        return;
+    }
+    const type = typeEl.value;
     const groupDate = document.getElementById('group-date');
     const groupDays = document.getElementById('group-days');
     const groupMonthly = document.getElementById('group-monthly');

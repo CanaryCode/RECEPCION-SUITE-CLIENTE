@@ -6,11 +6,13 @@
  * del día con el panel de control (Dashboard).
  */
 
-import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
-import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
-import { transfersService } from '../services/TransfersService.js?v=V145_VAL_FIX';
-import { PdfService } from '../core/PdfService.js?v=V145_VAL_FIX';
+import { Utils } from '../core/Utils.js';
+import { APP_CONFIG } from "../core/Config.js";
+import { Ui } from '../core/Ui.js';
+import { transfersService } from '../services/TransfersService.js';
+import { PdfService } from '../core/PdfService.js';
+
+import { rackService } from '../services/RackService.js';
 
 let transferParaImprimir = null; // Objeto temporal para el ticket
 
@@ -147,6 +149,32 @@ export async function inicializarTransfers() {
         dateInput.value = today;
         dateInput.min = today;
     }
+
+    // 3. CONFIGURAR VALIDADOR DE HABITACIÓN Y GUEST LOOKUP
+    Ui.attachRoomValidator('transfer_hab', {
+        allowEmpty: false,
+        onValidate: (isValid, room) => {
+            const feedbackEl = document.getElementById('transfer_hab_feedback');
+            if (!feedbackEl) return;
+
+            if (isValid && room) {
+                const details = rackService.getRoomDetails(room);
+                if (details && details.status === 'OCUPADA' && details.comments) {
+                    // En este sistema, el nombre del huésped suele estar en los comentarios del rack si está ocupada
+                    feedbackEl.className = 'x-small mt-1 fw-bold text-success';
+                    feedbackEl.innerHTML = `<i class="bi bi-person-check-fill me-1"></i>${details.comments}`;
+                } else if (isValid) {
+                    feedbackEl.className = 'x-small mt-1 text-muted';
+                    feedbackEl.innerHTML = `<i class="bi bi-check-circle me-1"></i>Habitación válida`;
+                }
+            } else if (room) {
+                feedbackEl.className = 'x-small mt-1 fw-bold text-danger';
+                feedbackEl.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i>Habitación no existe`;
+            } else {
+                feedbackEl.innerHTML = '';
+            }
+        }
+    });
     
     mostrarTransfers();
     setupIntersectionObserverTransfers();
@@ -472,6 +500,7 @@ window.imprimirTransferTicket = (id) => {
 };
 
 window.filtrarTransfers = mostrarTransfers;
+window.mostrarTransfers = mostrarTransfers;
 
 /**
  * IMPRIMIR LISTADO DE TRANSFERS (PdfService)

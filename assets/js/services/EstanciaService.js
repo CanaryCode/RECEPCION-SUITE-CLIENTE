@@ -70,6 +70,14 @@ class EstanciaService extends BaseService {
     }
 
     /**
+     * FILTRAR POR AÑO
+     */
+    getByYear(year) {
+        const prefix = `${year}-`;
+        return this.getRegistros().filter(r => r.fecha.startsWith(prefix));
+    }
+
+    /**
      * FILTRAR POR MES
      */
     getByMonth(year, month) {

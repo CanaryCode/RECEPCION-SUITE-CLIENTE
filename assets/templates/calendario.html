@@ -1,0 +1,142 @@
+<div class="d-none d-print-block report-header-print">
+    <div class="report-info-left">
+        <h2>Calendario de Eventos</h2>
+        <p>Hotel Garoé • Recepción</p>
+    </div>
+    <div class="report-info-right">
+        <div>
+            <strong>Fecha:</strong> <span id="print-date-calendario"></span>
+        </div>
+        <div class="text-muted" style="font-size: 7pt; margin-top: 5px">
+            Documento Interno de Uso Operativo
+        </div>
+    </div>
+</div>
+
+<!-- Encabezado del Módulo -->
+<div id="calendario-general-header" class="d-print-block">
+    <h4 class="module-title-discrete animate-fade-in no-print">
+        <i class="bi bi-calendar3 me-2 text-primary"></i>Calendario de Eventos
+    </h4>
+</div>
+
+<div class="module-toolbar d-flex justify-content-between align-items-center p-2 mb-3 no-print">
+    <!-- View Toggles (Left) -->
+    <div class="d-flex align-items-center gap-2">
+        <div class="btn-group shadow-sm">
+            <button id="btnCalendarioDia" class="btn btn-outline-primary" data-view="dia">Día</button>
+            <button id="btnCalendarioSemana" class="btn btn-outline-primary" data-view="semana">Semana</button>
+            <button id="btnCalendarioMes" class="btn btn-outline-primary active" data-view="mes">Mes</button>
+            <button id="btnCalendarioAnio" class="btn btn-outline-primary" data-view="anio">Año</button>
+            <button id="btnCalendarioLista" class="btn btn-outline-primary" data-view="lista">Listado</button>
+        </div>
+
+        <!-- Navigation Contextual -->
+        <div class="d-flex align-items-center gap-1 ms-3">
+            <button class="btn btn-sm btn-outline-secondary border-0" id="btnCalendarioPrev" title="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-primary fw-bold px-3" id="btnCalendarioHoy">Hoy</button>
+            <button class="btn btn-sm btn-outline-secondary border-0" id="btnCalendarioSig" title="Siguiente">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+            <span id="calendario-titulo-periodo" class="ms-2 fw-bold text-primary small text-uppercase"></span>
+        </div>
+    </div>
+
+    <!-- Actions (Right) -->
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary btn-sm fw-bold shadow-sm px-3" id="btnNuevoEvento">
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Evento
+        </button>
+        <button class="btn btn-sm btn-outline-secondary px-3" id="btnImprimirCalendario" title="Imprimir Vista">
+            <i class="bi bi-printer me-2"></i>Imprimir
+        </button>
+    </div>
+</div>
+
+<!-- Main Calendar Container -->
+<div id="calendario-vistas-container" class="animate-fade-in">
+    <!-- El contenido se cargará dinámicamente vía JS -->
+    <div id="view-dia" class="calendar-view"></div>
+    <div id="view-semana" class="calendar-view d-none">
+        <div class="triple-week-container" id="triple-week-container">
+            <!-- 3 weeks injected by JS -->
+        </div>
+    </div>
+    <div id="view-mes" class="calendar-view d-none">
+        <div class="triple-almanac-container" id="triple-almanac-container">
+            <!-- 3 months (Previous, Current, Next) injected by JS -->
+        </div>
+    </div>
+    <div id="view-anio" class="calendar-view d-none">
+        <div class="year-grid" id="year-almanac-grid">
+            <!-- 12 months injected by JS -->
+        </div>
+    </div>
+    <div id="view-lista" class="calendar-view d-none">
+        <div id="listado-eventos-container" class="p-3">
+            <!-- Personal events list injected by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA EVENTOS -->
+<div class="modal fade" id="modalEvento" tabindex="-1" aria-labelledby="modalEventoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalEventoLabel">Nuevo Evento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEvento">
+                <div class="modal-body">
+                    <input type="hidden" id="evento_id">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Título del Evento *</label>
+                        <input type="text" id="evento_titulo" class="form-control" required placeholder="Ej: Reunión de equipo">
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Fecha *</label>
+                            <input type="date" id="evento_fecha" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Hora *</label>
+                            <input type="time" id="evento_hora" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Prioridad</label>
+                            <select id="evento_prioridad" class="form-select">
+                                <option value="Normal">Normal</option>
+                                <option value="Urgente">Urgente 🔴</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Color del Evento</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="color" id="evento_color" class="form-control form-control-color" value="#0d6efd" title="Elegir color">
+                                <span class="small text-muted">Personalizado</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label small fw-bold">Descripción / Notas</label>
+                        <textarea id="evento_descripcion" class="form-control" rows="3" placeholder="Detalles adicionales..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-danger me-auto d-none" id="btnEliminarEvento">
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save me-1"></i>Guardar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

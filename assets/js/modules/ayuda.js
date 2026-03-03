@@ -1,4 +1,4 @@
-import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
+import { APP_CONFIG } from '../core/Config.js';
 import { ayudaService } from '../services/AyudaService.js';
 import { sessionService } from '../services/SessionService.js';
 import { Utils } from '../core/Utils.js';

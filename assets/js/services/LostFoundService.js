@@ -15,7 +15,7 @@ class LostFoundService extends BaseService {
          */
         this.schema = {
             id: 'string',
-            fecha: 'string',
+            fecha: 'date',
             objeto: 'string',
             lugar: 'string',
             quien: 'string',

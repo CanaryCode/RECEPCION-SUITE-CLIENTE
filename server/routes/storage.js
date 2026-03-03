@@ -49,6 +49,8 @@ const TABLE_MAP = {
     'vales_data': 'vales',
     'guia_operativa': 'guia_operativa',
     'gallery_favorites': 'gallery_favorites',
+    'calendario_eventos': 'calendario_eventos',
+    'recepcionistas': 'usuarios_recepcion',
 
     // ALIAS PARA COMPATIBILIDAD O LEGACY
     'riu_agenda_contactos': 'agenda_contactos',
@@ -101,7 +103,7 @@ router.post('/upload', async (req, res) => {
         logToFile(`[Storage] Data start: ${fileData.substring(0, 70)}...`);
 
         const mediaDir = path.join(STORAGE_DIR, 'media', folder);
-        console.log(`[Storage] Target directory: ${mediaDir}`);
+        console.log(`[Storage] Procesando subida de archivo para: ${fileName}`);
 
         // Ensure folder exists
         try {
@@ -146,11 +148,19 @@ router.get('/:key', async (req, res) => {
             // Special handling for JSON fields in DB if needed (e.g. departamentos in novedades)
             const processedRows = rows.map(row => {
                 const newRow = { ...row };
-                // PARSEO GENÉRICO DE CAMPOS JSON
+                // PARSEO GENÉRICO DE CAMPOS JSON Y FECHAS
                 Object.keys(newRow).forEach(col => {
                     const val = newRow[col];
+                    // 1. JSON
                     if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
                         try { newRow[col] = JSON.parse(val); } catch (e) { }
+                    }
+                    // 2. FECHAS (Sólo DATE, no TIMESTAMP)
+                    if (val instanceof Date && col !== 'created_at' && col !== 'updated_at' && col !== 'actualizado_en') {
+                        const y = val.getFullYear();
+                        const m = String(val.getMonth() + 1).padStart(2, '0');
+                        const d = String(val.getDate()).padStart(2, '0');
+                        newRow[col] = `${y}-${m}-${d}`;
                     }
                 });
                 return newRow;
@@ -212,9 +222,10 @@ router.get('/:key', async (req, res) => {
             if (key === 'riu_transfers') {
                 return res.json(processedRows.map(row => ({
                     transfer_id: row.id,
-                    fecha: row.fecha,
+                    fecha: row.fecha, // Ya viene formateada por el loop superior
                     hora: row.hora,
                     habitacion: row.habitacion,
+                    tipo: row.tipo || '',
                     pax: row.pasajeros ?? row.pax ?? row.PASAJEROS ?? 0,
                     destino: row.lugar_destino ?? row.destino ?? row.LUGAR_DESTINO ?? '',
                     nombre_cliente: row.nombre_cliente,
@@ -281,16 +292,14 @@ router.get('/:key', async (req, res) => {
 
 /**
  * POST /api/storage/:key
- * Saves data to MariaDB and JSON file using atomic transactions.
+ * Saves data to MySQL and JSON file using atomic transactions.
  */
 router.post('/:key', async (req, res) => {
     const { key } = req.params;
     const tableName = TABLE_MAP[key];
     const data = req.body;
 
-    if (data === undefined || data === null) {
-        return res.status(400).json({ error: 'Body is required' });
-    }
+    logToFile(`>>> POST /api/storage/${key} - Table: ${tableName || 'NONE'}`);
 
     // DEBUG: Log para diagnosticar transfers vacíos
     if (key === 'riu_transfers') {
@@ -426,6 +435,19 @@ router.post('/:key', async (req, res) => {
                         autor: val.autor,
                         actualizado_en: val.actualizadoEn || val.actualizado_en || new Date().toISOString()
                     }));
+                } else if (key === 'calendario_eventos') {
+                    itemsToInsert = Array.isArray(data) ? data.map(ev => ({
+                        id: ev.id,
+                        titulo: ev.titulo,
+                        fecha: ev.fecha,
+                        hora: ev.hora,
+                        categoria: ev.categoria,
+                        priority: ev.priority,
+                        color: ev.color,
+                        descripcion: ev.descripcion
+                    })) : [];
+                } else if (key === 'recepcionistas') {
+                    itemsToInsert = Array.isArray(data) ? data.map(val => (typeof val === 'string' ? { nombre: val } : val)) : [];
                 } else if (Array.isArray(data)) {
                     itemsToInsert = data;
                 } else if (typeof data === 'object') {
@@ -443,10 +465,14 @@ router.post('/:key', async (req, res) => {
                 if (itemsToInsert.length > 0) {
                     const [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
                     const validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+                    logToFile(`[Storage] Inserting ${itemsToInsert.length} items into ${tableName}. Valid columns: ${Array.from(validDbColumns).join(',')}`);
 
                     for (const item of itemsToInsert) {
                         const itemColumns = Object.keys(item).filter(col => validDbColumns.has(col));
-                        if (itemColumns.length === 0) continue;
+                        if (itemColumns.length === 0) {
+                            logToFile(`[Storage] Skipping item: no valid columns found. Item keys: ${Object.keys(item).join(',')}`);
+                            continue;
+                        }
 
                         const placeholders = itemColumns.map(() => '?').join(', ');
                         const sql = `INSERT INTO \`${tableName}\` (\`${itemColumns.join('\`, \`')}\`) VALUES (${placeholders})`;
@@ -463,6 +489,8 @@ router.post('/:key', async (req, res) => {
                         });
                         await connection.query(sql, values);
                     }
+                } else {
+                    logToFile(`[Storage] No items to insert for ${tableName}`);
                 }
             }
             logToFile(`[Storage] DB Write (Transaction Success): ${tableName}`);

@@ -1,31 +1,60 @@
 // --- STARTUP ---
 
 // --- IMPORTACIÓN DE MÓDULOS CORE ---
-import { Ui } from "./core/Ui.js?v=V155_AGENT_FIX"; // Bump version
-import { clock } from "./modules/clock.js?v=V147_PROXY_FIX";
-import { Spotify } from "./modules/spotify.js?v=V147_PROXY_FIX";
-import { IconSelector } from "./core/IconSelector.js?v=V147_PROXY_FIX";
+import { Ui } from "./core/Ui.js";
+import { clock } from "./modules/clock.js";
+import { Spotify } from "./modules/spotify.js";
+import { IconSelector } from "./core/IconSelector.js";
 import { ModuleLoader } from "./core/ModuleLoader.js";
 
 // --- SISTEMAS CORE (NÚCLEO) ---
-import { APP_CONFIG, Config } from "./core/Config.js?v=V153_DB_CONFIG";
-import { Api } from "./core/Api.js?v=V155_PNA_FIX";
-import { Modal } from "./core/Modal.js?v=V147_PROXY_FIX";
-import { Router } from "./core/Router.js?v=V147_PROXY_FIX";
-import { CompLoader } from "./core/CompLoader.js?v=V147_PROXY_FIX";
-import { Search } from "./core/Search.js?v=V147_PROXY_FIX";
-import { sessionService } from "./services/SessionService.js?v=V147_PROXY_FIX";
-import { Utils } from "./core/Utils.js?v=V147_PROXY_FIX";
-import { RoomDetailModal } from "./core/RoomDetailModal.js?v=V147_PROXY_FIX";
-import "./core/PrintService.js?v=V147_PROXY_FIX";
-import { SecurityBarrier } from "./core/SecurityBarrier.js?v=V147_PROXY_FIX";
+import { APP_CONFIG, Config } from "./core/Config.js";
+import { Api } from "./core/Api.js";
+import { Modal } from "./core/Modal.js";
+import { Router } from "./core/Router.js";
+import { CompLoader } from "./core/CompLoader.js";
+import { Search } from "./core/Search.js";
+import { sessionService } from "./services/SessionService.js";
+import { Utils } from "./core/Utils.js";
+import { RoomDetailModal } from "./core/RoomDetailModal.js";
+import "./core/PrintService.js";
+import { SecurityBarrier } from "./core/SecurityBarrier.js";
 import { realTimeSync } from "./core/RealTimeSync.js";
 import { Login } from "./core/Login.js";
 
-// Global debug helper
+// Global debug helpers
 window.clearConfigOverride = () => {
   localStorage.removeItem("app_config_override");
   location.reload();
+};
+
+// Helper para forzar limpieza total de caché (útil después de actualizaciones)
+window.forceClearCache = async () => {
+  console.log('[CACHE] Limpiando toda la caché del navegador...');
+
+  // 1. Limpiar localStorage
+  const preserveKeys = ['app_config_override', 'session_user'];
+  const backup = {};
+  preserveKeys.forEach(key => {
+    const val = localStorage.getItem(key);
+    if (val) backup[key] = val;
+  });
+  localStorage.clear();
+  Object.entries(backup).forEach(([key, val]) => localStorage.setItem(key, val));
+
+  // 2. Limpiar sessionStorage
+  sessionStorage.clear();
+
+  // 3. Limpiar Cache API (si está disponible)
+  if ('caches' in window) {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map(name => caches.delete(name)));
+    console.log(`[CACHE] ${cacheNames.length} cachés eliminadas.`);
+  }
+
+  // 4. Reload forzado sin caché
+  console.log('[CACHE] Recargando sin caché...');
+  window.location.reload(true);
 };
 
 // Expose Essentials globally for non-module scripts and inline events
@@ -61,6 +90,7 @@ window.hideAllTooltips = () => {
  * Se ejecuta cuando el navegador termina de cargar el HTML básico.
  */
 document.addEventListener("DOMContentLoaded", async () => {
+  console.log(`%c Reception Suite v${APP_CONFIG.SYSTEM.VERSION || '?.?.?'} `, 'background: #222; color: #bada55; font-size: 1.2rem; font-weight: bold;');
   try {
     // 0. Limpieza UI Base
     try {
@@ -358,10 +388,27 @@ window.openLaunchPad = () => {
 
   window.renderLaunchPad("", "app", "modal");
 
-  const modal = bootstrap.Modal.getOrCreateInstance(
-    document.getElementById("launchPadModal"),
-  );
-  modal.show();
+  // Verificar que Bootstrap esté cargado
+  try {
+    if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+      console.error('[LaunchPad] Bootstrap no está disponible');
+      alert('Error: Bootstrap no está cargado. Por favor recarga la página con Ctrl+Shift+R');
+      return;
+    }
+
+    const modalEl = document.getElementById("launchPadModal");
+    if (!modalEl) {
+      console.error('[LaunchPad] El elemento launchPadModal no existe en el DOM');
+      alert('Error técnico: El lanzador no se encuentra en la página.');
+      return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+  } catch (e) {
+    console.error('[LaunchPad] Error al abrir modal:', e);
+    alert('Error al abrir LaunchPad. Por favor recarga la página con Ctrl+Shift+R');
+  }
 };
 
 window.filterLaunchPad = (filter, target = "modal") => {

@@ -13,7 +13,7 @@ class ValesService extends BaseService {
         // Definición del esquema para validación automática
         this.schema = {
             id: 'number',             // Timestamp
-            fecha_creacion: 'string', // ISO String
+            fecha_creacion: 'date',
             receptor: 'string',       // Persona que recibe el dinero
             concepto: 'string',       // Razón del vale
             estado: 'string',         // "Pendiente", "Liquidado", etc.

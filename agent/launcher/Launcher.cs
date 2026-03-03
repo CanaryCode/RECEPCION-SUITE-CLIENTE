@@ -153,7 +153,7 @@ namespace RecepcionSuiteLauncher
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = $"/c netstat -ano | findstr :{port}",
+                    Arguments = "/c netstat -ano | findstr :" + port,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
@@ -174,7 +174,8 @@ namespace RecepcionSuiteLauncher
                             if (parts.Length > 0)
                             {
                                 string pidString = parts[parts.Length - 1];
-                                if (int.TryParse(pidString, out int pid))
+                                int pid;
+                                if (int.TryParse(pidString, out pid))
                                 {
                                     try
                                     {

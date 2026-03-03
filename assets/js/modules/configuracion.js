@@ -1,12 +1,12 @@
-import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
-import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
-import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from '../core/Config.js';
+import { Utils } from '../core/Utils.js';
+import { Ui } from '../core/Ui.js';
 
-import { IconSelector } from '../core/IconSelector.js?v=V145_VAL_FIX';
-import { MediaPicker } from '../core/MediaPicker.js?v=V155_AGENT_FIX';
-import { Api } from '../core/Api.js?v=V155_AGENT_FIX';
-import { configService } from '../services/ConfigService.js?v=V145_VAL_FIX';
-import { Spotify } from './spotify.js?v=V145_VAL_FIX';
+import { IconSelector } from '../core/IconSelector.js';
+import { MediaPicker } from '../core/MediaPicker.js';
+import { Api } from '../core/Api.js';
+import { configService } from '../services/ConfigService.js';
+import { Spotify } from './spotify.js';
 
 let moduloInicializado = false;
 let tempConfig = null;
@@ -21,10 +21,26 @@ export const Configurator = {
      */
     async inicializar() {
         console.log("Configurator.inicializar() CALLED");
-        this.renderInterfaz();
+        // NO renderizar aquí - solo cuando el usuario navegue al panel
+        // this.renderInterfaz();
         this.initPinProtection();
         if (moduloInicializado) return;
         this.configurarEventos();
+
+        // Renderizar cuando se active el panel de configuración
+        const configPanel = document.getElementById('configuracion-content');
+        if (configPanel) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.target.classList.contains('active')) {
+                        this.renderInterfaz();
+                        observer.disconnect(); // Solo renderizar una vez
+                    }
+                });
+            });
+            observer.observe(configPanel, { attributes: true, attributeFilter: ['class'] });
+        }
+
         moduloInicializado = true;
     },
 
@@ -64,7 +80,7 @@ export const Configurator = {
 
             // Listas dinámicas
             this.renderCocktailLugares();
-            this.renderRecepcionistas();
+            this.renderRecepcionistas(); // Se inicia la carga asíncrona
             this.renderDestinosTransfers();
             this.renderDepartamentosGlobal();
             this.renderAppLaunchers();
@@ -128,14 +144,23 @@ export const Configurator = {
 
     // --- RENDERERS ---
 
-    renderRecepcionistas() {
-        Ui.renderTable('config-recepcionistas-list', tempConfig.HOTEL.RECEPCIONISTAS, (nombre) => `
-            <div class="badge bg-light text-dark border p-2 d-flex align-items-center">
-                <span class="fs-6 text-truncate me-2" style="max-width: 150px;">${nombre}</span>
-                <button type="button" class="btn btn-link link-primary p-0 text-decoration-none me-2" onclick="Configurator.editRecepcionista('${nombre}')" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                <button type="button" class="btn-close" style="width: 0.5em; height: 0.5em;" onclick="Configurator.removeRecepcionista('${nombre}')" title="Eliminar"></button>
-            </div>
-        `);
+    async renderRecepcionistas() {
+        try {
+            const data = await Api.get('storage/recepcionistas');
+            const list = Array.isArray(data) ? data.map(u => typeof u === 'string' ? u : u.nombre) : [];
+            tempConfig.HOTEL.RECEPCIONISTAS = list;
+
+            Ui.renderTable('config-recepcionistas-list', list, (nombre) => `
+                <div class="badge bg-light text-dark border p-2 d-flex align-items-center">
+                    <span class="fs-6 text-truncate me-2" style="max-width: 150px;">${nombre}</span>
+                    <button type="button" class="btn btn-link link-primary p-0 text-decoration-none me-2" onclick="Configurator.editRecepcionista('${nombre}')" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                    <button type="button" class="btn-close" style="width: 0.5em; height: 0.5em;" onclick="Configurator.removeRecepcionista('${nombre}')" title="Eliminar"></button>
+                </div>
+            `);
+        } catch (e) {
+            console.error("Error loading receptionists:", e);
+            Ui.renderTable('config-recepcionistas-list', [], () => '');
+        }
     },
 
     renderDestinosTransfers() {
@@ -481,19 +506,35 @@ export const Configurator = {
         }
     },
 
-    addRecepcionista() {
+    async addRecepcionista() {
         const nombre = Utils.getVal('newRecepcionista');
         if (nombre && !tempConfig.HOTEL.RECEPCIONISTAS.includes(nombre)) {
-            tempConfig.HOTEL.RECEPCIONISTAS.push(nombre);
-            this.renderRecepcionistas();
-            Utils.setVal('newRecepcionista', '');
+            try {
+                tempConfig.HOTEL.RECEPCIONISTAS.push(nombre);
+                await Api.post('storage/recepcionistas', tempConfig.HOTEL.RECEPCIONISTAS);
+                this.renderRecepcionistas();
+                Utils.setVal('newRecepcionista', '');
+                Ui.showToast("Recepcionista añadido correctamente", "success");
+            } catch (e) {
+                console.error("Error adding receptionist:", e);
+                tempConfig.HOTEL.RECEPCIONISTAS = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => r !== nombre);
+                Ui.showToast("Error al guardar en la base de datos", "danger");
+            }
         }
     },
 
     async removeRecepcionista(nombre) {
         if (await Ui.showConfirm(`¿Eliminar ${nombre}?`)) {
-            tempConfig.HOTEL.RECEPCIONISTAS = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => r !== nombre);
-            this.renderRecepcionistas();
+            try {
+                const newList = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => r !== nombre);
+                await Api.post('storage/recepcionistas', newList);
+                tempConfig.HOTEL.RECEPCIONISTAS = newList;
+                this.renderRecepcionistas();
+                Ui.showToast("Recepcionista eliminado", "success");
+            } catch (e) {
+                console.error("Error removing receptionist:", e);
+                Ui.showToast("Error al eliminar de la base de datos", "danger");
+            }
         }
     },
 

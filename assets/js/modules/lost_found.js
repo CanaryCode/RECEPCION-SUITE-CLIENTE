@@ -1,9 +1,9 @@
-import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
-import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
-import { lostFoundService } from "../services/LostFoundService.js?v=V145_VAL_FIX";
-import { MediaPicker } from "../core/MediaPicker.js?v=V145_VAL_FIX";
-import { MediaService } from "../services/MediaService.js?v=V145_VAL_FIX";
+import { Utils } from '../core/Utils.js';
+import { Ui } from '../core/Ui.js';
+import { APP_CONFIG } from "../core/Config.js";
+import { lostFoundService } from "../services/LostFoundService.js";
+import { MediaPicker } from "../core/MediaPicker.js";
+import { MediaService } from "../services/MediaService.js";
 
 /**
  * MÓDULO DE OBJETOS PERDIDOS (lost_found.js)

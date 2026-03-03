@@ -1,61 +1,51 @@
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
+import { APP_CONFIG } from "../core/Config.js";
 import { Utils } from '../core/Utils.js';
 import { estanciaService } from '../services/EstanciaService.js';
 import { sessionService } from '../services/SessionService.js';
 import { Ui } from '../core/Ui.js';
 
 /**
- * MÓDULO DE CONTROL DE ESTANCIA (OCUPACIÓN)
- * ----------------------------------------
- * Registra diariamente cuántas habitaciones están ocupadas para generar estadísticas.
- * Permite visualizar la evolución mediante gráficas de Chart.js y exportar datos a Excel.
+ * MÓDULO DE CONTROL DE ESTANCIA (OCUPACIÓN) - ROUND 3
  */
 
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-let chartEstancia = null; // Instancia de la gráfica actual
+let chartEstancia = null;
 
-export function inicializarEstancia() {
-    // 1. GESTIÓN DE FORMULARIO (Ui.handleFormSubmission)
+export async function inicializarEstancia() {
+    await estanciaService.init();
+
     Ui.handleFormSubmission({
         formId: 'formEstancia',
         service: estanciaService,
         idField: 'estancia_fecha',
         mapData: (rawData) => {
             const ocupadas = parseInt(rawData.estancia_ocupadas) || 0;
-            const rangos = APP_CONFIG.HOTEL.STATS_CONFIG.RANGOS;
-            const totalHab = rangos.reduce((acc, r) => acc + (r.max - r.min + 1), 0);
-            const vacias = totalHab - ocupadas;
-
+            const th = 190; // Estándar
             return {
                 fecha: rawData.estancia_fecha,
                 ocupadas,
-                vacias,
-                totalHab
+                vacias: th - ocupadas,
+                totalHab: th
             };
         },
         onSuccess: () => {
             mostrarEstancia();
-            // Resetear bloqueo y fecha a hoy por seguridad
             const fechaInput = document.getElementById('estancia_fecha');
-            fechaInput.value = new Date().toISOString().split('T')[0];
-            fechaInput.setAttribute('readonly', true);
+            if (fechaInput) {
+                fechaInput.value = Utils.getTodayISO();
+                fechaInput.setAttribute('readonly', true);
+            }
             const icon = document.getElementById('iconLockFecha');
             if (icon) icon.className = 'bi bi-lock-fill';
         }
     });
 
-    // Configurar el botón de bloqueo de fecha
     document.getElementById('btnToggleLockFecha')?.addEventListener('click', toggleLockFecha);
 
-    // --- BARRA DE HERRAMIENTAS UNIFICADA ---
-    document.getElementById('estancia-trabajo')?.classList.add('content-panel');
-    document.getElementById('estancia-graficas')?.classList.add('content-panel');
-
-    document.getElementById('btnVistaTrabajoEstancia')?.addEventListener('click', () => cambiarVistaEstancia('trabajo'));
-    document.getElementById('btnVistaGraficasEstancia')?.addEventListener('click', () => cambiarVistaEstancia('graficas'));
-
-    // Poblar filtro de años
     const yearSelect = document.getElementById('filtroYearEstancia');
+    const monthSelect = document.getElementById('filtroMonthEstancia');
+    const typeSelect = document.getElementById('filtroTipoReporte');
+
     if (yearSelect) {
         yearSelect.innerHTML = '';
         const currentYear = new Date().getFullYear();
@@ -66,28 +56,21 @@ export function inicializarEstancia() {
         }
     }
 
-    const monthSelect = document.getElementById('filtroMonthEstancia');
     if (monthSelect) monthSelect.value = new Date().getMonth();
 
-    // Agregar listeners a filtros
-    yearSelect?.addEventListener('change', mostrarEstancia);
-    monthSelect?.addEventListener('change', mostrarEstancia);
+    yearSelect?.addEventListener('change', refreshEstanciaData);
+    monthSelect?.addEventListener('change', refreshEstanciaData);
+    typeSelect?.addEventListener('change', refreshEstanciaData);
 
-    mostrarEstancia();
-
-    // Set default date to today
+    // Inicializar fecha
     const fechaInput = document.getElementById('estancia_fecha');
     if (fechaInput) {
         fechaInput.value = Utils.getTodayISO();
-        fechaInput.setAttribute('readonly', true);
     }
+
+    refreshEstanciaData();
 }
 
-/**
- * BLOQUEO DE FECHA
- * Por seguridad, la fecha siempre es la de hoy. Este botón permite "desbloquearla" 
- * para introducir datos de días pasados que se olvidaron registrar.
- */
 function toggleLockFecha() {
     const input = document.getElementById('estancia_fecha');
     const icon = document.getElementById('iconLockFecha');
@@ -108,270 +91,228 @@ function cambiarVistaEstancia(vista) {
     const btnGraficas = document.getElementById('btnVistaGraficasEstancia');
     const divTrabajo = document.getElementById('estancia-trabajo');
     const divGraficas = document.getElementById('estancia-graficas');
+    const periodSelectors = document.getElementById('periodSelectors');
 
     if (vista === 'trabajo') {
-        btnTrabajo.classList.add('active'); btnGraficas.classList.remove('active');
-        divTrabajo.classList.remove('d-none'); divGraficas.classList.add('d-none');
+        btnTrabajo?.classList.add('active'); 
+        btnGraficas?.classList.remove('active');
+        divTrabajo?.classList.remove('d-none'); 
+        divGraficas?.classList.add('d-none');
+        periodSelectors?.classList.add('d-none');
+        periodSelectors?.classList.remove('d-flex');
+        mostrarEstancia(); 
     } else {
-        btnTrabajo.classList.remove('active'); btnGraficas.classList.add('active');
-        divTrabajo.classList.add('d-none'); divGraficas.classList.remove('d-none');
+        btnTrabajo?.classList.remove('active'); 
+        btnGraficas?.classList.add('active');
+        divTrabajo?.classList.add('d-none'); 
+        divGraficas?.classList.remove('d-none');
+        periodSelectors?.classList.remove('d-none');
+        periodSelectors?.classList.add('d-flex');
         renderGraficaEstancia();
     }
 }
 
-// ============================================================================
-// HANDLERS
-// ============================================================================
+function refreshEstanciaData() {
+    const divGraficas = document.getElementById('estancia-graficas');
+    const isGraficasVisible = divGraficas && !divGraficas.classList.contains('d-none');
+    if (isGraficasVisible) renderGraficaEstancia();
+    else mostrarEstancia();
+}
 
-
-// ============================================================================
-// RENDERIZADO
-// ============================================================================
-
-/**
- * RENDERIZAR TABLA MENSUAL
- * Muestra el listado de todos los días del mes y sus porcentajes de ocupación.
- */
-function mostrarEstancia() {
+async function mostrarEstancia() {
     const tabla = document.getElementById('tablaEstanciaCuerpo');
     const pie = document.getElementById('tablaEstanciaPie');
     const yearSelect = document.getElementById('filtroYearEstancia');
     const monthSelect = document.getElementById('filtroMonthEstancia');
 
     if (!tabla || !yearSelect || !monthSelect) return;
+    
     const year = yearSelect.value;
-    const month = monthSelect.value; // 0-11
-
-    // Obtener registros y mapear
+    const month = monthSelect.value;
     const monthRegistros = estanciaService.getByMonth(year, month);
+
     const dataByDay = {};
     monthRegistros.forEach(r => {
-        const d = parseInt(r.fecha.split('-')[2]);
+        const d = parseInt(r.fecha.split('T')[0].split('-')[2]);
         dataByDay[d] = r;
     });
 
     let sumaOcupadas = 0, sumaVacias = 0, sumaTotal = 0, diasContados = 0;
     const diasEnMes = new Date(year, parseInt(month) + 1, 0).getDate();
-    
-    // Generar array de días para la tabla
     const listaDias = [];
+
     for (let d = 1; d <= diasEnMes; d++) {
-        const registro = dataByDay[d];
-        const item = { d, data: registro };
-        
-        // Flatten properties for sorting
-        if (registro) {
-            item.ocupadas = registro.ocupadas;
-            item.vacias = registro.vacias;
-            item.libres = registro.totalHab - registro.ocupadas - registro.vacias;
-            item.porcentaje = parseFloat(((registro.ocupadas / registro.totalHab) * 100).toFixed(1));
+        const r = dataByDay[d];
+        const item = { d, data: r };
+        if (r) {
+            item.ocupadas = r.ocupadas || 0;
+            item.vacias = r.vacias || 0;
+            const th = r.totalHab || 190;
+            item.libres = Math.max(0, th - item.ocupadas - item.vacias);
+            item.porcentaje = parseFloat(((item.ocupadas / th) * 100).toFixed(1));
+            sumaOcupadas += item.ocupadas;
+            sumaVacias += item.vacias;
+            sumaTotal += th;
+            diasContados++;
         } else {
-            // For sorting purposes, put empties at bottom or top? Let's treat as -1 or 0
-            item.ocupadas = -1;
-            item.vacias = -1;
-            item.libres = -1;
-            item.porcentaje = -1;
+            item.ocupadas = -1; item.vacias = -1; item.libres = -1; item.porcentaje = -1;
         }
-        
         listaDias.push(item);
     }
 
     const renderRow = (item) => {
-        const { d, data } = item;
-        
-        if (data) {
-            const libres = item.libres;   // Use calculated
-            const porcentaje = item.porcentaje; // Use calculated
-            const ocupadas = data.ocupadas;
-            const vacias = data.vacias;
-
-            // These sums need to be calculated separately or just once?
-            // Since enabling table sorting re-renders ONLY rows and not re-calculates globals usually...
-            // But here the original logic calculated sums DURING rendering loop.
-            // This is dangerous if we re-render sorted.
-            // BETTER: Calculate sums BEFORE creating the list.
-            
-            return `
-                <tr>
-                    <td class="fw-bold text-start ps-4">Día ${d}</td>
-                    <td>${ocupadas}</td>
-                    <td>${vacias}</td>
-                    <td>${libres}</td>
-                    <td><span class="badge bg-primary">${porcentaje}%</span></td>
-                    <td class="text-end pe-4">
-                        <button onclick="eliminarDiaEstancia('${data.fecha}')" class="btn btn-sm btn-link text-danger p-0" data-bs-toggle="tooltip" data-bs-title="Eliminar Registro"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>`;
-        } else {
-            return `<tr class="text-muted opacity-50"><td class="text-start ps-4">Día ${d}</td><td colspan="5">Sin registro</td></tr>`;
+        if (item.data) {
+            return `<tr>
+                <td class="fw-bold text-start ps-4">Día ${item.d}</td>
+                <td>${item.ocupadas}</td>
+                <td>${item.vacias}</td>
+                <td>${item.libres}</td>
+                <td><span class="badge bg-primary text-white">${item.porcentaje}%</span></td>
+                <td class="text-end pe-4">
+                    <button onclick="eliminarDiaEstancia('${item.data.fecha}')" class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>`;
         }
+        return `<tr class="text-muted opacity-50"><td class="text-start ps-4">Día ${item.d}</td><td colspan="5">Sin registro</td></tr>`;
     };
 
-    // Calculate Totals SEPARATELY from rendering
-    monthRegistros.forEach(data => {
-         sumaOcupadas += data.ocupadas;
-         sumaVacias += data.vacias;
-         sumaTotal += data.totalHab;
-         diasContados++;
-    });
-
     Ui.renderTable('tablaEstanciaCuerpo', listaDias, renderRow);
+    Ui.enableTableSorting('table-estancia', listaDias, (sorted) => Ui.renderTable('tablaEstanciaCuerpo', sorted, renderRow));
 
-    Ui.enableTableSorting('table-estancia', listaDias, (sortedData) => {
-        Ui.renderTable('tablaEstanciaCuerpo', sortedData, renderRow);
-    });
-
-    if (diasContados > 0 && sumaTotal > 0) {
-        const promOcupacion = ((sumaOcupadas / sumaTotal) * 100).toFixed(1);
-        pie.innerHTML = `
-            <tr>
-                <td class="text-start ps-4">PROMEDIO MENSUAL</td>
-                <td>${sumaOcupadas}</td>
-                <td>${sumaVacias}</td>
-                <td>${Math.max(0, sumaTotal - sumaOcupadas - sumaVacias)}</td>
-                <td>${promOcupacion}%</td>
-                <td></td>
-            </tr>`;
-        renderStatsAnual(year, promOcupacion, sumaOcupadas, diasContados);
+    if (diasContados > 0) {
+        const prom = ((sumaOcupadas / sumaTotal) * 100).toFixed(1);
+        pie.innerHTML = `<tr class="table-light fw-bold text-primary">
+            <td class="text-start ps-4 text-uppercase">Promedio Mensual</td>
+            <td>${(sumaOcupadas/diasContados).toFixed(0)}</td>
+            <td>${(sumaVacias/diasContados).toFixed(0)}</td>
+            <td>${((sumaTotal-sumaOcupadas-sumaVacias)/diasContados).toFixed(0)}</td>
+            <td>${prom}%</td>
+            <td></td>
+        </tr>`;
+        renderStatsAnual(year, prom, sumaOcupadas, diasContados);
     } else {
-        pie.innerHTML = `
-            <tr>
-                <td class="text-start ps-4">PROMEDIO MENSUAL</td>
-                <td colspan="5" class="text-center text-muted">Datos insuficientes para cálculos</td>
-            </tr>`;
-        renderStatsAnual(year, 0, sumaOcupadas, diasContados); 
+        pie.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No hay datos para este periodo</td></tr>`;
+        renderStatsAnual(year, 0, 0, 0);
     }
 }
 
-/**
- * WIDGETS DE ESTADÍSTICAS
- * Renderiza el resumen visual con ocupación media y pernoctaciones totales.
- */
-function renderStatsAnual(year, promMes, totalPernoctaciones, dias) {
-    const statsCont = document.getElementById('estancia_anual_stats');
-    if (!statsCont) return;
-    statsCont.innerHTML = `
-        <div class="card-body p-4 text-center">
-            <div class="mb-4">
-                <div class="small text-uppercase fw-bold opacity-75">Ocupación Media Mes</div>
-                <div class="display-5 fw-bold">${promMes}%</div>
-            </div>
-            <div class="mb-4">
-                <div class="small text-uppercase fw-bold opacity-75">Total Pernoctaciones</div>
-                <div class="display-6 fw-bold">${totalPernoctaciones}</div>
-            </div>
-            <div>
-                <div class="small text-uppercase fw-bold opacity-75">Días Registrados</div>
-                <div class="h4 mb-0 fw-bold">${dias} días</div>
-            </div>
-        </div>`;
+function renderStatsAnual(year, prom, total, dias) {
+    const cont = document.getElementById('estancia_anual_stats');
+    if (!cont) return;
+    cont.innerHTML = `<div class="p-3 text-center">
+        <div class="mb-4">
+            <div class="small text-uppercase fw-bold text-muted">Ocupación Media</div>
+            <div class="display-6 fw-bold text-primary">${prom}%</div>
+        </div>
+        <div class="mb-4">
+            <div class="small text-uppercase fw-bold text-muted">Pernoctaciones</div>
+            <div class="h3 fw-bold">${total}</div>
+        </div>
+        <div>
+            <div class="small text-uppercase fw-bold text-muted">Días Activos</div>
+            <div class="h5 fw-bold">${dias} registros</div>
+        </div>
+    </div>`;
 }
 
-/**
- * DIBUJAR GRÁFICA EVOLUTIVA
- * Usa Chart.js para mostrar una línea con la ocupación del mes seleccionado.
- */
 function renderGraficaEstancia() {
-    // Retardo para asegurar que el contenedor (tab-pane) es visible antes de renderizar
     setTimeout(() => {
         const canvas = document.getElementById('chartEstanciaEvolucion');
         if (!canvas) return;
-        
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        const yearS = document.getElementById('filtroYearEstancia');
+        const monthS = document.getElementById('filtroMonthEstancia');
+        const typeS = document.getElementById('filtroTipoReporte');
+        const monthCont = document.getElementById('monthSelectorContainer');
+        const yearCont = document.getElementById('yearSelectorContainer');
 
-        const year = document.getElementById('filtroYearEstancia').value;
-        const month = document.getElementById('filtroMonthEstancia').value;
+        const type = typeS.value;
+        const year = parseInt(yearS.value);
+        const month = monthS.value;
 
-        const monthRegistros = estanciaService.getByMonth(year, month);
-        const dataByDay = {};
-        monthRegistros.forEach(r => {
-            const d = parseInt(r.fecha.split('-')[2]);
-            dataByDay[d] = r;
-        });
+        // Toggle visor de selectores
+        if (type === 'mes') { monthCont.classList.remove('d-none'); yearCont.classList.remove('d-none'); }
+        else if (type === 'año') { monthCont.classList.add('d-none'); yearCont.classList.remove('d-none'); }
+        else { monthCont.classList.add('d-none'); yearCont.classList.remove('d-none'); }
 
-        const labels = [];
-        const dataPoints = [];
-        const diasEnMes = new Date(year, parseInt(month) + 1, 0).getDate();
+        const title = document.getElementById('grafica-estancia-titulo');
+        const labels = [], dataPoints = [];
 
-        for (let d = 1; d <= diasEnMes; d++) {
-            labels.push(d);
-            const dData = dataByDay[d];
-            if (dData && dData.totalHab > 0) {
-                dataPoints.push(((dData.ocupadas / dData.totalHab) * 100).toFixed(1));
-            } else {
-                dataPoints.push(null);
+        if (type === 'mes') {
+            title.innerText = `Ocupación Diaria: ${MESES[month]} ${year}`;
+            const regs = estanciaService.getByMonth(year, month);
+            const dataMap = {}; regs.forEach(r => dataMap[parseInt(r.fecha.split('T')[0].split('-')[2])] = r);
+            const days = new Date(year, parseInt(month)+1, 0).getDate();
+            for (let d=1; d<=days; d++) {
+                labels.push(d);
+                const r = dataMap[d];
+                dataPoints.push(r ? ((r.ocupadas / (r.totalHab || 190))*100).toFixed(1) : null);
+            }
+        } else if (type === 'año') {
+            title.innerText = `Ocupación Mensual (Media): ${year}`;
+            for (let m=0; m<12; m++) {
+                labels.push(MESES[m].substring(0,3));
+                const regs = estanciaService.getByMonth(year, m);
+                if (regs.length > 0) {
+                    let sum = 0, total = 0;
+                    regs.forEach(r => { sum += (r.ocupadas / (r.totalHab || 190))*100; total++; });
+                    dataPoints.push((sum/total).toFixed(1));
+                } else dataPoints.push(null);
+            }
+        } else {
+            title.innerText = `Comparativa 5 Años (${year-4} - ${year})`;
+            for (let y = year-4; y <= year; y++) {
+                labels.push(y);
+                const yearRegs = estanciaService.getByYear(y);
+                if (yearRegs.length > 0) {
+                    let sum = 0, total = 0;
+                    yearRegs.forEach(r => { sum += (r.ocupadas / (r.totalHab || 190))*100; total++; });
+                    dataPoints.push((sum/total).toFixed(1));
+                } else dataPoints.push(null);
             }
         }
 
-        if (chartEstancia) {
-            chartEstancia.destroy();
-            chartEstancia = null;
-        }
-
-        // Check if Chart is loaded
-        if (typeof Chart === 'undefined') {
-            console.error("Chart.js no está cargado");
-            return;
-        }
-
+        if (chartEstancia) chartEstancia.destroy();
         chartEstancia = new Chart(ctx, {
-            type: 'line',
+            type: type === 'mes' ? 'line' : 'bar',
             data: {
-                labels: labels,
+                labels,
                 datasets: [{
                     label: 'Ocupación %',
                     data: dataPoints,
                     borderColor: '#0d6efd',
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    fill: true,
+                    backgroundColor: type === 'mes' ? 'rgba(13, 110, 253, 0.1)' : 'rgba(13, 110, 253, 0.5)',
+                    fill: type === 'mes',
                     tension: 0.3,
                     spanGaps: true
                 }]
             },
-            options: { 
-                maintainAspectRatio: false, 
+            options: {
+                maintainAspectRatio: false,
                 responsive: true,
                 plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
-                }
+                scales: { y: { beginAtZero: true, max: 100 } }
             }
         });
-    }, 100); // 100ms delay
+    }, 100);
 }
-
-// ============================================================================
-// ACCIONES GLOBALES
-// ============================================================================
 
 export function exportarEstanciaExcel() {
     const yearSelect = document.getElementById('filtroYearEstancia');
     const monthSelect = document.getElementById('filtroMonthEstancia');
     if (!yearSelect || !monthSelect) return;
-
-    const year = yearSelect.value;
-    const month = monthSelect.value;
-
-    const monthRegistros = estanciaService.getByMonth(year, month);
-    const dataByDay = {};
-    monthRegistros.forEach(r => {
-        const d = parseInt(r.fecha.split('-')[2]);
-        dataByDay[d] = r;
-    });
-
+    const year = yearSelect.value, month = monthSelect.value;
+    const regs = estanciaService.getByMonth(year, month);
+    const dataMap = {}; regs.forEach(r => dataMap[parseInt(r.fecha.split('T')[0].split('-')[2])] = r);
     let csv = "\ufeffDia;Ocupadas;Vacias;Libres;Porcentaje\n";
-    const diasEnMes = new Date(year, parseInt(month) + 1, 0).getDate();
-
-    for (let d = 1; d <= diasEnMes; d++) {
-        const data = dataByDay[d];
-        if (data) {
-            const libres = data.totalHab - data.ocupadas - data.vacias;
-            const porcentaje = ((data.ocupadas / data.totalHab) * 100).toFixed(1);
-            csv += `${d};${data.ocupadas};${data.vacias};${libres};${porcentaje}%\n`;
+    const days = new Date(year, parseInt(month)+1, 0).getDate();
+    for (let d=1; d<=days; d++) {
+        const r = dataMap[d];
+        if (r) {
+            const th = r.totalHab || 190;
+            csv += `${d};${r.ocupadas};${r.vacias};${th-r.ocupadas-r.vacias};${((r.ocupadas/th)*100).toFixed(1)}%\n`;
         }
     }
-
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -380,33 +321,18 @@ export function exportarEstanciaExcel() {
 }
 
 function imprimirEstancia() {
-    const divGraficas = document.getElementById('estancia-graficas');
-    const isGraficasVisible = divGraficas && !divGraficas.classList.contains('d-none');
-
+    const divGraf = document.getElementById('estancia-graficas');
+    const isGr = divGraf && !divGraf.classList.contains('d-none');
     if (window.PrintService) {
-        if (isGraficasVisible) {
-             PrintService.printElementAsImage('estancia-graficas', 'Estadísticas de Ocupación');
-        } else {
-             PrintService.printElement('estancia-trabajo', `Control de Estancia - ${Utils.getTodayISO()}`);
-        }
-    } else {
-        const user = Utils.validateUser();
-        if (!user) return;
-        Utils.printSection('print-date-estancia', 'print-repc-nombre-estancia', user);
-    }
+        if (isGr) PrintService.printElementAsImage('estancia-graficas', 'Estadísticas de Ocupación');
+        else PrintService.printElement('estancia-trabajo', 'Control de Estancia');
+    } else window.print();
 }
 
-window.eliminarDiaEstancia = async (fecha) => {
-    if (await Ui.showConfirm(`¿Eliminar el registro de fecha ${fecha}?`)) {
-        await estanciaService.removeRegistro(fecha);
+window.eliminarDiaEstancia = async (f) => {
+    if (await Ui.showConfirm(`¿Eliminar registro ${f}?`)) {
+        await estanciaService.removeRegistro(f);
         mostrarEstancia();
-    }
-};
-
-window.imprimirGraficasEstancia = function() {
-    if (window.PrintService) {
-        // Imprimimos el contenedor de gráficas
-        PrintService.printElementAsImage('estancia-graficas', 'Estadísticas de Ocupación');
     }
 };
 

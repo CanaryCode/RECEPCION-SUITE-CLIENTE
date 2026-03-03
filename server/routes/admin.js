@@ -285,19 +285,25 @@ router.post('/run-tests', (req, res) => {
 router.post('/execute', async (req, res) => {
     const { script, action, target } = req.body;
 
-    // 1. Handle Server Control Actions (Forward to v4 Tunnel)
+    // 1. Handle Server Control Actions (Forward to Tunnel)
     if (action === 'start-server' || action === 'stop-server' || action === 'restart-server') {
-        const wsManager = require('../../wsManager_v4');
-        const success = wsManager.broadcastCommand({ action, target: target || 'local' });
-
-        if (success) {
-            return res.json({ success: true, message: `Comando ${action} enviado por Tunnel WS.`, output: 'Orden encolada en WS' });
-        } else {
-            return res.status(502).json({
-                success: false,
-                error: 'No hay ningún Agente Recepción conectado al túnel WebSocket v4 activo.'
-            });
+        const stationKey = req.headers['x-station-key'];
+        
+        if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
+            const ws = global.agentTunnels.get(stationKey);
+            if (ws.readyState === 1) {
+                ws.send(JSON.stringify({
+                    type: 'command',
+                    payload: { action, target: target || 'local' }
+                }));
+                return res.json({ success: true, message: `Comando ${action} enviado por Túnel WS.`, output: 'Orden encolada en WS' });
+            }
         }
+
+        return res.status(502).json({
+            success: false,
+            error: 'No hay ningún Agente Recepción conectado al túnel WebSocket activo para esta estación.'
+        });
     }
 
     // 2. Handle Maintenance Scripts (Legacy Switch)

@@ -19,23 +19,23 @@
     "noche": [
         {
             "id": 1,
-            "texto": "<h6 class='mb-1 text-primary fw-bold'>1. Tareas Preparatorias</h6><b>Novedades:</b> Revisar novedades y apagar luces.",
-            "hecho": false
+            "hecho": false,
+            "texto": "<h6 class='mb-1 text-primary fw-bold'>1. Tareas Preparatorias</h6><b>Novedades:</b> Revisar novedades y apagar luces."
         },
         {
             "id": 2,
-            "texto": "<b>Datáfonos:</b> Realizar operaciones comercio y cierre antes 00:00.",
-            "hecho": false
+            "hecho": false,
+            "texto": "<b>Datáfonos:</b> Realizar operaciones comercio y cierre antes 00:00."
         },
         {
             "id": 3,
-            "texto": "<h6 class='mb-1 text-primary fw-bold mt-2'>2. Liquidación y Caja</h6><b>Liquidación:</b> Puntear facturas y datáfonos.",
-            "hecho": false
+            "hecho": false,
+            "texto": "<h6 class='mb-1 text-primary fw-bold mt-2'>2. Liquidación y Caja</h6><b>Liquidación:</b> Puntear facturas y datáfonos."
         },
         {
             "id": 4,
-            "texto": "<h6 class='mb-1 text-primary fw-bold mt-2'>3. Cierre del Día</h6><b>Ejecución:</b> Iniciar proceso de Cierre del Día en el PMS.",
-            "hecho": false
+            "hecho": false,
+            "texto": "<h6 class='mb-1 text-primary fw-bold mt-2'>3. Cierre del Día</h6><b>Ejecución:</b> Iniciar proceso de Cierre del Día en el PMS."
         }
     ],
     "tarde": [

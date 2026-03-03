@@ -1,5 +1,5 @@
-import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
-import { sessionService } from '../services/SessionService.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from './Config.js';
+import { sessionService } from '../services/SessionService.js';
 
 /**
  * UTILIDADES GENERALES DEL SISTEMA (Utils)
@@ -49,21 +49,67 @@ export const Utils = {
     },
 
     /**
-     * FORMATEAR FECHA PARA LEER
-     * Convierte "2024-05-20" en "20/05/2024" para que sea más humano.
+     * PARSER GENÉRICO DE FECHAS (Standardizer)
+     * Intenta convertir cualquier entrada (string, Date, timestamp) en formato "YYYY-MM-DD" LOCAL.
+     * Soporta formatos: "YYYY-MM-DD", "DD/MM/YYYY", Date objects, Timestamps.
+     * @param {any} input - La fecha a parsear.
+     * @returns {string} - Fecha en formato "YYYY-MM-DD" o cadena vacía si falla.
      */
-    formatDate: (dateStr) => {
-        if (!dateStr) return "";
-        try {
-            if (dateStr instanceof Date) return dateStr.toLocaleDateString();
-            const parts = dateStr.split('-');
-            if (parts.length === 3) {
-                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    parseDate: (input) => {
+        if (!input) return "";
+        
+        let date;
+
+        if (input instanceof Date) {
+            date = input;
+        } else if (typeof input === 'number') {
+            date = new Date(input);
+        } else if (typeof input === 'string') {
+            input = input.trim();
+            if (!input) return "";
+
+            // Formato DD/MM/YYYY (Español)
+            if (input.includes('/')) {
+                const parts = input.split('/');
+                if (parts.length === 3) {
+                    date = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                }
+            } 
+            // Formato YYYY-MM-DD (ISO / Input Date)
+            else if (input.includes('-')) {
+                // Forzar parseo local para evitar desfases de zona horaria (ISO sin T suele interpretarse como UTC)
+                const parts = input.split('-');
+                if (parts.length === 3) {
+                    date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
             }
-            return dateStr;
-        } catch (e) {
-            return dateStr;
+            // Timestamp como string numeric
+            else if (/^\d+$/.test(input)) {
+                date = new Date(parseInt(input));
+            }
         }
+
+        if (!date || isNaN(date.getTime())) {
+            console.warn(`[Utils] parseDate: No se pudo parsear '${input}'`);
+            return "";
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    },
+
+    /**
+     * FORMATEAR FECHA PARA LEER
+     * Convierte cualquier formato de fecha en "DD/MM/YYYY" para que sea más humano.
+     */
+    formatDate: (input) => {
+        const iso = Utils.parseDate(input);
+        if (!iso) return "";
+        const parts = iso.split('-');
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
     },
 
     /**

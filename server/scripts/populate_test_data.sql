@@ -17,30 +17,30 @@ DELETE FROM clientes_riu;
 DELETE FROM novedades;
 
 -- 1. DESAYUNOS TEMPRANOS
-INSERT INTO desayunos (habitacion, pax, hora, comentarios, autor, fecha) VALUES 
-('101', 2, '06:30', 'Picnic Teide', 'Admin', CURDATE()),
-('102', 1, '07:00', 'Desayuno rápido', 'Recepcion1', CURDATE()),
-('201', 3, '06:15', 'Vuelo temprano', 'Admin', CURDATE()),
-('305', 2, '06:45', 'Sin gluten', 'Recepcion1', CURDATE()),
-('410', 4, '07:30', 'Familia completa', 'Admin', CURDATE()),
-('501', 1, '06:00', 'Business traveller', 'Admin', CURDATE()),
-('105', 2, '07:15', 'Regreso excursión nocturna', 'Recepcion2', CURDATE()),
-('212', 2, '06:30', 'Salida antes de apertura', 'Admin', CURDATE()),
-('314', 3, '06:45', 'Mucha fruta solicitada', 'Recepcion1', CURDATE()),
-('402', 2, '07:00', 'Estándar', 'Admin', CURDATE());
+INSERT INTO desayunos (id, habitacion, pax, cantidad, hora, comentarios, obs, autor, fecha) VALUES 
+('DES-101', '101', 2, 2, '06:30', 'Picnic Teide', 'Picnic Teide', 'Admin', CURDATE()),
+('DES-102', '102', 1, 1, '07:00', 'Desayuno rápido', 'Desayuno rápido', 'Recepcion1', CURDATE()),
+('DES-201', '201', 3, 3, '06:15', 'Vuelo temprano', 'Vuelo temprano', 'Admin', CURDATE()),
+('DES-305', '305', 2, 2, '06:45', 'Sin gluten', 'Sin gluten', 'Recepcion1', CURDATE()),
+('DES-410', '410', 4, 4, '07:30', 'Familia completa', 'Familia completa', 'Admin', CURDATE()),
+('DES-501', '501', 1, 1, '06:00', 'Business traveller', 'Business traveller', 'Admin', CURDATE()),
+('DES-105', '105', 2, 2, '07:15', 'Regreso excursión nocturna', 'Regreso excursión nocturna', 'Recepcion2', CURDATE()),
+('DES-212', '212', 2, 2, '06:30', 'Salida antes de apertura', 'Salida antes de apertura', 'Admin', CURDATE()),
+('DES-314', '314', 3, 3, '06:45', 'Mucha fruta solicitada', 'Mucha fruta solicitada', 'Recepcion1', CURDATE()),
+('DES-402', '402', 2, 2, '07:00', 'Estándar', 'Estándar', 'Admin', CURDATE());
 
 -- 2. CENAS FRÍAS
-INSERT INTO cenas_frias (habitacion, pax, comentarios, autor, fecha) VALUES 
-('104', 2, 'Llegada tarde vuelo', 'Admin', CURDATE()),
-('202', 1, 'Viene del aeropuerto', 'Recepcion1', CURDATE()),
-('301', 3, 'Vegetarianos', 'Admin', CURDATE()),
-('405', 2, 'Sin lactosa', 'Recepcion1', CURDATE()),
-('505', 2, 'VIP Bienvenida', 'Admin', CURDATE()),
-('110', 1, 'Check-in 01:00 AM', 'Admin', CURDATE()),
-('215', 2, 'Excursión terminó tarde', 'Recepcion2', CURDATE()),
-('320', 4, 'Pack familiar', 'Admin', CURDATE()),
-('411', 2, 'Solo sándwiches', 'Recepcion1', CURDATE()),
-('515', 1, 'Sin postre', 'Admin', CURDATE());
+INSERT INTO cenas_frias (id, habitacion, pax, cantidad, comentarios, obs, autor, fecha) VALUES 
+('CEN-104', '104', 2, 2, 'Llegada tarde vuelo', 'Llegada tarde vuelo', 'Admin', CURDATE()),
+('CEN-202', '202', 1, 1, 'Viene del aeropuerto', 'Viene del aeropuerto', 'Recepcion1', CURDATE()),
+('CEN-301', '301', 3, 3, 'Vegetarianos', 'Vegetarianos', 'Admin', CURDATE()),
+('CEN-405', '405', 2, 2, 'Sin lactosa', 'Sin lactosa', 'Recepcion1', CURDATE()),
+('CEN-505', '505', 2, 2, 'VIP Bienvenida', 'VIP Bienvenida', 'Admin', CURDATE()),
+('CEN-110', '110', 1, 1, 'Check-in 01:00 AM', 'Check-in 01:00 AM', 'Admin', CURDATE()),
+('CEN-215', '215', 2, 2, 'Excursión terminó tarde', 'Excursión terminó tarde', 'Recepcion2', CURDATE()),
+('CEN-320', '320', 4, 4, 'Pack familiar', 'Pack familiar', 'Admin', CURDATE()),
+('CEN-411', '411', 2, 2, 'Solo sándwiches', 'Solo sándwiches', 'Recepcion1', CURDATE()),
+('CEN-515', '515', 1, 1, 'Sin postre', 'Sin postre', 'Admin', CURDATE());
 
 -- 3. ATENCIONES VIP
 INSERT INTO atenciones (habitacion, tipos, comentario, autor, actualizado_en) VALUES 
@@ -70,16 +70,16 @@ INSERT INTO despertadores (habitacion, hora, comentario, autor, estado, fecha_pr
 
 -- 5. TRANSFERS
 INSERT INTO transfers (id, fecha, tipo, pasajeros, habitacion, nombre_cliente, externo, hora, lugar_destino, notas, autor) VALUES 
-('TRF-A', CURDATE(), 'TAXI', 2, '101', '', 0, '12:00', 'Aeropuerto Sur', 'Silla bebé', 'Admin'),
+('TRF-A', CURDATE(), 'TAXI', 2, '101', 'Juan Pérez', 0, '12:00', 'Aeropuerto Sur', 'Silla bebé', 'Admin'),
 ('TRF-B', CURDATE(), 'BUS', 12, 'EXTERNO', 'Grupo Golf', 1, '09:00', 'Golf Las Américas', 'Recoger hotel', 'Recepcion1'),
-('TRF-C', CURDATE(), 'TAXI', 1, '305', '', 0, '15:30', 'Santa Cruz', 'Pago tarjeta', 'Admin'),
-('TRF-D', CURDATE(), 'TAXI', 4, '410', '', 0, '05:00', 'Aeropuerto Norte', 'Mucha maleta', 'Noche'),
+('TRF-C', CURDATE(), 'TAXI', 1, '305', 'John Doe', 0, '15:30', 'Santa Cruz', 'Pago tarjeta', 'Admin'),
+('TRF-D', CURDATE(), 'TAXI', 4, '410', 'Fam. Smith', 0, '05:00', 'Aeropuerto Norte', 'Mucha maleta', 'Noche'),
 ('TRF-E', CURDATE(), 'VAN', 6, 'EXTERNO', 'Familia Smith', 1, '20:00', 'Restaurante El Teide', 'Ida y vuelta', 'Admin'),
-('TRF-F', CURDATE(), 'TAXI', 2, '105', '', 0, '11:00', 'Los Gigantes', '', 'Recepcion1'),
-('TRF-G', CURDATE(), 'TAXI', 3, '212', '', 0, '14:00', 'Siam Park', 'Niños', 'Admin'),
+('TRF-F', CURDATE(), 'TAXI', 2, '105', 'Guest 105', 0, '11:00', 'Los Gigantes', '', 'Recepcion1'),
+('TRF-G', CURDATE(), 'TAXI', 3, '212', 'Guest 212', 0, '14:00', 'Siam Park', 'Niños', 'Admin'),
 ('TRF-H', CURDATE(), 'BUS', 25, 'EXTERNO', 'Evento Empresa', 1, '08:00', 'Centro Congresos', 'Guía incluido', 'Recepcion2'),
-('TRF-I', CURDATE(), 'TAXI', 2, '314', '', 0, '10:30', 'CC Meridiano', '', 'Admin'),
-('TRF-J', CURDATE(), 'TAXI', 1, '501', '', 0, '19:00', 'Casino', 'VIP car', 'Admin');
+('TRF-I', CURDATE(), 'TAXI', 2, '314', 'Guest 314', 0, '10:30', 'CC Meridiano', '', 'Admin'),
+('TRF-J', CURDATE(), 'TAXI', 1, '501', 'VIP Guest', 0, '19:00', 'Casino', 'VIP car', 'Admin');
 
 -- 6. EXCURSIONES
 INSERT INTO registro_excursiones (id, tipo_id, huesped, habitacion, fecha_excursion, adultos, ninos, total, estado, vendedor, autor, fecha_venta) VALUES 

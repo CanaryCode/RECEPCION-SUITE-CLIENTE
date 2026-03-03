@@ -14,7 +14,7 @@ class NovedadesService extends BaseService {
             id: 'number',
             texto: 'string',
             autor: 'string',
-            fecha: 'string'
+            fecha: 'date'
         };
     }
 

@@ -1,4 +1,4 @@
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
+import { APP_CONFIG } from "../core/Config.js";
 import { Utils } from '../core/Utils.js';
 import { Ui } from '../core/Ui.js';
 import { novedadesService } from '../services/NovedadesService.js';
@@ -411,3 +411,6 @@ window.limpiarNovedadesTerminadas = async () => {
         mostrarNovedades();
     }
 };
+
+// Exponer globalmente para dashboard
+window.mostrarNovedades = mostrarNovedades;

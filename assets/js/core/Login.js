@@ -1,5 +1,6 @@
-import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
-import { sessionService } from '../services/SessionService.js?v=V147_PROXY_FIX';
+import { APP_CONFIG } from './Config.js';
+import { sessionService } from '../services/SessionService.js';
+import { Api } from './Api.js';
 
 /**
  * LOGIN COMPONENT
@@ -8,10 +9,18 @@ import { sessionService } from '../services/SessionService.js?v=V147_PROXY_FIX';
  */
 export class Login {
     static async showSelector() {
-        console.log('[Login] APP_CONFIG.HOTEL:', APP_CONFIG.HOTEL);
+        console.log('[Login] Fetching receptionists from DB...');
+        let users = [];
+        try {
+            const data = await Api.get('storage/recepcionistas');
+            users = Array.isArray(data) ? data.map(u => typeof u === 'string' ? u : u.nombre) : [];
+        } catch (e) {
+            console.error('[Login] Error fetching users, falling back to config:', e);
+            users = APP_CONFIG.HOTEL?.RECEPCIONISTAS || [];
+        }
+        
+        console.log(`[Login] Found ${users.length} receptionists:`, users);
         return new Promise((resolve) => {
-            const users = APP_CONFIG.HOTEL.RECEPCIONISTAS || [];
-            console.log(`[Login] Found ${users.length} receptionists:`, users);
             
             // Create overlay
             const overlay = document.createElement('div');

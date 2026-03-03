@@ -1,7 +1,8 @@
-import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
-import { Api } from '../core/Api.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from '../core/Config.js';
+import { Api } from '../core/Api.js';
 import { realTimeSync } from '../core/RealTimeSync.js';
 import { LocalStorage } from '../core/LocalStorage.js';
+import { Utils } from '../core/Utils.js';
 
 /**
  * CLASE BASE DE SERVICIOS (BaseService)
@@ -79,6 +80,17 @@ export class BaseService {
                     } else if (typeof item[key] !== 'number' || isNaN(item[key])) {
                         throw new Error(`El campo '${key}' debe ser un número válido.`);
                     }
+                } else if (type === 'date') {
+                    // ESTANDARIZACIÓN GENÉRICA DE FECHAS (Síncrona)
+                    const parsed = Utils.parseDate(item[key]);
+                    if (parsed) {
+                        item[key] = parsed;
+                    } else if (item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                        console.warn(`[BaseService] No se pudo estandarizar fecha para '${key}':`, item[key]);
+                    }
+                } else if (item[key] === null) {
+                    // Permitir nulls (común cuando la DB no tiene valor)
+                    continue;
                 } else if (actualType !== type && type !== 'any') {
                     throw new Error(`Tipo de dato inválido para '${key}': esperado ${type}, recibido ${actualType}`);
                 }

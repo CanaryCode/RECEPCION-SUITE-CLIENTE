@@ -559,13 +559,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
-  padding: 0.85rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  margin-bottom: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  border: none;
+  margin-bottom: 1.5rem;
+  box-shadow: none;
   gap: 12px;
   flex-wrap: wrap;
 }

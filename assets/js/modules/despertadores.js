@@ -1,4 +1,4 @@
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
+import { APP_CONFIG } from "../core/Config.js";
 import { Utils } from '../core/Utils.js';
 import { despertadorService } from '../services/DespertadorService.js';
 import { sessionService } from '../services/SessionService.js';
@@ -447,6 +447,7 @@ window.limpiarDespertadoresPasados = async () => {
 };
 
 window.cambiarVistaDespertadores = cambiarVistaDespertadores;
+window.mostrarDespertadores = mostrarDespertadores;
 window.imprimirDespertadores = imprimirDespertadores;
 window.limpiarDespertadoresPasados = limpiarDespertadoresPasados;
 

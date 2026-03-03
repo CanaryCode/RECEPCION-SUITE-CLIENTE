@@ -31,14 +31,8 @@
     margin-right: auto !important;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-    width: 100%; /* Default mobile */
+    width: 100% !important;
 }
-
-@media (min-width: 576px) { #app-layout { max-width: 540px !important; } }
-@media (min-width: 768px) { #app-layout { max-width: 720px !important; } }
-@media (min-width: 992px) { #app-layout { max-width: 960px !important; } }
-@media (min-width: 1200px) { #app-layout { max-width: 1140px !important; } }
-@media (min-width: 1400px) { #app-layout { max-width: 1320px !important; } }
 
 @media screen {
     /* FIX: Navbar Layout with Stacking Context */

@@ -99,16 +99,23 @@ router.post('/list-images', async (req, res) => {
 
 /**
  * GET /api/system/local-config
- * Retrieves local configuration elements (Launchers, Gallery) from agent_local_config.json.
+ * Retrieves local configuration elements (Launchers, Gallery) from local_config.json.
+ *
+ * RUTA: Se guarda en agent/config/local_config.json (relativa al agente)
+ * Esto permite que funcione en cualquier instalación (Windows/Linux)
  */
 router.get('/local-config', async (req, res) => {
     try {
-        const configPath = path.resolve(__dirname, '../agent_local_config.json');
+        // Ruta relativa a la raíz del agente: agent/config/local_config.json
+        const configPath = path.join(__dirname, '../../config/local_config.json');
+        console.log(`[AGENT] Reading config from: ${configPath}`);
+
         try {
             const data = await fs.readFile(configPath, 'utf8');
             res.json(JSON.parse(data));
         } catch (err) {
             if (err.code === 'ENOENT') {
+                console.log('[AGENT] Config file not found, returning empty config');
                 return res.json({}); // Default empty config
             }
             throw err;
@@ -121,11 +128,16 @@ router.get('/local-config', async (req, res) => {
 
 /**
  * POST /api/system/local-config
- * Saves local configuration elements to agent_local_config.json.
+ * Saves local configuration elements to local_config.json.
+ *
+ * RUTA: Se guarda en agent/config/local_config.json (relativa al agente)
+ * Esto permite que funcione en cualquier instalación (Windows/Linux)
  */
 router.post('/local-config', async (req, res) => {
     try {
-        const configPath = path.resolve(__dirname, '../agent_local_config.json');
+        // Ruta relativa a la raíz del agente: agent/config/local_config.json
+        const configPath = path.join(__dirname, '../../config/local_config.json');
+        console.log(`[AGENT] Writing config to: ${configPath}`);
 
         let existingConfig = {};
         try {
@@ -133,12 +145,16 @@ router.post('/local-config', async (req, res) => {
             existingConfig = JSON.parse(data);
         } catch (err) {
             // Error ENOENT is fine, means file doesn't exist yet
+            if (err.code === 'ENOENT') {
+                console.log('[AGENT] Creating new config file');
+            }
         }
 
         // Merge existing with new payload
         const updatedConfig = { ...existingConfig, ...req.body };
 
         await fs.writeFile(configPath, JSON.stringify(updatedConfig, null, 2), 'utf8');
+        console.log('[AGENT] ✓ Config saved successfully');
         res.json({ success: true });
     } catch (e) {
         console.error('[AGENT] Error saving local config:', e);

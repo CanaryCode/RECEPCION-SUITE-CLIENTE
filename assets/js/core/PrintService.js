@@ -94,8 +94,8 @@ const PrintService = {
             <!-- RESTAURAR FIDELIDAD: Enlaces CSS del sistema -->
             <link href="assets/vendor/bootstrap.min.css" rel="stylesheet" />
             <link rel="stylesheet" href="assets/vendor/bootstrap-icons.css" />
-            <link rel="stylesheet" href="assets/css/styles.css?v=FINAL_FIX_V2" />
-            <link rel="stylesheet" href="assets/css/layout_fix.css?v=FINAL_FIX_V2" />
+            <link rel="stylesheet" href="assets/css/styles.css?v=V156_UNIFIED" />
+            <link rel="stylesheet" href="assets/css/layout_fix.css?v=V156_UNIFIED" />
             <style>
                 /* Forzar estilos de impresión de Bootstrap */
                 @page { margin: 15mm; size: auto; }
@@ -284,7 +284,7 @@ const PrintService = {
                 <!-- RESTAURAR FIDELIDAD: Enlaces CSS para que la foto tenga los mismos iconos/estilos -->
                 <link href="assets/vendor/bootstrap.min.css" rel="stylesheet" />
                 <link rel="stylesheet" href="assets/vendor/bootstrap-icons.css" />
-                <link rel="stylesheet" href="assets/css/styles.css?v=FINAL_FIX_V2" />
+                <link rel="stylesheet" href="assets/css/styles.css?v=V156_UNIFIED" />
                 <style>
                     @page { margin: 5mm; size: A4 landscape; }
                     body { 
@@ -382,7 +382,7 @@ const PrintService = {
                 <title>${title}</title>
                 <link href="assets/vendor/bootstrap.min.css" rel="stylesheet" />
                 <link rel="stylesheet" href="assets/vendor/bootstrap-icons.css" />
-                <link rel="stylesheet" href="assets/css/styles.css?v=FINAL_FIX_V2" />
+                <link rel="stylesheet" href="assets/css/styles.css?v=V156_UNIFIED" />
                 <style>
                     @page { margin: 10mm; size: A4 landscape; }
                     body { margin: 0; padding: 0; background: #fff; }

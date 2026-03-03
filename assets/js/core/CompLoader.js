@@ -11,7 +11,7 @@
  * Este módulo se encarga de leer esos archivos e inyectarlos en la página.
  */
 
-import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
+import { APP_CONFIG } from './Config.js';
 
 export const CompLoader = {
     /**
@@ -27,7 +27,8 @@ export const CompLoader = {
             let lastError = null;
             for (let i = 0; i <= retries; i++) {
                 try {
-                    const response = await fetch(`${path}?v=${APP_CONFIG.VERSION || 'V112'}`);
+                    const version = APP_CONFIG.SYSTEM.VERSION || 'V1.0.0';
+                    const response = await fetch(`${path}?v=${version}`);
                     if (!response.ok) throw new Error(`HTTP ${response.status}: ${path}`);
                     
                     const html = await response.text();

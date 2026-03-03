@@ -20,163 +20,190 @@ export class ModuleLoader {
         // MÓDULOS CRÍTICOS (se cargan al inicio)
         'despertadores': {
             selector: '#despertadores-content',
-            importPath: '/assets/js/modules/despertadores.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/despertadores.js',
             initFunction: 'inicializarDespertadores',
             critical: true
         },
         'novedades': {
             selector: '#novedades-content',
-            importPath: '/assets/js/modules/novedades.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/novedades.js',
             initFunction: 'inicializarNovedades',
             critical: true
         },
         'cena-fria': {
             selector: '#cena-fria-content',
-            importPath: '/assets/js/modules/cena_fria.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/cena_fria.js',
             initFunction: 'inicializarCenaFria',
             critical: true
         },
         'desayuno': {
             selector: '#desayuno-content',
-            importPath: '/assets/js/modules/desayuno.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/desayuno.js',
             initFunction: 'inicializarDesayuno',
             critical: true
         },
         'transfers': {
             selector: '#transfers-content',
-            importPath: '/assets/js/modules/transfers.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/transfers.js',
             initFunction: 'inicializarTransfers',
             critical: true
         },
         'alarms': {
             selector: '#system-alarms-content',
-            importPath: '/assets/js/modules/alarms.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/alarms.js',
             initFunction: 'inicializarSystemAlarms',
             critical: true
         },
         'alarms-ui': {
             selector: '#system-alarms-content',
-            importPath: '/assets/js/modules/system_alarms_ui.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/system_alarms_ui.js',
             initFunction: 'inicializarSystemAlarmsUI',
             critical: true
         },
         'configuracion': {
             selector: '#configuracion-content',
-            importPath: '/assets/js/modules/configuracion.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/configuracion.js',
             initFunction: 'inicializarConfiguracion',
-            critical: true
+            critical: false  // Cambiado a lazy loading - se carga cuando se navega
         },
 
         // MÓDULOS LAZY (se cargan bajo demanda)
         'agenda': {
             selector: '#agenda-content',
-            importPath: '/assets/js/modules/agenda.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/agenda.js',
             initFunction: 'inicializarAgenda',
             critical: false
         },
         'caja': {
             selector: '#caja-content',
-            importPath: '/assets/js/modules/caja.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/caja.js',
             initFunction: 'inicializarCaja',
             critical: false
         },
         'cobro': {
             selector: '#cobro-content',
-            importPath: '/assets/js/modules/cobro.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/cobro.js',
             initFunction: 'inicializarCobro',
             critical: false
         },
         'safe': {
             selector: '#safe-content',
-            importPath: '/assets/js/modules/safe.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/safe.js',
             initFunction: 'inicializarSafe',
             critical: false
         },
         'atenciones': {
             selector: '#atenciones-content',
-            importPath: '/assets/js/modules/atenciones.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/atenciones.js',
             initFunction: 'inicializarAtenciones',
+            critical: false
+        },
+        'impresion': {
+            selector: '#impresion-content',
+            importPath: 'assets/js/modules/Impresion.js',
+            initFunction: 'inicializarImpresion',
             critical: false
         },
         'estancia': {
             selector: '#estancia-content',
-            importPath: '/assets/js/modules/estancia.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/estancia.js',
             initFunction: 'inicializarEstancia',
             critical: false
         },
         'riu': {
             selector: '#riu-content',
-            importPath: '/assets/js/modules/riu.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/riu.js',
             initFunction: 'inicializarRiu',
             critical: false
         },
         'ayuda': {
             selector: '#ayuda-content',
-            importPath: '/assets/js/modules/ayuda.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/ayuda.js',
             initFunction: 'inicializarAyuda',
             critical: false
         },
         'notas-permanentes': {
             selector: '#notas-content',
-            importPath: '/assets/js/modules/notas_permanentes.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/notas_permanentes.js',
             initFunction: 'inicializarNotasPermanentes',
             critical: false
         },
         'precios': {
             selector: '#precios-content',
-            importPath: '/assets/js/modules/precios.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/precios.js',
             initFunction: 'inicializarPrecios',
             critical: false
         },
         'lost-found': {
             selector: '#lost-found-content',
-            importPath: '/assets/js/modules/lost_found.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/lost_found.js',
             initFunction: 'inicializarLostFound',
             critical: false
         },
         'rack': {
             selector: '#rack-content',
-            importPath: '/assets/js/modules/rack.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/rack.js',
             initFunction: 'inicializarRack',
             critical: false
         },
         'excursiones': {
             selector: '#excursiones-content',
-            importPath: '/assets/js/modules/excursiones.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/excursiones.js',
             initFunction: 'init',
             className: 'Excursiones',
             critical: false
         },
         'reservas-instalaciones': {
             selector: '#reservas-instalaciones-content',
-            importPath: '/assets/js/modules/reservas_instalaciones.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/reservas_instalaciones.js',
             initFunction: 'init',
             className: 'ReservasInstalaciones',
             critical: false
         },
         'valoracion': {
             selector: '#valoracion-content',
-            importPath: '/assets/js/modules/valoracion.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/valoracion.js',
             initFunction: 'inicializarValoracion',
             critical: false
         },
         'gallery': {
             selector: '#gallery-content',
-            importPath: '/assets/js/modules/gallery.js?v=V147_PROXY_FIX',
+            importPath: 'assets/js/modules/gallery.js',
             initFunction: 'inicializar',
             className: 'Gallery',
             critical: false
         },
         'tiempo': {
             selector: '#tiempo-content',
-            importPath: '/assets/js/modules/tiempo.js?v=V1_TIEMPO',
+            importPath: 'assets/js/modules/tiempo.js',
             initFunction: 'inicializarTiempo',
             critical: false
         },
         'ocr': {
             selector: '#ocr-datafonos-content',
-            importPath: '/assets/js/modules/ocr_datafonos.js?v=V1_OCR',
+            importPath: 'assets/js/modules/ocr_datafonos.js',
             initFunction: 'inicializarOCR',
+            critical: false
+        },
+        'calendario': {
+            selector: '#calendario-content',
+            importPath: 'assets/js/modules/calendario.js',
+            initFunction: 'inicializarCalendario',
+            critical: false
+        },
+        'vales': {
+            selector: '#vales-content',
+            importPath: 'assets/js/modules/vales.js',
+            initFunction: 'initVales',
+            critical: false
+        },
+        'aplicaciones': {
+            selector: '#aplicaciones-content',
+            // El launcher está integrado en main.js por ahora, pero lo registramos para que Router no falle
+            // Si en el futuro se mueve a un módulo separado, se pondrá aquí la ruta.
+            // Por ahora, usamos un hack inofensivo para marcarlo como "cargado" cuando se pida.
+            importPath: 'assets/js/main.js', 
+            initFunction: null,
             critical: false
         }
     };
@@ -185,6 +212,18 @@ export class ModuleLoader {
      * Carga todos los módulos críticos al arranque
      */
     static async loadCriticalModules() {
+        // 1. Inicializar configuración local PRIMERO (necesaria para otros módulos)
+        try {
+            console.log('[ModuleLoader] Inicializando configuración local...');
+            const version = APP_CONFIG.SYSTEM.VERSION || Date.now();
+            const { localConfigService } = await import(`../services/LocalConfigService.js?v=${version}`);
+            await localConfigService.init();
+            console.log('[ModuleLoader] ✓ Configuración local inicializada.');
+        } catch (e) {
+            console.error('[ModuleLoader] Error inicializando configuración local:', e);
+        }
+
+        // 2. Cargar módulos críticos
         const criticalModules = Object.entries(this.MODULE_REGISTRY)
             .filter(([_, config]) => config.critical);
 
@@ -227,7 +266,20 @@ export class ModuleLoader {
 
         const loadPromise = (async () => {
             try {
-                const module = await import(config.importPath);
+                // Caso especial: módulos ya integrados (como aplicaciones en main.js)
+                if (!config.importPath || !config.initFunction) {
+                    this._loadedModules.add(moduleKey);
+                    return true;
+                }
+
+                const version = APP_CONFIG.SYSTEM.VERSION || Date.now();
+                // Normalización de ruta: Si es abs, quitar / inicial. Si es rel, asegurar ../ si estamos en core? 
+                // Mejor usar rutas relativas al root siempre en el registry y resolverlas aquí.
+                // Dado que ModuleLoader está en assets/js/core/, para llegar a assets/js/modules usamos ../modules/
+                const finalPath = config.importPath.replace('assets/js/', '../');
+                const pathWithVersion = finalPath.includes('?') ? `${finalPath}&v=${version}` : `${finalPath}?v=${version}`;
+                
+                const module = await import(pathWithVersion);
 
                 // Inicializar el módulo
                 if (config.className) {
@@ -264,6 +316,9 @@ export class ModuleLoader {
      * @param {string} selector - Selector CSS del panel
      */
     static async loadBySelector(selector) {
+        // Ignorar selectores de la UI core que no tienen módulos lazy
+        if (selector === '#dashboard-content' || selector === '#inicio') return true;
+
         const moduleKey = Object.entries(this.MODULE_REGISTRY)
             .find(([_, config]) => config.selector === selector)?.[0];
 

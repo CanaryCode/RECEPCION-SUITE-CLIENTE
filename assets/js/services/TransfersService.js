@@ -1,4 +1,5 @@
 import { BaseService } from './BaseService.js';
+import { localConfigService } from './LocalConfigService.js';
 
 /**
  * SERVICIO DE TRASLADOS (TransfersService)
@@ -7,25 +8,63 @@ import { BaseService } from './BaseService.js';
  *
  * IMPORTANTE: Este servicio guarda DIRECTAMENTE en la base de datos,
  * NO usa caché local como otros servicios.
+ *
+ * CONFIGURACIÓN LOCAL:
+ * - Las carpetas se guardan en la configuración local del PC (agent_local_config.json)
+ * - Cada ordenador puede tener carpetas diferentes
+ * - Persiste al borrado de caché del navegador
  */
 class TransfersService extends BaseService {
     constructor() {
         super('riu_transfers');
 
-        // DESACTIVAR sincronización automática (vamos directo a DB)
-        this.syncEnabled = false;
+        // ACTIVAR sincronización automática
+        this.syncEnabled = true;
 
         // Esquema para validación de servicios de traslados (taxis/bus)
         this.schema = {
             habitacion: 'any',
             pax: 'number',
-            fecha: 'string',
+            fecha: 'date',
             hora: 'string',
             destino: 'string'
         };
     }
 
+    /**
+     * OBTENER carpetas configuradas para este módulo (desde config local)
+     */
+    async getFolders() {
+        return localConfigService.getFolders('transfers');
+    }
+
+    /**
+     * ESTABLECER carpetas para este módulo (en config local)
+     */
+    async setFolders(folders) {
+        return localConfigService.setFolders('transfers', folders);
+    }
+
+    /**
+     * AÑADIR carpeta (en config local)
+     */
+    async addFolder(folderPath) {
+        return localConfigService.addFolder('transfers', folderPath);
+    }
+
+    /**
+     * ELIMINAR carpeta (en config local)
+     */
+    async removeFolder(folderPath) {
+        return localConfigService.removeFolder('transfers', folderPath);
+    }
+
     async init() {
+        // Registrar para sincronización en tiempo real
+        if (window.realTimeSync) {
+            window.realTimeSync.registerService(this.endpoint, this);
+        }
+
         await this.syncWithServer();
         return this.getAll();
     }

@@ -489,288 +489,38 @@
         "USE_API": false,
         "LAUNCHERS": [
             {
-                "icon": "display",
-                "path": "",
-                "label": "SIHOT"
-            },
-            {
-                "icon": "house",
-                "path": "",
-                "label": "ALTA RIU"
-            },
-            {
-                "icon": "receipt",
-                "path": "",
-                "label": "GESTATUR"
-            },
-            {
-                "icon": "tablet",
-                "path": "",
-                "label": "SUPREMO"
-            },
-            {
-                "icon": "camera",
-                "path": "",
-                "label": "ATLANTICO EXCURSIONES"
-            },
-            {
-                "icon": "globe",
-                "path": "",
-                "label": "EXTRANET RIU"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Norte&query_place_id=ChIJbx3s_vTNQQwReLBTc3mRXBw",
-                "type": "maps",
-                "label": "Aeropuerto norte"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Aeropuerto+Tenerife+Sur&t=k",
-                "type": "maps",
-                "label": "Aeropuerto sur"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Mirador+Cruz+del+Carmen+Anaga&t=k",
-                "type": "maps",
-                "label": "Anaga"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Caserio+de+Masca&t=k",
-                "type": "maps",
-                "label": "Masca"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Punta+de+Teno&t=k",
-                "type": "maps",
-                "label": "Punta de teno"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Adelantado+La+Laguna&t=k",
-                "type": "maps",
-                "label": "La laguna"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+Espana+Santa+Cruz+de+Tenerife&t=k",
-                "type": "maps",
-                "label": "Santa cruz"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+de+la+Constitucion+La+Orotava&t=k",
-                "type": "maps",
-                "label": "La orotava"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Plaza+del+Charco+Puerto+de+la+Cruz&t=k",
-                "type": "maps",
-                "label": "Puerto de la cruz"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Acantilados+de+Los+Gigantes&t=k",
-                "type": "maps",
-                "label": "Los gigantes"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=El+Caleton+Garachico&t=k",
-                "type": "maps",
-                "label": "Garachico"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Basilica+Candelaria+Tenerife&t=k",
-                "type": "maps",
-                "label": "Candelaria"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Playa+Las+Teresitas&t=k",
-                "type": "maps",
-                "label": "Las Teresitas"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Auditorio+Tenerife&t=k",
-                "type": "maps",
-                "label": "Auditorio"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Siam+Park&t=k",
-                "type": "maps",
-                "label": "Siam Park"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/search/?api=1&query=Loro+Parque&t=k",
-                "type": "maps",
-                "label": "Loro parque"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+Los+Cristianos&t=k",
-                "type": "maps",
-                "label": "Los Cristianos"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "http://www.google.com/maps/search/?api=1&query=Puerto+de+Los+Cristianos+Ferry&t=k",
-                "type": "maps",
-                "label": "Puerto de los Cristianos"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "http://www.google.com/maps/search/?api=1&query=Playa+de+las+Americas+Tenerife&t=k",
-                "type": "maps",
-                "label": "Playa de las Americas"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=13862698318489807873&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Centro de visitantes Teide"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIHM0ogKEICAgIDE_6jr0QE!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
-                "type": "maps",
-                "label": "Cueva del viento"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/place//data=!3m4!1e2!3m2!1sCIABIhA2DnIstRL_eDiCxzsrgNMJ!2e10!4m2!3m1!1s0xc6a87fe3e4fe6b9:0x97ae382934e71374",
-                "type": "maps",
-                "label": "Barranco del infierno"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=761971844405859170&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf Abama"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=1821567396275382399&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf Costa Adeje"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=4012408393901694028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf Las Americas"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=14379514915312051412&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf del sur"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=1203249720886280057&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf Amarilla"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=13023968755834190814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf Los Palos"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=8046334199755273567&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf El Peñon"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=6795739325682155554&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Golf La Rosaleda"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=5073196173529580874&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "EL Médano"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://maps.google.com/?cid=3256704489302261413&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ",
-                "type": "maps",
-                "label": "Piramides de Guimar"
-            },
-            {
-                "icon": "geo-alt-fill",
-                "path": "https://www.google.com/maps/place/Hotel+Riu+Garoe/@28.4127299,-16.5342366,765m/data=!3m1!1e3!4m9!3m8!1s0xc41d55edeab4ccf:0x8c61247370e092d4!5m2!4m1!1i2!8m2!3d28.4127252!4d-16.5316617!16s%2Fg%2F1td9xcm9?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D",
-                "type": "maps",
-                "label": "Hotel Riu Garoé"
+                "icon": "heart",
+                "path": "C:/Program Files/Calibre2/calibre.exe",
+                "type": "app",
+                "label": "prueba1",
+                "embedded": false
             },
             {
                 "icon": "save",
-                "path": "C:\\Users\\jesus\\Downloads",
-                "type": "documentos",
-                "label": "Download"
-            },
-            {
-                "icon": "video",
-                "path": "https://www.youtube.com/watch?v=1MXizg-PQFI",
-                "type": "video",
-                "label": "Royal Delfín",
-                "embedded": true
-            },
-            {
-                "icon": "briefcase",
-                "path": "Z:\\RECEPCIÓN",
-                "type": "folder",
-                "label": "RECEPCIÓN",
+                "path": "C:/Program Files/Calibre2/calibre.exe",
+                "type": "app",
+                "label": "prueba 2",
                 "embedded": false
             },
             {
-                "icon": "briefcase",
-                "path": "Z:\\BOOKING MENSUAL PARA DEPARTAMENTOS",
-                "type": "folder",
-                "label": "BOOKING MENSUAL PARA DEPARTAMENTOS",
+                "icon": "trash",
+                "path": "C:/Program Files/PuTTY/putty.exe",
+                "type": "app",
+                "label": "otro",
                 "embedded": false
             },
             {
-                "icon": "briefcase",
-                "path": "Z:\\FICHA POLICIA",
+                "icon": "save",
+                "path": "C:/Users/jesus",
                 "type": "folder",
-                "label": "FICHA POLICIA",
-                "embedded": false
-            },
-            {
-                "icon": "clipboard-data",
-                "path": "Z:\\RECEPCIÓN",
-                "type": "documentos",
-                "label": "RECEPCIÓN (Docs)",
+                "label": "car",
                 "embedded": false
             }
         ],
-        "GALLERY_PATH": "C:/Users/usuario/Desktop/ANTONIO/RECURSOS/INFORMACIÓN",
+        "GALLERY_PATH": "C:/Users/jesus/Downloads",
         "SYNC_INTERVAL": 10000,
         "ADMIN_PASSWORD": "1234",
-        "GALLERY_FOLDERS": [
-            {
-                "path": "Z:\\\\ESCANER",
-                "label": "ESCANER"
-            },
-            {
-                "path": "C:\\Users\\jesus\\Downloads",
-                "label": "DESCARGAS"
-            }
-        ],
+        "GALLERY_FOLDERS": [],
         "USE_SYNC_SERVER": true
     },
     "TRANSFERS": {

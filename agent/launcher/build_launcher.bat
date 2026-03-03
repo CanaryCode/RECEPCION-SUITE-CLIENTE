@@ -27,32 +27,36 @@ if not exist "!SOURCE!" (
 echo [i] Intentando compilar !OUTPUT! via PowerShell...
 echo.
 
-:: 2. Generar un nombre único para el script temporal para evitar bloqueos
+:: 2. Generar un nombre único para el script temporal
 set "TEMP_PS1=compile_%RANDOM%.ps1"
 if exist "!TEMP_PS1!" del /f /q "!TEMP_PS1!" >nul 2>&1
 
-:: 3. Crear el script de PowerShell
-(
-echo $$source = Get-Content -Raw -Path "!SOURCE!" -Encoding UTF8
-echo $$params = New-Object System.CodeDom.Compiler.CompilerParameters
-echo $$params.GenerateExecutable = $$true
-echo $$params.OutputAssembly = "!OUTPUT!"
-echo $$params.CompilerOptions = "/target:winexe /codepage:65001"
-echo if (Test-Path "!ICON!"^) {
-echo     $$params.CompilerOptions += " /win32icon:!ICON!"
-echo }
-echo $$params.ReferencedAssemblies.Add("System.Windows.Forms.dll"^) ^| Out-Null
-echo $$params.ReferencedAssemblies.Add("System.Drawing.dll"^) ^| Out-Null
-echo $$params.ReferencedAssemblies.Add("System.dll"^) ^| Out-Null
-echo $$provider = New-Object Microsoft.CSharp.CSharpCodeProvider
-echo $$results = $$provider.CompileAssemblyFromSource($$params, $$source^)
-echo if ($$results.Errors.Count -gt 0^) {
-echo    $$results.Errors ^| ForEach-Object { Write-Error $$_.ErrorText }
-echo    exit 1
-echo } else {
-echo    exit 0
-echo }
-) > "!TEMP_PS1!"
+:: 3. Crear el script de PowerShell línea a línea para evitar errores de escape de CMD
+echo $source = Get-Content -Raw -Path "%SOURCE%" -Encoding UTF8 > "!TEMP_PS1!"
+echo $params = New-Object System.CodeDom.Compiler.CompilerParameters >> "!TEMP_PS1!"
+echo $params.GenerateExecutable = $true >> "!TEMP_PS1!"
+echo $params.OutputAssembly = "%OUTPUT%" >> "!TEMP_PS1!"
+echo $params.CompilerOptions = "/target:winexe /codepage:65001" >> "!TEMP_PS1!"
+echo if (Test-Path "%ICON%") { >> "!TEMP_PS1!"
+echo     $params.CompilerOptions += " /win32icon:%ICON%" >> "!TEMP_PS1!"
+echo } >> "!TEMP_PS1!"
+
+:: El carácter pipe (|) debe escaparse con ^ en Batch si no está entre comillas
+echo $params.ReferencedAssemblies.Add("System.Windows.Forms.dll") ^| Out-Null >> "!TEMP_PS1!"
+echo $params.ReferencedAssemblies.Add("System.Drawing.dll") ^| Out-Null >> "!TEMP_PS1!"
+echo $params.ReferencedAssemblies.Add("System.dll") ^| Out-Null >> "!TEMP_PS1!"
+
+echo $provider = New-Object Microsoft.CSharp.CSharpCodeProvider >> "!TEMP_PS1!"
+echo $results = $provider.CompileAssemblyFromSource($params, $source) >> "!TEMP_PS1!"
+
+echo if ($results.Errors.Count -gt 0) { >> "!TEMP_PS1!"
+echo    foreach ($err in $results.Errors) { >> "!TEMP_PS1!"
+echo        Write-Host "ERROR: $($err.ErrorText)" -ForegroundColor Red >> "!TEMP_PS1!"
+echo    } >> "!TEMP_PS1!"
+echo    exit 1 >> "!TEMP_PS1!"
+echo } else { >> "!TEMP_PS1!"
+echo    exit 0 >> "!TEMP_PS1!"
+echo } >> "!TEMP_PS1!"
 
 :: 4. Ejecutar el script de PowerShell
 powershell -ExecutionPolicy Bypass -File "!TEMP_PS1!"
@@ -69,8 +73,7 @@ if !EXIT_CODE! equ 0 (
     echo.
 ) else (
     echo.
-    echo [!] ERROR: La compilacion ha fallado. 
-    echo     Si el error es "Acceso denegado", asegúrate de que "!OUTPUT!" no esté en uso.
+    echo [!] ERROR: La compilación ha fallado. 
     echo.
 )
 

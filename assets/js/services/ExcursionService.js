@@ -30,11 +30,11 @@ class ExcursionService extends BaseService {
             id: 'string',
             huesped: 'string',
             habitacion: 'string',
-            fechaExcursion: 'string',
+            fechaExcursion: 'date',
             total: 'number',
             estado: 'string',
             vendedor: 'string',
-            fechaVenta: 'string',
+            fechaVenta: 'date',
             comments: 'string'
         };
     }

@@ -1,4 +1,4 @@
-import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
+import { APP_CONFIG } from './Config.js';
 
 /**
  * SERVICIO DE TIEMPO REAL (RealTimeSync)

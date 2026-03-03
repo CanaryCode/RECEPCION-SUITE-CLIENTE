@@ -35,7 +35,7 @@ export const Router = {
         Router.handleModuleReload(targetId);
       });
 
-      tabBtn.addEventListener("show.bs.tab", (event) => {
+      tabBtn.addEventListener("show.bs.tab", async (event) => {
         const targetId = event.target.getAttribute("data-bs-target");
 
         // Si el relatedTarget es nulo (pasa en navegación manual),
@@ -64,12 +64,31 @@ export const Router = {
           }
         });
 
-        // Ensure target is prepared to be shown
-        const targetPane = document.querySelector(targetId);
-        if (targetPane) {
-          targetPane.style.display = "";
-          Router.handleModuleReload(targetId);
+        // Ensure target
+        let targetPane = document.querySelector(targetId);
+        
+        // Si no lo encontramos, puede que el Router se iniciara con el DOM roto
+        if (!targetPane) {
+            console.warn(`[Router] Panel ${targetId} no encontrado. Reintentando descubrimiento...`);
+            // No hacemos nada más, dejamos que ModuleLoader intente cargarlo o falle con gracia
         }
+
+        // 1. CARGA LAZY DEL MÓDULO (si aplica)
+        // El ModuleLoader ya sabe qué módulos son lazy y cuáles no
+        if (window.ModuleLoader) {
+          await window.ModuleLoader.loadBySelector(targetId);
+        }
+
+        // Volver a verificar el pane tras el load (por si se inyectó dinámicamente)
+        targetPane = document.querySelector(targetId);
+        if (!targetPane) {
+            console.error(`[Router] Error crítico: El selector ${targetId} no existe en el DOM.`);
+            return;
+        }
+
+        // 2. CAMBIO DE PESTAÑA (UI)
+        targetPane.style.display = "";
+        Router.handleModuleReload(targetId);
 
         // UPDATE URL (Catch-all for clicks on native Bootstrap tabs)
         if (!isNavigatingHistory) {
@@ -104,7 +123,7 @@ export const Router = {
     if (selector === "#gallery-content") {
       if (window.Gallery) window.Gallery.loadImages(true);
     } else if (selector === "#impresion-content") {
-      import("../modules/Impresion.js?v=V145_VAL_FIX").then((m) => {
+      import("../modules/Impresion.js").then((m) => {
         if (m.inicializarImpresion) m.inicializarImpresion();
       });
     } else if (selector === "#vales-content") {
@@ -123,7 +142,7 @@ export const Router = {
    * 2. Se desmarque el menú activo antiguo.
    * 3. Se active el nuevo panel visualmente.
    */
-  navegarA: (targetId) => {
+  navegarA: async (targetId) => {
     const selector = targetId.startsWith("#") ? targetId : "#" + targetId;
     const currentActive = document.querySelector(".tab-pane.active");
     const currentId = currentActive ? "#" + currentActive.id : null;
@@ -133,10 +152,17 @@ export const Router = {
       Router.recordNavigation(currentId, selector);
     }
 
+    // LAZY LOADING: Cargar módulo si no está cargado aún
+    if (window.ModuleLoader) {
+      await window.ModuleLoader.loadBySelector(selector);
+    }
+
     const targetPane = document.querySelector(selector);
 
     if (!targetPane) {
       console.error(`Router: Panel no encontrado ${selector}`);
+      console.error(`DEBUG: Todos los tab-panes disponibles:`,
+        Array.from(document.querySelectorAll('.tab-pane')).map(el => '#' + el.id));
       return;
     }
 

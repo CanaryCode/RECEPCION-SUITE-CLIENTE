@@ -1,0 +1,509 @@
+/* Elimino la primera sección redundante del CSS antiguo para evitar colisiones */
+
+/* Mas limpieza de estilos antiguos */
+
+.period-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+.period-header { 
+    padding: 0.5rem; 
+    background: #f8f9fa; 
+    border-bottom: 1px solid #dee2e6; 
+    font-weight: bold; 
+    text-align: center; 
+}
+
+.period-body { 
+    padding: 0.5rem; 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    max-height: 500px; 
+}
+
+/* CALENDAR MODULE - ULTRA COMPACT REFIT */
+:root {
+    --cal-primary: #1a73e8;
+    --cal-bg: #f8fafc;
+    --cal-border: #e2e8f0;
+    --cal-text: #1e293b;
+    --cal-muted: #64748b;
+    --cal-urgent: #ef4444;
+    --cal-festivo: #94a3b8;
+    --cal-today: #fffbeb;
+    --cal-today-border: #f59e0b;
+    --cal-event-personal: #e0f2fe;
+    --cal-event-personal-border: #0ea5e9;
+    --day-h: 48px; /* Slightly smaller to fit 6 rows better */
+    --day-w: 100%;
+}
+
+#calendario-content {
+    color: var(--cal-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 0;
+    background: transparent !important;
+}
+
+/* Almanaque Grid System */
+.almanac-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, var(--day-h)); /* Enforce exactly 6 rows of fixed height */
+    border-top: 1px solid var(--cal-border);
+    border-left: 1px solid var(--cal-border);
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.almanac-header-day {
+    background: #f1f5f9;
+    color: var(--cal-muted);
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 4px;
+    text-align: center;
+    border-right: 1px solid var(--cal-border);
+    border-bottom: 1px solid var(--cal-border);
+    text-transform: uppercase;
+}
+
+.almanac-day {
+    border-right: 1px solid var(--cal-border);
+    border-bottom: 1px solid var(--cal-border);
+    padding: 2px 4px; /* Reduced vertical padding */
+    height: 100%; /* Force fill the grid row */
+    max-height: var(--day-h); /* Strict height */
+    cursor: pointer;
+    transition: all 0.1s ease;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.almanac-day-number {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+    line-height: 1;
+}
+
+/* Highlighting */
+.almanac-day.has-events { background: var(--cal-event-personal) !important; border-top: 2px solid var(--cal-event-personal-border); }
+.almanac-day.has-festivo { background: #f8fafc !important; border-top: 2px solid var(--cal-festivo); }
+.almanac-day.today { background: var(--cal-today) !important; border-top: 2px solid var(--cal-today-border); }
+.almanac-day.other-month { background: #fdfdfd !important; color: #cbd5e1 !important; opacity: 0.6; }
+.almanac-day.other-month .event-item { opacity: 0.4; pointer-events: none; }
+
+/* Compact Month Containers */
+.triple-almanac-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem; /* Better breathing space */
+    width: 100%;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.almanac-month-section {
+    flex: 0 1 420px; 
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.almanac-month-section:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 45px rgba(31, 38, 135, 0.12);
+}
+
+.almanac-month-title {
+    font-weight: 900;
+    color: var(--cal-primary);
+    margin-bottom: 1.25rem;
+    font-size: 1.1rem;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.almanac-month-title::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 3px;
+    background: var(--cal-primary);
+    margin: 4px auto 0;
+    border-radius: 2px;
+}
+
+/* Mas limpieza de estilos antiguos */
+
+/* Truncated Event Items */
+.event-micro-list {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.event-item {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 2px solid var(--cal-primary);
+    background: rgba(26, 115, 232, 0.05);
+    border-radius: 2px;
+    line-height: 1.2;
+}
+
+.event-item.is-urgent { background: #fee2e2; border-left-color: var(--cal-urgent); color: #991b1b; }
+.event-item.is-festivo { background: #f1f5f9; border-left-color: var(--cal-festivo); color: #64748b; font-style: italic; }
+
+/* Week View stack */
+.triple-week-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.week-almanac-section {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--cal-border);
+}
+
+.month-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1.2rem); 
+    gap: 1px;
+    font-size: 0.6rem;
+    text-align: center;
+}
+
+.year-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 10px;
+}
+
+.month-mini-card {
+    background: #fff;
+    border: 1px solid var(--cal-border);
+    border-radius: 10px;
+    padding: 1rem;
+    transition: all 0.2s;
+}
+
+.month-mini-card:hover {
+    border-color: var(--cal-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.week-almanac-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.week-day-card {
+    height: 140px; /* Fixed Height */
+    background: #fff;
+    border: 1px solid var(--cal-border);
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.week-day-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.week-day-name { font-size: 0.6rem; font-weight: 800; color: var(--cal-muted); }
+.week-day-number { font-size: 1rem; font-weight: 800; }
+
+.week-day-body {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.week-day-card:hover { border-color: var(--cal-primary); transform: translateY(-2px); }
+
+.week-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 6px;
+}
+
+.week-day-name { font-size: 0.7rem; font-weight: 800; color: var(--cal-muted); }
+.week-day-number { font-size: 1.2rem; font-weight: 900; }
+
+.week-day-body {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* List View Styling */
+.listado-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--cal-border);
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.listado-item:hover { transform: scale(1.01); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+.listado-date-circle {
+    width: 50px;
+    height: 50px;
+    background: var(--cal-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.listado-date-day { font-size: 1.2rem; font-weight: 800; line-height: 1; }
+.listado-date-month { font-size: 0.6rem; text-transform: uppercase; font-weight: 600; }
+
+.listado-info { flex-grow: 1; }
+.listado-title { font-weight: 700; font-size: 1.1rem; color: var(--cal-text); }
+.listado-meta { font-size: 0.85rem; color: var(--cal-muted); }
+
+/* Custom Scrollbar for Premium feel */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Event Styles */
+.event-item {
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    font-size: 0.75rem;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-item.is-urgent {
+    border: 1px solid #dc3545;
+    background: #fff5f5 !important;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(220, 53, 69, 0.2);
+}
+
+.event-item.is-festivo {
+    background: #f5f5f5 !important;
+    color: #999 !important;
+    border-left: 3px solid #ddd !important;
+    font-weight: normal !important;
+    font-style: italic;
+    cursor: default;
+}
+
+.event-item:hover { 
+    background: #f0f7ff; 
+}
+
+.event-time { 
+    font-size: 0.75rem; 
+    color: #6c757d; 
+    font-weight: bold; 
+    margin-right: 0.5rem; 
+}
+
+.event-title { 
+    font-size: 0.85rem; 
+    font-weight: 500; 
+}
+
+.event-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* Badges override */
+.almanac-day.has-events {
+    background: #e7f3ff;
+    border-top: 3px solid #0d6efd;
+}
+
+.almanac-day.has-festivo {
+    background: #f8f9fa;
+    border-top: 3px solid #dee2e6;
+}
+
+.almanac-day.today {
+    background: #fff9db;
+    border-top: 3px solid #fcc419;
+}
+
+/* Multi-month Layout - Horizontal */
+.triple-almanac-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    padding: 10px 0;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-x: auto;
+}
+
+.almanac-month-section {
+    flex: 0 1 420px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--cal-border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.almanac-month-title {
+    font-weight: 800;
+    color: var(--cal-primary);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-size: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+}
+
+.almanac-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 65px); /* ENFORCE UNIFORM ROW HEIGHT */
+    border-top: 1px solid var(--cal-border);
+    border-left: 1px solid var(--cal-border);
+    background: white;
+}
+
+.almanac-day {
+    border-right: 1px solid var(--cal-border);
+    border-bottom: 1px solid var(--cal-border);
+    padding: 2px 4px;
+    height: 65px; /* STRICT HEIGHT */
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Triple Week Layout - Vertical Stack of Horizontal Rows */
+.triple-week-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.week-almanac-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.week-almanac-title {
+    font-weight: bold;
+    color: #0d6efd;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 1rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Week Almanac Grid */
+.week-almanac-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.week-day-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    min-height: 150px;
+    padding: 10px;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.week-day-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.week-day-card.has-events {
+    background: #e7f3ff;
+    border-color: #74c0fc;
+}
+
+.week-day-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.week-day-name { font-weight: bold; font-size: 0.8rem; color: #666; }
+.week-day-number { font-weight: 800; font-size: 1.2rem; color: #333; }
+
+
+.current-period .period-header { 
+    background: #0d6efd; 
+    color: white; 
+}
+
+/* Animations */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

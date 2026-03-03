@@ -1,5 +1,5 @@
 import { Utils } from '../core/Utils.js';
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
+import { APP_CONFIG } from "../core/Config.js";
 import { Ui } from '../core/Ui.js';
 import { cenaFriaService } from '../services/CenaFriaService.js';
 
@@ -262,3 +262,6 @@ window.imprimirCenasFrias = () => {
         }
     }
 };
+
+// Exponer globalmente para dashboard
+window.mostrarCenasFrias = mostrarCenasFrias;

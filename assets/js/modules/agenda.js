@@ -1,7 +1,7 @@
-import { APP_CONFIG } from '../core/Config.js?v=V153_DB_CONFIG';
+import { APP_CONFIG } from '../core/Config.js';
 import { agendaService } from '../services/AgendaService.js';
-import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
-import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
+import { Utils } from '../core/Utils.js';
+import { Ui } from '../core/Ui.js';
 
 /**
  * MÓDULO DE AGENDA DE CONTACTOS (agenda.js)

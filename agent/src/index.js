@@ -40,7 +40,7 @@ app.use((req, res, next) => {
     }
     
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Max-Age', '86400'); // 24 horas

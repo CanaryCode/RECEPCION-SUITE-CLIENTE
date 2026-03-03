@@ -3,7 +3,7 @@
  * Contiene todos los ajustes del sistema. Se exporta para que cualquier módulo pueda leer los ajustes.
  */
 export const APP_CONFIG = {
-    SYSTEM: { API_URL: '/api', MODE: 'local' },
+    SYSTEM: { API_URL: '/api', MODE: 'local', VERSION: '5.0.2' },
     HOTEL: {
         RECEPCIONISTAS: [],
         HABITACIONES: [], // Default empty, populated via loadConfig or override

@@ -15,7 +15,7 @@ class RiuService extends BaseService {
             nombre: 'string',
             habitacion: 'string',
             tipo_tarjeta: 'string',
-            fecha_salida: 'string'
+            fecha_salida: 'date'
         };
     }
 
@@ -57,11 +57,14 @@ class RiuService extends BaseService {
     async limpiarSalidas() {
         const hoy = new Date().toISOString().split('T')[0];
         const actuales = this.getClientes();
-        const filtrados = actuales.filter(c => c.fecha_salida >= hoy);
+        
+        // RESILIENCIA: Filtrar registros que no tengan nombre (evita error de esquema)
+        // y filtrar también los que ya han salido.
+        const filtrados = actuales.filter(c => c.nombre && c.fecha_salida >= hoy);
         
         if (filtrados.length !== actuales.length) {
             await this.save(filtrados);
-            console.log(`[RiuService] Limpieza automática realizada: Salidas pasadas eliminadas.`);
+            console.log(`[RiuService] Limpieza automática realizada: Salidas pasadas o registros inválidos eliminados.`);
         }
     }
 }

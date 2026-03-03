@@ -1,9 +1,9 @@
-import { APP_CONFIG } from "../core/Config.js?v=V153_DB_CONFIG";
-import { riuService } from '../services/RiuService.js?v=V145_VAL_FIX';
-import { Utils } from '../core/Utils.js?v=V145_VAL_FIX';
-import { Ui } from '../core/Ui.js?v=V145_VAL_FIX';
-import { sessionService } from '../services/SessionService.js?v=V145_VAL_FIX';
-import { PdfService } from '../core/PdfService.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from "../core/Config.js";
+import { riuService } from '../services/RiuService.js';
+import { Utils } from '../core/Utils.js';
+import { Ui } from '../core/Ui.js';
+import { sessionService } from '../services/SessionService.js';
+import { PdfService } from '../core/PdfService.js';
 
 /**
  * MÓDULO DE GESTIÓN RIU CLASS (riu.js)
@@ -74,8 +74,8 @@ export async function inicializarRiu() {
                 nombre: rawData.nombre.trim(),
                 habitacion: habInput,
                 tipo_tarjeta: rawData.tipo_tarjeta, // Using name='tipo_tarjeta'
-                fecha_entrada: rawData.fecha_entrada,
-                fecha_salida: rawData.fecha_salida,
+                fecha_entrada: Utils.parseDate(rawData.fecha_entrada),
+                fecha_salida: Utils.parseDate(rawData.fecha_salida),
                 comentarios: rawData.comentarios.trim()
             };
         },

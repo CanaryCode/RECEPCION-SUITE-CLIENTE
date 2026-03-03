@@ -1,5 +1,5 @@
-import { APP_CONFIG } from './Config.js?v=V153_DB_CONFIG';
-import { SecurityBarrier } from './SecurityBarrier.js?v=V145_VAL_FIX';
+import { APP_CONFIG } from './Config.js';
+import { SecurityBarrier } from './SecurityBarrier.js';
 
 /**
  * SERVICIO DE COMUNICACIÓN (Api)
@@ -45,7 +45,8 @@ export const Api = {
         try {
             const finalUrl = this._getFinalUrl(endpoint);
             const separator = endpoint.includes('?') ? '&' : '?';
-            const url = `${finalUrl}${separator}_t=${Date.now()}`;
+            const version = APP_CONFIG.SYSTEM.VERSION || Date.now();
+            const url = `${finalUrl}${separator}v=${version}`;
 
             const headers = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',

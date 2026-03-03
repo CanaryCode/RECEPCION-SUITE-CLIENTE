@@ -151,22 +151,29 @@ CREATE TABLE IF NOT EXISTS atenciones (
 );
 
 -- 13. CENAS FRÍAS
-CREATE TABLE IF NOT EXISTS cenas_frias (
+DROP TABLE IF EXISTS cenas_frias;
+CREATE TABLE cenas_frias (
     id VARCHAR(50) PRIMARY KEY,
     habitacion VARCHAR(10),
     fecha DATE,
     cantidad INT DEFAULT 1,
+    pax INT DEFAULT 1,
+    obs TEXT,
     comentarios TEXT,
     autor VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 13b. DESAYUNOS (Early/Late)
-CREATE TABLE IF NOT EXISTS desayunos (
+DROP TABLE IF EXISTS desayunos;
+CREATE TABLE desayunos (
     id VARCHAR(50) PRIMARY KEY,
     habitacion VARCHAR(10),
     fecha DATE,
     cantidad INT DEFAULT 1,
+    pax INT DEFAULT 1,
+    hora VARCHAR(5),
+    obs TEXT,
     comentarios TEXT,
     autor VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -188,13 +195,18 @@ CREATE TABLE IF NOT EXISTS lost_found (
 );
 
 -- 15. TRANSFERS
-CREATE TABLE IF NOT EXISTS transfers (
+DROP TABLE IF EXISTS transfers;
+CREATE TABLE transfers (
     id VARCHAR(50) PRIMARY KEY,
+    fecha DATE,
     tipo VARCHAR(50), -- Shuttle, Privado, Bus
     pasajeros INT DEFAULT 1,
     habitacion VARCHAR(10),
     hora VARCHAR(5),
     lugar_destino VARCHAR(255),
+    nombre_cliente VARCHAR(255),
+    externo BOOLEAN DEFAULT FALSE,
+    notas TEXT,
     compania VARCHAR(100),
     vuelo VARCHAR(50),
     autor VARCHAR(100),
@@ -277,4 +289,17 @@ VALUES ('admin', '9e3953e9fea7ab3622aed509723766bff8e7500da19fba8e091d13504913af
 CREATE TABLE IF NOT EXISTS app_config (
     config_key VARCHAR(100) PRIMARY KEY,
     config_value JSON
+);
+
+-- 24. EVENTOS DE CALENDARIO
+CREATE TABLE IF NOT EXISTS calendario_eventos (
+    id BIGINT PRIMARY KEY, -- Usamos el timestamp generado en el cliente
+    titulo VARCHAR(255) NOT NULL,
+    fecha DATE NOT NULL,
+    hora VARCHAR(5) NOT NULL,
+    categoria VARCHAR(50),
+    priority VARCHAR(50),
+    color VARCHAR(20),
+    descripcion TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
