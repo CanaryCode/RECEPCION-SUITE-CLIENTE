@@ -19,6 +19,13 @@ let selectedItems = []; // Array of URLs
 let favorites = [];
 let pdfThumbnailsCache = {};
 
+// Paginación (Lazy DOM)
+let _galleryFilteredImages = [];
+let _galleryOffset = 0;
+const _galleryLimit = 30; // Nodos a crear por cada scroll
+let _galleryObserver = null; // El observador principal de los nodos
+let _galleryScrollObserver = null; // El observador del fondo para infinite scroll
+
 export const Gallery = {
     async inicializar() {
         try {
@@ -301,7 +308,7 @@ export const Gallery = {
             this.updateFolderFilterUI(mainPath, configFolders);
 
             // FIX: Forzar lectura de disco con timestamp
-            const response = await Api.post('/system/list-images?t=' + Date.now(), {
+            const response = await Api.post('/system/list-images', {
                 folderPaths: folderPaths
             });
 
@@ -390,20 +397,45 @@ export const Gallery = {
             return;
         }
 
-        // 3. Lazy Loading Setup (IntersectionObserver)
+        // 3. Lazy Loading Setup
+        _galleryFilteredImages = filtered;
+        _galleryOffset = 0;
+        
+        if (_galleryObserver) _galleryObserver.disconnect();
+        if (_galleryScrollObserver) _galleryScrollObserver.disconnect();
+        
         const observerOptions = { root: null, rootMargin: '200px', threshold: 0.01 };
-        const observer = new IntersectionObserver((entries) => {
+        _galleryObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     this.loadCardContent(entry.target);
-                    observer.unobserve(entry.target);
+                    // Dejar de observar para no volver a cargar la misma imagen
+                    _galleryObserver.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        // 4. Batch Rendering con DocumentFragment
+        _galleryScrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.renderNextGalleryChunk();
+                }
+            });
+        }, { root: null, rootMargin: '300px', threshold: 0.01 });
+
+        this.renderNextGalleryChunk();
+    },
+
+    renderNextGalleryChunk() {
+        const container = document.getElementById('gallery-grid');
+        if (!container) return;
+
         const fragment = document.createDocumentFragment();
-        filtered.forEach(img => {
+        const chunk = _galleryFilteredImages.slice(_galleryOffset, _galleryOffset + _galleryLimit);
+        
+        if (chunk.length === 0) return; // No hay más imágenes
+
+        chunk.forEach(img => {
             const col = document.createElement('div');
             col.className = 'col-6 col-md-4 col-lg-3 gallery-item-col mb-4';
             col.dataset.url = img.url;
@@ -419,10 +451,28 @@ export const Gallery = {
                 </div>`;
             
             fragment.appendChild(col);
-            observer.observe(col);
+            _galleryObserver.observe(col);
         });
 
+        // Eliminar el trigger anterior si existe
+        const oldTrigger = document.getElementById('gallery-scroll-trigger');
+        if (oldTrigger) {
+            _galleryScrollObserver.unobserve(oldTrigger);
+            oldTrigger.remove();
+        }
+
         container.appendChild(fragment);
+        _galleryOffset += _galleryLimit;
+
+        // Añadir nuevo trigger si quedan imágenes
+        if (_galleryOffset < _galleryFilteredImages.length) {
+            const newTrigger = document.createElement('div');
+            newTrigger.id = 'gallery-scroll-trigger';
+            newTrigger.className = 'col-12 py-3 text-center text-muted';
+            newTrigger.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div>Cargando más imágenes...';
+            container.appendChild(newTrigger);
+            _galleryScrollObserver.observe(newTrigger);
+        }
     },
 
     loadCardContent(col) {
@@ -558,7 +608,7 @@ export const Gallery = {
         
         if (!modalEl || !img || !pdf) return;
 
-        currentIndex = currentImages.findIndex(i => i.url === url);
+        currentIndex = _galleryFilteredImages.findIndex(i => i.url === url);
         titleEl.textContent = title;
         
         const localAgentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
@@ -595,19 +645,19 @@ export const Gallery = {
     },
 
     nextImage() {
-        if (currentImages.length <= 1) return;
-        currentIndex = (currentIndex + 1) % currentImages.length;
+        if (_galleryFilteredImages.length <= 1) return;
+        currentIndex = (currentIndex + 1) % _galleryFilteredImages.length;
         this.syncViewer();
     },
 
     prevImage() {
-        if (currentImages.length <= 1) return;
-        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        if (_galleryFilteredImages.length <= 1) return;
+        currentIndex = (currentIndex - 1 + _galleryFilteredImages.length) % _galleryFilteredImages.length;
         this.syncViewer();
     },
 
     syncViewer() {
-        const item = currentImages[currentIndex];
+        const item = _galleryFilteredImages[currentIndex];
         if (!item) return;
         this.openViewer(item.url, item.name, item.type);
     },
