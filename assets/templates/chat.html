@@ -1,18 +1,18 @@
-<div id="chat-container" class="chat-window shadow-lg border border-secondary animate-slide-up d-none">
-    <div class="chat-header d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
-        <h6 class="mb-0 fw-bold"><i class="bi bi-chat-dots-fill me-2 text-primary"></i>Chat</h6>
+<div id="chat-container" class="chat-window shadow-lg border-0 animate-slide-up d-none">
+    <div class="chat-header d-flex justify-content-between align-items-center p-3">
+        <h6 class="mb-0 fw-bold"><i class="bi bi-chat-dots-fill me-2 text-white"></i>Chat</h6>
         <div class="chat-actions">
-            <button class="btn btn-sm btn-link text-secondary p-0 me-2" id="chat-btn-minimize" title="Minimizar">
+            <button class="btn btn-sm btn-link text-white p-0 me-2 opacity-75 hover-opacity-100" id="chat-btn-minimize" title="Minimizar">
                 <i class="bi bi-dash-lg"></i>
             </button>
-            <button class="btn btn-sm btn-link text-secondary p-0" id="chat-btn-close" title="Cerrar">
+            <button class="btn btn-sm btn-link text-white p-0 opacity-75 hover-opacity-100" id="chat-btn-close" title="Cerrar">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
     </div>
     
-    <div class="chat-recipient-selector bg-dark bg-opacity-50 p-2 border-bottom border-secondary">
-        <select id="chat-recipient-select" class="form-select form-select-sm bg-dark text-light border-secondary">
+    <div class="chat-recipient-selector p-2 border-bottom border-light bg-light bg-opacity-50">
+        <select id="chat-recipient-select" class="form-select form-select-sm border-0 shadow-none bg-transparent fw-bold text-secondary">
             <option value="">Chat Global</option>
             <!-- Usuarios online cargados dinámicamente -->
         </select>
@@ -25,12 +25,12 @@
         </div>
     </div>
     
-    <div class="chat-footer p-3 border-top border-secondary bg-dark bg-opacity-25">
+    <div class="chat-footer p-3 border-top border-light bg-white">
         <form id="chat-form" class="d-flex gap-2">
-            <input type="text" id="chat-input" class="form-control form-control-sm bg-dark text-light border-secondary" 
+            <input type="text" id="chat-input" class="form-control form-control-sm border-0 bg-light px-3 rounded-pill" 
                 placeholder="Escribe un mensaje..." autocomplete="off">
-            <button type="submit" class="btn btn-primary btn-sm rounded-circle shadow-sm">
-                <i class="bi bi-send-fill"></i>
+            <button type="submit" class="btn btn-primary btn-sm rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                <i class="bi bi-send-fill" style="font-size: 0.8rem;"></i>
             </button>
         </form>
     </div>
