@@ -75,18 +75,33 @@ router.post('/list-images', async (req, res) => {
                 await fs.access(fsPath);
                 const dirents = await fs.readdir(fsPath, { withFileTypes: true });
 
-                const mediaItems = dirents
-                    .filter(d => {
-                        const ext = path.extname(d.name).toLowerCase();
-                        return d.isFile() && ['.jpg', '.jpeg', '.png', '.gif', '.pdf'].includes(ext);
-                    })
-                    .map(d => ({
+                const fileEntries = dirents.filter(d => {
+                    const ext = path.extname(d.name).toLowerCase();
+                    return d.isFile() && ['.jpg', '.jpeg', '.png', '.gif', '.pdf'].includes(ext);
+                });
+
+                const mediaPromises = fileEntries.map(async (d) => {
+                    const fullPath = path.join(fsPath, d.name);
+                    let mtime = new Date().toISOString(); // Default fallback
+                    
+                    try {
+                        const stats = await fs.stat(fullPath);
+                        mtime = stats.mtime.toISOString();
+                    } catch (e) {
+                        console.warn(`[AGENT] No se pudo leer mtime de ${fullPath}`);
+                    }
+
+                    return {
                         name: d.name,
-                        path: path.join(fsPath, d.name).replace(/\\/g, '/'),
+                        path: fullPath.replace(/\\/g, '/'),
                         folder: targetPath.replace(/\\/g, '/'),
-                        url: `/api/system/image-proxy?path=${encodeURIComponent(path.join(fsPath, d.name))}`,
-                        type: path.extname(d.name).toLowerCase() === '.pdf' ? 'pdf' : 'image'
-                    }));
+                        url: `/api/system/image-proxy?path=${encodeURIComponent(fullPath)}`,
+                        type: path.extname(d.name).toLowerCase() === '.pdf' ? 'pdf' : 'image',
+                        mtime: mtime
+                    };
+                });
+
+                const mediaItems = await Promise.all(mediaPromises);
                 allMedia.push(...mediaItems);
             } catch (e) {
                 console.warn(`[AGENT] Skip folder: ${targetPath}`);

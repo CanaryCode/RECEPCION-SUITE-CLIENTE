@@ -59,6 +59,14 @@ export const Dashboard = {
                                             <span><i class="bi bi-exclamation-octagon me-2 text-danger"></i>Alarmas Sist.</span>
                                             <span class="badge bg-danger pill" id="dash-active-alarms">0</span>
                                         </li>
+                                        <li class="d-flex justify-content-between mb-2" id="dash-transfers-wrapper">
+                                            <span><i class="bi bi-car-front-fill me-2 text-info"></i>Transfers Hoy</span>
+                                            <span class="badge bg-info text-light pill" id="dash-pending-transfers">0</span>
+                                        </li>
+                                        <li class="d-flex justify-content-between mb-2" id="dash-events-wrapper">
+                                            <span><i class="bi bi-calendar-event-fill me-2 text-primary"></i>Eventos Hoy</span>
+                                            <span class="badge bg-primary text-light pill" id="dash-pending-events">0</span>
+                                        </li>
                                      </ul>
                                 </div>
                             </div>
@@ -112,11 +120,11 @@ export const Dashboard = {
             </div>
         `;
 
-        this.refresh();
+        await this.refresh();
     },
 
-    refresh() {
-        const stats = dashboardService.getStats();
+    async refresh() {
+        const stats = await dashboardService.getStats();
 
         // Actualizar KPIs
         this.animateValue('dash-occupancy-val', stats.occupancy.rate, '%');
@@ -125,6 +133,16 @@ export const Dashboard = {
         document.getElementById('dash-out').textContent = stats.movements.departures;
         document.getElementById('dash-pending-wake').textContent = stats.pendingWakeups;
         document.getElementById('dash-active-alarms').textContent = stats.alarms.active;
+
+        const transBadge = document.getElementById('dash-pending-transfers');
+        if (transBadge) transBadge.textContent = stats.todayTransfers;
+        const transWrap = document.getElementById('dash-transfers-wrapper');
+        if (transWrap) transWrap.style.display = stats.todayTransfers > 0 ? 'flex' : 'none';
+
+        const eveBadge = document.getElementById('dash-pending-events');
+        if (eveBadge) eveBadge.textContent = stats.todayEvents;
+        const eveWrap = document.getElementById('dash-events-wrapper');
+        if (eveWrap) eveWrap.style.display = stats.todayEvents > 0 ? 'flex' : 'none';
 
         // Actualizar Lista Novedades
         const feedContainer = document.getElementById('dash-feed-list');

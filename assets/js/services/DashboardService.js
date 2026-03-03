@@ -2,6 +2,8 @@ import { estanciaService } from './EstanciaService.js';
 import { novedadesService } from './NovedadesService.js';
 import { systemAlarmsService } from './SystemAlarmsService.js';
 import { despertadorService } from './DespertadorService.js';
+import { transfersService } from './TransfersService.js';
+import { calendarioService } from './CalendarioService.js';
 
 /**
  * SERVICIO DE DASHBOARD (DashboardService)
@@ -14,7 +16,7 @@ class DashboardService {
     /**
      * OBTENER ESTADÍSTICAS GLOBALES
      */
-    getStats() {
+    async getStats() {
         const estancias = estanciaService.getAll() || [];
         const novedades = novedadesService.getAll() || [];
         const alarmas = systemAlarmsService.getActiveAlarms() || [];
@@ -39,8 +41,26 @@ class DashboardService {
             .sort((a, b) => (b.id || 0) - (a.id || 0))
             .slice(0, 5);
 
-        // 4. Despertadores Pendientes (Hoy)
+        // 4. Pendientes (Hoy)
         const pendingWakeups = despertadores.filter(d => !d.completado).length;
+        
+        // 5. Traslados de Hoy
+        let todayTransfers = 0;
+        try {
+            const transfers = transfersService.getTransfers() || [];
+            todayTransfers = transfers.filter(t => t.fecha === today).length;
+        } catch (e) {
+            console.warn('[DashboardService] Error leyendo transfers:', e);
+        }
+
+        // 6. Eventos de Hoy
+        let todayEvents = 0;
+        try {
+            const events = await calendarioService.getEventosDia(today);
+            todayEvents = events ? events.length : 0;
+        } catch (e) {
+            console.warn('[DashboardService] Error leyendo eventos del calendario:', e);
+        }
 
         return {
             occupancy: {
@@ -57,7 +77,9 @@ class DashboardService {
                 critical: alarmas.filter(a => a.nivel === 'CRITICO').length
             },
             novedades: recentNovedades,
-            pendingWakeups
+            pendingWakeups,
+            todayTransfers,
+            todayEvents
         };
     }
 }
