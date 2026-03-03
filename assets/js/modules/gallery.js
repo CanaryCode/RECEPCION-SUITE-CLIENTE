@@ -373,7 +373,8 @@ export const Gallery = {
         // 1. Aplicar filtros
         let filtered = images.filter(img => {
             const matchesType = currentTypeFilter === 'all' || img.type === currentTypeFilter;
-            const matchesFolder = currentFolderFilter === 'all' || normalize(img.folder) === normFilterFolder;
+            const matchesFolder = currentFolderFilter === 'all' || 
+                (img.folder ? normalize(img.folder) === normFilterFolder : normalize(img.path).startsWith(normFilterFolder));
             const matchesSearch = searchVal === '' || img.name.toLowerCase().includes(searchVal);
             const matchesFavorite = !showOnlyFavorites || favorites.includes(img.url);
             return matchesType && matchesFolder && matchesSearch && matchesFavorite;
@@ -386,8 +387,14 @@ export const Gallery = {
             if (isFavA && !isFavB) return -1;
             if (!isFavA && isFavB) return 1;
             
-            if (currentSort === 'mtime_desc') return new Date(b.mtime).getTime() - new Date(a.mtime).getTime();
-            if (currentSort === 'mtime_asc') return new Date(a.mtime).getTime() - new Date(b.mtime).getTime();
+            if (currentSort === 'mtime_desc') {
+                if (!a.mtime) return 1; if (!b.mtime) return -1;
+                return new Date(b.mtime).getTime() - new Date(a.mtime).getTime();
+            }
+            if (currentSort === 'mtime_asc') {
+                if (!a.mtime) return 1; if (!b.mtime) return -1;
+                return new Date(a.mtime).getTime() - new Date(b.mtime).getTime();
+            }
             if (currentSort === 'name_asc') return a.name.localeCompare(b.name, undefined, {sensitivity: 'base', numeric: true});
             return 0;
         });

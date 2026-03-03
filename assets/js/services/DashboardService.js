@@ -31,7 +31,9 @@ class DashboardService {
         const occupancyRate = Math.round((occupiedCount / totalRooms) * 100);
 
         // 2. Movimientos (Entradas/Salidas hoy)
-        const today = new Date().toISOString().split('T')[0];
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        const today = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+        
         const arrivals = estancias.filter(e => e.fechaEntrada === today).length;
         const departures = estancias.filter(e => e.fechaSalida === today).length;
 
