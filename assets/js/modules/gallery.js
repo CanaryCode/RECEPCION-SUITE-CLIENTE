@@ -21,10 +21,11 @@ let pdfThumbnailsCache = {};
 
 export const Gallery = {
     async inicializar() {
-        if (moduloInicializado) return;
-        
-        // Cargar favoritos del servidor
-        await this.loadFavorites();
+        try {
+            if (moduloInicializado) return;
+            
+            // Cargar favoritos del servidor
+            await this.loadFavorites();
         
         // Initial load
         await this.loadImages();
@@ -69,6 +70,10 @@ export const Gallery = {
 
         this.setupModalEvents();
         moduloInicializado = true;
+        } catch (err) {
+            console.error('[Gallery-Init-Error]', err);
+            try { fetch('http://localhost:3001/debug-log', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({error: err.toString(), stack: err.stack})}); } catch(e){}
+        }
     },
 
     async loadFavorites() {
@@ -256,13 +261,17 @@ export const Gallery = {
         }
     },
     async loadImages(resetFilters = false) {
-
+        console.log('[DEBUG-GALLERY] loadImages called. Reset:', resetFilters);
         const container = document.getElementById('gallery-grid');
-        if (!container) return;
+        if (!container) {
+            console.error('[DEBUG-GALLERY] #gallery-grid not found!');
+            return;
+        }
 
         try {
             const mainPath = (APP_CONFIG.SYSTEM?.GALLERY_PATH || 'assets/gallery').trim();
             const configFolders = APP_CONFIG.SYSTEM?.GALLERY_FOLDERS || [];
+            console.log('[DEBUG-GALLERY] mainPath:', mainPath, 'configFolders:', configFolders);
 
             // Reset filtros si se solicita (Manual Sync o Cambio de Módulo)
             if (resetFilters || currentFolderFilter === 'all') {
@@ -284,7 +293,7 @@ export const Gallery = {
 
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted px-4">Recuperando archivos y miniaturas...</p></div>';
 
-            let folderPaths = [mainPath, ...configFolders.map(f => f.path.trim())];
+            let folderPaths = [mainPath, ...configFolders.map(f => (f.path || '').trim())];
             folderPaths = [...new Set(folderPaths)].filter(p => p !== '');
 
 
@@ -309,6 +318,7 @@ export const Gallery = {
 
         } catch (error) {
             console.error('Error loading gallery:', error);
+            try { fetch('http://localhost:3001/debug-log', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({error: error.toString(), stack: error.stack, place: 'loadImages'})}); } catch(e){}
             container.innerHTML = `<div class="col-12 text-center text-danger py-5"><i class="bi bi-exclamation-triangle fs-1 mb-3"></i><p>Error de conexión: ${error.message}</p></div>`;
         }
     },
@@ -417,6 +427,9 @@ export const Gallery = {
 
     loadCardContent(col) {
         const { url, name, type } = col.dataset;
+        const localAgentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+        const absoluteUrl = url.startsWith('/api/system/') ? `${localAgentUrl}${url}` : url;
+        
         const isPdf = type === 'pdf';
         const isFav = favorites.includes(url);
         const isSelected = selectedItems.includes(url);
@@ -427,7 +440,10 @@ export const Gallery = {
                 <i class="bi bi-file-earmark-pdf fs-1"></i>
                 <span class="small mt-2 text-center" style="font-size: 0.6rem;">Generando vista...</span>
                </div>`
-            : `<img src="${url}" class="card-img-top" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">`;
+            : `<div class="d-flex flex-column align-items-center justify-content-center h-100 bg-light text-muted overflow-hidden" id="${thumbId}">
+                 <div class="spinner-border spinner-border-sm" role="status"></div>
+               </div>
+               <img id="img-${thumbId}" class="card-img-top d-none" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">`;
 
         col.innerHTML = `
             <div class="card h-100 shadow-sm border-0 gallery-card overflow-hidden ${isSelected ? 'selected' : ''} ${selectionMode ? 'selection-active' : ''} animate__animated animate__fadeIn" 
@@ -451,20 +467,53 @@ export const Gallery = {
             </div>`;
 
         if (isPdf) {
-            setTimeout(() => this.generatePdfThumbnail(url, thumbId), 50);
+            setTimeout(() => this.generatePdfThumbnail(absoluteUrl, thumbId, url), 50);
+        } else {
+            setTimeout(() => this.loadBlobUrl(absoluteUrl, `img-${thumbId}`, thumbId), 50);
         }
     },
 
-    async generatePdfThumbnail(url, elementId) {
-        if (pdfThumbnailsCache[url]) {
-            setTimeout(() => this.applyThumbnailToElement(elementId, pdfThumbnailsCache[url]), 10);
+    async loadBlobUrl(absoluteUrl, imgId, spinnerId) {
+        const imgEl = document.getElementById(imgId);
+        const spinner = document.getElementById(spinnerId);
+        if (!imgEl) return;
+
+        try {
+            const token = sessionStorage.getItem('RS_STATION_KEY') || '';
+            const finalUrl = absoluteUrl.includes('?') ? `${absoluteUrl}&token=${token}` : `${absoluteUrl}?token=${token}`;
+            
+            const response = await fetch(finalUrl, { headers: { 'X-Station-Key': token } });
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const blob = await response.blob();
+            imgEl.src = URL.createObjectURL(blob);
+            imgEl.onload = () => {
+                imgEl.classList.remove('d-none');
+                if (spinner) spinner.classList.add('d-none');
+            };
+        } catch (e) {
+            console.error('[Gallery] Image blob fetch failed:', e);
+            imgEl.src = absoluteUrl; // Fallback
+            imgEl.classList.remove('d-none');
+            if (spinner) spinner.classList.add('d-none');
+        }
+    },
+
+    async generatePdfThumbnail(absoluteUrl, elementId, originalUrl) {
+        if (pdfThumbnailsCache[originalUrl]) {
+            setTimeout(() => this.applyThumbnailToElement(elementId, pdfThumbnailsCache[originalUrl]), 10);
             return;
         }
 
         try {
-            if (typeof pdfjsLib === 'undefined') return;
+            if (typeof window['pdfjs-dist/build/pdf'] === 'undefined') return;
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
             
-            const loadingTask = pdfjsLib.getDocument(url);
+            const token = sessionStorage.getItem('RS_STATION_KEY') || '';
+            const finalUrl = absoluteUrl.includes('?') ? `${absoluteUrl}&token=${token}` : `${absoluteUrl}?token=${token}`;
+            
+            // Usamos httpHeaders en pdfjs para pasar el token también, aunque lo mandamos en URL
+            const loadingTask = pdfjsLib.getDocument({ url: finalUrl, httpHeaders: { 'X-Station-Key': token } });
             const pdf = await loadingTask.promise;
             const page = await pdf.getPage(1);
             
@@ -476,8 +525,8 @@ export const Gallery = {
 
             await page.render({ canvasContext: context, viewport: viewport }).promise;
             
-            const dataUrl = canvas.toDataURL();
-            pdfThumbnailsCache[url] = dataUrl;
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            pdfThumbnailsCache[originalUrl] = dataUrl;
             this.applyThumbnailToElement(elementId, dataUrl);
             
         } catch (e) {
@@ -512,15 +561,31 @@ export const Gallery = {
         currentIndex = currentImages.findIndex(i => i.url === url);
         titleEl.textContent = title;
         
+        const localAgentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+        const absoluteUrl = url.startsWith('/api/system/') ? `${localAgentUrl}${url}` : url;
+
         if (type === 'pdf') {
             img.classList.add('d-none');
             pdf.classList.remove('d-none');
-            pdf.src = url;
+            
+            // Para iframe de PDFs también evitamos el mixed content usando DataURL o Blob
+            try {
+                const token = sessionStorage.getItem('RS_STATION_KEY') || '';
+                const finalUrl = absoluteUrl.includes('?') ? `${absoluteUrl}&token=${token}` : `${absoluteUrl}?token=${token}`;
+                fetch(finalUrl, { headers: { 'X-Station-Key': token } })
+                    .then(res => res.blob())
+                    .then(blob => { pdf.src = URL.createObjectURL(blob); })
+                    .catch(() => { pdf.src = absoluteUrl; });
+            } catch (e) {
+                pdf.src = absoluteUrl;
+            }
+            
             if (controls) controls.classList.add('d-none'); 
         } else {
             pdf.classList.add('d-none');
             img.classList.remove('d-none');
-            img.src = url;
+            img.src = ''; // Clear old immediately
+            this.loadBlobUrl(absoluteUrl, 'galleryViewerImage', null);
             if (controls) controls.classList.remove('d-none');
             this.resetView();
         }
