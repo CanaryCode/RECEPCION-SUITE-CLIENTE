@@ -118,7 +118,7 @@ try {
 app.use('/api', (req, res, next) => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const stationKey = req.headers['x-station-key'];
-    
+
     // Log ultra-detallado para cazar ese 403/404
     const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'}`;
     console.log(`[AGENT] ${msg}`);
@@ -127,10 +127,13 @@ app.use('/api', (req, res, next) => {
     // 1. Endpoints públicos
     if (req.path === '/auth/id' || req.path === '/auth/id/') return next();
 
-    // 2. Bypass para peticiones LOCALES a /system/
+    // 2. Admin endpoints use their own authentication (x-admin-password)
+    if (req.path.startsWith('/admin')) return next();
+
+    // 3. Bypass para peticiones LOCALES a /system/
     const isLocal = isLocalRequest(req);
     const isSystem = req.originalUrl.includes('/api/system/');
-    
+
     if (isLocal && isSystem) {
         console.log(`[AGENT] ✅ Bypass LOCAL concedido para: ${req.originalUrl} (IP detectada: ${ip})`);
         return next();
@@ -139,8 +142,6 @@ app.use('/api', (req, res, next) => {
     if (stationKey === config.STATION_KEY) {
         return next();
     }
-
-    if (req.path.startsWith('/admin')) return next();
 
     res.status(403).json({
         error: 'Acceso No Autorizado',
@@ -229,6 +230,12 @@ app.use('/assets', express.static(path.join(__dirname, '../../assets'), {
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', component: 'local-agent', version: '2.0.0-PRO' });
+});
+
+// --- RUTA DEBUG PARA VER LOGS DEL NAVEGADOR ---
+app.post('/debug-log', (req, res) => {
+    console.log('[BROWSER-LOG]', req.body);
+    res.status(200).send();
 });
 
 // --- INICIO DE SERVIDOR ---

@@ -10,13 +10,13 @@
 
 > **Actualizar en cada SELLADO.**
 
-| Campo                      | Valor                                                                     |
-| -------------------------- | ------------------------------------------------------------------------- |
-| **Última versión**         | v.beta 10.2                                                               |
-| **Módulo en foco**         | Quick Login (Selector de Usuario) + Optimización de Impresión             |
-| **Deuda técnica conocida** | Ninguna conocida                                                          |
-| **Próximo objetivo**       | Ver `roadmap.md`                                                          |
-| **Última sesión**          | 2026-02-28 — SELLADO: Quick Login, recuperación de lanzadores y fix CORS. |
+| Campo                      | Valor                                                                                     |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| **Última versión**         | v5.0.3                                                                                    |
+| **Módulo en foco**         | Chat con Mensajería Privada + Robustez de API Core                                        |
+| **Deuda técnica conocida** | Ninguna conocida                                                                          |
+| **Próximo objetivo**       | Ver `roadmap.md`                                                                          |
+| **Última sesión**          | 2026-03-03 — SELLADO: Implementación de Chat Privado y fix de errores críticos en Api.js. |
 
 ---
 

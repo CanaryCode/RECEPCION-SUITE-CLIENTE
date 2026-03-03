@@ -19,15 +19,19 @@ export async function inicializarCalendario() {
 
     // 2. Inicializar Referencias UI
     _setupEventListeners();
-    
+
     // 3. Render Inicial
     actualizarVista();
-    
-    // 4. Escuchar Sincronización Real-Time
+
+    // 4. Actualizar widget del Dashboard
+    actualizarDashboardCalendario();
+
+    // 5. Escuchar Sincronización Real-Time
     window.addEventListener('service-synced', (e) => {
         if (e.detail.endpoint === 'calendario_eventos') {
             console.log("Detectado cambio en servidor para calendario, actualizando...");
             actualizarVista();
+            actualizarDashboardCalendario();
         }
     });
 
@@ -90,6 +94,7 @@ function _setupEventListeners() {
             await calendarioService.deleteEvento(id);
             bootstrap.Modal.getInstance(document.getElementById('modalEvento')).hide();
             actualizarVista();
+            actualizarDashboardCalendario();
         }
     };
 }
@@ -581,9 +586,10 @@ async function guardarEvento() {
 
     await calendarioService.saveEvento(data);
     Ui.showToast("Evento guardado correctamente");
-    
+
     bootstrap.Modal.getInstance(document.getElementById('modalEvento')).hide();
     actualizarVista();
+    actualizarDashboardCalendario();
 }
 
 /**
@@ -617,8 +623,20 @@ function _getDiaSemana(fechaStr) {
     return d.toLocaleString('es-ES', { weekday: 'short' }).toUpperCase();
 }
 
+/**
+ * Actualiza el widget de Calendario en el Dashboard principal ("Resumen del Día")
+ * Cuando el módulo de calendario está cargado, llama a la función global de actualización
+ */
+async function actualizarDashboardCalendario() {
+    // Llamar a la función global de actualización si existe
+    if (typeof window.actualizarWidgetCalendario === 'function') {
+        await window.actualizarWidgetCalendario();
+    }
+}
+
 window.abrirModalEvento = abrirModalEvento;
 window.guardarEvento = guardarEvento;
 window.editarEventoCalendario = editarEventoCalendario;
 window.irAMes = irAMes;
 window.cambiarFechayDia = cambiarFechayDia;
+window.actualizarDashboardCalendario = actualizarDashboardCalendario;

@@ -60,6 +60,12 @@ export class ModuleLoader {
             initFunction: 'inicializarSystemAlarmsUI',
             critical: true
         },
+        'tareas': {
+            selector: '#tareas-content',
+            importPath: 'assets/js/modules/tareas.js',
+            initFunction: 'inicializarTareas',
+            critical: true
+        },
         'configuracion': {
             selector: '#configuracion-content',
             importPath: 'assets/js/modules/configuracion.js',

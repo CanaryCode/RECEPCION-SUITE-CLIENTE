@@ -38,6 +38,8 @@
 
   <!-- MÓDULO DE IMPRESIÓN -->
   <link rel="stylesheet" href="assets/css/modules/impresion.css" />
+  <link rel="stylesheet" href="/assets/css/calculadora.css?v=1.1">
+  <link rel="stylesheet" href="/assets/css/chat.css?v=1.0">
 
   <!-- MÓDULO DE CALENDARIO -->
   <link rel="stylesheet" href="assets/css/modules/calendario.css" />
@@ -219,6 +221,12 @@
               </button>
             </li>
             <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#tareas-content" onclick="navegarA('#tareas-content')">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Gestión de tareas y asignaciones"><i class="bi bi-check2-square me-2"></i>Tareas Pendientes</span>
+              </button>
+            </li>
+            <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#valoracion-content">
                 <span data-tooltip="true" data-bs-placement="right" data-bs-title="Cálculo de precios y valoraciones"><i
                     class="bi bi-calculator-fill me-2"></i>Cálculo Valoración</span>
@@ -322,6 +330,17 @@
                 <span data-tooltip="true" data-bs-placement="left" data-bs-container="body"
                   data-bs-title="Editar ajustes del sistema"><i
                     class="bi bi-gear-wide-connected me-2"></i>Configuración</span>
+              </button>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <button class="dropdown-item" onclick="openWebViewer('/assets/admin/index.html', 'Consola de Administración', false)">
+                <span data-tooltip="true" data-bs-placement="left"
+                  data-bs-title="Monitoreo de servidores y acciones de gestión">
+                  <i class="bi bi-shield-lock-fill me-2"></i>Consola de Administración
+                </span>
               </button>
             </li>
           </ul>
@@ -428,6 +447,14 @@
 
 
           <div class="col-6 col-md">
+            <a href="javascript:void(0)" onclick="abrirCalculadora()" class="btn-shortcut shortcut-info"
+              data-bs-toggle="tooltip" data-bs-title="Calculadora Operativa">
+              <i class="bi bi-calculator"></i>
+              <span>Calculadora</span>
+            </a>
+          </div>
+
+          <div class="col-6 col-md">
             <a href="javascript:void(0)" onclick="openLaunchPad()" class="btn-shortcut shortcut-dark"
               data-bs-toggle="tooltip" data-bs-title="Herramientas y Configuración">
               <i class="bi bi-grid-3x3-gap-fill"></i>
@@ -479,6 +506,27 @@
               <div class="card-body p-0 overflow-auto" style="max-height: 200px">
                 <table class="table table-sm table-hover mb-0" style="font-size: 0.8rem">
                   <tbody id="dash-tabla-novedades"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3 d-none" id="dash-col-tareas">
+            <div class="card border-0 shadow-sm h-100" style="cursor: pointer" onclick="
+                  if (!event.target.closest('tr'))
+                    navegarA('#tareas-content');
+                " data-bs-toggle="tooltip" data-bs-title="Ver Tareas Pendientes">
+              <div class="card-header border-0 py-2 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">
+                  <i class="bi bi-check2-square me-2"></i>Tareas
+                </h6>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-danger" id="dash-count-tareas">0</span>
+                </div>
+              </div>
+              <div class="card-body p-0 overflow-auto" style="max-height: 200px">
+                <table class="table table-sm table-hover mb-0" style="font-size: 0.8rem">
+                  <tbody id="dash-tabla-tareas"></tbody>
                 </table>
               </div>
             </div>
@@ -548,6 +596,28 @@
             </div>
           </div>
 
+          <!-- WIDGET CALENDARIO -->
+          <div class="col-md-6 col-xl-3 d-none" id="dash-col-calendario">
+            <div class="card border-0 shadow-sm h-100" style="cursor: pointer" onclick="
+                  if (!event.target.closest('tr'))
+                    navegarA('#calendario-content');
+                " data-bs-toggle="tooltip" data-bs-title="Ver Calendario de Eventos">
+              <div class="card-header border-0 py-2 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">
+                  <i class="bi bi-calendar-event me-2"></i>Calendario
+                </h6>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-primary" id="dash-count-calendario">0</span>
+                </div>
+              </div>
+              <div class="card-body p-0 overflow-auto" style="max-height: 200px">
+                <table class="table table-sm table-hover mb-0" style="font-size: 0.8rem">
+                  <tbody id="dash-tabla-calendario"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <!-- WIDGET ATENCIONES -->
           <div class="col-md-6 col-xl-3 d-none" id="dash-col-atenciones">
             <div class="card border-0 shadow-sm h-100" style="cursor: pointer" onclick="
@@ -569,6 +639,15 @@
               </div>
             </div>
           </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAREAS CONTENT -->
+      <div class="tab-pane fade" id="tareas-content" role="tabpanel">
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Módulo de Tareas...</p>
         </div>
       </div>
 
@@ -3354,6 +3433,9 @@
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture;" loading="lazy"></iframe>
     </div>
   </div>
+
+  <!-- CALCULADORA FLOTANTE -->
+  <div id="calculadora-container"></div>
 
 </body>
 

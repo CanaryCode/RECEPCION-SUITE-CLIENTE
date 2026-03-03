@@ -1,0 +1,43 @@
+<div id="chat-container" class="chat-window shadow-lg border border-secondary animate-slide-up d-none">
+    <div class="chat-header d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
+        <h6 class="mb-0 fw-bold"><i class="bi bi-chat-dots-fill me-2 text-primary"></i>Chat</h6>
+        <div class="chat-actions">
+            <button class="btn btn-sm btn-link text-secondary p-0 me-2" id="chat-btn-minimize" title="Minimizar">
+                <i class="bi bi-dash-lg"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-secondary p-0" id="chat-btn-close" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="chat-recipient-selector bg-dark bg-opacity-50 p-2 border-bottom border-secondary">
+        <select id="chat-recipient-select" class="form-select form-select-sm bg-dark text-light border-secondary">
+            <option value="">Chat Global</option>
+            <!-- Usuarios online cargados dinámicamente -->
+        </select>
+    </div>
+    
+    <div class="chat-body p-3" id="chat-messages-list">
+        <!-- Mensajes aquí -->
+        <div class="text-center text-secondary small my-4 opacity-50 italic">
+            Cargando historial...
+        </div>
+    </div>
+    
+    <div class="chat-footer p-3 border-top border-secondary bg-dark bg-opacity-25">
+        <form id="chat-form" class="d-flex gap-2">
+            <input type="text" id="chat-input" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                placeholder="Escribe un mensaje..." autocomplete="off">
+            <button type="submit" class="btn btn-primary btn-sm rounded-circle shadow-sm">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Botón flotante de chat -->
+<button id="chat-toggle-btn" class="chat-toggle-btn shadow-lg animate-fade-in d-none">
+    <i class="bi bi-chat-fill"></i>
+    <span id="chat-badge" class="badge rounded-pill bg-danger d-none">0</span>
+</button>

@@ -29,6 +29,7 @@ const storageRoutes = require('./routes/storage');
 const systemRoutes = require('./routes/system');
 const heartbeatRoutes = require('./routes/heartbeat');
 const adminRoutes = require('./routes/admin');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 // const PORT = 3000; // PORT moved to server start block
@@ -45,7 +46,8 @@ app.use('/api', (req, res, next) => {
     // Excluir endpoints públicos y de autenticación de la validación de estación
     // Incluimos 'storage' porque el App Guest necesita leer configuración y datos
     // Incluimos 'system/launch' porque se valida internamente vía túnel o localhost
-    const isPublic = /health|heartbeat|admin\/login|admin\/agent-proxy|admin\/connections|storage|system\/local-config|system\/web-proxy|system\/launch/.test(req.originalUrl);
+    // Incluimos todos los endpoints 'admin' porque tienen su propio middleware de autenticación
+    const isPublic = /health|heartbeat|admin|\/chat\/|storage|system\/local-config|system\/web-proxy|system\/launch/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];
@@ -105,6 +107,8 @@ logToFile('Mounting Heartbeat Routes...');
 app.use('/api/heartbeat', heartbeatRoutes);
 logToFile('Mounting Admin Routes...');
 app.use('/api/admin', adminRoutes);
+logToFile('Mounting Chat Routes...');
+app.use('/api/chat', chatRoutes);
 
 // --- CAPA DE SEGURIDAD ADMIN (GATE) ---
 
@@ -219,18 +223,19 @@ try {
         
         // --- AGENT TUNNEL TRACKING ---
         global.agentTunnels = new Map();
+        global.chatUsers = new Map(); // username -> ws
 
         wss.on('connection', (ws) => {
             console.log('[WSS] Nuevo cliente conectado');
+            ws.isAlive = true;
+            ws.on('pong', () => { ws.isAlive = true; });
             
             ws.on('message', (message) => {
                 try {
-                    // Convert buffer to string to avoid parse errors in some Node/WS versions
                     const data = JSON.parse(message.toString());
                     if (data.type === 'auth') {
                         const { stationKey, fingerprint } = data.payload;
                         if (stationKey && fingerprint) {
-                            // Usar stationKey + fingerprint como clave única del túnel
                             const tunnelKey = `${stationKey}::${fingerprint}`;
                             console.log(`[WSS] Agente autenticado para túnel: ${tunnelKey}`);
                             global.agentTunnels.set(tunnelKey, ws);
@@ -239,14 +244,54 @@ try {
                             ws.fingerprint = fingerprint;
                             ws.send(JSON.stringify({ type: 'auth_success' }));
                         } else {
-                            console.warn(`[WSS] Autenticación rechazada: falta stationKey o fingerprint`);
                             ws.send(JSON.stringify({ type: 'auth_fail', reason: 'Missing credentials' }));
                         }
+                    } else if (data.type === 'chat_login') {
+                        const { username } = data.payload;
+                        if (username) {
+                            ws.username = username;
+                            global.chatUsers.set(username, ws);
+                            console.log(`[WSS] Usuario chat logueado: ${username}`);
+                            broadcast({ type: 'user_connected', payload: { username, online: true } });
+                            
+                            // Enviar lista de usuarios ya conectados a este usuario
+                            const users = Array.from(global.chatUsers.keys());
+                            ws.send(JSON.stringify({ 
+                                type: 'online_users', 
+                                payload: { users } 
+                            }));
+                        }
+                    } else if (data.type === 'chat_message') {
+                        const { sender, recipient, message, is_system } = data.payload;
+                        const db = require('./db');
+                        db.query(
+                            'INSERT INTO chat_messages (sender, recipient, message, is_system) VALUES (?, ?, ?, ?)',
+                            [sender, recipient || null, message, is_system || false]
+                        ).then(([result]) => {
+                            const chatPayload = {
+                                type: 'chat_message',
+                                payload: {
+                                    id: result.insertId,
+                                    sender,
+                                    recipient: recipient || null,
+                                    message,
+                                    is_system: is_system || false,
+                                    created_at: new Date()
+                                }
+                            };
+                            if (recipient) {
+                                const targetWs = global.chatUsers.get(recipient);
+                                if (targetWs && targetWs.readyState === WebSocket.OPEN) targetWs.send(JSON.stringify(chatPayload));
+                                if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(chatPayload));
+                            } else {
+                                broadcast(chatPayload);
+                            }
+                        }).catch(err => console.error('[WS CHAT ERROR]', err));
                     } else if (data.type === 'pong') {
                         ws.isAlive = true;
                     }
                 } catch (e) {
-                    // Ignorar mensajes no JSON (mensajes de broadcast normales)
+                    console.error('[WSS ERROR]', e);
                 }
             });
 
@@ -255,10 +300,12 @@ try {
                     console.log(`[WSS] Agente desconectado: ${ws.tunnelKey}`);
                     global.agentTunnels.delete(ws.tunnelKey);
                 }
+                if (ws.username) {
+                    global.chatUsers.delete(ws.username);
+                    broadcast({ type: 'user_connected', payload: { username: ws.username, online: false } });
+                }
+                console.log('[WSS] Cliente desconectado');
             });
-
-            ws.isAlive = true;
-            ws.on('pong', () => { ws.isAlive = true; });
         });
 
         // Keep-alive para los túneles

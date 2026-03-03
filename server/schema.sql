@@ -303,3 +303,13 @@ CREATE TABLE IF NOT EXISTS calendario_eventos (
     descripcion TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 25. CHAT MESSAGES (Global Internal Chat)
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sender VARCHAR(100) NOT NULL,
+    recipient VARCHAR(100) DEFAULT NULL,
+    message TEXT NOT NULL,
+    is_system BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

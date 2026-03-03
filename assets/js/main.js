@@ -86,6 +86,48 @@ window.hideAllTooltips = () => {
 
 
 /**
+ * Actualiza el widget de Calendario en el Dashboard sin cargar el módulo completo
+ * Esta función se ejecuta al inicio para mostrar eventos del día
+ */
+window.actualizarWidgetCalendario = async function() {
+  try {
+    // Importar solo el servicio de calendario (ligero)
+    const { calendarioService } = await import('./services/CalendarioService.js');
+
+    // Calcular fecha de hoy
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    // Obtener eventos del día
+    const events = await calendarioService.getEventosDia(today);
+
+    // Filtrar solo eventos personales (no festivos)
+    const personalEvents = events ? events.filter(e => e.readonly !== true).sort((a, b) => a.hora.localeCompare(b.hora)) : [];
+
+    console.log('[Main] Eventos personales del día:', personalEvents.length);
+
+    // Actualizar widget usando Ui.updateDashboardWidget
+    Ui.updateDashboardWidget('calendario', personalEvents, (ev) => {
+      const isUrgent = ev.priority === 'Urgente';
+      const iconColor = isUrgent ? 'text-danger' : 'text-primary';
+
+      return `
+        <tr style="cursor: pointer;" onclick="navegarA('#calendario-content'); setTimeout(() => { if(window.editarEventoCalendario) window.editarEventoCalendario('${ev.id}'); }, 200)">
+          <td>
+            <i class="bi bi-circle-fill ${iconColor} me-2" style="font-size: 0.5rem;"></i>
+            <span class="fw-bold">${ev.titulo}</span>
+          </td>
+          <td class="text-end">
+            <span class="badge bg-light text-dark border small">${ev.hora}</span>
+          </td>
+        </tr>`;
+    });
+  } catch (e) {
+    console.error('[Main] Error actualizando widget de calendario:', e);
+  }
+}
+
+/**
  * PUNTO DE ENTRADA PRINCIPAL (DOMContentLoaded)
  * Se ejecuta cuando el navegador termina de cargar el HTML básico.
  */
@@ -216,6 +258,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       { id: "tiempo-content", path: "assets/templates/tiempo.html" },
       { id: "ocr-datafonos-content", path: "assets/templates/ocr_datafonos.html" },
       { id: "calendario-content", path: "assets/templates/calendario.html" },
+      { id: "tareas-content", path: "assets/templates/tareas.html" },
+      { id: "calculadora-container", path: "assets/templates/calculadora.html" },
     ];
 
     await CompLoader.loadAll(componentes);
@@ -231,13 +275,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 5.1 Forzar refresh del dashboard después de cargar módulos críticos
     // Los módulos críticos (Despertadores, Transfers, etc.) renderizan sus widgets
     // pero necesitamos asegurar que el dashboard esté visible si hay datos
-    setTimeout(() => {
+    setTimeout(async () => {
       // Llamar a las funciones de mostrar para cada módulo crítico que tenga widget
       if (window.mostrarDespertadores) window.mostrarDespertadores();
       if (window.mostrarTransfers) window.mostrarTransfers();
       if (window.mostrarCenasFrias) window.mostrarCenasFrias();
       if (window.mostrarDesayunos) window.mostrarDesayunos();
       if (window.mostrarNovedades) window.mostrarNovedades();
+      if (window.mostrarTareas) window.mostrarTareas();
+
+      // Actualizar widget de Calendario sin cargar el módulo completo
+      await actualizarWidgetCalendario();
+
+      // Inicializar Calculadora y Chat
+      import("./modules/calculadora.js").then((m) => m.calculadora && m.calculadora.init());
+      import("./modules/chat.js").then((m) => m.chat && m.chat.init());
     }, 100);
 
     // --- 5.5 WATCHDOG DE SEGURIDAD (Refresco de Handshake) ---
@@ -315,6 +367,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       ) {
         import("./modules/safe.js").then(
           (m) => m.mostrarSafeRentals && m.mostrarSafeRentals(),
+        );
+      }
+      if (
+        e.detail.endpoint === "riu_tareas"
+      ) {
+        import("./modules/tareas.js").then(
+          (m) => m.mostrarTareas && m.mostrarTareas(),
         );
       }
     });

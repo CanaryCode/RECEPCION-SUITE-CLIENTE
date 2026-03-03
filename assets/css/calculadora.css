@@ -1,0 +1,114 @@
+.calculadora-window {
+  position: fixed;
+  top: 100px;
+  right: 50px;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  z-index: 99999; /* Super top */
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  min-height: 350px;
+}
+
+.calculadora-header {
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: move;
+  border-radius: 12px 12px 0 0;
+}
+
+.calculadora-display-container {
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+#calc-screen {
+  font-family: "Inter", "Roboto Mono", monospace;
+  letter-spacing: -1px;
+  color: #2c3e50;
+  word-break: break-all;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.calculadora-buttons .btn {
+  border-radius: 8px;
+  padding: 12px 0;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-calc-num {
+  background: #ffffff;
+  color: #2d3436;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.btn-calc-num:hover {
+  background: #f1f2f6;
+  transform: translateY(-1px);
+}
+
+.btn-calc-action {
+  background: #f8f9fa;
+  color: #0d6efd;
+}
+
+.btn-calc-action:hover {
+  background: #e9ecef;
+}
+
+.btn-calc-op {
+  background: #f1f2f6;
+  color: #636e72;
+}
+
+.btn-calc-op:hover {
+  background: #dfe4ea;
+}
+
+/* Resizer handle bottom-right */
+.calculadora-resizer {
+  width: 15px;
+  height: 15px;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+  z-index: 100;
+}
+
+.calculadora-resizer::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+}
+
+/* Animations */
+.animate-pop-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

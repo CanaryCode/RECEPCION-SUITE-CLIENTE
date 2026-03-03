@@ -4,6 +4,7 @@ import { systemAlarmsService } from './SystemAlarmsService.js';
 import { despertadorService } from './DespertadorService.js';
 import { transfersService } from './TransfersService.js';
 import { calendarioService } from './CalendarioService.js';
+import { tareasService } from './TareasService.js';
 
 /**
  * SERVICIO DE DASHBOARD (DashboardService)
@@ -21,6 +22,7 @@ class DashboardService {
         const novedades = novedadesService.getAll() || [];
         const alarmas = systemAlarmsService.getActiveAlarms() || [];
         const despertadores = despertadorService.getAll() || [];
+        const tareas = tareasService.getAll() || [];
 
         // 1. Ocupación
         // Filtrar habitaciones realmente ocupadas (ignorar salidas pasadas si no se han limpiado, etc)
@@ -31,8 +33,9 @@ class DashboardService {
         const occupancyRate = Math.round((occupiedCount / totalRooms) * 100);
 
         // 2. Movimientos (Entradas/Salidas hoy)
-        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-        const today = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+        // Usar el mismo formato que el calendario para evitar desfases de zona horaria
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         
         const arrivals = estancias.filter(e => e.fechaEntrada === today).length;
         const departures = estancias.filter(e => e.fechaSalida === today).length;
@@ -64,6 +67,9 @@ class DashboardService {
             console.warn('[DashboardService] Error leyendo eventos del calendario:', e);
         }
 
+        // 7. Tareas de Hoy
+        const todayTasks = tareas.filter(t => t.fecha === today && t.estado !== 'Terminada').length;
+
         return {
             occupancy: {
                 current: occupiedCount,
@@ -81,7 +87,8 @@ class DashboardService {
             novedades: recentNovedades,
             pendingWakeups,
             todayTransfers,
-            todayEvents
+            todayEvents,
+            todayTasks
         };
     }
 }

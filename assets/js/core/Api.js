@@ -14,29 +14,35 @@ export const Api = {
      * y el servidor remoto (Datos centralizados) según el endpoint.
      */
     _getFinalUrl(endpoint) {
-        let apiUrl = APP_CONFIG.SYSTEM.API_URL || '/api';
         const remoteUrl = APP_CONFIG.SYSTEM.REMOTE_API_URL;
+        let baseUrl = APP_CONFIG.SYSTEM.API_URL || '/api';
 
-        const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+        const cleanEndpoint = endpoint.replace(/^\/+/, ''); // Limpiar slashes iniciales
 
-        // Endpoints que SIEMPRE deben ser locales (acceso a hardware, ejecutable, etc)
-        const isLocalOnly = cleanEndpoint.startsWith('system/') ||
-            cleanEndpoint.startsWith('health');
-
+        const isLocalOnly = cleanEndpoint.startsWith('system/') || cleanEndpoint.startsWith('health');
         let isForcedLocal = false;
 
-        // Si tenemos un servidor remoto y el endpoint no es local-only, usamos el remoto
         if (remoteUrl && !isLocalOnly) {
-            apiUrl = remoteUrl;
+            baseUrl = remoteUrl;
         } else if (isLocalOnly) {
-            // Forzar URL del agente local explícita SIEMPRE para endpoints locales
-            apiUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            baseUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
             isForcedLocal = true;
         }
 
-        const base = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
-        const prefix = isForcedLocal ? `${base}/api` : base;
-        return `${prefix}/${cleanEndpoint}`;
+        // Limpiar slash final de la base
+        baseUrl = baseUrl.replace(/\/+$/, '');
+
+        // Asegurar prefijo /api si es remoto y no lo tiene (evita 404/HTML en producción)
+        // Pero no lo añadimos si ya lo tiene o si es una URL local que ya lo manejará
+        if (!isForcedLocal && baseUrl.startsWith('http') && !baseUrl.includes('/api') && !cleanEndpoint.startsWith('storage')) {
+            baseUrl += '/api';
+        } else if (isForcedLocal && !baseUrl.includes('/api')) {
+            baseUrl += '/api';
+        }
+
+        const finalUrl = `${baseUrl}/${cleanEndpoint}`;
+        console.log(`[DEBUG API] endpoint: ${endpoint} -> finalUrl: ${finalUrl}`);
+        return finalUrl;
     },
 
     get baseUrl() {

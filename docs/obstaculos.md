@@ -193,3 +193,59 @@ Permission was denied for this request to access the `loopback` address space.
 **Solución**: Implementar fallback automático en `Api.js`. El handshake ahora intenta `https` primero y, si falla, reintenta por `http` antes de denegar el acceso.
 **Archivos afectados**: `assets/js/core/Api.js`
 **Lección**: No asumir que el entorno local siempre tiene SSL. El handshake debe ser resiliente a ambos protocolos.
+
+---
+
+### [2026-03-03] Error 403 y HTML en API de Chat
+
+**Síntoma**: Al intentar cargar el historial de chat, la API devolvía un 403 o directamente código HTML (`<!doctype html>...`).
+
+**Causa raíz**:
+
+1. `server/app.js`: La regex `isPublic` no incluía la ruta `/chat/`, bloqueando el acceso.
+2. `Api.js`: El método `_getFinalUrl` no añadía correctamente el prefijo `/api` en entornos remotos o tenía lógica que fallaba al detectar endpoints de sistema. El HTML era devuelto por el fallback de la SPA (index.html) al no encontrar la ruta API correcta.
+
+**Solución**:
+
+- Se actualizó la regex de rutas públicas en el servidor.
+- Se refactorizó `Api.js` para asegurar que el prefijo `/api` se añada siempre que sea necesario y se limpien correctamente los slashes.
+
+**Archivos afectados**: `server/app.js`, `assets/js/core/Api.js`
+
+**Lección**: Las rutas de nuevos módulos deben registrarse explícitamente en la lista blanca de seguridad del servidor. No confiar en que "heredarán" permisos de otros módulos.
+
+---
+
+### [2026-03-03] TypeError y ReferenceError Críticos en Api.js
+
+**Síntoma**: Tras un refactor, ningún módulo (Despertadores, Tareas, etc.) cargaba. Pantalla congelada en "Cargando...".
+
+**Causa raíz**:
+
+1. **TypeError**: Se intentó reasignar un valor a `const cleanEndpoint`.
+2. **ReferenceError**: Se usó `baseUrl` sin haberla definido previamente con `let/const`.
+   Como `Api.js` es un singleton central, estos errores en su método base rompían cualquier comunicación con el servidor.
+
+**Solución**: Se corrigieron las declaraciones de variables, usando `let` para la base y eliminando la doble declaración de `cleanEndpoint`.
+
+**Archivos afectados**: `assets/js/core/Api.js`
+
+**Lección**: **Regla Crítica:** Nunca simplificar código en servicios core (`Api.js`, `Config.js`) sin una verificación de sintaxis inmediata. Un error aquí es un "cataclismo" para toda la aplicación.
+
+---
+
+### [2026-03-03] Implementación de Chat Privado (WebSocket + DB)
+
+**Síntoma**: El chat solo permitía hablar en grupo (global). Se requería privacidad 1-a-1.
+
+**Causa raíz**: El esquema de DB no tenía campo `recipient`, y el servidor WebSocket solo hacía `broadcast` global.
+
+**Solución**:
+
+1. **DB**: Se añadió columna `recipient` (VARCHAR(100), NULL por defecto) a `chat_messages`.
+2. **Server**: Se implementó herencia de usuarios en `global.chatUsers` (Map) y lógica de envío dirigido (`ws.send` al destinatario específico).
+3. **UI**: Se añadió un `select` dinámico que carga los usuarios online en tiempo real y permite filtrar el historial por conversación privada.
+
+**Archivos afectados**: `server/schema.sql`, `server/app.js`, `server/routes/chat.js`, `assets/js/modules/chat.js`, `assets/templates/chat.html`, `assets/css/chat.css`
+
+**Lección**: Para sistemas de mensajería, la persistencia debe soportar el filtrado `sender <-> recipient` desde el diseño inicial para evitar refactorizaciones pesadas de la UI más adelante.

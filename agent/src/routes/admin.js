@@ -108,7 +108,58 @@ router.post('/login', async (req, res) => {
  * GET /api/admin/status
  * Check local and remote server status, plus remote DB (via Tenerife health)
  */
+// Variable global para tracking de CPU (necesaria para calcular delta)
+let lastCpuTimes = null;
+
 router.get('/status', async (req, res) => {
+    // Get CPU usage (calculate delta between calls)
+    let cpuUsage = 0;
+    try {
+        const cpus = os.cpus();
+        let totalIdle = 0, totalTick = 0;
+        cpus.forEach(cpu => {
+            for (const type in cpu.times) {
+                totalTick += cpu.times[type];
+            }
+            totalIdle += cpu.times.idle;
+        });
+
+        if (lastCpuTimes) {
+            const idleDiff = totalIdle - lastCpuTimes.idle;
+            const totalDiff = totalTick - lastCpuTimes.total;
+            cpuUsage = Math.round(100 - (idleDiff / totalDiff * 100));
+        } else {
+            // First call - use load average as approximation
+            const loadAvg = os.loadavg()[0];
+            cpuUsage = Math.round(Math.min((loadAvg / cpus.length) * 100, 100));
+        }
+
+        lastCpuTimes = { idle: totalIdle, total: totalTick };
+    } catch (e) {
+        cpuUsage = 0;
+    }
+
+    // Get network usage from /proc/net/dev on Linux
+    let netUsage = { rx: 'N/A', tx: 'N/A' };
+    try {
+        if (os.platform() === 'linux') {
+            const netData = await fs.readFile('/proc/net/dev', 'utf8');
+            const lines = netData.split('\n');
+            let totalRx = 0, totalTx = 0;
+            lines.forEach(line => {
+                if (line.includes(':') && !line.includes('lo:')) {
+                    const parts = line.trim().split(/\s+/);
+                    totalRx += parseInt(parts[1]) || 0;
+                    totalTx += parseInt(parts[9]) || 0;
+                }
+            });
+            netUsage.rx = (totalRx / 1024 / 1024).toFixed(2) + ' MB';
+            netUsage.tx = (totalTx / 1024 / 1024).toFixed(2) + ' MB';
+        }
+    } catch (e) {
+        // Keep N/A if /proc/net/dev not available
+    }
+
     const status = {
         local: { status: 'offline', port: 3000 },
         remote: { status: 'offline', url: 'https://www.desdetenerife.com:3000' },
@@ -116,7 +167,9 @@ router.get('/status', async (req, res) => {
             freeMem: Math.round(os.freemem() / 1024 / 1024),
             totalMem: Math.round(os.totalmem() / 1024 / 1024),
             platform: os.platform(),
-            uptime: os.uptime()
+            uptime: os.uptime(),
+            cpuUsage: cpuUsage,
+            netUsage: netUsage
         },
         database: { local: 'unknown', remote: 'unknown' }
     };
@@ -370,7 +423,7 @@ router.post('/execute', async (req, res) => {
  * Helper para peticiones GET (Incluye x-station-key y opcionalmente x-admin-password)
  */
 async function fetchUrl(url, adminPass = null, timeout = 5000) {
-    const config = JSON.parse(await fs.readFile(path.join(__dirname, '../agent_config.json'), 'utf8'));
+    const config = JSON.parse(await fs.readFile(path.join(__dirname, '../../config/agent_config.json'), 'utf8'));
     const protocol = url.startsWith('https') ? https : require('http');
 
     return new Promise((resolve, reject) => {
@@ -420,7 +473,7 @@ async function fetchUrl(url, adminPass = null, timeout = 5000) {
 function fetchUrlPost(url, body, adminPass = null) {
     return new Promise(async (resolve, reject) => {
         try {
-            const config = JSON.parse(await fs.readFile(path.join(__dirname, '../agent_config.json'), 'utf8'));
+            const config = JSON.parse(await fs.readFile(path.join(__dirname, '../../config/agent_config.json'), 'utf8'));
             const postData = JSON.stringify(body);
             const headers = {
                 'Content-Type': 'application/json',

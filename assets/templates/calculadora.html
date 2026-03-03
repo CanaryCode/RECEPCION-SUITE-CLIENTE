@@ -1,0 +1,60 @@
+<div id="calculadora-flotante" class="calculadora-window shadow-lg d-none">
+    <!-- Header / Drag Bar -->
+    <div class="calculadora-header d-flex justify-content-between align-items-center px-3 py-2">
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <i class="bi bi-calculator text-primary"></i>
+            <span class="fw-bold small text-truncate">Calculadora Operativa</span>
+        </div>
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn btn-sm btn-link text-muted p-0 me-2" id="btn-calc-copy" title="Copiar Resultado">
+                <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-danger p-0" id="btn-calc-close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Display -->
+    <div class="calculadora-display-container p-3">
+        <div id="calc-history" class="text-end text-muted x-small mb-1" style="height: 15px; overflow: hidden;">&nbsp;</div>
+        <div id="calc-screen" class="text-end fw-bold h3 mb-0">0</div>
+    </div>
+
+    <!-- Buttons Grid -->
+    <div class="calculadora-buttons p-2">
+        <div class="row g-1 mb-1">
+            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="C">C</button></div>
+            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="(">(</button></div>
+            <div class="col-3"><button class="btn btn-calc-op w-100" data-val=")">)</button></div>
+            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="/">÷</button></div>
+        </div>
+        <div class="row g-1 mb-1">
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="7">7</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="8">8</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="9">9</button></div>
+            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="*">×</button></div>
+        </div>
+        <div class="row g-1 mb-1">
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="4">4</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="5">5</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="6">6</button></div>
+            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="-">−</button></div>
+        </div>
+        <div class="row g-1 mb-1">
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="1">1</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="2">2</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="3">3</button></div>
+            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="+">+</button></div>
+        </div>
+        <div class="row g-1">
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="0">0</button></div>
+            <div class="col-3"><button class="btn btn-calc-num w-100" data-val=".">.</button></div>
+            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="%">%</button></div>
+            <div class="col-3"><button class="btn btn-primary w-100 fw-bold shadow-sm" id="btn-calc-equal">=</button></div>
+        </div>
+    </div>
+
+    <!-- Resize Handle -->
+    <div class="calculadora-resizer"></div>
+</div>

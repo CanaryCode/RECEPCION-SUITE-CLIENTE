@@ -1,5 +1,4 @@
 import { Ui } from '../core/Ui.js';
-import { dashboardService } from '../services/DashboardService.js';
 
 let chartOccupancy = null;
 let chartMovements = null;
@@ -120,48 +119,7 @@ export const Dashboard = {
             </div>
         `;
 
-        await this.refresh();
-    },
-
-    async refresh() {
-        const stats = await dashboardService.getStats();
-
-        // Actualizar KPIs
-        this.animateValue('dash-occupancy-val', stats.occupancy.rate, '%');
-        document.getElementById('dash-occupancy-detail').textContent = `${stats.occupancy.current}/${stats.occupancy.total}`;
-        document.getElementById('dash-in').textContent = stats.movements.arrivals;
-        document.getElementById('dash-out').textContent = stats.movements.departures;
-        document.getElementById('dash-pending-wake').textContent = stats.pendingWakeups;
-        document.getElementById('dash-active-alarms').textContent = stats.alarms.active;
-
-        const transBadge = document.getElementById('dash-pending-transfers');
-        if (transBadge) transBadge.textContent = stats.todayTransfers;
-        const transWrap = document.getElementById('dash-transfers-wrapper');
-        if (transWrap) transWrap.style.display = stats.todayTransfers > 0 ? 'flex' : 'none';
-
-        const eveBadge = document.getElementById('dash-pending-events');
-        if (eveBadge) eveBadge.textContent = stats.todayEvents;
-        const eveWrap = document.getElementById('dash-events-wrapper');
-        if (eveWrap) eveWrap.style.display = stats.todayEvents > 0 ? 'flex' : 'none';
-
-        // Actualizar Lista Novedades
-        const feedContainer = document.getElementById('dash-feed-list');
-        if (stats.novedades.length === 0) {
-            feedContainer.innerHTML = '<div class="text-center p-5 text-muted"><i class="bi bi-chat-square-dots fs-1 d-block mb-3 opacity-25"></i>Sin novedades recientes</div>';
-        } else {
-            feedContainer.innerHTML = stats.novedades.map(n => `
-                <div class="list-group-item border-0 py-3 px-4">
-                    <div class="d-flex w-100 justify-content-between mb-1">
-                        <small class="text-muted"><i class="bi bi-clock me-1"></i>${n.fecha || 'Hoy'}</small>
-                        <span class="badge bg-light text-dark border">${n.autor || 'Sistema'}</span>
-                    </div>
-                    <p class="mb-1 small text-dark">${n.texto}</p>
-                </div>
-            `).join('');
-        }
-
-        // Renderizar Charts
-        this.renderCharts(stats);
+        // El Dashboard ya no tiene refresh porque los widgets se actualizan desde cada módulo
     },
 
     renderCharts(stats) {
@@ -205,7 +163,7 @@ export const Dashboard = {
         let increment = end > start ? 1 : -1;
         let stepTime = Math.abs(Math.floor(2000 / range)); // 2s duration
         if (stepTime < 10) stepTime = 10; // min 10ms
-        
+
         let timer = setInterval(function() {
             current += increment;
             obj.innerHTML = current + suffix;
@@ -214,7 +172,7 @@ export const Dashboard = {
             }
         }, stepTime);
         // Fast finish for consistency
-        obj.innerHTML = end + suffix; 
+        obj.innerHTML = end + suffix;
     }
 };
 
