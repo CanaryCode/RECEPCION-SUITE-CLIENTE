@@ -21,16 +21,22 @@ export const Api = {
 
         // Endpoints que SIEMPRE deben ser locales (acceso a hardware, ejecutable, etc)
         const isLocalOnly = cleanEndpoint.startsWith('system/') ||
-            cleanEndpoint.startsWith('storage/') ||
             cleanEndpoint.startsWith('health');
+
+        let isForcedLocal = false;
 
         // Si tenemos un servidor remoto y el endpoint no es local-only, usamos el remoto
         if (remoteUrl && !isLocalOnly) {
             apiUrl = remoteUrl;
+        } else if (isLocalOnly) {
+            // Forzar URL del agente local explícita SIEMPRE para endpoints locales
+            apiUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            isForcedLocal = true;
         }
 
         const base = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
-        return `${base}/${cleanEndpoint}`;
+        const prefix = isForcedLocal ? `${base}/api` : base;
+        return `${prefix}/${cleanEndpoint}`;
     },
 
     get baseUrl() {
@@ -201,6 +207,13 @@ export const Api = {
                             if (fingerprint) {
                                 sessionStorage.setItem('RS_FINGERPRINT', fingerprint);
                                 console.log(`[AUTH] Fingerprint guardado: ${fingerprint.substring(0, 12)}...`);
+                            }
+                            
+                            // Guardar la URL base del agente detectado para resolver peticiones locales de forma absoluta
+                            const baseUrlMatch = url.match(/^(https?:\/\/[^\/]+)/);
+                            if (baseUrlMatch) {
+                                sessionStorage.setItem('RS_LOCAL_AGENT_URL', baseUrlMatch[1]);
+                                console.log(`[AUTH] Local Agent URL base guardada: ${baseUrlMatch[1]}`);
                             }
                             break;
                         }
