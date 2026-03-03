@@ -194,5 +194,65 @@ export const Modal = {
 
             systemModalInstance.show();
         });
+    },
+
+    /**
+     * HELPERS ESPECÍFICOS PARA MENSAJES
+     */
+    error: (title, message, onClose) => {
+        return Modal.showAlert(`<strong>${title}</strong><br><br>${message}`, 'error').then(() => {
+            if (onClose) onClose();
+        });
+    },
+
+    success: (title, message, onClose) => {
+        return Modal.showAlert(`<strong>${title}</strong><br><br>${message}`, 'success').then(() => {
+            if (onClose) onClose();
+        });
+    },
+
+    warning: (title, message, onClose) => {
+        return Modal.showAlert(`<strong>${title}</strong><br><br>${message}`, 'warning').then(() => {
+            if (onClose) onClose();
+        });
+    },
+
+    info: (title, message, onClose) => {
+        return Modal.showAlert(`<strong>${title}</strong><br><br>${message}`, 'info').then(() => {
+            if (onClose) onClose();
+        });
+    },
+
+    confirm: (title, message, onConfirm, onCancel, confirmText = 'Confirmar', cancelText = 'Cancelar') => {
+        return new Promise(resolve => {
+            ensureModalExists();
+            setupModalUI('question', `<strong>${title}</strong><br><br>${message}`);
+
+            const footer = document.getElementById('globalModalFooter');
+            footer.innerHTML = `
+                <button class="btn btn-outline-secondary btn-lg px-4 fw-bold me-2" data-action="cancel">${cancelText}</button>
+                <button class="btn btn-primary btn-lg px-4 fw-bold" data-action="confirm">${confirmText}</button>
+            `;
+
+            const el = document.getElementById('globalSystemModal');
+            let result = false;
+
+            const btns = footer.querySelectorAll('button');
+            btns.forEach(b => b.addEventListener('click', (e) => {
+                result = e.currentTarget.dataset.action === 'confirm';
+                systemModal.hide();
+            }));
+
+            const onHide = () => {
+                el.removeEventListener('hidden.bs.modal', onHide);
+                if (result && onConfirm) onConfirm();
+                if (!result && onCancel) onCancel();
+                resolve(result);
+            };
+            el.addEventListener('hidden.bs.modal', onHide);
+
+            el.removeAttribute('aria-hidden');
+            systemModalInstance.show();
+        });
     }
 };

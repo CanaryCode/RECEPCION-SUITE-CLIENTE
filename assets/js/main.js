@@ -259,7 +259,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       { id: "ocr-datafonos-content", path: "assets/templates/ocr_datafonos.html" },
       { id: "calendario-content", path: "assets/templates/calendario.html" },
       { id: "tareas-content", path: "assets/templates/tareas.html" },
+      { id: "guia-interactiva-content", path: "assets/templates/guia_interactiva.html" },
       { id: "calculadora-container", path: "assets/templates/calculadora.html" },
+      { id: "chat-wrapper", path: "assets/templates/chat.html" },
     ];
 
     await CompLoader.loadAll(componentes);

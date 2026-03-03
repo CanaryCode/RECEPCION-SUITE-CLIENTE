@@ -27,11 +27,6 @@ class ChatModule {
     async init() {
         console.log("[CHAT] Initializing module...");
         
-        if (!document.getElementById('chat-container')) {
-            const html = await fetch('/assets/templates/chat.html').then(r => r.text());
-            document.body.insertAdjacentHTML('beforeend', html);
-        }
-
         this.container = document.getElementById('chat-container');
         this.toggleBtn = document.getElementById('chat-toggle-btn');
         this.badge = document.getElementById('chat-badge');

@@ -40,8 +40,8 @@
 .bg-soft-panel .input-group-text,
 .bg-soft-panel .form-control,
 .bg-soft-panel .form-select {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* --- BOTONES GENÉRICOS --- */
@@ -227,7 +227,8 @@
   width: 220px;
 }
 
-.nav-link, .dropdown-toggle.btn-link {
+.nav-link,
+.dropdown-toggle.btn-link {
   padding-left: 0.9rem !important;
   padding-right: 0.9rem !important;
 }
@@ -559,13 +560,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: transparent;
-  backdrop-filter: none;
-  border-radius: 0;
-  padding: 0.5rem 0;
-  border: none;
+  background: white !important;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
   margin-bottom: 1.5rem;
-  box-shadow: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -609,32 +610,32 @@
 
 /* Premium Styling for LaunchPad Tabs */
 #launchPadModal .btn-group {
-    background: rgba(0, 0, 0, 0.03);
-    padding: 3px;
-    border-radius: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 3px;
+  border-radius: 12px;
 }
 
 #launchPadModal .btn-group .btn {
-    border: none !important;
-    border-radius: 9px !important;
-    font-size: 0.8rem;
-    font-weight: 600;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #6c757d;
-    background: transparent;
-    padding: 8px 16px;
+  border: none !important;
+  border-radius: 9px !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #6c757d;
+  background: transparent;
+  padding: 8px 16px;
 }
 
 #launchPadModal .btn-group .btn:hover {
-    color: var(--bs-primary);
-    background: rgba(var(--bs-primary-rgb), 0.05);
+  color: var(--bs-primary);
+  background: rgba(var(--bs-primary-rgb), 0.05);
 }
 
 #launchPadModal .btn-group .btn.active {
-    background: white !important;
-    color: var(--bs-primary) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    transform: translateY(-1px);
+  background: white !important;
+  color: var(--bs-primary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px);
 }
 
 /* Fix for truncated text in LaunchPad */

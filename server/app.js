@@ -1,4 +1,4 @@
-const express = require('express'); // Force restart 2
+const express = require('express'); // Force restart 6
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs'); // Changed from fsSync to fs
@@ -30,6 +30,8 @@ const systemRoutes = require('./routes/system');
 const heartbeatRoutes = require('./routes/heartbeat');
 const adminRoutes = require('./routes/admin');
 const chatRoutes = require('./routes/chat');
+const guiaRoutes = require('./routes/guia');
+const updatesRoutes = require('./routes/updates');
 
 const app = express();
 // const PORT = 3000; // PORT moved to server start block
@@ -47,7 +49,8 @@ app.use('/api', (req, res, next) => {
     // Incluimos 'storage' porque el App Guest necesita leer configuración y datos
     // Incluimos 'system/launch' porque se valida internamente vía túnel o localhost
     // Incluimos todos los endpoints 'admin' porque tienen su propio middleware de autenticación
-    const isPublic = /health|heartbeat|admin|\/chat\/|storage|system\/local-config|system\/web-proxy|system\/launch/.test(req.originalUrl);
+    // Incluimos 'updates' para permitir actualizaciones desde cualquier cliente
+    const isPublic = /health|heartbeat|admin|\/chat\/|storage|system|guia|updates/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];
@@ -109,6 +112,10 @@ logToFile('Mounting Admin Routes...');
 app.use('/api/admin', adminRoutes);
 logToFile('Mounting Chat Routes...');
 app.use('/api/chat', chatRoutes);
+logToFile('Mounting Guia Routes...');
+app.use('/api/guia', guiaRoutes);
+logToFile('Mounting Updates Routes...');
+app.use('/api/updates', updatesRoutes);
 
 // --- CAPA DE SEGURIDAD ADMIN (GATE) ---
 
@@ -203,6 +210,7 @@ app.set('broadcast', broadcast);
 
 // --- INICIO DE SERVIDOR ---
 const PORT = 3000;
+const HTTP_PORT = 8080; // Puerto para redirecciones HTTP
 const certPath = '/etc/letsencrypt/live/www.desdetenerife.com/fullchain.pem';
 const keyPath = '/etc/letsencrypt/live/www.desdetenerife.com/privkey.pem';
 
@@ -212,12 +220,25 @@ try {
             cert: fs.readFileSync(certPath),
             key: fs.readFileSync(keyPath)
         };
+
+        // Servidor HTTPS principal
         const server = https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
             console.log(`[SERVER] HTTPS iniciado en puerto ${PORT} (SSL ACTIVO)`);
             console.log(`========================================`);
             console.log(`  HOTEL MANAGER SERVER v5.0 [EXPRESS]`);
             console.log(`  Running at https://localhost:${PORT}`);
             console.log(`========================================`);
+        });
+
+        // Servidor HTTP para redireccionar a HTTPS
+        const http = require('http');
+        const httpApp = express();
+        httpApp.use((req, res) => {
+            const host = req.headers.host.split(':')[0]; // Obtener host sin puerto
+            res.redirect(301, `https://${host}:${PORT}${req.url}`);
+        });
+        http.createServer(httpApp).listen(HTTP_PORT, '0.0.0.0', () => {
+            console.log(`[SERVER] HTTP redirect server running on port ${HTTP_PORT} -> redirects to HTTPS:${PORT}`);
         });
         wss = new WebSocket.Server({ server });
         

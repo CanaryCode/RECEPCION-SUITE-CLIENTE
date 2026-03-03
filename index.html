@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="assets/css/modules/impresion.css" />
   <link rel="stylesheet" href="/assets/css/calculadora.css?v=1.1">
   <link rel="stylesheet" href="/assets/css/chat.css?v=1.0">
+  <link rel="stylesheet" href="assets/css/modules/guia_interactiva.css">
 
   <!-- MÓDULO DE CALENDARIO -->
   <link rel="stylesheet" href="assets/css/modules/calendario.css" />
@@ -293,6 +294,16 @@
             </span>
           </button>
           <ul class="dropdown-menu shadow border-0">
+            <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#guia-interactiva-content" onclick="
+                    import('./assets/js/modules/guia_interactiva.js').then(
+                      (m) => m.GuiaInteractiva.inicializar(),
+                    )
+                  ">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Guía visual para aprender a manejar la aplicación"><i class="bi bi-mortarboard-fill me-2"></i>Guía de Uso</span>
+              </button>
+            </li>
             <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#ayuda-content">
                 <span data-tooltip="true" data-bs-placement="right"
@@ -723,6 +734,14 @@
         <div class="text-center p-5">
           <div class="spinner-border text-primary" role="status"></div>
           <p class="mt-2 text-muted">Cargando Calendario...</p>
+        </div>
+      </div>
+
+      <!-- NUEVO MÓDULO GUÍA INTERACTIVA -->
+      <div class="tab-pane fade bg-soft-panel" id="guia-interactiva-content" role="tabpanel">
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Guía de Uso...</p>
         </div>
       </div>
 
@@ -3436,6 +3455,9 @@
 
   <!-- CALCULADORA FLOTANTE -->
   <div id="calculadora-container"></div>
+
+  <!-- CHAT GLOBAL -->
+  <div id="chat-wrapper"></div>
 
 </body>
 

@@ -97,6 +97,9 @@ export const Configurator = {
             this.renderValoracionSuplIndiv();
             this.renderValoracionDescTriple();
             this.renderValoracionSuplNino();
+
+            // Cargar módulo de actualizaciones
+            this.loadActualizacionesModule();
         } catch (err) {
             console.error("FATAL ERROR in Configurator.renderInterfaz:", err);
             Ui.showToast("Error crítico cargando configuración: " + err.message, "danger");
@@ -1151,6 +1154,32 @@ export const Configurator = {
             bsCollapse.toggle();
         } else if (targetEl) {
             targetEl.classList.toggle('show'); // Fallback básico
+        }
+    },
+
+    /**
+     * Carga el módulo de actualizaciones de forma dinámica
+     */
+    async loadActualizacionesModule() {
+        try {
+            const container = document.getElementById('actualizaciones-module-container');
+            if (!container) {
+                console.warn('[CONFIGURATOR] No se encontró contenedor para módulo de actualizaciones');
+                return;
+            }
+
+            // Importar el módulo
+            const { default: Actualizaciones } = await import('./actualizaciones.js');
+
+            // Renderizar el HTML
+            container.innerHTML = Actualizaciones.render();
+
+            // Inicializar el módulo
+            Actualizaciones.init();
+
+            console.log('[CONFIGURATOR] Módulo de actualizaciones cargado');
+        } catch (error) {
+            console.error('[CONFIGURATOR] Error cargando módulo de actualizaciones:', error);
         }
     }
 };

@@ -1,0 +1,144 @@
+/* ESTILOS DEL MÓDULO DE GUÍA INTERACTIVA */
+
+.help-banner {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    border-radius: 20px;
+}
+
+.btn-category {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 600;
+    color: #495057;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.btn-category:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    background: #f8f9fa;
+}
+
+.btn-category.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.btn-category:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #e9ecef;
+}
+
+/* Card de la Guía */
+.help-card {
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.help-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+
+.help-card .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.help-card:hover .icon-wrapper {
+    background: #0d6efd;
+    color: white;
+}
+
+.help-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.help-card-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+/* Modal Detalle */
+.help-detail-modal {
+    border-radius: 25px;
+}
+
+.detail-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.detail-section-title i {
+    width: 32px;
+    height: 32px;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 0.9rem;
+}
+
+.use-case-item {
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid #0d6efd;
+}
+
+.consideration-item {
+    padding: 12px 15px;
+    background: #fff8e1;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    border-left: 3px solid #ffc107;
+}
+
+.consideration-item i {
+    color: #ffc107;
+    margin-right: 10px;
+    margin-top: 3px;
+}
+
+/* Animaciones */
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop-in {
+    animation: popIn 0.3s ease forwards;
+}

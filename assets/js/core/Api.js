@@ -40,7 +40,17 @@ export const Api = {
             baseUrl += '/api';
         }
 
-        const finalUrl = `${baseUrl}/${cleanEndpoint}`;
+        let finalUrl = `${baseUrl}/${cleanEndpoint}`;
+
+        // CRITICAL FIX: Si la URL es relativa y estamos en HTTP, forzar HTTPS
+        // porque el servidor solo funciona en HTTPS (puerto 3000)
+        if (!finalUrl.startsWith('http') && window.location.protocol === 'http:') {
+            // Construir URL absoluta con HTTPS
+            const host = window.location.hostname;
+            const port = window.location.port || '3000';
+            finalUrl = `https://${host}:${port}${finalUrl.startsWith('/') ? '' : '/'}${finalUrl}`;
+        }
+
         console.log(`[DEBUG API] endpoint: ${endpoint} -> finalUrl: ${finalUrl}`);
         return finalUrl;
     },
@@ -270,6 +280,67 @@ export const Api = {
         } catch (e) {
             console.error('[AUTH] Error crítico en handshake:', e);
             return null;
+        }
+    },
+
+    /**
+     * PETICIÓN GET DIRECTA AL AGENT LOCAL (sin pasar por servidor central)
+     * Útil para operaciones que solo el agent puede realizar (como actualizaciones)
+     */
+    async getFromAgent(endpoint) {
+        try {
+            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            const cleanEndpoint = endpoint.replace(/^\/+/, '');
+            const url = `${agentUrl}/${cleanEndpoint}`;
+
+            console.log(`[API] GET desde Agent: ${url}`);
+
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Agent API Error: ${response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(`[API] Error en GET desde Agent ${endpoint}:`, error);
+            throw error;
+        }
+    },
+
+    /**
+     * PETICIÓN POST DIRECTA AL AGENT LOCAL
+     */
+    async postToAgent(endpoint, data) {
+        try {
+            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://localhost:3001';
+            const cleanEndpoint = endpoint.replace(/^\/+/, '');
+            const url = `${agentUrl}/${cleanEndpoint}`;
+
+            console.log(`[API] POST a Agent: ${url}`);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Agent API Error: ${response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(`[API] Error en POST a Agent ${endpoint}:`, error);
+            throw error;
         }
     }
 };

@@ -213,6 +213,10 @@ app.use('/api/system', (req, res, next) => {
 
 app.use('/api/admin', adminRoutes);
 
+// Rutas de actualización del agent
+const updatesRoutes = require('./routes/updates');
+app.use('/api/agent/updates', updatesRoutes);
+
 // Fallback para rutas no encontradas bajo /api
 app.use('/api', (req, res) => {
     console.warn(`[AGENT] 404 on API: ${req.method} ${req.url}`);

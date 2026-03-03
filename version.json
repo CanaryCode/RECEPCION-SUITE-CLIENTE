@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "buildDate": "2026-03-03",
+  "changelog": {
+    "1.0.0": [
+      "Sistema inicial de Recepción Suite",
+      "Implementación de auto-actualización"
+    ]
+  }
+}
