@@ -83,6 +83,7 @@ router.post('/list-images', async (req, res) => {
                     .map(d => ({
                         name: d.name,
                         path: path.join(fsPath, d.name).replace(/\\/g, '/'),
+                        folder: targetPath.replace(/\\/g, '/'),
                         url: `/api/system/image-proxy?path=${encodeURIComponent(path.join(fsPath, d.name))}`,
                         type: path.extname(d.name).toLowerCase() === '.pdf' ? 'pdf' : 'image'
                     }));

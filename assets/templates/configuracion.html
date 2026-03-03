@@ -25,7 +25,15 @@
     </button>
   </div>
 
-  <div class="btn-print-wrapper gap-2">
+  <div class="btn-print-wrapper gap-2 align-items-center d-flex">
+    <input type="file" id="importLocalConfigInput" class="d-none" accept=".json" onchange="importLocalConfig(event)">
+    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" onclick="exportLocalConfig()" data-bs-toggle="tooltip" title="Exportar configuración local de este PC">
+      <i class="bi bi-download me-1"></i>Exportar
+    </button>
+    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" onclick="document.getElementById('importLocalConfigInput').click()" data-bs-toggle="tooltip" title="Restaurar configuración local">
+      <i class="bi bi-upload me-1"></i>Restaurar
+    </button>
+    <div class="vr mx-1 d-none d-md-block"></div>
     <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="saveConfigLocal()" data-bs-toggle="tooltip"
       data-bs-title="Aplicar cambios en este navegador">
       <i class="bi bi-save-fill me-2"></i>Aplicar Cambios

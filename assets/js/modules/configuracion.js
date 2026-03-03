@@ -1004,6 +1004,57 @@ export const Configurator = {
         }
     },
 
+    exportLocalConfig() {
+        if (!tempConfig || !tempConfig.SYSTEM) return;
+        const localData = {
+            LAUNCHERS: tempConfig.SYSTEM.LAUNCHERS || [],
+            GALLERY_FOLDERS: tempConfig.SYSTEM.GALLERY_FOLDERS || [],
+            GALLERY_PATH: tempConfig.SYSTEM.GALLERY_PATH || ''
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(localData, null, 2));
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", dataStr);
+        anchor.setAttribute("download", "recepcion_suite_local_config.json");
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        Ui.showToast("Configuración local exportada", "success");
+    },
+
+    importLocalConfig(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (!tempConfig.SYSTEM) tempConfig.SYSTEM = {};
+                
+                if (imported.LAUNCHERS) tempConfig.SYSTEM.LAUNCHERS = imported.LAUNCHERS;
+                if (imported.GALLERY_FOLDERS) tempConfig.SYSTEM.GALLERY_FOLDERS = imported.GALLERY_FOLDERS;
+                if (imported.GALLERY_PATH !== undefined) tempConfig.SYSTEM.GALLERY_PATH = imported.GALLERY_PATH;
+
+                // Re-render the UI elements affected
+                Configurator.renderAppLaunchers();
+                Configurator.renderVisualizadorFolders();
+                Utils.setVal('conf_gallery_path', tempConfig.SYSTEM.GALLERY_PATH || '');
+
+                Ui.showToast("Configuración local restaurada. Guardando...", "info");
+                
+                // Programmatically trigger a save so it hits the agent immediately
+                Configurator.saveConfigLocal();
+            } catch (err) {
+                console.error("Error parsing imported config:", err);
+                Ui.showToast("El archivo seleccionado no es válido", "danger");
+            }
+        };
+        reader.readAsText(file);
+        
+        // Reset the input so the same file could be imported again if needed
+        event.target.value = '';
+    },
+
 
     /**
      * PROTECCIÓN POR PIN
@@ -1106,6 +1157,8 @@ export const Configurator = {
 
 window.Configurator = Configurator;
 window.saveConfigLocal = () => Configurator.saveConfigLocal();
+window.exportLocalConfig = () => Configurator.exportLocalConfig();
+window.importLocalConfig = (event) => Configurator.importLocalConfig(event);
 window.addRecepcionista = () => Configurator.addRecepcionista();
 window.addDestinoTransfer = () => Configurator.addDestinoTransfer();
 window.addDepartamentoGlobal = () => Configurator.addDepartamentoGlobal();
