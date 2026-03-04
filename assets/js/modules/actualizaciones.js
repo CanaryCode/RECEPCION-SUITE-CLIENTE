@@ -17,6 +17,31 @@ const Actualizaciones = {
     init() {
         console.log('[ACTUALIZACIONES] Módulo inicializado');
         this.attachEventListeners();
+
+        // NO cargar la versión automáticamente - esperar a que el usuario abra el panel
+        // Esto mejora significativamente el tiempo de carga
+    },
+
+    /**
+     * Carga la versión actual (lazy loading)
+     */
+    async loadVersion() {
+        if (this._versionLoaded) return;
+        this._versionLoaded = true;
+
+        try {
+            const agentVersion = await Api.getFromAgent('/api/agent/updates/version');
+            const currentVersionEl = document.getElementById('current-version');
+            if (currentVersionEl) {
+                currentVersionEl.textContent = agentVersion.version || '1.0.0';
+            }
+        } catch (error) {
+            console.warn('[ACTUALIZACIONES] No se pudo cargar la versión actual:', error);
+            const currentVersionEl = document.getElementById('current-version');
+            if (currentVersionEl) {
+                currentVersionEl.textContent = 'No disponible';
+            }
+        }
     },
 
     /**
@@ -33,6 +58,16 @@ const Actualizaciones = {
         if (installButton) {
             installButton.addEventListener('click', () => this.installUpdate());
         }
+
+        // Detectar cuando el usuario abre el panel de actualizaciones
+        // Buscar el collapse del acordeón
+        const updateSection = document.querySelector('[data-bs-target="#collapse-actualizaciones"]');
+        if (updateSection) {
+            updateSection.addEventListener('click', () => {
+                // Cargar la versión cuando el usuario abra el panel
+                setTimeout(() => this.loadVersion(), 100);
+            });
+        }
     },
 
     /**
@@ -48,14 +83,29 @@ const Actualizaciones = {
         });
 
         try {
-            // Verificar en el servidor central
-            const serverCheck = await Api.get('/api/updates/check?version=1.0.0');
+            // Cargar versión si no se ha cargado
+            await this.loadVersion();
 
-            // Verificar en el agent local
+            // Verificar en el agent local primero
             const agentVersion = await Api.getFromAgent('/api/agent/updates/version');
-
-            console.log('[ACTUALIZACIONES] Server:', serverCheck);
             console.log('[ACTUALIZACIONES] Agent:', agentVersion);
+
+            // Actualizar la UI con la versión actual
+            const currentVersionEl = document.getElementById('current-version');
+            if (currentVersionEl) {
+                currentVersionEl.textContent = agentVersion.version || '1.0.0';
+            }
+
+            // Verificar en el servidor central
+            const serverCheck = await Api.get('/api/updates/check?version=' + (agentVersion.version || '1.0.0'));
+            console.log('[ACTUALIZACIONES] Server:', serverCheck);
+
+            // Actualizar fecha de última verificación
+            const lastCheckEl = document.getElementById('last-check');
+            if (lastCheckEl) {
+                const now = new Date();
+                lastCheckEl.textContent = now.toLocaleString('es-ES');
+            }
 
             if (serverCheck.updateAvailable) {
                 this.showUpdateAvailable(serverCheck, agentVersion.version);
@@ -79,11 +129,25 @@ const Actualizaciones = {
      * Muestra información de actualización disponible
      */
     showUpdateAvailable(updateInfo, currentVersion) {
-        const changelog = updateInfo.changelog.join('\n• ');
+        // Crear modal personalizado usando la infraestructura existente
+        const modalEl = document.getElementById('globalSystemModal');
+        if (!modalEl) {
+            console.error('[ACTUALIZACIONES] Modal no disponible');
+            return;
+        }
 
-        Modal.confirm(
-            '¡Actualización Disponible!',
-            `<div style="text-align: left;">
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        // Configurar contenido del modal
+        const header = document.getElementById('globalModalHeader');
+        header.className = 'modal-header text-white border-0 py-2 bg-success';
+
+        document.getElementById('globalModalTitle').innerText = '¡ACTUALIZACIÓN DISPONIBLE!';
+        document.getElementById('globalModalIcon').className = 'display-1 mb-3 text-success';
+        document.getElementById('globalModalIcon').innerHTML = '<i class="bi bi-arrow-up-circle-fill"></i>';
+
+        const messageHtml = `
+            <div style="text-align: left;">
                 <p><strong>Versión actual:</strong> ${currentVersion}</p>
                 <p><strong>Nueva versión:</strong> ${updateInfo.latestVersion}</p>
                 <p><strong>Fecha:</strong> ${updateInfo.buildDate}</p>
@@ -93,13 +157,57 @@ const Actualizaciones = {
                     ${updateInfo.changelog.map(item => `<li>${item}</li>`).join('')}
                 </ul>
                 <br>
-                <p style="color: #ff9800;">⚠️ El sistema se reiniciará después de la actualización.</p>
-            </div>`,
-            () => this.installUpdate(),
-            () => {},
-            'Instalar Ahora',
-            'Más Tarde'
-        );
+                <div style="background: #e3f2fd; padding: 10px; border-left: 4px solid #2196F3; margin: 10px 0;">
+                    <p style="margin: 0; color: #1976D2;"><strong>💡 Modo de Prueba:</strong></p>
+                    <p style="margin: 5px 0 0 0; color: #555; font-size: 0.9em;">
+                        Puedes probar el sistema de actualización sin modificar archivos.
+                    </p>
+                </div>
+                <p style="color: #ff9800;">⚠️ El sistema se reiniciará después de la actualización real.</p>
+            </div>`;
+
+        document.getElementById('globalModalMessage').innerHTML = messageHtml;
+        document.getElementById('globalModalInputContainer').classList.add('d-none');
+
+        // Crear botones personalizados
+        const footer = document.getElementById('globalModalFooter');
+        footer.innerHTML = `
+            <button class="btn btn-outline-secondary btn-lg px-4 fw-bold me-2" data-action="cancel">Más Tarde</button>
+            <button class="btn btn-info btn-lg px-4 fw-bold me-2" data-action="test">Probar (sin cambios)</button>
+            <button class="btn btn-success btn-lg px-4 fw-bold" data-action="install">Instalar Ahora</button>
+        `;
+
+        // Asignar eventos a los botones
+        const btnCancel = footer.querySelector('[data-action="cancel"]');
+        const btnTest = footer.querySelector('[data-action="test"]');
+        const btnInstall = footer.querySelector('[data-action="install"]');
+
+        btnCancel.onclick = () => modalInstance.hide();
+        btnTest.onclick = () => {
+            modalInstance.hide();
+            this.installUpdate(true);
+        };
+        btnInstall.onclick = () => {
+            modalInstance.hide();
+
+            // Advertir que la actualización real está en desarrollo
+            setTimeout(() => {
+                Modal.confirm(
+                    'Actualización Real',
+                    '⚠️ La actualización real está actualmente en fase de pruebas y puede fallar debido a validaciones de hash.\n\n' +
+                    '¿Prefieres usar el <strong>Modo de Prueba</strong> que simula el proceso sin riesgos?\n\n' +
+                    'Solo continúa si entiendes que puede haber errores.',
+                    () => this.installUpdate(false),
+                    () => {},
+                    'Continuar de todas formas',
+                    'Cancelar'
+                );
+            }, 300);
+        };
+
+        // Mostrar modal
+        modalEl.removeAttribute('aria-hidden');
+        modalInstance.show();
     },
 
     /**
@@ -114,8 +222,9 @@ const Actualizaciones = {
 
     /**
      * Instala la actualización
+     * @param {boolean} testMode - Si es true, ejecuta en modo de prueba
      */
-    async installUpdate() {
+    async installUpdate(testMode = false) {
         if (this.installing) return;
 
         this.installing = true;
@@ -124,11 +233,19 @@ const Actualizaciones = {
         const progressModal = this.showProgressModal();
 
         try {
-            // Iniciar instalación en el agent
-            const response = await Api.postToAgent('/api/agent/updates/install', {});
+            // Iniciar instalación en el agent (con modo de prueba si está activado)
+            const endpoint = testMode
+                ? '/api/agent/updates/install?mode=test'
+                : '/api/agent/updates/install';
+
+            const response = await Api.postToAgent(endpoint, {});
 
             if (!response.success) {
                 throw new Error('No se pudo iniciar la actualización');
+            }
+
+            if (testMode) {
+                console.log('[ACTUALIZACIONES] Modo de prueba activado - No se modificarán archivos');
             }
 
             // Monitorear progreso
@@ -303,7 +420,20 @@ const Actualizaciones = {
 
                 // Si hay error
                 if (status.error) {
-                    throw new Error(status.error);
+                    this.stopStatusMonitoring();
+                    this.closeProgressModal(modal);
+
+                    // Resetear el estado del updater
+                    await Api.postToAgent('/api/agent/updates/reset', {});
+
+                    Modal.error(
+                        'Error en la Actualización',
+                        `La actualización falló: ${status.error}\n\n` +
+                        '💡 <strong>Recomendación:</strong> Usa el "Modo de Prueba" para verificar el sistema sin modificar archivos.\n\n' +
+                        'El estado del updater ha sido reseteado automáticamente.'
+                    );
+                    this.installing = false;
+                    return;
                 }
 
                 // Si completó
@@ -317,9 +447,18 @@ const Actualizaciones = {
                 console.error('[ACTUALIZACIONES] Error monitoreando estado:', error);
                 this.stopStatusMonitoring();
                 this.closeProgressModal(modal);
+
+                // Intentar resetear el estado
+                try {
+                    await Api.postToAgent('/api/agent/updates/reset', {});
+                } catch (e) {
+                    console.error('[ACTUALIZACIONES] No se pudo resetear el estado:', e);
+                }
+
                 Modal.error(
                     'Error en la Actualización',
-                    error.message || 'No se pudo completar la actualización'
+                    (error.message || 'No se pudo completar la actualización') + '\n\n' +
+                    '💡 <strong>Recomendación:</strong> Usa el "Modo de Prueba" para verificar el sistema sin modificar archivos.'
                 );
                 this.installing = false;
             }

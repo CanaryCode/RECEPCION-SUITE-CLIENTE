@@ -1,0 +1,83 @@
+/*
+ * ESTILOS PARA TRADUCTOR FLOTANTE
+ * Similar a calculadora.css
+ */
+
+.traductor-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrado inicial en caso de fallback */
+    width: 380px;
+    height: 400px;
+    background-color: var(--bs-body-bg);
+    border-radius: 12px;
+    z-index: 10700 !important; /* Top priority over everything including Modals and Navbars */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.25) !important;
+    border: 1px solid var(--bs-border-color-translucent);
+}
+
+/* Animación de entrada suave */
+.animate-pop-in {
+    animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        /* La transición original se hace cargo; si usamos transform top/left no colisiona
+         * con transform: translate si en JS actualizamos directamente px */
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+/* El drag handle de la cabecera */
+.traductor-header {
+    background-color: var(--bs-gray-100);
+    border-bottom: 1px solid var(--bs-border-color);
+    cursor: grab;
+    user-select: none;
+}
+
+.traductor-header:active {
+    cursor: grabbing;
+}
+
+.traductor-body textarea {
+    resize: none !important;
+}
+
+.traductor-body textarea:focus {
+    box-shadow: none !important;
+}
+
+/* Esquina para redimensionar */
+.traductor-resizer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    cursor: nwse-resize;
+    z-index: 10;
+}
+
+/* Pequeño triángulo visual para sugerir redimensionamiento */
+.traductor-resizer::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 8px 8px;
+    border-color: transparent transparent var(--bs-gray-400) transparent;
+}

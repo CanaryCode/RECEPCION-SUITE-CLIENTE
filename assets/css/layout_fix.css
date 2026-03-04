@@ -283,4 +283,45 @@
         20% { left: 100%; }
         100% { left: 100%; }
     }
+
+    /* ==========================================================================
+       TRADUCTOR COMPACTO (GOOGLE WEB) - SIMPLE LAYOUT
+       ========================================================================== */
+    #google_translate_element {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .goog-te-gadget-simple {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        font-size: 0.85rem !important;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .goog-te-gadget-simple span {
+        color: #495057 !important;
+    }
+
+    .goog-te-gadget-icon {
+        display: none !important;
+    }
+
+    /* Ocultar el branding superior */
+    .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+    }
+    
+    /* Prevenir que Google añada un margen superior al body */
+    body { top: 0 !important; }
+    
+    /* Ocultar los tooltips de Google (Texto original) que aparecen abajo a la izquierda o flotando */
+    .goog-te-balloon-frame, #goog-gt-tt, .goog-tooltip { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
 }

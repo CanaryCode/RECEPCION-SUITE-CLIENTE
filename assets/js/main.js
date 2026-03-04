@@ -1002,3 +1002,8 @@ window.abrirCalculadora = async function() {
     m.calculadora.abrir();
   }
 };
+
+window.abrirTraductor = async function() {
+    const { traductor } = await import("./modules/traductor.js");
+    traductor.abrir();
+};

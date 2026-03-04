@@ -1,0 +1,66 @@
+<div id="traductor-flotante" class="traductor-window shadow-lg d-none">
+    <!-- Header / Drag Bar -->
+    <div class="traductor-header d-flex justify-content-between align-items-center px-3 py-2">
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <i class="bi bi-translate text-primary"></i>
+            <span class="fw-bold small text-truncate">Traductor Rápido</span>
+        </div>
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn btn-sm btn-link text-primary p-0 me-2" id="btn-trad-speak" title="Escuchar Traducción">
+                <i class="bi bi-volume-up-fill fs-5"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-muted p-0 me-2" id="btn-trad-copy" title="Copiar Traducción">
+                <i class="bi bi-clipboard fs-6"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-danger p-0" id="btn-trad-close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Controles de Idioma -->
+    <div class="p-2 bg-light border-bottom d-flex align-items-center justify-content-between">
+        <select class="form-select form-select-sm w-auto border-0 bg-transparent text-primary fw-bold" id="trad-source-lang">
+            <option value="auto">Detectar</option>
+            <option value="es">Español</option>
+            <option value="en">Inglés</option>
+            <option value="de">Alemán</option>
+            <option value="fr">Francés</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Portugués</option>
+        </select>
+        <button class="btn btn-sm btn-light rounded-circle" id="btn-trad-swap" title="Invertir idiomas">
+            <i class="bi bi-arrow-left-right text-muted"></i>
+        </button>
+        <select class="form-select form-select-sm w-auto border-0 bg-transparent text-success fw-bold" id="trad-target-lang">
+            <option value="es">Español</option>
+            <option value="en" selected>Inglés</option>
+            <option value="de">Alemán</option>
+            <option value="fr">Francés</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Portugués</option>
+        </select>
+    </div>
+
+    <!-- Áreas de Texto -->
+    <div class="traductor-body d-flex flex-column h-100 p-0">
+        <!-- Input -->
+        <div class="p-2 pt-3 flex-fill border-bottom position-relative">
+            <textarea id="trad-input" class="form-control border-0 bg-transparent h-100 w-100 resize-none shadow-none" placeholder="Escribe el texto aquí..." style="min-height: 80px;"></textarea>
+            <button class="btn btn-sm btn-icon btn-light position-absolute bottom-0 end-0 m-2 rounded-circle" id="btn-trad-clear" title="Borrar" style="display:none;">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        
+        <!-- Output -->
+        <div class="p-3 flex-fill bg-soft-panel position-relative">
+            <div id="trad-loading" class="position-absolute top-50 start-50 translate-middle d-none text-muted">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>Tradiciendo...
+            </div>
+            <textarea id="trad-output" class="form-control border-0 bg-transparent h-100 w-100 resize-none shadow-none text-success fw-medium fs-5" readonly placeholder="Traducción" style="min-height: 80px;"></textarea>
+        </div>
+    </div>
+
+    <!-- Resize Handle -->
+    <div class="traductor-resizer"></div>
+</div>

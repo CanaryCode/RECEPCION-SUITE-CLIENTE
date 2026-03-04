@@ -112,7 +112,7 @@
     <div id="navbar-container" class="mb-3 border-bottom pb-1">
       <!-- Navegación por Pestañas -->
       <ul class="nav nav-tabs border-0" id="mainTabs" role="tablist">
-        <li class="nav-item">
+        <li class="nav-item d-none">
           <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard-content"
             type="button">
             <span class="custom-tooltip" data-bs-placement="right" data-bs-title="Panel Principal">
@@ -402,6 +402,13 @@
             <div id="searchResults" class="search-results-dropdown d-none"></div>
           </div>
         </li>
+
+        <!-- Google Web Translator -->
+        <li class="nav-item d-flex align-items-center ms-1" title="Traductor de Página">
+          <div class="bg-white shadow-sm rounded" style="height: 38px; display: flex; align-items: center; justify-content: center; padding: 0 5px; flex-shrink: 0; min-width: 145px; border: 1px solid rgba(0,0,0,0.05);">
+            <div id="google_translate_element"></div>
+          </div>
+        </li>
       </ul>
     </div>
 
@@ -470,6 +477,14 @@
               data-bs-toggle="tooltip" data-bs-title="Herramientas y Configuración">
               <i class="bi bi-grid-3x3-gap-fill"></i>
               <span>Apps & Herramientas</span>
+            </a>
+          </div>
+
+          <div class="col-6 col-md">
+            <a href="javascript:void(0)" onclick="window.abrirTraductor()" class="btn-shortcut shortcut-primary"
+              data-bs-toggle="tooltip" data-bs-title="Traductor Rápido">
+              <i class="bi bi-translate"></i>
+              <span>Traductor</span>
             </a>
           </div>
         </div>
@@ -3459,6 +3474,18 @@
   <!-- CHAT GLOBAL -->
   <div id="chat-wrapper"></div>
 
+  <!-- GOOGLE TRANSLATE WIDGET INITIALIZATION -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: "es",
+        includedLanguages: "en,de,fr,it,pt,ru,nl,pl",
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, "google_translate_element");
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

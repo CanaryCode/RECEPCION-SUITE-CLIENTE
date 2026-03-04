@@ -169,9 +169,7 @@ const Calculadora = {
         };
 
         performCopy().then(() => {
-            Ui.showToast("Resultado copiado al portapapeles", "info");
-            
-            // Feedback visual en el botón
+            // Feedback visual silencioso en el botón
             const btn = document.getElementById('btn-calc-copy');
             if (btn) {
                 const icon = btn.querySelector('i');
@@ -185,7 +183,6 @@ const Calculadora = {
             }
         }).catch(err => {
             console.error('[Calculadora] Fallo al copiar:', err);
-            Ui.showToast("Error al copiar al portapapeles", "danger");
         });
     },
 
@@ -220,6 +217,11 @@ const Calculadora = {
             offset.x = e.clientX - win.offsetLeft;
             offset.y = e.clientY - win.offsetTop;
             win.style.transition = 'none'; // Quitar animaciones mientras se arrastra
+            
+            // Bring to front vs. translator
+            win.style.zIndex = '10710';
+            const traductor = document.getElementById('traductor-flotante');
+            if(traductor) traductor.style.setProperty('z-index', '10700', 'important');
         };
 
         document.onmousemove = (e) => {

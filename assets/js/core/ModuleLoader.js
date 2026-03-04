@@ -72,6 +72,12 @@ export class ModuleLoader {
             initFunction: 'inicializarConfiguracion',
             critical: false  // Cambiado a lazy loading - se carga cuando se navega
         },
+        'idle': {
+            selector: null,
+            importPath: 'assets/js/modules/idle.js',
+            initFunction: 'inicializarIdle',
+            critical: true
+        },
 
         // MÓDULOS LAZY (se cargan bajo demanda)
         'agenda': {
