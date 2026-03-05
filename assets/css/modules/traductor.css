@@ -58,6 +58,24 @@
     box-shadow: none !important;
 }
 
+/* Botón de limpiar flotante */
+#btn-trad-clear {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#btn-trad-clear:hover {
+    background-color: var(--bs-gray-100);
+    color: var(--bs-danger);
+}
+
 /* Esquina para redimensionar */
 .traductor-resizer {
     position: absolute;
@@ -80,4 +98,75 @@
     border-style: solid;
     border-width: 0 0 8px 8px;
     border-color: transparent transparent var(--bs-gray-400) transparent;
+}
+/* Animación para el icono de sonido */
+@keyframes pulse-fast {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse-fast {
+    animation: pulse-fast 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    display: inline-block;
+}
+
+.animate-spin {
+    animation: animate-spin 1s linear infinite;
+}
+
+@keyframes animate-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Estilos para los sliders (range) */
+.traductor-window input[type="range"] {
+    accent-color: var(--bs-primary);
+    cursor: pointer;
+    vertical-align: middle;
+    height: 1.2rem;
+}
+
+.traductor-window input[type="range"]:hover {
+    filter: brightness(1.1);
+}
+
+.traductor-window label {
+    user-select: none;
+    pointer-events: none;
+}
+
+.traductor-window span[id$="-val"] {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem !important;
+    font-weight: 800;
+    padding: 0.2rem 0.8rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 60px;
+    text-align: center;
+    border-radius: 6px !important;
+    letter-spacing: 0.5px;
+}
+
+/* Colores solidos para mejor visibilidad */
+.bg-primary-subtle { background-color: #007bff !important; color: white !important; }
+.bg-success-subtle { background-color: #28a745 !important; color: white !important; }
+
+#btn-trad-speak, #btn-trad-stop {
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+#btn-trad-speak:hover, #btn-trad-stop:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+#btn-trad-stop {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }

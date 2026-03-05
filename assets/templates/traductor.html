@@ -1,15 +1,12 @@
 <div id="traductor-flotante" class="traductor-window shadow-lg d-none">
-    <!-- Header / Drag Bar -->
+    <!-- Cabecera sin Sliders (Drag Zone Limpia) -->
     <div class="traductor-header d-flex justify-content-between align-items-center px-3 py-2">
         <div class="d-flex align-items-center gap-2 overflow-hidden">
             <i class="bi bi-translate text-primary"></i>
             <span class="fw-bold small text-truncate">Traductor Rápido</span>
         </div>
-        <div class="d-flex align-items-center gap-1">
-            <button class="btn btn-sm btn-link text-primary p-0 me-2" id="btn-trad-speak" title="Escuchar Traducción">
-                <i class="bi bi-volume-up-fill fs-5"></i>
-            </button>
-            <button class="btn btn-sm btn-link text-muted p-0 me-2" id="btn-trad-copy" title="Copiar Traducción">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-link text-muted p-0 me-1" id="btn-trad-copy" title="Copiar Traducción">
                 <i class="bi bi-clipboard fs-6"></i>
             </button>
             <button class="btn btn-sm btn-link text-danger p-0" id="btn-trad-close">
@@ -42,12 +39,40 @@
         </select>
     </div>
 
+    <!-- Controles de Audio y Velocidad -->
+    <div class="px-3 py-1 bg-white border-bottom d-flex align-items-center gap-2 small text-muted">
+        <div class="d-flex align-items-center gap-2 flex-grow-1">
+            <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-link text-primary p-0" id="btn-trad-speak" title="Escuchar">
+                    <i class="bi bi-play-circle-fill fs-5"></i>
+                </button>
+                <button class="btn btn-sm btn-link text-danger p-0 d-none" id="btn-trad-stop" title="Detener">
+                    <i class="bi bi-stop-circle-fill fs-5"></i>
+                </button>
+            </div>
+            <div class="d-flex flex-column flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="mb-0" style="font-size: 0.65rem;">Volumen</label>
+                    <span id="trad-vol-val" class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.65rem;">80%</span>
+                </div>
+                <input type="range" id="trad-volume" class="form-range" min="0" max="1" step="0.1" value="0.8">
+            </div>
+        </div>
+        <div class="d-flex flex-column" style="width: 90px;">
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="mb-0" style="font-size: 0.65rem;">Velocidad</label>
+                <span id="trad-speed-val" class="badge rounded-pill bg-success-subtle text-success border border-success-subtle" style="font-size: 0.65rem;">x0.9</span>
+            </div>
+            <input type="range" id="trad-speed" class="form-range" min="0.5" max="2" step="0.25" value="0.9">
+        </div>
+    </div>
+
     <!-- Áreas de Texto -->
     <div class="traductor-body d-flex flex-column h-100 p-0">
         <!-- Input -->
         <div class="p-2 pt-3 flex-fill border-bottom position-relative">
             <textarea id="trad-input" class="form-control border-0 bg-transparent h-100 w-100 resize-none shadow-none" placeholder="Escribe el texto aquí..." style="min-height: 80px;"></textarea>
-            <button class="btn btn-sm btn-icon btn-light position-absolute bottom-0 end-0 m-2 rounded-circle" id="btn-trad-clear" title="Borrar" style="display:none;">
+            <button class="btn btn-sm btn-icon btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow-sm" id="btn-trad-clear" title="Borrar" style="display:none; z-index: 5;">
                 <i class="bi bi-x"></i>
             </button>
         </div>

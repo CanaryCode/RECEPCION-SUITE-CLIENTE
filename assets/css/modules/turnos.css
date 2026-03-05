@@ -1,0 +1,373 @@
+/* MÓDULO DE TURNOS - ESTILOS REFINADOS */
+
+.turnos-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+}
+
+.turnos-table th {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 700;
+}
+
+.turnos-table td {
+    padding: 0;
+    border: 1px solid #f1f2f6;
+    height: 60px;
+    vertical-align: middle;
+}
+
+.user-cell {
+    background: #fff;
+    font-weight: 700;
+    text-align: left !important;
+    padding-left: 20px !important;
+    width: 200px;
+    color: #2c3e50;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+/* Celdas de Turnos */
+.shift-cell {
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; /* Para marcadores P/D */
+}
+
+/* Marcadores de Turno Pedido / Debido */
+.shift-marker-pedido, .shift-marker-debido {
+    position: absolute;
+    top: 0px;
+    font-size: 8px;
+    width: 12px;
+    height: 12px;
+    display: block; /* Simplificado de flex */
+    text-align: center;
+    line-height: 12px;
+    border-radius: 50%;
+    z-index: 5;
+    font-weight: bold;
+    color: white;
+}
+
+.shift-marker-pedido {
+    right: -2px;
+    background-color: #3867d6 !important;
+    color: white !important;
+}
+
+.shift-marker-debido {
+    left: -2px;
+    background-color: #eb3b5a !important;
+    color: white !important;
+}
+
+.shift-cell:hover {
+    filter: contrast(1.2) brightness(0.95);
+    transform: scale(0.98);
+}
+
+/* Colores de Turnos (Vibrantes) */
+.shift-manana { background-color: #ffd93d !important; color: #333; }
+.shift-tarde { background-color: #6bc1ff !important; color: #fff; }
+.shift-noche { background-color: #4d089a !important; color: #fff; }
+.shift-libre { background-color: #e2f6d3 !important; color: #2d5a27; }
+.shift-vacaciones { background-color: #ff6b6b !important; color: #fff; }
+.shift-baja { background-color: #adb5bd !important; color: #fff; }
+.shift-partido { background-color: #ff9f43 !important; color: #fff; }
+.shift-extra { background-color: #20c997 !important; color: #fff; }
+.shift-especial { background-color: #fd7e14 !important; color: #fff; }
+.shift-practicas { background-color: #a55eea !important; color: #fff; }
+.shift-reservas { background-color: #2bcbba !important; color: #fff; }
+
+.shift-none { background-color: #fafafa; color: #ddd; font-weight: 400; }
+
+/* Legend */
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    margin-right: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Weekly Navigation */
+.week-navigation .btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.current-week-label {
+    min-width: 220px;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Espaciado para evitar "apiñamiento" */
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Incrementado para más aire */
+}
+
+.quadrant-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px; /* Mas padding */
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Botón Auto-asignar - Estilo Estándar pero con Toque Especial */
+#btnAutoAssign {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: #fff;
+    border: none;
+    font-weight: 800;
+    padding: 12px 30px;
+    min-width: 180px;
+    font-size: 0.95rem;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+#btnAutoAssign:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+    filter: brightness(1.15);
+}
+
+#btnAutoAssign::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    transform: scale(0);
+    transition: transform 0.6s ease-out;
+    pointer-events: none;
+}
+
+#btnAutoAssign:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+#btnManageUsers {
+    transition: all 0.3s ease;
+}
+
+#btnManageUsers:hover {
+    background-color: #17a2b8;
+    color: white;
+    transform: scale(1.1);
+}
+/* Marcadores de Turno Pedido / Debido Mejorados */
+.shift-marker-pedido, .shift-marker-debido {
+    position: absolute;
+    bottom: 2px;
+    font-size: 9px;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    z-index: 5;
+    font-weight: 900;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.shift-marker-pedido {
+    top: auto;
+    right: 2px;
+    background: linear-gradient(135deg, #4b7bec, #3867d6) !important;
+}
+
+.shift-marker-debido {
+    top: auto;
+    left: 2px;
+}
+
+.shift-marker-debido[style*="background-color: #636e72"] {
+    background: linear-gradient(135deg, #718093, #2f3640) !important;
+}
+
+.shift-marker-debido:not([style*="background-color"]) {
+    background: linear-gradient(135deg, #ff4757, #eb3b5a) !important;
+}
+
+/* Stats UI */
+.turnos-view {
+    transition: opacity 0.3s ease;
+}
+
+#chartTurnosPersona, #chartTurnosSemana {
+    max-height: 400px;
+}
+
+/* Annual View Heatmap */
+.day-dot {
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.day-dot:hover {
+    transform: scale(1.5);
+    z-index: 10;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+/* Drag & Drop Fill */
+.shift-cell.drag-origin {
+    border: 2px solid #0d6efd !important;
+    position: relative;
+    z-index: 2;
+}
+
+.shift-cell.drag-target {
+    animation: fillPulse 0.3s ease;
+}
+
+@keyframes fillPulse {
+    0% { background-color: #0d6efd; color: white; }
+    100% { }
+}
+
+@media print {
+    .turnos-table td, .day-dot {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* REORDENACIÓN DE USUARIOS DRAG-AND-DROP */
+.user-annual-section.dragging {
+    opacity: 0.5;
+    border: 2px dashed #0d6efd !important;
+    background-color: #f8f9fa !important;
+}
+
+.user-annual-section.drag-over {
+    border: 2px solid #0d6efd !important;
+    transform: translateY(5px);
+    transition: transform 0.2s ease;
+}
+
+.user-annual-section h6 {
+    cursor: grab;
+}
+
+.user-annual-section h6:active {
+    cursor: grabbing;
+}
+
+/* VISTA MENSUAL - COMPACTA (MULTITABLA) */
+.monthly-week-block {
+    margin-bottom: 25px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    overflow: hidden;
+}
+
+.monthly-week-title {
+    background: #f8f9fa;
+    padding: 8px 15px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #0d6efd;
+    border-bottom: 1px solid #eee;
+}
+
+.turnos-table-compact {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.turnos-table-compact th {
+    background: #fff;
+    font-size: 0.75rem;
+    padding: 10px 5px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+    color: #666;
+}
+
+.turnos-table-compact td {
+    height: 45px; /* Más compacto */
+    border: 1px solid #f8f9fa;
+    padding: 0;
+}
+
+.compact-user-cell {
+    width: 140px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding-left: 10px;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+.calendar-day.other-month {
+    background-color: #fcfcfc !important;
+    opacity: 0.4;
+    cursor: default;
+}
+
+.calendar-day.other-month * {
+    filter: grayscale(1);
+}
+
+/* FORZAR COLORES EN IMPRESIÓN */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .shift-manana { background-color: #ffd93d !important; border: 1px solid #e6c200 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-tarde   { background-color: #6bc1ff !important; border: 1px solid #4da3ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-noche   { background-color: #4d089a !important; border: 1px solid #3c067a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-libre   { background-color: #e2f6d3 !important; border: 1px solid #c8e9b0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-vacaciones { background-color: #ff6b6b !important; border: 1px solid #e65a5a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-baja    { background-color: #adb5bd !important; border: 1px solid #949ca3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-partido { background-color: #ff9f43 !important; border: 1px solid #e68a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-extra   { background-color: #20c997 !important; border: 1px solid #1ba87e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-especial { background-color: #fd7e14 !important; border: 1px solid #e56d0d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-practicas { background-color: #a55eea !important; border: 1px solid #8e44ad !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shift-reservas { background-color: #2bcbba !important; border: 1px solid #0fb9b1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

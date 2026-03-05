@@ -617,6 +617,35 @@ export const Ui = {
     },
 
     /**
+     * MOSTRAR LOADING GLOBAL
+     */
+    showLoading: (message = "Cargando...") => {
+        let loader = document.getElementById('global-ui-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.id = 'global-ui-loader';
+            loader.style = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(3px);';
+            loader.innerHTML = `
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                <h5 class="fw-bold text-primary animate__animated animate__pulse animate__infinite" id="loader-msg">${message}</h5>
+            `;
+            document.body.appendChild(loader);
+        } else {
+            const msgEl = loader.querySelector('#loader-msg');
+            if (msgEl) msgEl.innerText = message;
+            loader.style.display = 'flex';
+        }
+    },
+
+    /**
+     * OCULTAR LOADING GLOBAL
+     */
+    hideLoading: () => {
+        const loader = document.getElementById('global-ui-loader');
+        if (loader) loader.style.display = 'none';
+    },
+
+    /**
      * MOSTRAR PROMPT (Entrada de texto)
      */
     showPrompt: async (message, type = 'text') => {

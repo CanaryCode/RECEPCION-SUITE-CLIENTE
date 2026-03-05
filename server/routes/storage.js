@@ -51,6 +51,8 @@ const TABLE_MAP = {
     'gallery_favorites': 'gallery_favorites',
     'calendario_eventos': 'calendario_eventos',
     'recepcionistas': 'usuarios_recepcion',
+    'turnos_empleados': 'turnos_empleados',
+
 
     // ALIAS PARA COMPATIBILIDAD O LEGACY
     'riu_agenda_contactos': 'agenda_contactos',
@@ -157,10 +159,11 @@ router.get('/:key', async (req, res) => {
                     }
                     // 2. FECHAS (Sólo DATE, no TIMESTAMP)
                     if (val instanceof Date && col !== 'created_at' && col !== 'updated_at' && col !== 'actualizado_en') {
-                        const y = val.getFullYear();
-                        const m = String(val.getMonth() + 1).padStart(2, '0');
-                        const d = String(val.getDate()).padStart(2, '0');
-                        newRow[col] = `${y}-${m}-${d}`;
+                        // Usamos el formato local para evitar desfases UTC
+                        const year = val.getFullYear();
+                        const month = String(val.getMonth() + 1).padStart(2, '0');
+                        const day = String(val.getDate()).padStart(2, '0');
+                        newRow[col] = `${year}-${month}-${day}`;
                     }
                 });
                 return newRow;

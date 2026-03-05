@@ -263,5 +263,17 @@ export const Utils = {
             };
             reader.onerror = reject;
         });
+    },
+
+    /**
+     * OBTENER NÚMERO DE SEMANA ISO
+     * Calcula el número de la semana actual según el estándar ISO-8601.
+     */
+    getWeekNumber: (d) => {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return weekNo;
     }
 };

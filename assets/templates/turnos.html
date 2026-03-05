@@ -1,0 +1,384 @@
+<!-- Encabezado Discreto (Estilo estándar de la app) -->
+<div id="turnos-general-header" class="d-print-none">
+    <h4 class="module-title-discrete animate__animated animate__fadeIn">
+        <i class="bi bi-calendar-range-fill me-2 text-primary"></i>Gestión de Turnos
+    </h4>
+</div>
+
+<!-- Barra de Herramientas (Standard Module Toolbar) -->
+<div class="module-toolbar d-flex justify-content-between align-items-center p-2 mb-3 no-print">
+    <!-- Selectores de Vista (Izquierda) -->
+    <div class="toolbar-group">
+        <div class="btn-group shadow-sm" role="group">
+            <button class="btn btn-outline-primary active fw-bold" id="btnVistaCuadrante" onclick="TurnosManager.cambiarVista('cuadrante')" data-bs-toggle="tooltip" title="Vista de Cuadrante Semanal">
+                <i class="bi bi-grid-3x3 me-2"></i>Cuadrante
+            </button>
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaMensual" onclick="TurnosManager.cambiarVista('mensual')" data-bs-toggle="tooltip" title="Vista Mensual de Calendario">
+                <i class="bi bi-calendar-month me-2"></i>Mensual
+            </button>
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaAnual" onclick="TurnosManager.cambiarVista('anual')" data-bs-toggle="tooltip" title="Vista Anual Heatmap">
+                <i class="bi bi-calendar3 me-2"></i>Anual
+            </button>
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaEstadisticas" onclick="TurnosManager.cambiarVista('stats')" data-bs-toggle="tooltip" title="Estadísticas y Gráficas">
+                <i class="bi bi-bar-chart-fill me-2"></i>Estadísticas
+            </button>
+        </div>
+    </div>
+
+    <!-- Acciones (Derecha) -->
+    <div class="toolbar-group">
+        <button class="btn btn-outline-dark btn-sm fw-bold shadow-sm" onclick="TurnosManager.imprimirTurnos()">
+            <i class="bi bi-printer me-2"></i>Imprimir
+        </button>
+    </div>
+</div>
+
+<!-- CONTENEDOR PRINCIPAL -->
+<div id="turnos-main-container" class="animate__animated animate__fadeInUp">
+    
+    <!-- VISTA 1: CUADRANTE SEMANAL -->
+    <div id="view-cuadrante" class="turnos-view">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white quadrant-header-content">
+                <div class="toolbar-group">
+                    <div class="week-navigation d-flex align-items-center gap-2">
+                        <button class="btn btn-light btn-sm rounded-circle border" id="prevWeekBtn">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <input type="date" id="weekPicker" class="form-control form-control-sm w-auto fw-bold text-primary border-primary" style="max-width: 150px;">
+                        <div class="current-week-label text-primary fs-6" id="currentWeekRange">Semana -- / --</div>
+                        <button class="btn btn-light btn-sm rounded-circle border" id="nextWeekBtn">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                        
+                        <!-- Botón Auto-asignar (Oculto por defecto, visible en edición) -->
+                        <button id="btnAutoAssign" class="btn btn-outline-info btn-sm d-none ms-3 fw-bold" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
+                            <i class="bi bi-magic me-1"></i> Auto-asignar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Acciones de Edición (Movidas al Cuadrante) -->
+                <div class="toolbar-group">
+                    <div class="quadrant-actions d-flex gap-2 align-items-center">
+                        <button class="btn btn-primary btn-sm fw-bold shadow-sm" id="btnEditTurnos" onclick="TurnosManager.handleEditRequest()">
+                            <i class="bi bi-pencil-fill me-1"></i>Modificar
+                        </button>
+                        <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos" onclick="TurnosManager.saveChanges()">
+                            <i class="bi bi-check-lg me-1"></i>Guardar
+                        </button>
+                        <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit" onclick="TurnosManager.cancelEdit()">
+                            Cancelar
+                        </button>
+                        <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" data-bs-toggle="modal" data-bs-target="#modalManageUsers" title="Gestionar Personal">
+                            <i class="bi bi-people me-1"></i>Personal
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos" onclick="TurnosManager.loadData().then(() => TurnosManager.render())">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek" onclick="TurnosManager.difundirSemana()" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
+                            <i class="bi bi-share-fill me-1"></i>Difundir
+                        </button>
+                        <div class="text-muted small ms-2 d-none d-md-block" id="edit-info-label">
+                            <i class="bi bi-info-circle me-1"></i> Haz clic en "Modificar"
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="turnos-table w-100">
+                        <thead>
+                            <tr id="turnosTableHeader">
+                                <th class="user-cell">Personal / Reception</th>
+                                <!-- Días dinámicos -->
+                            </tr>
+                        </thead>
+                        <tbody id="turnosTableBody">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="turnos-legend card border-0 shadow-sm p-3">
+            <h6 class="fw-bold mb-3 small text-muted text-uppercase">Leyenda de Turnos</h6>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="legend-item"><div class="legend-color shift-manana"></div> Mañana</div>
+                <div class="legend-item"><div class="legend-color shift-tarde"></div> Tarde</div>
+                <div class="legend-item"><div class="legend-color shift-noche"></div> Noche</div>
+                <div class="legend-item"><div class="legend-color shift-partido"></div> H. Partido</div>
+                <div class="legend-item"><div class="legend-color shift-libre"></div> Libre</div>
+                <div class="legend-item"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
+                <div class="legend-item"><div class="legend-color shift-baja"></div> Baja</div>
+                <div class="legend-item"><div class="legend-color shift-extra"></div> Extra</div>
+                <div class="legend-item"><div class="legend-color shift-especial"></div> Especial</div>
+                <div class="legend-item"><div class="legend-color shift-practicas"></div> Prácticas</div>
+                <div class="legend-item"><div class="legend-color shift-reservas"></div> Reservas</div>
+                <div class="legend-item d-flex align-items-center gap-1">
+                    <div class="position-relative" style="width:16px;height:16px;">
+                        <span class="badge shift-marker-pedido" style="top:0;right:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">P</span>
+                    </div>
+                    <span>Pedido</span>
+                </div>
+                <div class="legend-item d-flex align-items-center gap-1">
+                    <div class="position-relative" style="width:16px;height:16px;">
+                        <span class="badge shift-marker-debido" style="top:0;left:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">D</span>
+                    </div>
+                    <span>Debido</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 2: ESTADÍSTICAS -->
+    <div id="view-stats" class="turnos-view d-none">
+        <div class="row g-4">
+            <!-- Gráfica por Persona -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-person-check me-2 text-primary"></i>Distribución de Turnos por Persona</h6>
+                    </div>
+                    <div class="card-body" style="min-height: 400px; cursor: zoom-in;" onclick="TurnosManager.zoomChart('chartTurnosPersona', 'Distribución de Turnos por Persona')">
+                        <canvas id="chartTurnosPersona"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resumen Rápido -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-calendar-week me-2 text-primary"></i>Días de la Semana</h6>
+                    </div>
+                    <div class="card-body" style="cursor: zoom-in;" onclick="TurnosManager.zoomChart('chartTurnosSemana', 'Días de la Semana')">
+                        <canvas id="chartTurnosSemana"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Acumulados -->
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-table me-2 text-primary"></i>Tabla de Acumulados Anuales</h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-sort="user" style="cursor:pointer" data-bs-toggle="tooltip" title="Nombre del Empleado">User <i class="bi bi-sort-alpha-down small text-muted"></i></th>
+                                    <th data-sort="mananas" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos de Mañana">M</th>
+                                    <th data-sort="tardes" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos de Tarde">T</th>
+                                    <th data-sort="noches" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos de Noche">N</th>
+                                    <th data-sort="partidos" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos Partidos">P</th>
+                                    <th data-sort="extra" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos Extra">E</th>
+                                    <th data-sort="especial" style="cursor:pointer" data-bs-toggle="tooltip" title="Otros tipos de turno">Esp.</th>
+                                    <th data-sort="libres" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días Libres">Libres</th>
+                                    <th data-sort="vacaciones" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días de Vacaciones">Vaca.</th>
+                                    <th data-sort="baja" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días de Baja">Baja</th>
+                                    <th data-sort="trabajado" class="text-primary fw-bold" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días trabajados (M, T, N, P, E, Esp)">Trabajado</th>
+                                    <th data-sort="pedidos" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos Pedidos">Ped.</th>
+                                    <th data-sort="debidos" style="cursor:pointer" data-bs-toggle="tooltip" title="Balance de días Debidos (Empresa vs Trabajador)">Debido</th>
+                                    <th data-sort="ytd" style="cursor:pointer" data-bs-toggle="tooltip" title="Acumulado en el año actual (Year To Date)">Acum. Anual</th>
+                                    <th data-sort="total" class="text-end pe-4" style="cursor:pointer" data-bs-toggle="tooltip" title="Total histórico de turnos registrados">Histórico</th>
+                                </tr>
+                            </thead>
+                            <tbody id="statsTableBody">
+                                <!-- Datos dinámicos -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 3: MENSUAL (Calendar Grid) -->
+    <div id="view-mensual" class="turnos-view d-none">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-calendar-month me-2"></i>Vista Mensual</h6>
+                    <div class="d-flex gap-2">
+                        <select id="selectMensualMonth" class="form-select form-select-sm" style="width: 140px;"></select>
+                        <select id="selectMensualYear" class="form-select form-select-sm" style="width: 100px;"></select>
+                    </div>
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Días de otros meses en color tenue
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="monthly-compact-container" class="p-3">
+                    <!-- JS Render: Las tablas de las semanas se generarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 4: ANUAL (Heatmap/Grid) -->
+    <div id="view-anual" class="turnos-view d-none">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-calendar3 me-2 text-primary"></i>Cuadrante Anual <span id="labelAnualYear"></span></h6>
+                <div class="d-flex gap-2">
+                    <select id="selectAnualUser" class="form-select form-select-sm" style="width: 200px;">
+                        <option value="all">Todos los Empleados</option>
+                    </select>
+                    <select id="selectAnualYear" class="form-select form-select-sm" style="width: 100px;">
+                        <!-- JS Years -->
+                    </select>
+                </div>
+            </div>
+            <div class="card-body p-0 overflow-auto">
+                <div id="annual-heatmap-container" class="p-4" style="min-width: 1000px;">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal PIN Administrador -->
+<div class="modal fade" id="modalPinTurnos" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark text-white py-2">
+                <h6 class="modal-title fw-bold small"><i class="bi bi-shield-lock me-2"></i>Seguridad</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-person-badge text-primary" style="font-size: 2rem;"></i>
+                </div>
+                <h6 class="fw-bold mb-3">PIN de Administrador</h6>
+                <input type="password" id="inputPinTurnos" class="form-control form-control-lg text-center fw-bold mb-0" 
+                       maxlength="4" placeholder="••••" style="letter-spacing: 0.5rem; font-size: 1.5rem;">
+                <div id="pin-error-turnos" class="text-danger small mt-2 d-none">PIN Incorrecto</div>
+            </div>
+            <div class="modal-footer border-0 p-3 pt-0">
+                <button type="button" id="btnConfirmPinTurnos" class="btn btn-primary w-100 fw-bold">Desbloquear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Selección de Turno (Mismo que antes, pero más compacto) -->
+<div class="modal fade" id="shiftSelectorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title fw-bold small">Asignar Turno</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="list-group list-group-flush small">
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Mañana">
+                        <div class="legend-color shift-manana me-2" style="width:14px;height:14px;"></div> Mañana
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Tarde">
+                        <div class="legend-color shift-tarde me-2" style="width:14px;height:14px;"></div> Tarde
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Noche">
+                        <div class="legend-color shift-noche me-2" style="width:14px;height:14px;"></div> Noche
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Horario Partido">
+                        <div class="legend-color shift-partido me-2" style="width:14px;height:14px;"></div> H. Partido
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Libre">
+                        <div class="legend-color shift-libre me-2" style="width:14px;height:14px;"></div> Libre
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Vacaciones">
+                        <div class="legend-color shift-vacaciones me-2" style="width:14px;height:14px;"></div> Vacaciones
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Baja">
+                        <div class="legend-color shift-baja me-2" style="width:14px;height:14px;"></div> Baja
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Extra">
+                        <div class="legend-color shift-extra me-2" style="width:14px;height:14px;"></div> Extra
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Especial">
+                        <div class="legend-color shift-especial me-2" style="width:14px;height:14px;"></div> Especial
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Prácticas">
+                        <div class="legend-color shift-practicas me-2" style="width:14px;height:14px;"></div> Prácticas
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center py-2" data-shift="Reservas">
+                        <div class="legend-color shift-reservas me-2" style="width:14px;height:14px;"></div> Reservas
+                    </button>
+                    
+                    <div class="list-group-item bg-light py-2">
+                        <div class="mt-2 pt-2 border-top">
+                            <label class="small fw-bold text-muted mb-2">Balance de Días (Debidos/Pedidos)</label>
+                            <div class="form-check mb-1">
+                                <input class="form-check-input" type="checkbox" id="checkShiftPedido">
+                                <label class="form-check-label small fw-bold text-primary" for="checkShiftPedido">
+                                    <i class="bi bi-star-fill me-1"></i> Turno Pedido
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <div class="btn-group btn-group-sm w-100" role="group">
+                                    <input type="radio" class="btn-check" name="debidoType" id="debidoEmpresa" value="1">
+                                    <label class="btn btn-outline-success" for="debidoEmpresa" title="Empresa debe (Extra)">Me Deben <i class="bi bi-plus-circle"></i></label>
+
+                                    <input type="radio" class="btn-check" name="debidoType" id="debidoTrabajador" value="-1">
+                                    <label class="btn btn-outline-danger" for="debidoTrabajador" title="Trabajador debe (Mi libre)">Debo <i class="bi bi-dash-circle"></i></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="list-group-item list-group-item-action text-danger py-2 fw-bold" data-shift="">
+                        <i class="bi bi-eraser-fill me-2"></i> Borrar Turno
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Visualización de Gráficas Ampliadas -->
+<div class="modal fade" id="modalZoomChart" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-white border-0 py-3">
+                <h5 class="modal-title fw-bold text-primary" id="zoomChartTitle">Visualización de Gráfica</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div style="height: 70vh; width: 100%;">
+                    <canvas id="zoomChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GESTIÓN PERSONAL -->
+<div class="modal fade" id="modalManageUsers" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-people me-2"></i>Gestionar Personal</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="input-group mb-4 shadow-sm">
+                    <input type="text" id="inputNewReceptionist" class="form-control" placeholder="Nombre completo...">
+                    <button class="btn btn-primary fw-bold" id="btnAddReceptionist">Añadir</button>
+                </div>
+                
+                <h6 class="fw-bold text-muted small text-uppercase mb-3">Lista de empleados actuales</h6>
+                <div id="receptionist-list-container" class="list-group list-group-flush rounded border">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0 justify-content-center">
+                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Los cambios se guardan en la configuración global.</small>
+            </div>
+        </div>
+    </div>
+</div>

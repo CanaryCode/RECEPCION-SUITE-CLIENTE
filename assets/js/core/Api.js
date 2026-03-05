@@ -25,8 +25,8 @@ export const Api = {
         if (remoteUrl && !isLocalOnly) {
             baseUrl = remoteUrl;
         } else if (isLocalOnly) {
-            // SIEMPRE usar puerto 3002 para peticiones locales al agente
-            baseUrl = 'http://localhost:3002';
+            // Utilizar la URL segura negociada en validateStation()
+            baseUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://127.0.0.1:3001';
             isForcedLocal = true;
         }
 
@@ -296,9 +296,7 @@ export const Api = {
      */
     async getFromAgent(endpoint) {
         try {
-            // SIEMPRE usar puerto 3002 (HTTP local) para peticiones directas al agente
-            // El puerto 3001 es HTTPS y puede dar problemas con certificados
-            let agentUrl = 'http://localhost:3002';
+            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://127.0.0.1:3001';
             const cleanEndpoint = endpoint.replace(/^\/+/, '');
             const url = `${agentUrl}/${cleanEndpoint}`;
 
@@ -327,9 +325,7 @@ export const Api = {
      */
     async postToAgent(endpoint, data) {
         try {
-            // SIEMPRE usar puerto 3002 (HTTP local) para peticiones directas al agente
-            // El puerto 3001 es HTTPS y puede dar problemas con certificados
-            let agentUrl = 'http://localhost:3002';
+            const agentUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL') || 'http://127.0.0.1:3001';
             const cleanEndpoint = endpoint.replace(/^\/+/, '');
             const url = `${agentUrl}/${cleanEndpoint}`;
 

@@ -77,6 +77,7 @@ class AdminApp {
             await this.refreshStatus();
             await this.refreshLogs();
             await this.refreshConnections();
+            await this.refreshActiveSessions();
             this.startPolling();
         } else {
             this.showLogin();
@@ -91,6 +92,7 @@ class AdminApp {
         this.statusInterval = setInterval(() => this.refreshStatus(), 8000);
         this.logInterval = setInterval(() => this.refreshLogs(), 8000);
         this.connInterval = setInterval(() => this.refreshConnections(), 10000);
+        this.sessionInterval = setInterval(() => this.refreshActiveSessions(), 10000);
     }
 
     updateClock() {
@@ -308,6 +310,7 @@ class AdminApp {
         bindAction('btn-run-tests', () => this.executeAction('run-tests', 'local'));
         bindAction('btn-logs-refresh', () => this.refreshLogs(true));
         bindAction('btn-connections-refresh', () => this.refreshConnections(true));
+        bindAction('btn-sessions-refresh', () => this.refreshActiveSessions(true));
 
         if (this.loginBtn) {
             this.loginBtn.onclick = () => this.handleLogin();
@@ -460,8 +463,82 @@ class AdminApp {
                 this.refreshStatus();
                 setTimeout(() => this.refreshLogs(true), 1500);
                 setTimeout(() => this.refreshConnections(true), 2000);
+                setTimeout(() => this.refreshActiveSessions(true), 2500);
             }, 2500);
         }
+    }
+
+    async refreshActiveSessions(manual = false) {
+        if (this.isRefreshingSessions) return;
+        this.isRefreshingSessions = true;
+
+        const btn = document.getElementById('btn-sessions-refresh');
+        if (manual && btn) btn.classList.add('btn-loading');
+
+        try {
+            const res = await this.secureFetch('/api/admin/active-sessions-v2', { timeout: 8000 });
+            if (res.ok) {
+                const data = await res.json();
+                this.renderActiveSessions(data.sessions || []);
+            }
+        } catch (e) {
+            console.warn('[ADMIN] Error refreshing active sessions:', e);
+        } finally {
+            if (btn) btn.classList.remove('btn-loading');
+            this.isRefreshingSessions = false;
+        }
+    }
+
+    renderActiveSessions(sessions) {
+        const body = document.getElementById('sessions-table-body');
+        const countEl = document.getElementById('active-sessions-count');
+        if (!body) return;
+
+        if (countEl) countEl.textContent = `${sessions.length} ACTIVAS`;
+
+        if (sessions.length === 0) {
+            body.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-secondary italic">No hay sesiones WebSocket activas en este momento.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = sessions.map(s => {
+            const time = new Date(s.connectedAt).toLocaleTimeString();
+            const date = new Date(s.connectedAt).toLocaleDateString();
+            
+            // User Agent Parser simplificado
+            let browser = 'Unknown';
+            let icon = 'bi-browser-chrome';
+            if (s.ua.includes('Firefox')) { browser = 'Firefox'; icon = 'bi-browser-firefox'; }
+            else if (s.ua.includes('Edg/')) { browser = 'Edge'; icon = 'bi-browser-edge'; }
+            else if (s.ua.includes('Chrome')) { browser = 'Chrome'; icon = 'bi-browser-chrome'; }
+            else if (s.ua.includes('Safari')) { browser = 'Safari'; icon = 'bi-browser-safari'; }
+            
+            const isGuest = s.username === 'Guest';
+            const userDisplay = isGuest 
+                ? `<span class="text-secondary"><i class="bi bi-person-dash me-2"></i>Invitado</span>`
+                : `<span class="text-primary fw-bold"><i class="bi bi-person-check-fill me-2"></i>${s.username}</span>`;
+
+            return `
+                <tr class="animate-fade-in">
+                    <td class="ps-4">${userDisplay}</td>
+                    <td><code class="text-success small">${s.ip}</code></td>
+                    <td><span class="badge bg-dark border border-secondary fw-normal"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${s.location}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="bi ${icon} me-2 text-info"></i>
+                            <div class="small">
+                                <div class="fw-bold">${browser}</div>
+                                <div class="text-secondary" style="font-size: 0.7rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${s.ua}">${s.ua}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="fw-bold">${time}</div>
+                        <div class="text-secondary" style="font-size: 0.7rem;">${date}</div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     async refreshConnections(manual = false) {

@@ -44,6 +44,8 @@
 
   <!-- MÓDULO DE CALENDARIO -->
   <link rel="stylesheet" href="assets/css/modules/calendario.css" />
+  <link rel="stylesheet" href="assets/css/modules/turnos.css" />
+
 
   <!-- CARGA FINAL DE ESTILOS DE IMPRESIÓN (PRIORIDAD MÁXIMA) -->
   <link rel="stylesheet" href="assets/css/print.css" media="print" />
@@ -203,6 +205,17 @@
                     class="bi bi-calendar3 me-2"></i>Calendario</span>
               </button>
             </li>
+            <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#turnos-content" onclick="
+                    import('./assets/js/modules/turnos.js').then(
+                      (m) => m.TurnosManager.inicializar(),
+                    )
+                  ">
+                <span data-tooltip="true" data-bs-placement="right" data-bs-title="Asignación de turnos del personal"><i
+                    class="bi bi-calendar-range-fill me-2"></i>Turnos de Personal</span>
+              </button>
+            </li>
+
             <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#impresion-content" onclick="
                     import('./assets/js/modules/Impresion.js').then(
@@ -751,6 +764,14 @@
           <p class="mt-2 text-muted">Cargando Calendario...</p>
         </div>
       </div>
+
+      <div class="tab-pane fade" id="turnos-content" role="tabpanel">
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Turnos...</p>
+        </div>
+      </div>
+
 
       <!-- NUEVO MÓDULO GUÍA INTERACTIVA -->
       <div class="tab-pane fade bg-soft-panel" id="guia-interactiva-content" role="tabpanel">

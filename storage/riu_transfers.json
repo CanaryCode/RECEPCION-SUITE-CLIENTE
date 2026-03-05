@@ -1,20 +1,5 @@
 [
     {
-        "transfer_id": "TRF-D",
-        "fecha": "2026-03-02",
-        "hora": "05:00",
-        "habitacion": "410",
-        "tipo": "TAXI",
-        "pax": 4,
-        "destino": "Aeropuerto Norte",
-        "nombre_cliente": "Fam. Smith",
-        "externo": false,
-        "notas": "Mucha maleta",
-        "compania": null,
-        "vuelo": null,
-        "autor": "Noche"
-    },
-    {
         "transfer_id": "TRF-H",
         "fecha": "2026-03-02",
         "hora": "08:00",
@@ -165,18 +150,18 @@
         "autor": "Antonio"
     },
     {
-        "transfer_id": 1772583364042,
+        "transfer_id": "1772583364042",
         "fecha": "2026-03-04",
         "hora": "05:55",
         "habitacion": "344",
-        "nombre_cliente": "",
-        "externo": false,
         "tipo": "TAXI",
         "pax": 1,
         "destino": "Aeropuerto Norte",
-        "notas": "",
-        "autor": "Antonio",
-        "creadoEn": "2026-03-04T00:16:04.042Z",
-        "actualizadoEn": "2026-03-04T00:16:04.042Z"
+        "nombre_cliente": null,
+        "externo": false,
+        "notas": null,
+        "compania": null,
+        "vuelo": null,
+        "autor": "Antonio"
     }
 ]

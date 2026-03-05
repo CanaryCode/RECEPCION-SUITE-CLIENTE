@@ -1,0 +1,5077 @@
+[
+    {
+        "id": 1,
+        "usuario": "Alberto",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 2,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 3,
+        "usuario": "Antonio",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 4,
+        "usuario": "Carmen",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 5,
+        "usuario": "Domingo",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 6,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 7,
+        "usuario": "Javi",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 8,
+        "usuario": "Marta",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 9,
+        "usuario": "Nerea",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 10,
+        "usuario": "Pavel",
+        "fecha": "2026-01-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 11,
+        "usuario": "Alberto",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 12,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 13,
+        "usuario": "Antonio",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 14,
+        "usuario": "Carmen",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 15,
+        "usuario": "Domingo",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 16,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 17,
+        "usuario": "Javi",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 18,
+        "usuario": "Marta",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 19,
+        "usuario": "Nerea",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 20,
+        "usuario": "Pavel",
+        "fecha": "2026-01-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 21,
+        "usuario": "Alberto",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 22,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 23,
+        "usuario": "Antonio",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 24,
+        "usuario": "Carmen",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 25,
+        "usuario": "Domingo",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 26,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 27,
+        "usuario": "Javi",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 28,
+        "usuario": "Marta",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 29,
+        "usuario": "Nerea",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 30,
+        "usuario": "Pavel",
+        "fecha": "2026-01-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 31,
+        "usuario": "Alberto",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 32,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 33,
+        "usuario": "Antonio",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 34,
+        "usuario": "Carmen",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 35,
+        "usuario": "Domingo",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 36,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 37,
+        "usuario": "Javi",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 38,
+        "usuario": "Marta",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 39,
+        "usuario": "Nerea",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 40,
+        "usuario": "Pavel",
+        "fecha": "2026-01-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 41,
+        "usuario": "Alberto",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 42,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 43,
+        "usuario": "Antonio",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 44,
+        "usuario": "Carmen",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 45,
+        "usuario": "Domingo",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 46,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 47,
+        "usuario": "Javi",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 48,
+        "usuario": "Marta",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 49,
+        "usuario": "Nerea",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 50,
+        "usuario": "Pavel",
+        "fecha": "2026-01-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 51,
+        "usuario": "Alberto",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 52,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 53,
+        "usuario": "Antonio",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 54,
+        "usuario": "Carmen",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 55,
+        "usuario": "Domingo",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 56,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 57,
+        "usuario": "Javi",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 58,
+        "usuario": "Marta",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 59,
+        "usuario": "Nerea",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 60,
+        "usuario": "Pavel",
+        "fecha": "2026-01-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 61,
+        "usuario": "Alberto",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 62,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 63,
+        "usuario": "Antonio",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 64,
+        "usuario": "Carmen",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 65,
+        "usuario": "Domingo",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 66,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 67,
+        "usuario": "Javi",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 68,
+        "usuario": "Marta",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 69,
+        "usuario": "Nerea",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 70,
+        "usuario": "Pavel",
+        "fecha": "2026-01-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 71,
+        "usuario": "Alberto",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 72,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 73,
+        "usuario": "Antonio",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 74,
+        "usuario": "Carmen",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 75,
+        "usuario": "Domingo",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 76,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 77,
+        "usuario": "Javi",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 78,
+        "usuario": "Marta",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 79,
+        "usuario": "Nerea",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 80,
+        "usuario": "Pavel",
+        "fecha": "2026-01-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 81,
+        "usuario": "Alberto",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 82,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 83,
+        "usuario": "Antonio",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 84,
+        "usuario": "Carmen",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 85,
+        "usuario": "Domingo",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 86,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 87,
+        "usuario": "Javi",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 88,
+        "usuario": "Marta",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 89,
+        "usuario": "Nerea",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 90,
+        "usuario": "Pavel",
+        "fecha": "2026-01-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 91,
+        "usuario": "Alberto",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 92,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 93,
+        "usuario": "Antonio",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 94,
+        "usuario": "Carmen",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 95,
+        "usuario": "Domingo",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 96,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 97,
+        "usuario": "Javi",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 98,
+        "usuario": "Marta",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 99,
+        "usuario": "Nerea",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 100,
+        "usuario": "Pavel",
+        "fecha": "2026-01-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 101,
+        "usuario": "Alberto",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 102,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 103,
+        "usuario": "Antonio",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 104,
+        "usuario": "Carmen",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 105,
+        "usuario": "Domingo",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 106,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 107,
+        "usuario": "Javi",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 108,
+        "usuario": "Marta",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 109,
+        "usuario": "Nerea",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 110,
+        "usuario": "Pavel",
+        "fecha": "2026-01-11",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 111,
+        "usuario": "Alberto",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 112,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 113,
+        "usuario": "Antonio",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 114,
+        "usuario": "Carmen",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 115,
+        "usuario": "Domingo",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 116,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 117,
+        "usuario": "Javi",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 118,
+        "usuario": "Marta",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 119,
+        "usuario": "Nerea",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 120,
+        "usuario": "Pavel",
+        "fecha": "2026-01-12",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 121,
+        "usuario": "Alberto",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 122,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 123,
+        "usuario": "Antonio",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 124,
+        "usuario": "Carmen",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 125,
+        "usuario": "Domingo",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 126,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 127,
+        "usuario": "Javi",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 128,
+        "usuario": "Marta",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 129,
+        "usuario": "Nerea",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 130,
+        "usuario": "Pavel",
+        "fecha": "2026-01-13",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 131,
+        "usuario": "Alberto",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 132,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 133,
+        "usuario": "Antonio",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 134,
+        "usuario": "Carmen",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 135,
+        "usuario": "Domingo",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 136,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 137,
+        "usuario": "Javi",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 138,
+        "usuario": "Marta",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 139,
+        "usuario": "Nerea",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 140,
+        "usuario": "Pavel",
+        "fecha": "2026-01-14",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 141,
+        "usuario": "Alberto",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 142,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 143,
+        "usuario": "Antonio",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 144,
+        "usuario": "Carmen",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 145,
+        "usuario": "Domingo",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 146,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 147,
+        "usuario": "Javi",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 148,
+        "usuario": "Marta",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 149,
+        "usuario": "Nerea",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 150,
+        "usuario": "Pavel",
+        "fecha": "2026-01-15",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 151,
+        "usuario": "Alberto",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 152,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Horario Partido",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 153,
+        "usuario": "Antonio",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 154,
+        "usuario": "Carmen",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 155,
+        "usuario": "Domingo",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 156,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 157,
+        "usuario": "Javi",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 158,
+        "usuario": "Marta",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 159,
+        "usuario": "Nerea",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 160,
+        "usuario": "Pavel",
+        "fecha": "2026-01-16",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 161,
+        "usuario": "Alberto",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 162,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 163,
+        "usuario": "Antonio",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 164,
+        "usuario": "Carmen",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 165,
+        "usuario": "Domingo",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 166,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 167,
+        "usuario": "Javi",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 168,
+        "usuario": "Marta",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 169,
+        "usuario": "Nerea",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 170,
+        "usuario": "Pavel",
+        "fecha": "2026-01-17",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 171,
+        "usuario": "Alberto",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 172,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 173,
+        "usuario": "Antonio",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 174,
+        "usuario": "Carmen",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 175,
+        "usuario": "Domingo",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 176,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 177,
+        "usuario": "Javi",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 178,
+        "usuario": "Marta",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 179,
+        "usuario": "Nerea",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 180,
+        "usuario": "Pavel",
+        "fecha": "2026-01-18",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 181,
+        "usuario": "Alberto",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 182,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 183,
+        "usuario": "Antonio",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 184,
+        "usuario": "Carmen",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 185,
+        "usuario": "Domingo",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 186,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 187,
+        "usuario": "Javi",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 188,
+        "usuario": "Marta",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 189,
+        "usuario": "Nerea",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 190,
+        "usuario": "Pavel",
+        "fecha": "2026-01-19",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 191,
+        "usuario": "Alberto",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 192,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 193,
+        "usuario": "Antonio",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 194,
+        "usuario": "Carmen",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 195,
+        "usuario": "Domingo",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 196,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 197,
+        "usuario": "Javi",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 198,
+        "usuario": "Marta",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 199,
+        "usuario": "Nerea",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 200,
+        "usuario": "Pavel",
+        "fecha": "2026-01-20",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 201,
+        "usuario": "Alberto",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 202,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 203,
+        "usuario": "Antonio",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 204,
+        "usuario": "Carmen",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 205,
+        "usuario": "Domingo",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 206,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 207,
+        "usuario": "Javi",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 208,
+        "usuario": "Marta",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 209,
+        "usuario": "Nerea",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 210,
+        "usuario": "Pavel",
+        "fecha": "2026-01-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 211,
+        "usuario": "Alberto",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 212,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 213,
+        "usuario": "Antonio",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 214,
+        "usuario": "Carmen",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 215,
+        "usuario": "Domingo",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 216,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 217,
+        "usuario": "Javi",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 218,
+        "usuario": "Marta",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 219,
+        "usuario": "Nerea",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 220,
+        "usuario": "Pavel",
+        "fecha": "2026-01-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 221,
+        "usuario": "Alberto",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 222,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 223,
+        "usuario": "Antonio",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 224,
+        "usuario": "Carmen",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 225,
+        "usuario": "Domingo",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 226,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 227,
+        "usuario": "Javi",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 228,
+        "usuario": "Marta",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 229,
+        "usuario": "Nerea",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 230,
+        "usuario": "Pavel",
+        "fecha": "2026-01-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 231,
+        "usuario": "Alberto",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 232,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 233,
+        "usuario": "Antonio",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 234,
+        "usuario": "Carmen",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 235,
+        "usuario": "Domingo",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 236,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 237,
+        "usuario": "Javi",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 238,
+        "usuario": "Marta",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 239,
+        "usuario": "Nerea",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 240,
+        "usuario": "Pavel",
+        "fecha": "2026-01-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 241,
+        "usuario": "Alberto",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 242,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 243,
+        "usuario": "Antonio",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 244,
+        "usuario": "Carmen",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 245,
+        "usuario": "Domingo",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 246,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 247,
+        "usuario": "Javi",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 248,
+        "usuario": "Marta",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 249,
+        "usuario": "Nerea",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 250,
+        "usuario": "Pavel",
+        "fecha": "2026-01-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 251,
+        "usuario": "Alberto",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 252,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 253,
+        "usuario": "Antonio",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 254,
+        "usuario": "Carmen",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 255,
+        "usuario": "Domingo",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 256,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 257,
+        "usuario": "Javi",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 258,
+        "usuario": "Marta",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 259,
+        "usuario": "Nerea",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 260,
+        "usuario": "Pavel",
+        "fecha": "2026-01-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 261,
+        "usuario": "Alberto",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 262,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 263,
+        "usuario": "Antonio",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 264,
+        "usuario": "Carmen",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 265,
+        "usuario": "Domingo",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 266,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 267,
+        "usuario": "Javi",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 268,
+        "usuario": "Marta",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 269,
+        "usuario": "Nerea",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 270,
+        "usuario": "Pavel",
+        "fecha": "2026-01-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 271,
+        "usuario": "Alberto",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 272,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 273,
+        "usuario": "Antonio",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 274,
+        "usuario": "Carmen",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 275,
+        "usuario": "Domingo",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 276,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 277,
+        "usuario": "Javi",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 278,
+        "usuario": "Marta",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 279,
+        "usuario": "Nerea",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 280,
+        "usuario": "Pavel",
+        "fecha": "2026-01-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 281,
+        "usuario": "Alberto",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 282,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 283,
+        "usuario": "Antonio",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 284,
+        "usuario": "Carmen",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 285,
+        "usuario": "Domingo",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 286,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 287,
+        "usuario": "Javi",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 288,
+        "usuario": "Marta",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 289,
+        "usuario": "Nerea",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 290,
+        "usuario": "Pavel",
+        "fecha": "2026-01-29",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 291,
+        "usuario": "Alberto",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 292,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 293,
+        "usuario": "Antonio",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 294,
+        "usuario": "Carmen",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 295,
+        "usuario": "Domingo",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 296,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 297,
+        "usuario": "Javi",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 298,
+        "usuario": "Marta",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 299,
+        "usuario": "Nerea",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 300,
+        "usuario": "Pavel",
+        "fecha": "2026-01-30",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 301,
+        "usuario": "Alberto",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 302,
+        "usuario": "Anadelia",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 303,
+        "usuario": "Antonio",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 304,
+        "usuario": "Carmen",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 305,
+        "usuario": "Domingo",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 306,
+        "usuario": "Emiliano",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 307,
+        "usuario": "Javi",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 308,
+        "usuario": "Marta",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 309,
+        "usuario": "Nerea",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 310,
+        "usuario": "Pavel",
+        "fecha": "2026-01-31",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 311,
+        "usuario": "Alberto",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 312,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 313,
+        "usuario": "Antonio",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 314,
+        "usuario": "Carmen",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 315,
+        "usuario": "Domingo",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 316,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 317,
+        "usuario": "Javi",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 318,
+        "usuario": "Marta",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 319,
+        "usuario": "Nerea",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 320,
+        "usuario": "Pavel",
+        "fecha": "2026-02-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 321,
+        "usuario": "Alberto",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 322,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 323,
+        "usuario": "Antonio",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 324,
+        "usuario": "Carmen",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 325,
+        "usuario": "Domingo",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 326,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 327,
+        "usuario": "Javi",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 328,
+        "usuario": "Marta",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 329,
+        "usuario": "Nerea",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 330,
+        "usuario": "Pavel",
+        "fecha": "2026-02-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 331,
+        "usuario": "Alberto",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 332,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 333,
+        "usuario": "Antonio",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 334,
+        "usuario": "Carmen",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 335,
+        "usuario": "Domingo",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 336,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 337,
+        "usuario": "Javi",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 338,
+        "usuario": "Marta",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 339,
+        "usuario": "Nerea",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 340,
+        "usuario": "Pavel",
+        "fecha": "2026-02-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 341,
+        "usuario": "Alberto",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 342,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 343,
+        "usuario": "Antonio",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 344,
+        "usuario": "Carmen",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 345,
+        "usuario": "Domingo",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 346,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 347,
+        "usuario": "Javi",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 348,
+        "usuario": "Marta",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 349,
+        "usuario": "Nerea",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 350,
+        "usuario": "Pavel",
+        "fecha": "2026-02-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 351,
+        "usuario": "Alberto",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 352,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 353,
+        "usuario": "Antonio",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 354,
+        "usuario": "Carmen",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 355,
+        "usuario": "Domingo",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 356,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 357,
+        "usuario": "Javi",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 358,
+        "usuario": "Marta",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 359,
+        "usuario": "Nerea",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 360,
+        "usuario": "Pavel",
+        "fecha": "2026-02-05",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 361,
+        "usuario": "Alberto",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 362,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 363,
+        "usuario": "Antonio",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 364,
+        "usuario": "Carmen",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 365,
+        "usuario": "Domingo",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 366,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 367,
+        "usuario": "Javi",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 368,
+        "usuario": "Marta",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 369,
+        "usuario": "Nerea",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 370,
+        "usuario": "Pavel",
+        "fecha": "2026-02-06",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 371,
+        "usuario": "Alberto",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 372,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 373,
+        "usuario": "Antonio",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 374,
+        "usuario": "Carmen",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 375,
+        "usuario": "Domingo",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 376,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 377,
+        "usuario": "Javi",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 378,
+        "usuario": "Marta",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 379,
+        "usuario": "Nerea",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 380,
+        "usuario": "Pavel",
+        "fecha": "2026-02-07",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 381,
+        "usuario": "Alberto",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 382,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 383,
+        "usuario": "Antonio",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 384,
+        "usuario": "Carmen",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 385,
+        "usuario": "Domingo",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 386,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 387,
+        "usuario": "Javi",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 388,
+        "usuario": "Marta",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 389,
+        "usuario": "Nerea",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 390,
+        "usuario": "Pavel",
+        "fecha": "2026-02-08",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 391,
+        "usuario": "Alberto",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 392,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 393,
+        "usuario": "Antonio",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 394,
+        "usuario": "Carmen",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 395,
+        "usuario": "Domingo",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 396,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 397,
+        "usuario": "Javi",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 398,
+        "usuario": "Marta",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 399,
+        "usuario": "Nerea",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 400,
+        "usuario": "Pavel",
+        "fecha": "2026-02-09",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 401,
+        "usuario": "Alberto",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 402,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Mañana",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 403,
+        "usuario": "Antonio",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 404,
+        "usuario": "Carmen",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 405,
+        "usuario": "Domingo",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 406,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 407,
+        "usuario": "Javi",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 408,
+        "usuario": "Marta",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 409,
+        "usuario": "Nerea",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 410,
+        "usuario": "Pavel",
+        "fecha": "2026-02-10",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 411,
+        "usuario": "Alberto",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 412,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 413,
+        "usuario": "Antonio",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 414,
+        "usuario": "Carmen",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 415,
+        "usuario": "Domingo",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 416,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 417,
+        "usuario": "Javi",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 418,
+        "usuario": "Marta",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 419,
+        "usuario": "Nerea",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 420,
+        "usuario": "Pavel",
+        "fecha": "2026-02-11",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 421,
+        "usuario": "Alberto",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 422,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 423,
+        "usuario": "Antonio",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 424,
+        "usuario": "Carmen",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 425,
+        "usuario": "Domingo",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 426,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 427,
+        "usuario": "Javi",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 428,
+        "usuario": "Marta",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 429,
+        "usuario": "Nerea",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 430,
+        "usuario": "Pavel",
+        "fecha": "2026-02-12",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 431,
+        "usuario": "Alberto",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 432,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 433,
+        "usuario": "Antonio",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 434,
+        "usuario": "Carmen",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 435,
+        "usuario": "Domingo",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 436,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 437,
+        "usuario": "Javi",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 438,
+        "usuario": "Marta",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 439,
+        "usuario": "Nerea",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 440,
+        "usuario": "Pavel",
+        "fecha": "2026-02-13",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 441,
+        "usuario": "Alberto",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 442,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 443,
+        "usuario": "Antonio",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 444,
+        "usuario": "Carmen",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 445,
+        "usuario": "Domingo",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 446,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 447,
+        "usuario": "Javi",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 448,
+        "usuario": "Marta",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 449,
+        "usuario": "Nerea",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 450,
+        "usuario": "Pavel",
+        "fecha": "2026-02-14",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 451,
+        "usuario": "Alberto",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 452,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 453,
+        "usuario": "Antonio",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 454,
+        "usuario": "Carmen",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 455,
+        "usuario": "Domingo",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 456,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 457,
+        "usuario": "Javi",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 458,
+        "usuario": "Marta",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 459,
+        "usuario": "Nerea",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 460,
+        "usuario": "Pavel",
+        "fecha": "2026-02-15",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 461,
+        "usuario": "Alberto",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 462,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 463,
+        "usuario": "Antonio",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 464,
+        "usuario": "Carmen",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 465,
+        "usuario": "Domingo",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 466,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 467,
+        "usuario": "Javi",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 468,
+        "usuario": "Marta",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 469,
+        "usuario": "Nerea",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 470,
+        "usuario": "Pavel",
+        "fecha": "2026-02-16",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 471,
+        "usuario": "Alberto",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 472,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 473,
+        "usuario": "Antonio",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 474,
+        "usuario": "Carmen",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 475,
+        "usuario": "Domingo",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 476,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 477,
+        "usuario": "Javi",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 478,
+        "usuario": "Marta",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 479,
+        "usuario": "Nerea",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 480,
+        "usuario": "Pavel",
+        "fecha": "2026-02-17",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 481,
+        "usuario": "Alberto",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 482,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 483,
+        "usuario": "Antonio",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 484,
+        "usuario": "Carmen",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 485,
+        "usuario": "Domingo",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 486,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 487,
+        "usuario": "Javi",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 488,
+        "usuario": "Marta",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 489,
+        "usuario": "Nerea",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 490,
+        "usuario": "Pavel",
+        "fecha": "2026-02-18",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 491,
+        "usuario": "Alberto",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 492,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 493,
+        "usuario": "Antonio",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 494,
+        "usuario": "Carmen",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 495,
+        "usuario": "Domingo",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 496,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 497,
+        "usuario": "Javi",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 498,
+        "usuario": "Marta",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 499,
+        "usuario": "Nerea",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 500,
+        "usuario": "Pavel",
+        "fecha": "2026-02-19",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 501,
+        "usuario": "Alberto",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 502,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 503,
+        "usuario": "Antonio",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 504,
+        "usuario": "Carmen",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 505,
+        "usuario": "Domingo",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 506,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 507,
+        "usuario": "Javi",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 508,
+        "usuario": "Marta",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 509,
+        "usuario": "Nerea",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 510,
+        "usuario": "Pavel",
+        "fecha": "2026-02-20",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 511,
+        "usuario": "Alberto",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 512,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 513,
+        "usuario": "Antonio",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 514,
+        "usuario": "Carmen",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 515,
+        "usuario": "Domingo",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 516,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 517,
+        "usuario": "Javi",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 518,
+        "usuario": "Marta",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 519,
+        "usuario": "Nerea",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 520,
+        "usuario": "Pavel",
+        "fecha": "2026-02-21",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 521,
+        "usuario": "Alberto",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 522,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 523,
+        "usuario": "Antonio",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 524,
+        "usuario": "Carmen",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 525,
+        "usuario": "Domingo",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 526,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 527,
+        "usuario": "Javi",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 528,
+        "usuario": "Marta",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 529,
+        "usuario": "Nerea",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 530,
+        "usuario": "Pavel",
+        "fecha": "2026-02-22",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 531,
+        "usuario": "Alberto",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 532,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 533,
+        "usuario": "Antonio",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 534,
+        "usuario": "Carmen",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 535,
+        "usuario": "Domingo",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 536,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 537,
+        "usuario": "Javi",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 538,
+        "usuario": "Marta",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 539,
+        "usuario": "Nerea",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 540,
+        "usuario": "Pavel",
+        "fecha": "2026-02-23",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 541,
+        "usuario": "Alberto",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 542,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 543,
+        "usuario": "Antonio",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 544,
+        "usuario": "Carmen",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 545,
+        "usuario": "Domingo",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 546,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 547,
+        "usuario": "Javi",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 548,
+        "usuario": "Marta",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 549,
+        "usuario": "Nerea",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 550,
+        "usuario": "Pavel",
+        "fecha": "2026-02-24",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 551,
+        "usuario": "Alberto",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 552,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 553,
+        "usuario": "Antonio",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 554,
+        "usuario": "Carmen",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 555,
+        "usuario": "Domingo",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 556,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 557,
+        "usuario": "Javi",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 558,
+        "usuario": "Marta",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 559,
+        "usuario": "Nerea",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 560,
+        "usuario": "Pavel",
+        "fecha": "2026-02-25",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 561,
+        "usuario": "Alberto",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 562,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 563,
+        "usuario": "Antonio",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 564,
+        "usuario": "Carmen",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 565,
+        "usuario": "Domingo",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 566,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 567,
+        "usuario": "Javi",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 568,
+        "usuario": "Marta",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 569,
+        "usuario": "Nerea",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 570,
+        "usuario": "Pavel",
+        "fecha": "2026-02-26",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 571,
+        "usuario": "Alberto",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 572,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 573,
+        "usuario": "Antonio",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 574,
+        "usuario": "Carmen",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 575,
+        "usuario": "Domingo",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 576,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 577,
+        "usuario": "Javi",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 578,
+        "usuario": "Marta",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 579,
+        "usuario": "Nerea",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 580,
+        "usuario": "Pavel",
+        "fecha": "2026-02-27",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 581,
+        "usuario": "Alberto",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 582,
+        "usuario": "Anadelia",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 583,
+        "usuario": "Antonio",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 584,
+        "usuario": "Carmen",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 585,
+        "usuario": "Domingo",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 586,
+        "usuario": "Emiliano",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 587,
+        "usuario": "Javi",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 588,
+        "usuario": "Marta",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 589,
+        "usuario": "Nerea",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 590,
+        "usuario": "Pavel",
+        "fecha": "2026-02-28",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 591,
+        "usuario": "Alberto",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 592,
+        "usuario": "Anadelia",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 593,
+        "usuario": "Antonio",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 594,
+        "usuario": "Carmen",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 595,
+        "usuario": "Domingo",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 596,
+        "usuario": "Emiliano",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 597,
+        "usuario": "Javi",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 598,
+        "usuario": "Marta",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 599,
+        "usuario": "Nerea",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 600,
+        "usuario": "Pavel",
+        "fecha": "2026-03-01",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 601,
+        "usuario": "Alberto",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 602,
+        "usuario": "Anadelia",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 603,
+        "usuario": "Antonio",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 604,
+        "usuario": "Carmen",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 605,
+        "usuario": "Domingo",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 606,
+        "usuario": "Emiliano",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 607,
+        "usuario": "Javi",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 608,
+        "usuario": "Marta",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 609,
+        "usuario": "Nerea",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 610,
+        "usuario": "Pavel",
+        "fecha": "2026-03-02",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 611,
+        "usuario": "Alberto",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 612,
+        "usuario": "Anadelia",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 613,
+        "usuario": "Antonio",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 614,
+        "usuario": "Carmen",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 615,
+        "usuario": "Domingo",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 616,
+        "usuario": "Emiliano",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 617,
+        "usuario": "Javi",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 618,
+        "usuario": "Marta",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 619,
+        "usuario": "Nerea",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 620,
+        "usuario": "Pavel",
+        "fecha": "2026-03-03",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 621,
+        "usuario": "Alberto",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 622,
+        "usuario": "Anadelia",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Tarde",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 623,
+        "usuario": "Antonio",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Vacaciones",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 624,
+        "usuario": "Carmen",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 625,
+        "usuario": "Domingo",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 626,
+        "usuario": "Emiliano",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 627,
+        "usuario": "Javi",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 628,
+        "usuario": "Marta",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 629,
+        "usuario": "Nerea",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Noche",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "id": 630,
+        "usuario": "Pavel",
+        "fecha": "2026-03-04",
+        "tipo_turno": "Libre",
+        "created_at": "2026-03-04T07:56:11.000Z",
+        "updated_at": "2026-03-04T07:56:11.000Z"
+    },
+    {
+        "usuario": "Pavel",
+        "fecha": "2026-03-09",
+        "tipo_turno": "MAÑANA",
+        "es_pedido": false,
+        "es_debido": 0
+    },
+    {
+        "usuario": "Pavel",
+        "fecha": "2026-03-10",
+        "tipo_turno": "MAÑANA",
+        "es_pedido": false,
+        "es_debido": 0
+    },
+    {
+        "usuario": "Pavel",
+        "fecha": "2026-03-11",
+        "tipo_turno": "MAÑANA",
+        "es_pedido": false,
+        "es_debido": 0
+    },
+    {
+        "usuario": "Pavel",
+        "fecha": "2026-03-12",
+        "tipo_turno": "MAÑANA",
+        "es_pedido": false,
+        "es_debido": 0
+    },
+    {
+        "usuario": "Javi",
+        "fecha": "2026-03-12",
+        "tipo_turno": "MAÑANA",
+        "es_pedido": false,
+        "es_debido": 0
+    }
+]

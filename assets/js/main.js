@@ -260,6 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       { id: "calendario-content", path: "assets/templates/calendario.html" },
       { id: "tareas-content", path: "assets/templates/tareas.html" },
       { id: "guia-interactiva-content", path: "assets/templates/guia_interactiva.html" },
+      { id: "turnos-content", path: "assets/templates/turnos.html" },
       { id: "calculadora-container", path: "assets/templates/calculadora.html" },
       { id: "chat-wrapper", path: "assets/templates/chat.html" },
     ];

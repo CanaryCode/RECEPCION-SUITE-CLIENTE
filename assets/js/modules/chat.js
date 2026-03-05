@@ -108,6 +108,10 @@ class ChatModule {
                     this.handleIncomingMessage(data.payload);
                 } else if (data.type === 'chat_delete') {
                     this.handleDeletedMessage(data.payload.id);
+                } else if (data.type === 'chat_delete_multiple') {
+                    if (data.payload.ids && Array.isArray(data.payload.ids)) {
+                        data.payload.ids.forEach(id => this.handleDeletedMessage(id));
+                    }
                 } else if (data.type === 'user_connected') {
                     this.handleUserPresence(data.payload);
                 } else if (data.type === 'online_users') {
@@ -293,8 +297,6 @@ class ChatModule {
     }
 
     async deleteMessage(id) {
-        if (!confirm('¿Estás seguro de que quieres borrar este mensaje?')) return;
-
         try {
             const result = await Api.delete(`/chat/message/${id}`);
             if (result.success) {
@@ -308,3 +310,4 @@ class ChatModule {
 }
 
 export const chat = new ChatModule();
+window.chat = chat;

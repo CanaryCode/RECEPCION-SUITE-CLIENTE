@@ -7,6 +7,11 @@ import { Ui } from '../core/Ui.js';
 
 let typingTimer;
 const doneTypingInterval = 500; // ms
+let activeUtterance = null; 
+let lastCharIndex = 0;
+let watchdogTimer = null;
+let sliderThrottleTimer = null; 
+let audioPlayer = null; // Instancia global para el HTML5 Audio de Google TTS
 
 const Traductor = {
     async init() {
@@ -80,6 +85,9 @@ const Traductor = {
         const btnSpeak = document.getElementById('btn-trad-speak');
         if (btnSpeak) btnSpeak.onclick = () => this.readAloud();
 
+        const btnStop = document.getElementById('btn-trad-stop');
+        if (btnStop) btnStop.onclick = () => this.stopAudio();
+
         // Swap idiomas
         const btnSwap = document.getElementById('btn-trad-swap');
         const selSource = document.getElementById('trad-source-lang');
@@ -130,6 +138,42 @@ const Traductor = {
                     document.getElementById('trad-output').value = '';
                 }
             });
+        }
+
+        // Sliders de Audio
+        const volInput = document.getElementById('trad-volume');
+        const speedInput = document.getElementById('trad-speed');
+        const volVal = document.getElementById('trad-vol-val');
+        const speedVal = document.getElementById('trad-speed-val');
+
+        if (volInput && volVal) {
+            volInput.oninput = () => {
+                const v = Math.round(volInput.value * 100);
+                volVal.textContent = `${v}%`;
+                
+                // Cambio en tiempo real CON DEBOUNCE (200ms)
+                if (audioPlayer && !audioPlayer.paused) {
+                    audioPlayer.volume = volInput.value;
+                }
+            };
+        }
+
+        if (speedInput && speedVal) {
+            speedInput.oninput = () => {
+                const val = parseFloat(speedInput.value).toFixed(1);
+                speedVal.textContent = `x${val}`;
+                
+                // Cambio en tiempo real
+                if (audioPlayer && !audioPlayer.paused) {
+                    audioPlayer.playbackRate = val;
+                }
+            };
+        }
+
+        // --- RELIABILITY FIX ---
+        // Pre-cargar voces si es posible (ya no se usa native TTS, pero lo dejamos por si acaso)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices();
         }
     },
 
@@ -197,59 +241,97 @@ const Traductor = {
         });
     },
 
-    readAloud() {
+    resetUI() {
+        const btn = document.getElementById('btn-trad-speak');
+        const btnStop = document.getElementById('btn-trad-stop');
+        const icon = btn ? btn.querySelector('i') : null;
+        const originalClass = 'bi bi-play-circle-fill fs-5';
+
+        if (icon) icon.className = originalClass;
+        if (btnStop) btnStop.classList.add('d-none');
+        
+        activeUtterance = null;
+        if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
+        if (sliderThrottleTimer) { clearTimeout(sliderThrottleTimer); sliderThrottleTimer = null; }
+        
+        // Limpiamos el keepalive
+        if (window._tradKeepAlive) { clearInterval(window._tradKeepAlive); window._tradKeepAlive = null; }
+    },
+
+    // --- NUEVO MOTOR DE LECTURA BASADO EN GOOGLE TTS (HTML5 AUDIO) ---
+    // Resuelve bugs crónicos de Edge/Linux con SpeechSynthesis nativo.
+    readAloud(startIndex = 0) {
         const textToRead = document.getElementById('trad-output').value.trim();
         if (!textToRead) return;
 
-        if (!('speechSynthesis' in window)) {
-            Ui.showToast("Tu navegador no soporta lectura de voz", "warning");
-            return;
-        }
+        // --- PREPARACIÓN ---
+        this.resetUI();
 
-        // Si ya está hablando, detenerlo para evitar acumulaciones
-        if (window.speechSynthesis.speaking) {
-            window.speechSynthesis.cancel();
-        }
+        const currentText = (startIndex > 0) ? textToRead.substring(startIndex).trim() : textToRead;
+        if (!currentText) return;
 
-        const utterance = new SpeechSynthesisUtterance(textToRead);
-        
-        // Coger el idioma de destino activo
+        // Configuración de idioma (necesitamos código corto tipo 'en', 'es', etc)
         const targetLang = document.getElementById('trad-target-lang').value;
+        const volInput = document.getElementById('trad-volume');
+        const speedInput = document.getElementById('trad-speed');
         
-        // Mapear algunos códigos a BCP 47 para mejor compatibilidad de voces
-        const langMap = {
-            'es': 'es-ES',
-            'en': 'en-US',
-            'fr': 'fr-FR',
-            'de': 'de-DE',
-            'it': 'it-IT',
-            'pt': 'pt-PT'
-        };
-        
-        utterance.lang = langMap[targetLang] || targetLang;
-        utterance.rate = 0.9; // Hablar un poco más lento para mejor comprensión
-        utterance.pitch = 1.0;
+        const volume = volInput ? (parseFloat(volInput.value) || 0.8) : 0.8;
+        const rate = speedInput ? (parseFloat(speedInput.value) || 1.0) : 1.0;
 
-        // Feedback visual en el botón de altavoz
+        // --- UI ESTADO CARGA ---
         const btn = document.getElementById('btn-trad-speak');
-        let icon;
-        let originalClass;
-        
-        if (btn) {
-            icon = btn.querySelector('i');
-            if (icon) {
-                originalClass = icon.className;
-                icon.className = 'bi bi-soundwave text-primary'; // Cambiar icono mientras habla
-            }
-        }
+        const btnStop = document.getElementById('btn-trad-stop');
+        const icon = btn ? btn.querySelector('i') : null;
 
-        utterance.onend = () => {
-             if (icon && originalClass) {
-                 icon.className = originalClass;
-             }
+        if (icon) icon.className = 'bi bi-hourglass-split text-muted animate-spin';
+        if (btnStop) btnStop.classList.remove('d-none');
+
+        // Construir URL al backend propio para evitar bloqueos CORS o de formato de Google
+        const chunk = currentText.substring(0, 190);
+        const url = `/api/tts?text=${encodeURIComponent(chunk)}&lang=${targetLang}`;
+
+        audioPlayer = new Audio(url);
+        audioPlayer.volume = volume;
+        audioPlayer.playbackRate = rate;
+
+        // Watchdog por si la carga de red falla o se atasca
+        watchdogTimer = setTimeout(() => {
+            console.warn('[Traductor] Watchdog timeout preventivo cancelando (audio de Google no cargó)');
+            this.stopAudio();
+            Ui.showToast("Error de red cargando el audio.", "danger");
+        }, 10000);
+
+        audioPlayer.onplay = () => {
+             if (watchdogTimer) clearTimeout(watchdogTimer);
+             if (icon) icon.className = 'bi bi-soundwave text-primary animate-pulse-fast';
         };
 
-        window.speechSynthesis.speak(utterance);
+        audioPlayer.onended = () => {
+             // TODO: Si hay textos de más de 190 caracteres, aquí habría que mandar el siguiente chunk.
+             // Para esta solución robusta inicial de traducción rápida, servirá.
+             this.resetUI();
+        };
+
+        audioPlayer.onerror = (e) => {
+             console.error('[Traductor] Error HTML5 Audio Google TTS:', e);
+             this.resetUI();
+             Ui.showToast("Error reproduciendo el audio online.", "danger");
+        };
+
+        // Reproducir nativamente
+        audioPlayer.play().catch(err => {
+             console.error("Autoplay bloqueado o error en play():", err);
+             this.resetUI();
+        });
+    },
+
+    stopAudio() {
+        if (audioPlayer) {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer = null;
+        }
+        this.resetUI();
     },
 
     /**

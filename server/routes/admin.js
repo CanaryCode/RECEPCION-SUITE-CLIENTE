@@ -93,6 +93,49 @@ let lastNetStats = { rx: 0, tx: 0, time: Date.now() };
 let lastCpuStats = os.cpus();
 
 /**
+ * GET /active-sessions-v2
+ * Returns details of all currently connected WebSocket clients.
+ */
+const geoCache = new Map();
+router.get('/active-sessions-v2', async (req, res) => {
+    console.log(`[ADMIN-API] Hit /active-sessions-v2 - Sessions: ${global.activeSessions ? global.activeSessions.size : 0}`);
+    try {
+        const sessions = [];
+        const entries = global.activeSessions ? Array.from(global.activeSessions.values()) : [];
+        
+        for (const session of entries) {
+            let geo = { city: 'Local/Unknown', country: '-' };
+            const cleanIp = session.ip.replace('::ffff:', '');
+            
+            if (cleanIp !== '127.0.0.1' && cleanIp !== '::1') {
+                if (geoCache.has(cleanIp)) {
+                    geo = geoCache.get(cleanIp);
+                } else {
+                    try {
+                        const geoRes = await fetch(`http://ip-api.com/json/${cleanIp}?fields=status,message,country,city`);
+                        const geoData = await geoRes.json();
+                        if (geoData.status === 'success') {
+                            geo = { city: geoData.city, country: geoData.country };
+                            geoCache.set(cleanIp, geo);
+                        }
+                    } catch (e) { }
+                }
+            }
+            
+            sessions.push({
+                ...session,
+                location: `${geo.city}, ${geo.country}`
+            });
+        }
+        
+        res.json({ sessions: sessions.reverse() });
+    } catch (err) {
+        console.error('[ADMIN-API ERROR] /active-sessions-v2:', err);
+        res.status(500).json({ error: 'Internal Error', message: err.message });
+    }
+});
+
+/**
  * GET /status
  * Returns system, database, CPU and Network health.
  */
@@ -247,6 +290,8 @@ router.get('/connections', async (req, res) => {
         res.status(500).json({ error: 'Could not fetch connections', message: err.message });
     }
 });
+
+// /active-sessions moved to top
 
 /**
  * GET /db-check
