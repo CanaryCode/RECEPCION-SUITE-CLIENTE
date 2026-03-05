@@ -6,7 +6,7 @@
 </div>
 
 <!-- Barra de Herramientas (Standard Module Toolbar) -->
-<div class="module-toolbar d-flex justify-content-between align-items-center p-2 mb-3 no-print">
+<div class="module-toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 p-2 mb-3 no-print">
     <!-- Selectores de Vista (Izquierda) -->
     <div class="toolbar-group">
         <div class="btn-group shadow-sm" role="group">
@@ -19,15 +19,23 @@
             <button class="btn btn-outline-primary fw-bold" id="btnVistaAnual" onclick="TurnosManager.cambiarVista('anual')" data-bs-toggle="tooltip" title="Vista Anual Heatmap">
                 <i class="bi bi-calendar3 me-2"></i>Anual
             </button>
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaVacaciones" onclick="TurnosManager.cambiarVista('vacaciones')" data-bs-toggle="tooltip" title="Gestión Anual de Vacaciones">
+                <i class="bi bi-sun-fill me-2"></i>Vacaciones
+            </button>
             <button class="btn btn-outline-primary fw-bold" id="btnVistaEstadisticas" onclick="TurnosManager.cambiarVista('stats')" data-bs-toggle="tooltip" title="Estadísticas y Gráficas">
                 <i class="bi bi-bar-chart-fill me-2"></i>Estadísticas
             </button>
         </div>
     </div>
 
-    <!-- Acciones (Derecha) -->
-    <div class="toolbar-group">
-        <button class="btn btn-outline-dark btn-sm fw-bold shadow-sm" onclick="TurnosManager.imprimirTurnos()">
+    <!-- Acciones Globais (Derecha) -->
+    <div class="toolbar-group d-flex gap-2 align-items-center">
+        <!-- Acciones de Edición Unificadas -->
+        <button class="btn btn-primary fw-bold shadow-sm" id="btnEditTurnos" onclick="TurnosManager.handleEditRequest()">
+            <i class="bi bi-pencil-fill me-1"></i>Modificar
+        </button>
+        <!-- Impresión -->
+        <button class="btn btn-outline-dark fw-bold shadow-sm" onclick="TurnosManager.imprimirTurnos()">
             <i class="bi bi-printer me-2"></i>Imprimir
         </button>
     </div>
@@ -39,50 +47,39 @@
     <!-- VISTA 1: CUADRANTE SEMANAL -->
     <div id="view-cuadrante" class="turnos-view">
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white quadrant-header-content">
-                <div class="toolbar-group">
-                    <div class="week-navigation d-flex align-items-center gap-2">
-                        <button class="btn btn-light btn-sm rounded-circle border" id="prevWeekBtn">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <input type="date" id="weekPicker" class="form-control form-control-sm w-auto fw-bold text-primary border-primary" style="max-width: 150px;">
-                        <div class="current-week-label text-primary fs-6" id="currentWeekRange">Semana -- / --</div>
-                        <button class="btn btn-light btn-sm rounded-circle border" id="nextWeekBtn">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-                        
-                        <!-- Botón Auto-asignar (Oculto por defecto, visible en edición) -->
-                        <button id="btnAutoAssign" class="btn btn-outline-info btn-sm d-none ms-3 fw-bold" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
-                            <i class="bi bi-magic me-1"></i> Auto-asignar
-                        </button>
-                    </div>
+            <div class="card-header bg-white quadrant-header-content d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <!-- Izquierda: Navegación de Semanas -->
+                <div class="week-navigation d-flex align-items-center gap-2">
+                    <button class="btn btn-light btn-sm rounded-circle border" id="prevWeekBtn">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <input type="date" id="weekPicker" class="form-control form-control-sm w-auto fw-bold text-primary border-primary" style="max-width: 150px;">
+                    <div class="current-week-label text-primary fs-6 fw-bold" id="currentWeekRange">Semana -- / --</div>
+                    <button class="btn btn-light btn-sm rounded-circle border" id="nextWeekBtn">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
                 </div>
-
-                <!-- Acciones de Edición (Movidas al Cuadrante) -->
-                <div class="toolbar-group">
-                    <div class="quadrant-actions d-flex gap-2 align-items-center">
-                        <button class="btn btn-primary btn-sm fw-bold shadow-sm" id="btnEditTurnos" onclick="TurnosManager.handleEditRequest()">
-                            <i class="bi bi-pencil-fill me-1"></i>Modificar
-                        </button>
-                        <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos" onclick="TurnosManager.saveChanges()">
-                            <i class="bi bi-check-lg me-1"></i>Guardar
-                        </button>
-                        <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit" onclick="TurnosManager.cancelEdit()">
-                            Cancelar
-                        </button>
-                        <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" data-bs-toggle="modal" data-bs-target="#modalManageUsers" title="Gestionar Personal">
-                            <i class="bi bi-people me-1"></i>Personal
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos" onclick="TurnosManager.loadData().then(() => TurnosManager.render())">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek" onclick="TurnosManager.difundirSemana()" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
-                            <i class="bi bi-share-fill me-1"></i>Difundir
-                        </button>
-                        <div class="text-muted small ms-2 d-none d-md-block" id="edit-info-label">
-                            <i class="bi bi-info-circle me-1"></i> Haz clic en "Modificar"
-                        </div>
-                    </div>
+                
+                <!-- Derecha: Acciones Específicas del Cuadrante -->
+                <div class="quadrant-actions d-flex gap-2 align-items-center" id="cuadrante-actions">
+                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Cuadrante" onclick="TurnosManager.saveChanges()">
+                        <i class="bi bi-check-lg me-1"></i>Guardar
+                    </button>
+                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Cuadrante" onclick="TurnosManager.cancelEdit()">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Cuadrante" onclick="TurnosManager.loadData().then(() => TurnosManager.render())">
+                        <i class="bi bi-arrow-clockwise"></i>Refrescar
+                    </button>
+                    <button id="btnAutoAssign_Cuadrante" class="btn btn-outline-info btn-sm d-none fw-bold" onclick="TurnosManager.autoAssignWeek()" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
+                        <i class="bi bi-magic me-1"></i> Auto-asignar
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek_Cuadrante" onclick="TurnosManager.difundirSemana()" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
+                        <i class="bi bi-share-fill me-1"></i>Difundir
+                    </button>
+                    <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" onclick="TurnosManager.openManageUsers()" title="Gestionar Personal">
+                        <i class="bi bi-people me-1"></i>Personal
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -176,6 +173,7 @@
                                     <th data-sort="partidos" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos Partidos">P</th>
                                     <th data-sort="extra" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos Extra">E</th>
                                     <th data-sort="especial" style="cursor:pointer" data-bs-toggle="tooltip" title="Otros tipos de turno">Esp.</th>
+                                    <th data-sort="reservas" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de turnos de Reservas">Res.</th>
                                     <th data-sort="libres" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días Libres">Libres</th>
                                     <th data-sort="vacaciones" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días de Vacaciones">Vaca.</th>
                                     <th data-sort="baja" style="cursor:pointer" data-bs-toggle="tooltip" title="Total de días de Baja">Baja</th>
@@ -236,6 +234,45 @@
             <div class="card-body p-0 overflow-auto">
                 <div id="annual-heatmap-container" class="p-4" style="min-width: 1000px;">
                     <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 5: VACACIONES (Calendario Anual Interactivo) -->
+    <div id="view-vacaciones" class="turnos-view d-none">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-sun-fill me-2"></i>Calendario de Vacaciones</h6>
+                    <select id="selectVacacionesYear" class="form-select form-select-sm" style="width: 100px;" onchange="TurnosManager.renderVacationView()"></select>
+                </div>
+                <div class="d-flex gap-2" id="vacaciones-actions">
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Vacaciones" onclick="TurnosManager.loadData().then(() => TurnosManager.renderVacationView())">
+                        <i class="bi bi-arrow-clockwise"></i>Refrescar
+                    </button>
+                    <button id="btnAutoAssignVac" class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.autoAssignVacations()">
+                        <i class="bi bi-magic me-1"></i> Reparto Inteligente
+                    </button>
+                    <button id="btnSaveVacaciones" class="btn btn-success btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.saveChanges()">
+                        <i class="bi bi-check-lg me-1"></i>Guardar Todo
+                    </button>
+                    <button id="btnCancelVacaciones" class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.cancelEdit()">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="p-3 bg-light border-bottom mb-0 small text-muted d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-info-circle me-1"></i> Haz clic en los días para asignar/quitar vacaciones cuando el modo edición esté activo.
+                    </div>
+                    <div id="vacation-counters-summary" class="d-flex flex-wrap gap-2">
+                        <!-- JS: Antonio: 12/30, Carmen: 15/30 -->
+                    </div>
+                </div>
+                <div id="vacation-annual-container" class="p-3 overflow-auto" style="max-height: 70vh;">
+                    <!-- JS: Grid de meses por empleado -->
                 </div>
             </div>
         </div>
@@ -378,6 +415,68 @@
             </div>
             <div class="modal-footer bg-light border-0 justify-content-center">
                 <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Los cambios se guardan en la configuración global.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Selección de Trabajador para Vacaciones (Con Toggles y Detalle) -->
+<div class="modal fade" id="vacationWorkerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title fw-bold small"><i class="bi bi-sun-fill me-2"></i>Gestión de Vacaciones - <span id="vacationModalDateLabel"></span></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3 bg-light border-bottom text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Activa el interruptor para asignar/quitar vacaciones a cada persona este día.
+                </div>
+                <div id="vacationWorkerList" class="list-group list-group-flush">
+                    <!-- Dinámico: Switche por persona -->
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0 py-2">
+                <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edición Límite Vacaciones -->
+<div class="modal fade" id="vacationAllowanceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title fw-bold small">Editar Límite de Vacaciones</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <h6 id="vacationModalUserName" class="fw-bold text-muted mb-3">Empleado</h6>
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar3"></i></span>
+                    <input type="number" id="inputVacationAllowance" class="form-control text-center fw-bold" min="0" value="30">
+                    <span class="input-group-text bg-light text-muted">Días</span>
+                </div>
+                <button type="button" class="btn btn-success fw-bold w-100 shadow-sm" onclick="TurnosManager.saveVacationAllowance()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalles de Vacaciones (Lectura) -->
+<div class="modal fade" id="vacationDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-info text-white py-2">
+                <h6 class="modal-title fw-bold small"><i class="bi bi-info-circle me-1"></i>Vacaciones asignadas</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <h6 id="vacationDetailDate" class="fw-bold text-center text-primary mb-3"></h6>
+                <div id="vacationDetailList" class="list-group list-group-flush small">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
             </div>
         </div>
     </div>

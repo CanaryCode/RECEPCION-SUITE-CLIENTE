@@ -1,9 +1,70 @@
 /* MÓDULO DE TURNOS - ESTILOS REFINADOS */
 
-.turnos-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 0.9rem;
+.module-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite salto de línea controlado si no hay espacio */
+    gap: 15px;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+
+.quadrant-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.week-navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+}
+
+.quadrant-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap; /* Si hay muchos botones de edición, que bajen sin chocar */
+}
+
+/* Estilos de Drag en Vacaciones */
+.vac-day-cell.vac-drag-target {
+    background-color: rgba(74, 105, 189, 0.1) !important;
+}
+
+.vac-day-cell {
+    transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.vac-day-cell:active {
+    cursor: grabbing;
+}
+
+/* Toggles Modal */
+#vacationWorkerList .form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+    cursor: pointer;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.current-week-label {
+    min-width: 180px;
+    text-align: center;
 }
 
 .turnos-table th {
@@ -370,4 +431,135 @@
     .shift-especial { background-color: #fd7e14 !important; border: 1px solid #e56d0d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .shift-practicas { background-color: #a55eea !important; border: 1px solid #8e44ad !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .shift-reservas { background-color: #2bcbba !important; border: 1px solid #0fb9b1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+/* NUEVO CALENDARIO DE VACACIONES COMPARTIDO (GRILLA ANUAL) */
+.vacation-shared-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.vac-month-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.vac-month-header {
+    background: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.vac-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #fff;
+}
+
+.vac-day-header {
+    font-size: 0.65rem;
+    text-align: center;
+    padding: 5px 0;
+    font-weight: 700;
+    color: #adb5bd;
+    background: #fdfdfe;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+.vac-day-cell {
+    aspect-ratio: 1 / 1.1;
+    border-right: 1px solid #f1f2f6;
+    border-bottom: 1px solid #f1f2f6;
+    padding: 2px;
+    font-size: 0.6rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.vac-day-cell:nth-child(7n) {
+    border-right: none;
+}
+
+.vac-day-num {
+    font-weight: 700;
+    color: #dee2e6;
+    margin-bottom: 2px;
+}
+
+.vac-day-cell.is-today .vac-day-num {
+    color: #0d6efd;
+}
+
+.vac-day-cell.is-weekend {
+    background-color: #fcfcfd;
+}
+
+.vac-day-cell.not-current-month {
+    background-color: #fafafa;
+    opacity: 0.3;
+}
+
+.vac-names-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.vac-name-tag {
+    background: #ff6b6b;
+    color: #fff;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.55rem;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.vac-day-cell.editable {
+    cursor: cell; /* Indicador de Excel */
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.vac-day-cell.editable:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Cuando se pulsa SHIFT, cambiar cursor a Mover (Metáfora de Drag) */
+.vac-day-cell.editable:active {
+    cursor: grabbing;
+}
+
+/* Compactar Modal Vacaciones */
+#vacationWorkerModal .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#vacationWorkerList .list-group-item {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+#vacationWorkerList .form-switch .form-check-input {
+    cursor: pointer;
+}
+
+.vac-drag-target {
+    background-color: rgba(13, 110, 253, 0.15) !important;
+    border: 2px dashed #0d6efd !important;
 }
