@@ -102,11 +102,14 @@ router.get('/active-sessions-v2', async (req, res) => {
     try {
         const rawSessions = global.activeSessions ? Array.from(global.activeSessions.values()) : [];
         
-        // 1. Agrupar por IP + UA + Username para evitar duplicados visuales (Chat + Sync)
+        // 1. Agrupar por IP + UA + Username (case-insensitive)
         const grouped = new Map();
         
         for (const s of rawSessions) {
-            const key = `${s.ip}_${s.ua}_${s.username || 'invitado'}`;
+            // Normalizar username para la clave
+            const uname = (s.username || 'Invitado').trim().toLowerCase();
+            const key = `${s.ip}_${s.ua}_${uname}`;
+            
             if (!grouped.has(key)) {
                 grouped.set(key, { 
                     ...s, 
@@ -116,10 +119,14 @@ router.get('/active-sessions-v2', async (req, res) => {
             } else {
                 const existing = grouped.get(key);
                 existing.count++;
-                // Quedarnos con el timestamp más reciente
-                if (s.timestamp > existing.timestamp) existing.timestamp = s.timestamp;
-                // Si uno tiene username y el otro no, priorizar el username
-                if (s.username && !existing.username) existing.username = s.username;
+                // Quedarnos con el timestamp más reciente (usando el numérico)
+                if (s.timestamp > (existing.timestamp || 0)) {
+                    existing.timestamp = s.timestamp;
+                }
+                // Si uno tiene un nombre real y el otro es "Invitado", priorizar el real
+                if (s.username && s.username.toLowerCase() !== 'invitado' && existing.username.toLowerCase() === 'invitado') {
+                    existing.username = s.username;
+                }
             }
         }
 
@@ -149,7 +156,8 @@ router.get('/active-sessions-v2', async (req, res) => {
             });
         }
         
-        res.json({ sessions: sessions.sort((a, b) => b.timestamp - a.timestamp) });
+        // Ordenar por el timestamp numérico
+        res.json({ sessions: sessions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) });
     } catch (err) {
         console.error('[ADMIN-API ERROR] /active-sessions-v2:', err);
         res.status(500).json({ error: 'Internal Error', message: err.message });

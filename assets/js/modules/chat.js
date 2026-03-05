@@ -15,7 +15,7 @@ class ChatModule {
         this.recipientSelect = null;
         this.isOpen = false;
         this.unreadCount = 0;
-        this.currentUser = sessionStorage.getItem('session_user') || 'Recepcionista';
+        this.currentUser = sessionStorage.getItem('session_user') || 'Invitado';
         this.currentRecipient = null; // null means GLobal
         this.socket = null;
         this.onlineUsers = new Set();

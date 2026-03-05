@@ -230,10 +230,10 @@ function setupWebSocketServer(server) {
         
         const sessionData = {
             id: sessionId,
-            connectedAt: new Date(),
+            timestamp: Date.now(), // Usar timestamp numérico
             ip: ip,
             ua: ua,
-            username: 'Guest',
+            username: 'Invitado', // Estandarizado
             isAgent: false
         };
         
