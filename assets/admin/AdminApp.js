@@ -494,34 +494,39 @@ class AdminApp {
         const countEl = document.getElementById('active-sessions-count');
         if (!body) return;
 
-        if (countEl) countEl.textContent = `${sessions.length} ACTIVAS`;
+        if (countEl) countEl.textContent = `${sessions.length} DISPOSITIVOS`;
 
         if (sessions.length === 0) {
-            body.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-secondary italic">No hay sesiones WebSocket activas en este momento.</td></tr>';
+            body.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-secondary italic">No hay sesiones activas en este momento.</td></tr>';
             return;
         }
 
         body.innerHTML = sessions.map(s => {
-            const time = new Date(s.connectedAt).toLocaleTimeString();
-            const date = new Date(s.connectedAt).toLocaleDateString();
+            const time = new Date(s.timestamp).toLocaleTimeString();
+            const date = new Date(s.timestamp).toLocaleDateString();
             
             // User Agent Parser simplificado
             let browser = 'Unknown';
-            let icon = 'bi-browser-chrome';
+            let icon = 'bi-window';
             if (s.ua.includes('Firefox')) { browser = 'Firefox'; icon = 'bi-browser-firefox'; }
             else if (s.ua.includes('Edg/')) { browser = 'Edge'; icon = 'bi-browser-edge'; }
             else if (s.ua.includes('Chrome')) { browser = 'Chrome'; icon = 'bi-browser-chrome'; }
             else if (s.ua.includes('Safari')) { browser = 'Safari'; icon = 'bi-browser-safari'; }
+            else if (s.ua.includes('node')) { browser = 'Node Agent'; icon = 'bi-cpu'; }
             
-            const isGuest = s.username === 'Guest';
+            const isGuest = s.username.toLowerCase() === 'invitado' || s.username === 'Guest';
+            const countBadge = s.count > 1 
+                ? `<span class="badge bg-dark text-info border border-info border-opacity-25 ms-2" style="font-size: 0.65rem;">${s.count} sockets</span>` 
+                : '';
+
             const userDisplay = isGuest 
-                ? `<span class="text-secondary"><i class="bi bi-person-dash me-2"></i>Invitado</span>`
-                : `<span class="text-primary fw-bold"><i class="bi bi-person-check-fill me-2"></i>${s.username}</span>`;
+                ? `<div class="text-secondary"><i class="bi bi-person me-2"></i>Invitado</div>`
+                : `<div class="text-primary fw-bold"><i class="bi bi-person-check-fill me-2"></i>${s.username}${countBadge}</div>`;
 
             return `
-                <tr class="animate-fade-in">
+                <tr class="animate__animated animate__fadeIn">
                     <td class="ps-4">${userDisplay}</td>
-                    <td><code class="text-success small">${s.ip}</code></td>
+                    <td><code class="text-info small">${s.ip}</code></td>
                     <td><span class="badge bg-dark border border-secondary fw-normal"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${s.location}</span></td>
                     <td>
                         <div class="d-flex align-items-center">
@@ -533,7 +538,7 @@ class AdminApp {
                         </div>
                     </td>
                     <td class="text-end pe-4">
-                        <div class="fw-bold">${time}</div>
+                        <div class="fw-bold text-light">${time}</div>
                         <div class="text-secondary" style="font-size: 0.7rem;">${date}</div>
                     </td>
                 </tr>

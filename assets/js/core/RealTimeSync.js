@@ -47,6 +47,7 @@ class RealTimeSync {
 
             this.socket.onopen = () => {
                 console.log('[Sync-RT] ✅ Conexión establecida.');
+                this.login();
             };
 
             this.socket.onmessage = (event) => {
@@ -69,8 +70,26 @@ class RealTimeSync {
                 console.error('[Sync-RT] Error en WebSocket:', err);
                 this.socket.close();
             };
+            
+            // Re-identificar si el usuario cambia
+            if (!this._userListenerAdded) {
+                window.addEventListener('user-updated', () => this.login());
+                this._userListenerAdded = true;
+            }
+
         } catch (err) {
             console.error('[Sync-RT] Error al crear WebSocket:', err);
+        }
+    }
+
+    login() {
+        const username = sessionStorage.getItem('session_user');
+        if (this.socket && this.socket.readyState === WebSocket.OPEN && username) {
+            console.log(`[Sync-RT] Identificando conexión como: ${username}`);
+            this.socket.send(JSON.stringify({
+                type: 'chat_login',
+                payload: { username }
+            }));
         }
     }
 

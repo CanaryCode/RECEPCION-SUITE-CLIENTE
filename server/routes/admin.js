@@ -98,12 +98,33 @@ let lastCpuStats = os.cpus();
  */
 const geoCache = new Map();
 router.get('/active-sessions-v2', async (req, res) => {
-    console.log(`[ADMIN-API] Hit /active-sessions-v2 - Sessions: ${global.activeSessions ? global.activeSessions.size : 0}`);
+    console.log(`[ADMIN-API] Hit /active-sessions-v2 - Total Sockets: ${global.activeSessions ? global.activeSessions.size : 0}`);
     try {
-        const sessions = [];
-        const entries = global.activeSessions ? Array.from(global.activeSessions.values()) : [];
+        const rawSessions = global.activeSessions ? Array.from(global.activeSessions.values()) : [];
         
-        for (const session of entries) {
+        // 1. Agrupar por IP + UA + Username para evitar duplicados visuales (Chat + Sync)
+        const grouped = new Map();
+        
+        for (const s of rawSessions) {
+            const key = `${s.ip}_${s.ua}_${s.username || 'invitado'}`;
+            if (!grouped.has(key)) {
+                grouped.set(key, { 
+                    ...s, 
+                    count: 1,
+                    username: s.username || 'Invitado' 
+                });
+            } else {
+                const existing = grouped.get(key);
+                existing.count++;
+                // Quedarnos con el timestamp más reciente
+                if (s.timestamp > existing.timestamp) existing.timestamp = s.timestamp;
+                // Si uno tiene username y el otro no, priorizar el username
+                if (s.username && !existing.username) existing.username = s.username;
+            }
+        }
+
+        const sessions = [];
+        for (const session of grouped.values()) {
             let geo = { city: 'Local/Unknown', country: '-' };
             const cleanIp = session.ip.replace('::ffff:', '');
             
@@ -128,7 +149,7 @@ router.get('/active-sessions-v2', async (req, res) => {
             });
         }
         
-        res.json({ sessions: sessions.reverse() });
+        res.json({ sessions: sessions.sort((a, b) => b.timestamp - a.timestamp) });
     } catch (err) {
         console.error('[ADMIN-API ERROR] /active-sessions-v2:', err);
         res.status(500).json({ error: 'Internal Error', message: err.message });

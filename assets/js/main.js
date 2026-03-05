@@ -894,6 +894,9 @@ function updateUserUI(name) {
     userBtn.classList.remove("btn-outline-secondary", "btn-outline-danger", "animation-pulse");
     userBtn.classList.add("btn-success", "text-white");
   }
+  
+  // Propagar cambio de identidad a otros módulos (Chat, Sync, etc)
+  window.dispatchEvent(new CustomEvent('user-updated', { detail: { name } }));
 }
 window.updateUserUI = updateUserUI;
 
