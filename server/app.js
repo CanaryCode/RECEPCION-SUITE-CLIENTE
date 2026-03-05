@@ -9,6 +9,9 @@ const WebSocket = require('ws');
 const STORAGE_DIR = path.resolve(__dirname, '../storage');
 const LOG_FILE = path.join(STORAGE_DIR, 'server_debug.log');
 
+// Visitor Activity Tracking Storage
+global.visitorHistory = new Map(); // sessionId -> Array of { path, method, time }
+
 const logToFile = (msg) => {
     const timestamp = new Date().toISOString();
     const entry = `[${timestamp}] [SERVER] ${msg}\n`;
@@ -77,6 +80,25 @@ app.use((req, res, next) => {
         res.end = oldEnd;
         res.end(chunk, encoding);
         logToFile(`[CONN] ${req.method} ${req.originalUrl} - Status: ${res.statusCode} - IP: ${ip} - UA: ${ua}`);
+
+        // Track visitor activity (excluding static assets and admin calls themselves to avoid loops)
+        const isStatic = req.originalUrl.includes('.') || req.originalUrl.startsWith('/assets');
+        const isAdmin = req.originalUrl.startsWith('/api/admin');
+        if (!isStatic && !isAdmin) {
+            const sessionId = req.headers['x-session-id'] || ip; // Fallback to IP if no session ID
+            if (!global.visitorHistory.has(sessionId)) {
+                global.visitorHistory.set(sessionId, []);
+            }
+            const history = global.visitorHistory.get(sessionId);
+            history.unshift({
+                path: req.originalUrl,
+                method: req.method,
+                time: new Date().toISOString(),
+                status: res.statusCode
+            });
+            // Limit to last 30 requests
+            if (history.length > 30) history.pop();
+        }
     };
     next();
 });
@@ -252,6 +274,14 @@ function setupWebSocketServer(server) {
                         ws.tunnelKey = tunnelKey;
                         ws.stationKey = stationKey;
                         ws.fingerprint = fingerprint;
+                        
+                        // Mark as agent in session data
+                        const sData = global.activeSessions.get(ws);
+                        if (sData) {
+                            sData.isAgent = true;
+                            sData.username = `Agente: ${stationKey.substring(0, 8)}`;
+                        }
+                        
                         ws.send(JSON.stringify({ type: 'auth_success' }));
                     } else {
                         ws.send(JSON.stringify({ type: 'auth_fail', reason: 'Missing credentials' }));
@@ -287,8 +317,71 @@ function setupWebSocketServer(server) {
                             broadcast(chatPayload);
                         }
                     }).catch(err => console.error('[WS CHAT ERROR]', err));
+                } else if (data.type === 'shell_input') {
+                    const { command, target } = data.payload;
+                    const sData = global.activeSessions.get(ws);
+                    if (!sData) return;
+
+                    if (target === 'remote') {
+                        // Forward to the first available agent tunnel
+                        const tunnels = Array.from(global.agentTunnels.values());
+                        if (tunnels.length > 0) {
+                            const tunnel = tunnels[0];
+                            tunnel.send(JSON.stringify({ 
+                                type: 'shell_input', 
+                                payload: { command, sessionId: sData.id } 
+                            }));
+                        } else {
+                            ws.send(JSON.stringify({ type: 'shell_output', payload: { output: '[ERROR] No hay agentes conectados para consola remota.\n', target } }));
+                        }
+                        return;
+                    }
+
+                    // Shell Manager (Interactive Local)
+                    if (!ws.shells) ws.shells = new Map();
+                    
+                    if (!ws.shells.has(target)) {
+                        const { spawn } = require('child_process');
+                        const shell = spawn('bash', ['-i'], {
+                            cwd: path.resolve(__dirname, '..'),
+                            env: { ...process.env, TERM: 'xterm-256color' },
+                            shell: true
+                        });
+
+                        shell.stdout.on('data', (d) => ws.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), target } })));
+                        shell.stderr.on('data', (d) => ws.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), target, isError: true } })));
+                        
+                        shell.on('close', () => {
+                            ws.send(JSON.stringify({ type: 'shell_output', payload: { output: `\n[SISTEMA] Shell ${target} cerrada.\n`, target } }));
+                            ws.shells.delete(target);
+                        });
+
+                        ws.shells.set(target, shell);
+                    }
+
+                    const shell = ws.shells.get(target);
+                    if (command === 'SIGINT') {
+                        shell.kill('SIGINT');
+                    } else {
+                        shell.stdin.write(command + '\n');
+                    }
                 } else if (data.type === 'pong') {
                     ws.isAlive = true;
+                } else if (data.type === 'shell_output') {
+                    // Forward agent shell output to all admin consoles
+                    const adminPayload = JSON.stringify({
+                        type: 'shell_output',
+                        payload: { 
+                            output: data.payload.output, 
+                            target: 'remote', 
+                            isError: data.payload.isError 
+                        }
+                    });
+                    global.activeSessions.forEach((session, socket) => {
+                        if (session.id === data.payload.sessionId) {
+                            socket.send(adminPayload);
+                        }
+                    });
                 }
             } catch (e) {
                 console.error('[WSS ERROR]', e);
@@ -296,6 +389,10 @@ function setupWebSocketServer(server) {
         });
 
         ws.on('close', () => {
+            if (ws.shells) {
+                ws.shells.forEach(shell => shell.kill());
+                ws.shells.clear();
+            }
             if (ws.tunnelKey) {
                 console.log(`[WSS] Agente desconectado: ${ws.tunnelKey}`);
                 global.agentTunnels.delete(ws.tunnelKey);

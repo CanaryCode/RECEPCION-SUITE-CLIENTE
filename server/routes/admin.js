@@ -108,7 +108,8 @@ router.get('/active-sessions-v2', async (req, res) => {
         for (const s of rawSessions) {
             // Normalizar username para la clave
             const uname = (s.username || 'Invitado').trim().toLowerCase();
-            const key = `${s.ip}_${s.ua}_${uname}`;
+            const isAgent = s.isAgent === true;
+            const key = `${s.ip}_${s.ua}_${isAgent ? 'agent' : uname}`;
             
             if (!grouped.has(key)) {
                 grouped.set(key, { 
@@ -214,6 +215,31 @@ router.get('/status', async (req, res) => {
     const agents = Array.from(activeAgents.values());
     const isAnyAgentOnline = agents.length > 0;
 
+    /**
+     * Heurística de consumo de energía (Estimación)
+     * Basado en la carga de CPU y valores base para un mini-pc/laptop típico.
+     */
+    async function getPowerUsage() {
+        let pwr = 0;
+        try {
+            if (process.platform === 'linux') {
+                const { execSync } = require('child_process');
+                const powerData = execSync('upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep "energy-rate"', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+                if (powerData && powerData.includes('W')) {
+                    pwr = parseFloat(powerData.split(':')[1].trim());
+                }
+            }
+        } catch (e) { }
+        
+        // Si upower devuelve 0 (típico en AC o batería llena) o falla, usar heurística enriquecida
+        if (pwr <= 0) {
+            pwr = parseFloat((12 + (cpuUsage * 0.45)).toFixed(1));
+        }
+        return pwr;
+    }
+
+    const powerVal = await getPowerUsage();
+
     const stats = {
         local: { status: isAnyAgentOnline ? 'online' : 'offline', agents: agents.length },
         remote: { status: 'offline' }, // Se puede mejorar con un ping real si el server tiene acceso
@@ -223,7 +249,8 @@ router.get('/status', async (req, res) => {
             totalMem: Math.round(os.totalmem() / 1024 / 1024),
             freeMem: Math.round(os.freemem() / 1024 / 1024),
             cpuUsage: cpuUsage,
-            netUsage: netUsage
+            netUsage: netUsage,
+            power: powerVal
         },
         database: {
             remote: 'unknown',
@@ -265,6 +292,17 @@ router.get('/status', async (req, res) => {
  */
 router.get('/logs', async (req, res) => {
     try {
+        const target = req.query.target;
+        if (target === 'remote') {
+            const adminPass = req.headers['x-admin-password'];
+            const agentUrl = `https://127.0.0.1:3001/api/admin/logs`;
+            const response = await fetch(agentUrl, {
+                headers: { 'x-admin-password': adminPass },
+                dispatcher: new (require('undici').Agent)({ connect: { rejectUnauthorized: false } })
+            });
+            return res.json(await response.json());
+        }
+
         const data = await fs.readFile(LOG_FILE, 'utf8');
         const lines = data.split('\n');
         // Return latest 100 lines
@@ -359,36 +397,72 @@ router.post('/run-tests', (req, res) => {
 router.post('/execute', async (req, res) => {
     const { script, action, target } = req.body;
 
-    // 1. Handle Server Control Actions (Forward to Tunnel)
-    if (action === 'start-server' || action === 'stop-server' || action === 'restart-server') {
-        const stationKey = req.headers['x-station-key'];
+    // 1. Handle Server Control & Shell Actions (Forward to Tunnel if remote)
+    if (action === 'start-server' || action === 'stop-server' || action === 'restart-server' || action === 'shell' || action === 'run-tests') {
         
-        if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
-            const ws = global.agentTunnels.get(stationKey);
-            if (ws.readyState === 1) {
-                ws.send(JSON.stringify({
-                    type: 'command',
-                    payload: { action, target: target || 'local' }
-                }));
-                return res.json({ success: true, message: `Comando ${action} enviado por Túnel WS.`, output: 'Orden encolada en WS' });
+        if (target === 'local') {
+            if (action === 'shell') {
+                const ROOT_DIR = path.resolve(__dirname, '../../');
+                return exec(req.body.command, { cwd: ROOT_DIR }, (err, stdout, stderr) => {
+                    return res.json({
+                        success: true,
+                        output: stdout,
+                        stderr: stderr || (err ? err.message : null)
+                    });
+                });
             }
+            if (action === 'run-tests') {
+                const scriptPath = path.resolve(__dirname, '../../tests/integration/storage.test.js');
+                return exec(`node "${scriptPath}"`, (err, stdout, stderr) => {
+                    return res.json({
+                        success: true,
+                        output: stdout,
+                        stderr: stderr || (err ? err.message : null)
+                    });
+                });
+            }
+            // Para acciones locales de control (start/stop/restart), 
+            // salimos de este bloque if para que lleguen al switch de scripts de abajo,
+            // O enviamos comandos al admin del PM2/Sistema.
+            if (action === 'restart-server' || action === 'start-server' || action === 'stop-server') {
+                // Implementación básica para reiniciar usando el propio proceso si es posible
+                setTimeout(() => process.exit(0), 1000);
+                return res.json({ success: true, message: `Ejecutando ${action} en servidor local... El servidor se reiniciará.` });
+            }
+        } else {
+            // REMOTE TARGET LOGIC (TENERIFE)
+            const stationKey = req.headers['x-station-key'];
+            
+            if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
+                const ws = global.agentTunnels.get(stationKey);
+                if (ws.readyState === 1) {
+                    ws.send(JSON.stringify({
+                        type: 'command',
+                        payload: { action, target: target || 'local', command: req.body.command }
+                    }));
+                    return res.json({ success: true, message: `Comando ${action} enviado por Túnel WS.`, output: 'Orden encolada en WS' });
+                }
+            }
+            
+            // Si el objetivo era local o soy el agente directo, lo del shell ya se hizo en if(target==='local').
+            // Llegar aquí significa que pedimos remoto y no hay túnel.
+            return res.status(502).json({
+                success: false,
+                error: 'No hay ningún Agente Recepción conectado al túnel WebSocket activo para esta estación.'
+            });
         }
-
-        return res.status(502).json({
-            success: false,
-            error: 'No hay ningún Agente Recepción conectado al túnel WebSocket activo para esta estación.'
-        });
     }
 
     // 2. Handle Maintenance Scripts (Legacy Switch)
     let command = '';
     let scriptPath = '';
 
-    switch (script) {
+    switch (script || action) { // Also check action for backward compatibility
         case 'sync':
             scriptPath = path.resolve(__dirname, '../scripts/sync_json_to_db.js');
             break;
         case 'test':
+        case 'run-tests':
             scriptPath = path.resolve(__dirname, '../../tests/integration/storage.test.js');
             break;
         default:
@@ -396,8 +470,7 @@ router.post('/execute', async (req, res) => {
     }
 
     command = `node "${scriptPath}"`;
-
-    res.json({ message: `Executing ${script}... Check logs for progress.`, command });
+    res.json({ message: `Executing ${script || action}... Check logs for progress.`, command, success: true });
 
     // Execute in background
     exec(command, (error, stdout, stderr) => {
@@ -408,6 +481,16 @@ router.post('/execute', async (req, res) => {
         if (stderr) require('fs').appendFileSync(LOG_FILE, stderr + '\n');
     });
 });
+/**
+ * GET /visitor-history/:sessionId
+ * Returns the recent request history for a specific visitor.
+ */
+router.get('/visitor-history/:sessionId', (req, res) => {
+    const { sessionId } = req.params;
+    const history = global.visitorHistory.get(sessionId) || [];
+    res.json({ success: true, history });
+});
+
 /**
  * Helper para obtener IP real saltando el reverse proxy o Cloudflare
  */

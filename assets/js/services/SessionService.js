@@ -9,7 +9,7 @@ import { LocalStorage } from '../core/LocalStorage.js';
  */
 class SessionService {
     constructor() {
-        this.STORAGE_KEY = 'app_current_user'; // Clave bajo la que se guarda el nombre en el navegador
+        this.STORAGE_KEY = 'session_user'; // Clave bajo la que se guarda el nombre en el navegador
     }
 
     /**
@@ -17,10 +17,13 @@ class SessionService {
      * @returns {string|null} El nombre del recepcionista o null si nadie se ha identificado.
      */
     getUser() {
-        // Migración: Si existe en LocalStorage (versión antigua), limpiarlo para respetar nueva política
-        if (LocalStorage.get(this.STORAGE_KEY)) {
-            LocalStorage.remove(this.STORAGE_KEY);
+        // Migración: Si existe en app_current_user (versión antigua), migrarlo a session_user
+        const legacyUser = sessionStorage.getItem('app_current_user');
+        if (legacyUser) {
+            sessionStorage.setItem(this.STORAGE_KEY, legacyUser);
+            sessionStorage.removeItem('app_current_user');
         }
+        
         return sessionStorage.getItem(this.STORAGE_KEY);
     }
 
@@ -31,6 +34,8 @@ class SessionService {
     setUser(username) {
         if (username) {
             sessionStorage.setItem(this.STORAGE_KEY, username);
+            // Notificar a otros módulos (Chat, Sync, etc)
+            window.dispatchEvent(new CustomEvent('user-updated', { detail: { name: username } }));
         } else {
             this.logout();
         }
@@ -42,6 +47,7 @@ class SessionService {
      */
     logout() {
         sessionStorage.removeItem(this.STORAGE_KEY);
+        window.dispatchEvent(new CustomEvent('user-updated', { detail: { name: null } }));
     }
 
     /**

@@ -55,6 +55,9 @@ class RealTimeSync {
                     const data = JSON.parse(event.data);
                     if (data.type === 'data-changed') {
                         this.handleDataChange(data.key);
+                    } else if (data.type === 'chat_message' || data.type === 'chat_delete' || data.type === 'chat_delete_multiple' || data.type === 'user_connected' || data.type === 'online_users') {
+                        // Re-emitir evento para que otros módulos (como el chat) lo escuchen sin tener su propio socket
+                        window.dispatchEvent(new CustomEvent('sync:ws_message', { detail: data }));
                     }
                 } catch (e) {
                     console.error('[Sync-RT] Error parseando mensaje:', e);

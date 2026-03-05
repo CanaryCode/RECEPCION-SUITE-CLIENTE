@@ -19,8 +19,10 @@ class AdminApp {
 
         sessionStorage.removeItem('admin_local_msgs');
         sessionStorage.removeItem('admin_remote_msgs');
-        sessionStorage.removeItem('admin_last_logs');
-
+        this.adminPassword = sessionStorage.getItem('admin_pass') || '';
+        this.ws = null;
+        this.shellOutputBuffer = { local: '', remote: '' };
+        
         this.localInd = document.getElementById('local-indicator');
         this.localTxt = document.getElementById('local-text');
         this.remoteInd = document.getElementById('remote-indicator');
@@ -33,15 +35,15 @@ class AdminApp {
         this.memTxt = document.getElementById('mem-text');
         this.netRx = document.getElementById('net-rx');
         this.netTx = document.getElementById('net-tx');
-        this.terminalLocal = document.getElementById('terminal-body-local');
-        this.terminalRemote = document.getElementById('terminal-body-remote');
-        this.localLogStatus = document.getElementById('local-log-status');
-        this.remoteLogStatus = document.getElementById('remote-log-status');
-        this.loginOverlay = document.getElementById('login-overlay');
+        this.terminalUnified = document.getElementById('terminal-body-unified');
+        this.inputUnified = document.getElementById('input-command-unified');
+        this.termTargetToggle = document.getElementsByName('termTarget');
+        this.termPrompt = document.getElementById('terminal-prompt');
         this.userInput = document.getElementById('admin-user-input');
         this.passInput = document.getElementById('admin-pass-input');
         this.loginBtn = document.getElementById('btn-login');
         this.loginError = document.getElementById('login-error');
+        this.loginOverlay = document.getElementById('login-overlay');
 
         window.onerror = (msg, url, line) => {
             this.appendTerminal('JS ERROR', `${msg} (line ${line})`, 'danger');
@@ -74,6 +76,7 @@ class AdminApp {
         console.log('[ADMIN] App initialized. Password stored:', !!this.adminPassword);
 
         if (this.adminPassword) {
+            this.setupWebSocket();
             await this.refreshStatus();
             await this.refreshLogs();
             await this.refreshConnections();
@@ -148,6 +151,32 @@ class AdminApp {
             this.netRx.textContent = data.os.netUsage.rx;
             this.netTx.textContent = data.os.netUsage.tx;
         }
+
+        // POTENCIA Y UPTIME (NEWS)
+        const pwrEl = document.getElementById('pwr-text');
+        if (pwrEl && data.os.power !== undefined) {
+            pwrEl.textContent = `${data.os.power} W`;
+            const pwrBar = document.getElementById('pwr-bar');
+            if (pwrBar) {
+                const pwrPerc = Math.min(100, Math.round((data.os.power / 65) * 100)); // Relativo a 65W
+                pwrBar.style.width = `${pwrPerc}%`;
+            }
+        }
+
+        const uptimeEl = document.getElementById('uptime-text');
+        if (uptimeEl && data.os.uptime) {
+            uptimeEl.textContent = this.formatUptime(data.os.uptime);
+        }
+    }
+
+    formatUptime(seconds) {
+        const d = Math.floor(seconds / (3600 * 24));
+        const h = Math.floor(seconds % (3600 * 24) / 3600);
+        const m = Math.floor(seconds % 3600 / 60);
+        const s = Math.floor(seconds % 60);
+
+        if (d > 0) return `${d}d, ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
 
     setStatusItem(ind, txt, isOnline, label) {
@@ -200,16 +229,12 @@ class AdminApp {
 
     async fetchLogSource(target) {
         const url = target === 'local' ? '/api/admin/logs' : '/api/admin/logs?target=remote';
-        const statusEl = target === 'local' ? this.localLogStatus : this.remoteLogStatus;
 
         try {
-            // Timeout más corto de 5s para logs
             const res = await this.secureFetch(url, { timeout: 5000 });
             if (res.ok) {
                 const data = await res.json();
                 this.renderLogs(data.lines || [], target);
-                statusEl.textContent = `ACTIVO ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
-                statusEl.className = 'badge bg-success ms-2';
             } else {
                 if (res.status === 401) {
                     this.appendTerminal('AUTH', `${target.toUpperCase()}: Sesión expirada`, 'warning', target);
@@ -217,83 +242,32 @@ class AdminApp {
                 } else {
                     this.appendTerminal('ERROR', `${target.toUpperCase()}: Código ${res.status}`, 'danger', target);
                 }
-                statusEl.textContent = 'ERROR';
-                statusEl.className = 'badge bg-danger ms-2';
             }
         } catch (e) {
             console.warn(`[ADMIN] Error ${target}:`, e);
-            statusEl.textContent = 'ERROR';
-            statusEl.className = 'badge bg-danger ms-2';
             this.appendTerminal('ERROR', `${target.toUpperCase()}: ${e.message}`, 'danger', target);
         }
     }
 
     renderLogs(lines, target) {
-        const term = target === 'local' ? this.terminalLocal : this.terminalRemote;
-        const messages = target === 'local' ? this.localMessages : this.remoteMessages;
-        if (!term) return;
-
-        if (lines && lines.length > 0) {
-            this.lastLogs[target] = lines;
-            sessionStorage.setItem('admin_last_logs', JSON.stringify(this.lastLogs));
-        } else if (!this.lastLogs[target] || this.lastLogs[target].length === 0) {
-            this.lastLogs[target] = ['<span class="text-secondary opacity-50 italic">Esperando logs del servidor...</span>'];
-        }
-
-        const terminalContent = document.createElement('div');
-
-        // 1. Mostrar primero los logs del archivo (Tail)
-        const logsToRender = this.lastLogs[target] || [];
-        logsToRender.forEach(line => {
-            const div = document.createElement('div');
-            div.className = 'log-entry py-0 px-1';
-
-            // Format timestamps and tags more robustly
-            const formatted = String(line)
-                .replace(/\[(AGENT|ADMIN|SERVER|System Routes|STDOUT|STDERR|ACCION|OK|ERROR|AUTH|SISTEMA|TESTS?|DB|DB RESULT)\]/g,
-                    (match, p1) => `<span class="badge bg-dark-subtle text-light-emphasis border border-secondary me-1" style="font-size:0.6rem;">${p1}</span>`)
-                .replace(/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/g,
-                    (match) => `<span class="text-secondary small">[${new Date(match).toLocaleTimeString()}]</span>`);
-
-            div.innerHTML = formatted;
-            terminalContent.appendChild(div);
-        });
-
-        // 2. Mostrar mensajes del sistema (Eventos manuales) al FINAL
-        if (messages.length > 0) {
-            messages.forEach(m => {
-                const div = document.createElement('div');
-                div.className = `log-entry text-light bg-${m.type} bg-opacity-10 border-start border-4 border-${m.type} ms-1 mb-1 py-1 px-2`;
-                div.innerHTML = `<span class="badge bg-${m.type} me-2" style="font-size:0.65rem;">${m.tag}</span> <span class="text-secondary small" style="font-size:0.7rem;">[${m.time}]</span> <span class="fw-bold small">${m.message}</span>`;
-                terminalContent.appendChild(div);
-            });
-        }
-
-        term.innerHTML = '';
-        term.appendChild(terminalContent);
-        // Asegurar scroll al final con varios reintentos para compensar renderizado lento
-        const scrollToBottom = () => { term.scrollTop = term.scrollHeight; };
-        requestAnimationFrame(() => {
-            scrollToBottom();
-            setTimeout(scrollToBottom, 50);
-            setTimeout(scrollToBottom, 200);
-            setTimeout(scrollToBottom, 500);
+        if (!lines || lines.length === 0) return;
+        
+        // Append historic logs to unified terminal
+        lines.reverse().forEach(line => {
+            this.appendInteractiveOutput(target, line, line.toLowerCase().includes('error'));
         });
     }
 
     appendTerminal(tag, message, type = 'secondary', target = 'local') {
         const entry = { tag, message, type, time: new Date().toLocaleTimeString() };
         console.log(`[TERMINAL ${target}]`, tag, message);
-        if (target === 'local') {
-            this.localMessages.push(entry);
-            if (this.localMessages.length > 50) this.localMessages.shift();
-            sessionStorage.setItem('admin_local_msgs', JSON.stringify(this.localMessages));
-        } else {
-            this.remoteMessages.push(entry);
-            if (this.remoteMessages.length > 50) this.remoteMessages.shift();
-            sessionStorage.setItem('admin_remote_msgs', JSON.stringify(this.remoteMessages));
-        }
-        this.renderLogs(this.lastLogs[target] || [], target);
+
+        // For system messages, we now append to the unified terminal
+        const prefix = target.toUpperCase();
+        const prefixClass = target === 'local' ? 'text-success' : 'text-primary';
+        const formattedMessage = `<span class="badge bg-${type} me-2" style="font-size:0.65rem;">${tag}</span> <span class="text-secondary small" style="font-size:0.7rem;">[${entry.time}]</span> <span class="fw-bold small">${message}</span>`;
+        
+        this.appendInteractiveOutput(target, formattedMessage, type === 'danger' || type === 'warning', true);
     }
 
     setupEventListeners() {
@@ -311,21 +285,141 @@ class AdminApp {
         bindAction('btn-logs-refresh', () => this.refreshLogs(true));
         bindAction('btn-connections-refresh', () => this.refreshConnections(true));
         bindAction('btn-sessions-refresh', () => this.refreshActiveSessions(true));
+        // These clear buttons will now clear the unified terminal
+        bindAction('btn-clear-local', () => { if (this.terminalUnified) this.terminalUnified.innerHTML = ''; });
+        bindAction('btn-clear-remote', () => { if (this.terminalUnified) this.terminalUnified.innerHTML = ''; });
 
-        if (this.loginBtn) {
-            this.loginBtn.onclick = () => this.handleLogin();
+        this.termTargetToggle.forEach(radio => {
+            radio.onchange = () => {
+                const isLocal = radio.value === 'local';
+                this.termPrompt.textContent = isLocal ? '$' : '#';
+                this.termPrompt.className = `input-group-text bg-transparent border-0 fw-bold ${isLocal ? 'text-success' : 'text-primary'}`;
+                this.inputUnified.placeholder = isLocal ? 'Escribe un comando local...' : 'Escribe un comando remoto...';
+            };
+        });
+        const btnClear = document.getElementById('btn-clear-unified');
+        if (btnClear) {
+            btnClear.onclick = () => {
+                if (this.terminalUnified) this.terminalUnified.innerHTML = '';
+            };
         }
+
+        const btnCopy = document.getElementById('btn-copy-unified');
+        if (btnCopy) {
+            btnCopy.onclick = () => this.copyUnifiedToClipboard();
+        }
+
+        const btnCopyErrors = document.getElementById('btn-copy-errors');
+        if (btnCopyErrors) {
+            btnCopyErrors.onclick = () => this.copyUnifiedErrorsToClipboard();
+        }
+
         if (this.userInput) {
             this.userInput.onkeypress = (e) => { if (e.key === 'Enter') this.passInput.focus(); };
         }
         if (this.passInput) {
             this.passInput.onkeypress = (e) => { if (e.key === 'Enter') this.handleLogin(); };
         }
+        if (this.loginBtn) {
+            this.loginBtn.onclick = () => this.handleLogin();
+        }
 
-        bindAction('btn-copy-local', () => this.copyToClipboard('local'));
-        bindAction('btn-copy-errors-local', () => this.copyOnlyErrors('local'));
-        bindAction('btn-copy-remote', () => this.copyToClipboard('remote'));
-        bindAction('btn-copy-errors-remote', () => this.copyOnlyErrors('remote'));
+        if (this.inputUnified) {
+            this.inputUnified.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    const cmd = this.inputUnified.value.trim();
+                    if (cmd) {
+                        const target = Array.from(this.termTargetToggle).find(r => r.checked)?.value || 'local';
+                        this.sendShellInput(cmd, target);
+                        this.inputUnified.value = '';
+                    }
+                }
+            };
+        }
+    }
+
+    setupWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/agent-tunnel`; // El endpoint del websocket
+        
+        console.log('[WS] Conectando a terminal interactiva...');
+        this.ws = new WebSocket(wsUrl);
+
+        this.ws.onopen = () => {
+            console.log('[WS] Conectado.');
+            // Autenticar ante el túnel (aunque RS usa auth por socket en app.js)
+            // Para el admin, ya estamos validados por IP/Session si el servidor nos deja entrar en app.js
+        };
+
+        this.ws.onmessage = (msg) => {
+            try {
+                const data = JSON.parse(msg.data);
+                if (data.type === 'shell_output') {
+                    this.appendInteractiveOutput(data.payload.target, data.payload.output, data.payload.isError);
+                }
+            } catch (e) { }
+        };
+
+        this.ws.onclose = () => {
+            setTimeout(() => this.setupWebSocket(), 5000);
+        };
+    }
+
+    sendShellInput(command, target) {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+            this.appendTerminal('WS ERROR', 'Conexión perdida. Reintentando...', 'danger', target);
+            return;
+        }
+        this.ws.send(JSON.stringify({
+            type: 'shell_input',
+            payload: { command, target }
+        }));
+    }
+
+    appendInteractiveOutput(target, output, isError = false, isHtml = false) {
+        if (!this.terminalUnified) return;
+
+        const prefix = target.toUpperCase();
+        const prefixClass = target === 'local' ? 'text-success' : 'text-primary';
+        
+        const div = document.createElement('div');
+        div.className = `log-entry py-0 px-1 font-monospace ${isError ? 'text-danger' : 'text-light'}`;
+        div.style.whiteSpace = 'pre-wrap';
+        
+        const spanPrefix = document.createElement('span');
+        spanPrefix.className = `${prefixClass} fw-bold me-2`;
+        spanPrefix.textContent = `[${prefix}]`;
+        
+        div.appendChild(spanPrefix);
+        
+        if (isHtml) {
+            const spanContent = document.createElement('span');
+            spanContent.innerHTML = output;
+            div.appendChild(spanContent);
+        } else {
+            div.appendChild(document.createTextNode(output));
+        }
+        
+        this.terminalUnified.appendChild(div);
+        this.terminalUnified.scrollTop = this.terminalUnified.scrollHeight;
+    }
+
+    copyUnifiedToClipboard() {
+        if (!this.terminalUnified) return;
+        const text = this.terminalUnified.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copiado al portapapeles');
+        });
+    }
+
+    copyUnifiedErrorsToClipboard() {
+        if (!this.terminalUnified) return;
+        const errors = Array.from(this.terminalUnified.querySelectorAll('.text-danger'))
+            .map(el => el.innerText)
+            .join('\n');
+        navigator.clipboard.writeText(errors).then(() => {
+            alert('Errores copiados al portapapeles');
+        });
     }
 
     async copyToClipboard(target) {
@@ -396,6 +490,17 @@ class AdminApp {
         }
     }
 
+    clearTerminal(target) {
+        if (target === 'local') {
+            this.localMessages = [];
+            sessionStorage.removeItem('admin_local_msgs');
+        } else {
+            this.remoteMessages = [];
+            sessionStorage.removeItem('admin_remote_msgs');
+        }
+        this.renderLogs(this.lastLogs[target] || [], target);
+    }
+
     async runTests() {
         if (this.isExecuting) return;
         this.isExecuting = true;
@@ -418,53 +523,74 @@ class AdminApp {
         }
     }
 
-    async executeAction(action, target = 'local') {
-        if (this.isExecuting) {
+    async executeAction(action, target = 'local', params = {}) {
+        if (this.isExecuting && action !== 'shell') {
             this.appendTerminal('WAIT', 'Otra acción en curso...', 'warning', target);
             return;
         }
-        this.isExecuting = true;
+        
+        // Limpiar mensajes previos del sistema si es una nueva acción principal (evita acumulación)
+        if (action !== 'shell') {
+            this.isExecuting = true;
+            if (target === 'local') this.localMessages = [];
+            else this.remoteMessages = [];
+        }
 
-        const btnId = (action === 'start-server')
-            ? (target === 'local' ? 'btn-start-server' : 'btn-start-remote')
-            : (target === 'local'
-                ? (action === 'stop-server' ? 'btn-stop-server' : (action === 'run-tests' ? 'btn-run-tests' : 'btn-logs-refresh'))
-                : 'btn-stop-remote');
+        let btnId = null;
+        if (action === 'start-server') {
+            btnId = (target === 'local' ? 'btn-start-server' : 'btn-start-remote');
+        } else if (action === 'stop-server') {
+            btnId = (target === 'local' ? 'btn-stop-server' : 'btn-stop-remote');
+        } else if (action === 'run-tests') {
+            btnId = 'btn-run-tests';
+        } else if (action === 'logs-refresh') {
+            btnId = 'btn-logs-refresh';
+        }
 
-        const btn = document.getElementById(btnId);
+        const btn = btnId ? document.getElementById(btnId) : null;
         if (btn) { btn.disabled = true; btn.classList.add('btn-loading'); }
 
-        this.appendTerminal('ACCION', `${action.toUpperCase()} en ${target.toUpperCase()}...`, 'primary', target);
+        const logMsg = action === 'shell' ? `> ${params.command}` : `${action.toUpperCase()} en ${target.toUpperCase()}...`;
+        this.appendTerminal(action === 'shell' ? 'SHELL' : 'ACCION', logMsg, action === 'shell' ? 'info' : 'primary', target);
 
         try {
+            const body = { action, target, ...params };
             const res = await this.secureFetch('/api/admin/execute', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, target })
+                body: JSON.stringify(body)
             });
 
             if (res.status === 401) return this.showLogin();
             const data = await res.json();
             if (data.success) {
-                this.appendTerminal('OK', data.message || 'Comando enviado', 'success', target);
-                if (data.output) this.appendTerminal('STDOUT', data.output, 'secondary', target);
+                if (action !== 'shell') {
+                    this.appendTerminal('OK', data.message || 'Comando enviado', 'success', target);
+                }
+                if (data.output) {
+                    data.output.split('\n').forEach(line => {
+                        if (line.trim()) this.appendTerminal('OUT', line, 'secondary', target);
+                    });
+                }
             } else {
                 this.appendTerminal('ERROR', data.error || 'Fallo', 'danger', target);
-                if (data.stderr) this.appendTerminal('STDERR', data.stderr, 'warning', target);
+                if (data.stderr) {
+                    data.stderr.split('\n').forEach(line => {
+                        if (line.trim()) this.appendTerminal('STDERR', line, 'warning', target);
+                    });
+                }
             }
         } catch (e) {
             this.appendTerminal('ERROR RED', e.message, 'danger', target);
         } finally {
-            // Esperar un poco más para que el proceso tenga tiempo de levantar el puerto
-            setTimeout(() => {
-                this.isExecuting = false;
-                if (btn) { btn.disabled = false; btn.classList.remove('btn-loading'); }
-                // Forzar refresco inmediato de estado tras una acción
-                this.refreshStatus();
-                setTimeout(() => this.refreshLogs(true), 1500);
-                setTimeout(() => this.refreshConnections(true), 2000);
-                setTimeout(() => this.refreshActiveSessions(true), 2500);
-            }, 2500);
+            if (action !== 'shell') {
+                setTimeout(() => {
+                    this.isExecuting = false;
+                    if (btn) { btn.disabled = false; btn.classList.remove('btn-loading'); }
+                    this.refreshStatus();
+                    setTimeout(() => this.refreshLogs(true), 1500);
+                }, 2500);
+            }
         }
     }
 
@@ -515,13 +641,29 @@ class AdminApp {
             else if (s.ua.includes('node')) { browser = 'Node Agent'; icon = 'bi-cpu'; }
             
             const isGuest = s.username.toLowerCase() === 'invitado' || s.username === 'Guest';
+            const isAgent = s.isAgent === true;
+            
             const countBadge = s.count > 1 
                 ? `<span class="badge bg-dark text-info border border-info border-opacity-25 ms-2" style="font-size: 0.65rem;">${s.count} sockets</span>` 
                 : '';
 
-            const userDisplay = isGuest 
-                ? `<div class="text-secondary"><i class="bi bi-person me-2"></i>Invitado</div>`
-                : `<div class="text-primary fw-bold"><i class="bi bi-person-check-fill me-2"></i>${s.username}${countBadge}</div>`;
+            let userDisplay = '';
+            if (isAgent) {
+                userDisplay = `<div class="text-warning fw-bold"><i class="bi bi-robot me-2"></i>SISTEMA (AGENTE)</div>`;
+                browser = 'Internal Agent';
+                icon = 'bi-cpu-fill';
+            } else if (isGuest) {
+                userDisplay = `<div class="text-secondary"><i class="bi bi-person me-2"></i>Invitado</div>`;
+            } else {
+                userDisplay = `<div class="text-primary fw-bold"><i class="bi bi-person-check-fill me-2"></i>${s.username}${countBadge}</div>`;
+            }
+
+            const safeUsername = (s.username || '').replace(/'/g, "\\'");
+            const actions = isAgent ? '---' : `
+                <button class="btn btn-xs btn-outline-info p-1" onclick="window.app.showVisitorActivity('${s.ip}', '${safeUsername}')" title="Ver actividad">
+                    <i class="bi bi-eye-fill"></i>
+                </button>
+            `;
 
             return `
                 <tr class="animate__animated animate__fadeIn">
@@ -537,6 +679,7 @@ class AdminApp {
                             </div>
                         </div>
                     </td>
+                    <td class="text-center">${actions}</td>
                     <td class="text-end pe-4">
                         <div class="fw-bold text-light">${time}</div>
                         <div class="text-secondary" style="font-size: 0.7rem;">${date}</div>
@@ -544,6 +687,40 @@ class AdminApp {
                 </tr>
             `;
         }).join('');
+    }
+
+    async showVisitorActivity(ip, username) {
+        const modal = new bootstrap.Modal(document.getElementById('activityModal'));
+        const body = document.getElementById('activity-table-body');
+        const info = document.getElementById('activity-user-info');
+        
+        body.innerHTML = '<tr><td colspan="4" class="text-center p-4">Cargando historial...</td></tr>';
+        info.textContent = `Usuario: ${username} | IP: ${ip}`;
+        modal.show();
+
+        try {
+            const res = await this.secureFetch(`/api/admin/visitor-history/${encodeURIComponent(ip)}`);
+            const data = await res.json();
+            
+            if (data.success && data.history.length > 0) {
+                body.innerHTML = data.history.map(h => {
+                    const time = new Date(h.time).toLocaleTimeString();
+                    const statusClass = h.status >= 400 ? 'text-danger' : (h.status >= 300 ? 'text-warning' : 'text-success');
+                    return `
+                        <tr>
+                            <td class="ps-3"><span class="badge bg-secondary opacity-50">${h.method}</span></td>
+                            <td class="text-center fw-bold ${statusClass}">${h.status}</td>
+                            <td class="text-info font-monospace" style="word-break: break-all;">${h.path}</td>
+                            <td class="text-end pe-3 text-secondary">${time}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                body.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-secondary">No hay historial reciente para este usuario.</td></tr>';
+            }
+        } catch (e) {
+            body.innerHTML = `<tr><td colspan="4" class="text-center p-4 text-danger">Error: ${e.message}</td></tr>`;
+        }
     }
 
     async refreshConnections(manual = false) {

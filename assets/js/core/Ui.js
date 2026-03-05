@@ -275,7 +275,10 @@ export const Ui = {
         tooltips.forEach(el => {
             // Limpiar instancia previa si existe
             const old = bootstrap.Tooltip.getInstance(el);
-            if (old) old.dispose();
+            if (old) {
+                try { old.hide(); } catch (e) {}
+                old.dispose();
+            }
 
             new bootstrap.Tooltip(el, {
                 trigger: 'hover',
@@ -492,20 +495,20 @@ export const Ui = {
      */
     hideAllTooltips: () => {
         try {
-            // 1. Eliminar elementos visuales del DOM (Tooltips huérfanos)
-            const tooltips = document.querySelectorAll('.tooltip');
-            tooltips.forEach(t => t.remove());
-
-            // 2. Cerrar instancias de Bootstrap
+            // 1. Cerrar y destruir instancias de Bootstrap PRIMERO
             const triggers = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             triggers.forEach(trigger => {
                 try {
                     if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
                         const instance = bootstrap.Tooltip.getInstance(trigger);
-                        if (instance) instance.hide();
+                        if (instance) instance.dispose();
                     }
                 } catch (e) { /* Ignore individual tooltip errors */ }
             });
+
+            // 2. Eliminar elementos visuales del DOM (Tooltips huérfanos)
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(t => t.remove());
         } catch (err) {
             console.error("Error hiding tooltips:", err);
         }

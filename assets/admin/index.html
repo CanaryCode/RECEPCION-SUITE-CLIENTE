@@ -44,14 +44,26 @@
                     <div class="card-body">
                         <div id="status-container">
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1">SERVIDOR LOCAL (Puerto 3000)</label>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="text-secondary small mb-0">SERVIDOR LOCAL (3000)</label>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-link text-success p-0 me-2" id="btn-start-server" title="Iniciar Local"><i class="bi bi-play-fill"></i></button>
+                                        <button class="btn btn-link text-danger p-0" id="btn-stop-server" title="Apagar Local"><i class="bi bi-stop-fill"></i></button>
+                                    </div>
+                                </div>
                                 <div class="d-flex align-items-center">
                                     <span class="indicator me-2" id="local-indicator"></span>
                                     <span id="local-text">Cargando...</span>
                                 </div>
                             </div>
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1">SERVIDOR REMOTO (Tenerife)</label>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="text-secondary small mb-0">SERVIDOR REMOTO (Cloud)</label>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-link text-success p-0 me-2" id="btn-start-remote" title="Iniciar Remoto"><i class="bi bi-play-fill"></i></button>
+                                        <button class="btn btn-link text-danger p-0" id="btn-stop-remote" title="Apagar Remoto"><i class="bi bi-stop-fill"></i></button>
+                                    </div>
+                                </div>
                                 <div class="d-flex align-items-center">
                                     <span class="indicator me-2" id="remote-indicator"></span>
                                     <span id="remote-text">Cargando...</span>
@@ -61,42 +73,59 @@
                                 <label class="text-secondary small mb-1">AGENTE LOCAL (En ejecución)</label>
                                 <div class="d-flex align-items-center">
                                     <span class="indicator online me-2"></span>
-                                    <span class="text-success">Activo (3001)</span>
+                                    <span class="text-success small fw-bold">Activo (3001)</span>
                                 </div>
                             </div>
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1">BASE DE DATOS (Remota)</label>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="text-secondary small mb-0">BASE DE DATOS (Remota)</label>
+                                    <button class="btn btn-link text-info p-0 small font-monospace" id="btn-db-remote-check" title="Check Database" style="font-size: 0.7rem;">CHECK</button>
+                                </div>
                                 <div class="d-flex align-items-center">
                                     <span class="indicator me-2" id="db-remote-indicator"></span>
                                     <span id="db-remote-text" class="small">Sin datos</span>
                                 </div>
                             </div>
+                            <div class="d-grid gap-2 mb-4">
+                                <button class="btn btn-sm btn-outline-warning text-dark fw-bold border-2" id="btn-run-tests">
+                                    <i class="bi bi-shield-check me-2"></i>TESTS DE INTEGRIDAD
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" id="btn-logs-refresh">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>REFRESCAR TODO
+                                </button>
+                            </div>
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1"><i class="bi bi-cpu me-1"></i>USO DE
-                                    CPU</label>
+                                <label class="text-secondary small mb-1"><i class="bi bi-cpu me-1"></i>USO DE CPU</label>
                                 <div class="progress bg-dark mb-1" style="height: 6px; border-radius: 10px;">
-                                    <div id="cpu-bar" class="progress-bar bg-info"
-                                        style="width: 0%; transition: width 0.5s ease;"></div>
+                                    <div id="cpu-bar" class="progress-bar bg-info" style="width: 0%; transition: width 0.5s ease;"></div>
                                 </div>
                                 <span class="small text-secondary" id="cpu-text">0%</span>
                             </div>
                             <div class="status-item mb-4">
-                                <label class="text-secondary small mb-1"><i class="bi bi-memory me-1"></i>MEMORIA
-                                    RAM</label>
+                                <label class="text-secondary small mb-1"><i class="bi bi-memory me-1"></i>MEMORIA RAM</label>
                                 <div class="progress bg-dark mb-1" style="height: 6px; border-radius: 10px;">
-                                    <div id="mem-bar" class="progress-bar bg-primary"
-                                        style="width: 0%; transition: width 0.5s ease;"></div>
+                                    <div id="mem-bar" class="progress-bar bg-primary" style="width: 0%; transition: width 0.5s ease;"></div>
                                 </div>
                                 <span class="small text-secondary" id="mem-text">RAM: 0 / 0 MB</span>
                             </div>
+                            <div class="status-item mb-4">
+                                <label class="text-secondary small mb-1"><i class="bi bi-lightning-charge me-1"></i>CONSUMO ENERGÍA</label>
+                                <div class="progress bg-dark mb-1" style="height: 6px; border-radius: 10px;">
+                                    <div id="pwr-bar" class="progress-bar bg-warning" style="width: 0%; transition: width 0.5s ease;"></div>
+                                </div>
+                                <span class="small text-secondary" id="pwr-text">0 W</span>
+                            </div>
+                            <div class="status-item mb-4">
+                                <label class="text-secondary small mb-1"><i class="bi bi-clock-history me-1"></i>TIEMPO ACTIVO</label>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-info small fw-bold font-monospace" id="uptime-text">00:00:00</span>
+                                </div>
+                            </div>
                             <div class="status-item mb-2">
-                                <label class="text-secondary small mb-1"><i class="bi bi-globe2 me-1"></i>TRÁFICO
-                                    RED</label>
+                                <label class="text-secondary small mb-1"><i class="bi bi-globe2 me-1"></i>TRÁFICO RED</label>
                                 <div class="d-flex justify-content-between align-items-center small mt-1">
-                                    <span class="text-success fw-bold"><i class="bi bi-download me-1"></i><span
-                                            id="net-rx">0</span> KB/s</span>
-                                    <span class="text-primary fw-bold"><i class="bi bi-upload me-1"></i><span
-                                            id="net-tx">0</span> KB/s</span>
+                                    <span class="text-success fw-bold"><i class="bi bi-download me-1"></i><span id="net-rx">0</span> KB/s</span>
+                                    <span class="text-primary fw-bold"><i class="bi bi-upload me-1"></i><span id="net-tx">0</span> KB/s</span>
                                 </div>
                             </div>
                         </div>
@@ -108,123 +137,48 @@
             <div class="col-lg-9">
                 <div class="row g-4">
 
-                    <!-- Control Panel -->
-                    <div class="col-12">
-                        <div class="card bg-black-glass border-secondary shadow-sm">
-                            <div
-                                class="card-header border-secondary d-flex justify-content-between align-items-center py-3">
-                                <h6 class="mb-0 fw-bold"><i class="bi bi-terminal-fill me-2"></i>PANEL DE CONTROL</h6>
-                                <span class="badge bg-primary rounded-pill">GESTIÓN UNIFICADA</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label class="text-secondary small mb-2 d-block">SERVIDOR LOCAL (TENERIFE
-                                        PC)</label>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-success rounded-pill px-4 shadow-sm"
-                                            id="btn-start-server" title="Arrancar server/app.js local">
-                                            <i class="bi bi-lightning-charge-fill me-2"></i>Iniciar Local
-                                        </button>
-                                        <button class="btn btn-danger rounded-pill px-4 shadow-sm" id="btn-stop-server"
-                                            title="Apagar server local">
-                                            <i class="bi bi-power me-2"></i>Apagar Local
-                                        </button>
-                                    </div>
-                                </div>
-                                <hr class="border-secondary opacity-25">
-                                <div class="mb-3">
-                                    <label class="text-secondary small mb-2 d-block">SERVIDOR REMOTO (WEB
-                                        TENERIFE)</label>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-outline-success rounded-pill px-4 shadow-sm"
-                                            id="btn-start-remote">
-                                            <i class="bi bi-cloud-upload-fill me-2"></i>Iniciar Remoto
-                                        </button>
-                                        <button class="btn btn-outline-danger rounded-pill px-4 shadow-sm"
-                                            id="btn-stop-remote">
-                                            <i class="bi bi-cloud-slash-fill me-2"></i>Apagar Remoto
-                                        </button>
-                                        <button class="btn btn-outline-info rounded-pill px-4 shadow-sm"
-                                            id="btn-db-remote-check">
-                                            <i class="bi bi-database-check me-2"></i>Check DB Remota
-                                        </button>
-                                    </div>
-                                </div>
-                                <hr class="border-secondary opacity-25">
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button class="btn btn-warning rounded-pill px-4 shadow-sm text-dark fw-bold"
-                                        id="btn-run-tests">
-                                        <i class="bi bi-shield-check me-2"></i>Pruebas Integridad
-                                    </button>
-                                    <button class="btn btn-outline-info rounded-pill px-4 shadow-sm"
-                                        id="btn-logs-refresh">
-                                        <i class="bi bi-clock-history me-2"></i>Refrescar Logs
-                                    </button>
-                                    <a href="https://www.desdetenerife.com:3000" target="_blank"
-                                        class="btn btn-dark border-secondary rounded-pill px-4 ms-auto shadow-sm">
-                                        <i class="bi bi-box-arrow-up-right me-2"></i>Abrir Aplicación
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-12 d-none">
+                        <!-- Removed Card - Controls moved to sidebar -->
                     </div>
 
-                    <!-- Log Viewer (Dual Console) -->
-                    <div class="col-6 mb-3">
-                        <div class="card bg-black-glass border-secondary shadow-sm terminal-card h-100">
-                            <div
-                                class="card-header border-secondary d-flex justify-content-between align-items-center bg-dark py-2">
-                                <span class="small font-monospace text-success"><i class="bi bi-pc-display me-2"></i>PC
-                                    LOCAL <span id="local-log-status"
-                                        class="badge bg-secondary ms-2 opacity-50">BUSCANDO...</span></span>
+                    <!-- Terminal Unificada -->
+                    <div class="col-12 mb-3 mt-2">
+                        <div class="card bg-black-glass border-secondary shadow-sm terminal-card">
+                            <div class="card-header border-secondary d-flex justify-content-between align-items-center bg-dark py-2">
                                 <div class="d-flex align-items-center">
-                                    <button
-                                        class="btn btn-sm btn-outline-danger border-0 me-2 py-0 px-2 small font-monospace"
-                                        id="btn-copy-errors-local" title="Copiar SOLO errores">
+                                    <span class="small font-monospace text-success me-3"><i class="bi bi-terminal me-2"></i>CONSOLA UNIFICADA</span>
+                                    <div class="btn-group btn-group-sm bg-black rounded" id="terminal-target-toggle" role="group">
+                                        <input type="radio" class="btn-check" name="termTarget" id="target-local" value="local" checked>
+                                        <label class="btn btn-outline-success border-0 px-3" for="target-local">LOCAL</label>
+                                        
+                                        <input type="radio" class="btn-check" name="termTarget" id="target-remote" value="remote">
+                                        <label class="btn btn-outline-primary border-0 px-3" for="target-remote">REMOTO</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-sm btn-outline-danger border-0 me-2 py-0 px-2 small font-monospace" id="btn-copy-errors" title="Copiar SOLO errores">
                                         <i class="bi bi-exclamation-triangle-fill me-1"></i>ERRORES
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary border-0 me-2 py-0 px-1"
-                                        id="btn-copy-local" title="Copiar todo el log">
+                                    <button class="btn btn-link btn-sm text-secondary p-0 me-3 opacity-75" id="btn-clear-unified" title="Limpiar Consola" style="font-size: 0.7rem; text-decoration: none;">
+                                        <i class="bi bi-trash3 me-1"></i>LIMPIAR
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary border-0 me-2 py-0 px-1" id="btn-copy-unified" title="Copiar todo el log">
                                         <i class="bi bi-copy" style="font-size: 0.8rem;"></i>
                                     </button>
                                     <div class="terminal-dots"><span></span><span></span><span></span></div>
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <div id="terminal-body-local" class="terminal-view p-3 font-monospace small">
-                                    <div class="text-secondary">Conectando con logs locales...</div>
+                                <div id="terminal-body-unified" class="terminal-view p-3 font-monospace small" style="height: 380px;">
+                                    <div class="text-secondary opacity-50 italic">Log unificado iniciado. Usa el selector para dirigir comandos...</div>
+                                </div>
+                                <div class="terminal-input-container p-2 border-top border-secondary bg-black">
+                                    <div class="input-group input-group-sm">
+                                        <span id="terminal-prompt" class="input-group-text bg-transparent border-0 text-success fw-bold">$</span>
+                                        <input type="text" id="input-command-unified" class="form-control bg-transparent border-0 text-light font-monospace shadow-none" placeholder="Escribe un comando local...">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <div class="card bg-black-glass border-secondary shadow-sm terminal-card h-100">
-                            <div
-                                class="card-header border-secondary d-flex justify-content-between align-items-center bg-dark py-2">
-                                <span class="small font-monospace text-primary"><i class="bi bi-cloud-sun me-2"></i>WEB
-                                    REMOTA <span id="remote-log-status"
-                                        class="badge bg-secondary ms-2 opacity-50">BUSCANDO...</span></span>
-                                <div class="d-flex align-items-center">
-                                    <button
-                                        class="btn btn-sm btn-outline-danger border-0 me-2 py-0 px-2 small font-monospace"
-                                        id="btn-copy-errors-remote" title="Copiar SOLO errores de Tenerife">
-                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>ERRORES
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary border-0 me-2 py-0 px-1"
-                                        id="btn-copy-remote" title="Copiar todo el log de Tenerife">
-                                        <i class="bi bi-copy" style="font-size: 0.8rem;"></i>
-                                    </button>
-                                    <div class="terminal-dots"><span></span><span></span><span></span></div>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="terminal-body-remote" class="terminal-view p-3 font-monospace small">
-                                    <div class="text-secondary">Conectando con logs de Tenerife...</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Connection Tracker -->
                         </div>
                     </div>
 
@@ -251,6 +205,7 @@
                                                 <th>IP Address</th>
                                                 <th>Ubicación</th>
                                                 <th>Navegador / Sistema</th>
+                                                <th class="text-center">Acciones</th>
                                                 <th class="text-end pe-4">Conectado</th>
                                             </tr>
                                         </thead>
@@ -294,6 +249,39 @@
                 class="btn btn-link btn-sm text-secondary w-100 text-decoration-none">¿Problemas? Limpiar
                 sesión</button>
             <div id="login-error" class="text-danger small d-none mt-2">Contraseña incorrecta</div>
+        </div>
+    </div>
+
+    <!-- Modal Actividad Usuario -->
+    <div class="modal fade" id="activityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-black border-secondary shadow-lg">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-info small fw-bold"><i class="bi bi-eye-fill me-2"></i>HISTORIAL DE NAVEGACIÓN</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-dark table-hover mb-0" style="font-size: 0.75rem;">
+                            <thead class="sticky-top bg-dark">
+                                <tr>
+                                    <th class="ps-3 text-secondary">MÉTODO</th>
+                                    <th class="text-secondary text-center">STATUS</th>
+                                    <th class="text-secondary">RUTA / ENDPOINT</th>
+                                    <th class="text-end pe-3 text-secondary">HORA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table-body">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary py-1 bg-dark bg-opacity-50">
+                    <span class="text-secondary small me-auto" id="activity-user-info" style="font-size: 0.65rem;"></span>
+                    <button type="button" class="btn btn-xs btn-outline-secondary py-0" data-bs-dismiss="modal" style="font-size: 0.7rem;">Cerrar</button>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -397,16 +397,50 @@
             }
         ],
         "RECEPCIONISTAS": [
-            "Pavel",
-            "Javi",
-            "Anadelia",
-            "Marta",
-            "Carmen",
-            "Alberto",
-            "Nerea",
-            "Emiliano",
-            "Domingo",
-            "Antonio"
+            {
+                "nombre": "Pavel",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Javi",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Anadelia",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Marta",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Carmen",
+                "vacaciones": 48
+            },
+            {
+                "nombre": "Alberto",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Nerea",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Emiliano",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Domingo",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Antonio",
+                "vacaciones": 30
+            },
+            {
+                "nombre": "Marcos",
+                "vacaciones": 30
+            }
         ],
         "ALARMAS_SISTEMA": [
             {

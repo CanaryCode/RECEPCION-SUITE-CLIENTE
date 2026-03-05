@@ -405,14 +405,64 @@ function connectToCentral() {
             } else if (data.type === 'command') {
                 console.log('[AGENT] Comando Remoto Recibido:', data.payload);
                 executeRemoteCommand(data.payload);
+            } else if (data.type === 'shell_input') {
+                handleShellInput(data.payload);
             }
         } catch (e) {
             console.error('[AGENT] Error parseando WS:', e.message);
         }
     });
 
-    wsTunnel.on('close', () => { setTimeout(connectToCentral, 5000); });
+    wsTunnel.on('close', () => { 
+        if (activeShells) {
+            activeShells.forEach(s => s.kill());
+            activeShells.clear();
+        }
+        setTimeout(connectToCentral, 5000); 
+    });
     wsTunnel.on('error', (err) => { wsTunnel.close(); });
+}
+
+const activeShells = new Map();
+
+function handleShellInput(payload) {
+    const { command, sessionId } = payload;
+    
+    if (!activeShells.has(sessionId)) {
+        const { spawn } = require('child_process');
+        const shell = spawn('bash', ['-i'], {
+            cwd: path.resolve(__dirname, '../..'),
+            env: { ...process.env, TERM: 'xterm-256color' },
+            shell: true
+        });
+
+        shell.stdout.on('data', (d) => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), sessionId } }));
+            }
+        });
+        shell.stderr.on('data', (d) => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), sessionId, isError: true } }));
+            }
+        });
+
+        shell.on('close', () => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: `\n[SISTEMA] Shell remota cerrada.\n`, sessionId } }));
+            }
+            activeShells.delete(sessionId);
+        });
+
+        activeShells.set(sessionId, shell);
+    }
+
+    const shell = activeShells.get(sessionId);
+    if (command === 'SIGINT') {
+        shell.kill('SIGINT');
+    } else {
+        shell.stdin.write(command + '\n');
+    }
 }
 
 function executeRemoteCommand(payload) {
@@ -445,6 +495,15 @@ function executeRemoteCommand(payload) {
         require('child_process').exec('pm2 start server_v4.js --name "recepcion-central"', { cwd: path.join(__dirname, '../..') });
     } else if (action === 'stop-server') {
         require('child_process').exec('pm2 stop recepcion-central');
+    } else if (action === 'shell') {
+        console.log(`[AGENT] Executing remote shell command: ${command}`);
+        require('child_process').exec(command, { cwd: path.join(__dirname, '../..') }, (err, stdout, stderr) => {
+            // Ideally we should send this back via WS, but since it's a generic command 
+            // the server currently just enqueues it. In the future we can add real-time output.
+            if (err) console.error(`[AGENT] Shell error: ${err.message}`);
+            if (stdout) console.log(`[AGENT] Shell stdout: ${stdout}`);
+            if (stderr) console.error(`[AGENT] Shell stderr: ${stderr}`);
+        });
     }
 }
 

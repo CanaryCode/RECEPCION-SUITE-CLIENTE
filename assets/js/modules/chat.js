@@ -35,8 +35,22 @@ class ChatModule {
         this.recipientSelect = document.getElementById('chat-recipient-select');
 
         this.setupEventListeners();
-        this.connectWebSocket();
         this.loadHistory(); // Load global initially
+
+        // Listen for shared WebSocket messages
+        window.addEventListener('sync:ws_message', (e) => {
+            const data = e.detail;
+            if (data.type === 'chat_message') {
+                this.handleIncomingMessage(data.payload);
+            } else if (data.type === 'chat_delete' || data.type === 'chat_delete_multiple') {
+                const ids = data.type === 'chat_delete' ? [data.payload.id] : data.payload.ids;
+                if (ids && Array.isArray(ids)) ids.forEach(id => this.handleDeletedMessage(id));
+            } else if (data.type === 'user_connected') {
+                this.handleUserPresence(data.payload);
+            } else if (data.type === 'online_users') {
+                this.handleOnlineUsersList(data.payload.users);
+            }
+        });
 
         this.toggleBtn.classList.remove('d-none');
     }
@@ -59,12 +73,8 @@ class ChatModule {
         });
 
         window.addEventListener('user-updated', (e) => {
-            const oldUser = this.currentUser;
-            this.currentUser = e.detail.name;
-            if (oldUser !== this.currentUser) {
-                // Re-login to WS with new identity
-                this.login();
-            }
+            this.currentUser = e.detail.name || 'Invitado';
+            // Note: Re-identification is handled by RealTimeSync
         });
     }
 
@@ -91,48 +101,31 @@ class ChatModule {
         }
     }
 
-    connectWebSocket() {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}`;
-        this.socket = new WebSocket(wsUrl);
+    // WebSocket connection is now managed by RealTimeSync
+    sendMessage() {
+        const text = this.input.value.trim();
+        if (!text) return;
 
-        this.socket.onopen = () => {
-            console.log("[CHAT] WS Connected");
-            this.login();
+        const payload = {
+            sender: this.currentUser,
+            recipient: this.currentRecipient,
+            message: text,
+            is_system: false
         };
 
-        this.socket.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data.type === 'chat_message') {
-                    this.handleIncomingMessage(data.payload);
-                } else if (data.type === 'chat_delete') {
-                    this.handleDeletedMessage(data.payload.id);
-                } else if (data.type === 'chat_delete_multiple') {
-                    if (data.payload.ids && Array.isArray(data.payload.ids)) {
-                        data.payload.ids.forEach(id => this.handleDeletedMessage(id));
-                    }
-                } else if (data.type === 'user_connected') {
-                    this.handleUserPresence(data.payload);
-                } else if (data.type === 'online_users') {
-                    this.handleOnlineUsersList(data.payload.users);
-                }
-            } catch (e) {}
-        };
+        // Use the shared socket from realTimeSync if available
+        import('../core/RealTimeSync.js').then(m => {
+            if (m.realTimeSync && m.realTimeSync.socket && m.realTimeSync.socket.readyState === WebSocket.OPEN) {
+                m.realTimeSync.socket.send(JSON.stringify({
+                    type: 'chat_message',
+                    payload: payload
+                }));
+            } else {
+                Api.post('/chat/message', payload);
+            }
+        });
 
-        this.socket.onclose = () => {
-            console.warn("[CHAT] WS Disconnected. Retrying in 5s...");
-            setTimeout(() => this.connectWebSocket(), 5000);
-        };
-    }
-
-    login() {
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-            this.socket.send(JSON.stringify({
-                type: 'chat_login',
-                payload: { username: this.currentUser }
-            }));
-        }
+        this.input.value = '';
     }
 
     handleOnlineUsersList(users) {
@@ -203,29 +196,6 @@ class ChatModule {
             el.classList.add('animate__animated', 'animate__fadeOutRight');
             setTimeout(() => el.remove(), 500);
         }
-    }
-
-    sendMessage() {
-        const text = this.input.value.trim();
-        if (!text) return;
-
-        const payload = {
-            sender: this.currentUser,
-            recipient: this.currentRecipient,
-            message: text,
-            is_system: false
-        };
-
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-            this.socket.send(JSON.stringify({
-                type: 'chat_message',
-                payload: payload
-            }));
-        } else {
-            Api.post('/chat/message', payload);
-        }
-
-        this.input.value = '';
     }
 
     appendMessage(msg, scroll = true) {
