@@ -1,7 +1,12 @@
 {
-  "version": "1.0.0",
-  "buildDate": "2026-03-03",
+  "version": "1.0.1",
+  "buildDate": "2026-03-07",
   "changelog": {
+    "1.0.1": [
+      "Corrección del error 403 en actualizaciones",
+      "Mejoras en el sistema de autenticación Agent-Browser",
+      "Optimización del módulo de actualizaciones"
+    ],
     "1.0.0": [
       "Sistema inicial de Recepción Suite",
       "Implementación de auto-actualización"
