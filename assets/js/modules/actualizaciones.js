@@ -30,10 +30,12 @@ const Actualizaciones = {
         this._versionLoaded = true;
 
         try {
-            const agentVersion = await Api.getFromAgent('/api/agent/updates/version');
+            // Usar el servidor central para obtener la versión
+            // (funciona tanto para clientes locales como remotos)
+            const versionData = await Api.get('/api/updates/version');
             const currentVersionEl = document.getElementById('current-version');
             if (currentVersionEl) {
-                currentVersionEl.textContent = agentVersion.version || '1.0.0';
+                currentVersionEl.textContent = versionData.version || '1.0.0';
             }
         } catch (error) {
             console.warn('[ACTUALIZACIONES] No se pudo cargar la versión actual:', error);
@@ -83,22 +85,19 @@ const Actualizaciones = {
         });
 
         try {
-            // Cargar versión si no se ha cargado
-            await this.loadVersion();
-
-            // Verificar en el agent local primero
-            const agentVersion = await Api.getFromAgent('/api/agent/updates/version');
-            console.log('[ACTUALIZACIONES] Agent:', agentVersion);
+            // Cargar versión actual del servidor
+            const versionData = await Api.get('/api/updates/version');
+            console.log('[ACTUALIZACIONES] Versión actual:', versionData);
 
             // Actualizar la UI con la versión actual
             const currentVersionEl = document.getElementById('current-version');
             if (currentVersionEl) {
-                currentVersionEl.textContent = agentVersion.version || '1.0.0';
+                currentVersionEl.textContent = versionData.version || '1.0.0';
             }
 
-            // Verificar en el servidor central
-            const serverCheck = await Api.get('/api/updates/check?version=' + (agentVersion.version || '1.0.0'));
-            console.log('[ACTUALIZACIONES] Server:', serverCheck);
+            // Verificar si hay actualizaciones disponibles
+            const serverCheck = await Api.get('/api/updates/check?version=' + (versionData.version || '1.0.0'));
+            console.log('[ACTUALIZACIONES] Verificación:', serverCheck);
 
             // Actualizar fecha de última verificación
             const lastCheckEl = document.getElementById('last-check');
