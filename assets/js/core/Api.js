@@ -207,17 +207,14 @@ export const Api = {
             // El agente responde en localhost:3001/local-token.
             // Solo el equipo que tiene el agente instalado puede acceder a localhost.
             // Cualquier otro equipo de la misma red → ECONNREFUSED → null → bloqueado.
-            // PRIORIDAD HTTP: La mayoría de PCs no tienen certificados TLS configurados.
-            // Puerto 3002: HTTP local (sin SSL)
-            // Puerto 3001: HTTPS (con SSL)
+            // PRIORIDAD: Probar HTTPS primero (puerto 3001) ya que el navegador carga desde HTTPS
+            // Esto evita problemas de Mixed Content (HTTPS → HTTP bloqueado)
             let localToken = null;
             const testUrls = [
-                `http://localhost:3002/local-token?_t=${Date.now()}`,
-                `http://127.0.0.1:3002/local-token?_t=${Date.now()}`,
-                `http://localhost:3001/local-token?_t=${Date.now()}`,
-                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`,
                 `https://localhost:3001/local-token?_t=${Date.now()}`,
-                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`
+                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`,
+                `http://localhost:3001/local-token?_t=${Date.now()}`,
+                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`
             ];
 
             for (const url of testUrls) {
