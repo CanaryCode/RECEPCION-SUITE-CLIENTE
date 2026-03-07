@@ -306,7 +306,9 @@ export const Api = {
             const response = await fetch(url, {
                 headers: {
                     'Accept': 'application/json',
-                    'Cache-Control': 'no-cache'
+                    'Cache-Control': 'no-cache',
+                    'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                    'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
                 }
             });
 
@@ -336,7 +338,9 @@ export const Api = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                    'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
                 },
                 body: JSON.stringify(data)
             });

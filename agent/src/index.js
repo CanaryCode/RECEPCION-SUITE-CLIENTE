@@ -118,9 +118,10 @@ try {
 app.use('/api', (req, res, next) => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const stationKey = req.headers['x-station-key'];
+    const fingerprint = req.headers['x-fingerprint'];
 
     // Log ultra-detallado para cazar ese 403/404
-    const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'}`;
+    const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'} | Fingerprint: ${fingerprint ? fingerprint.substring(0, 12) + '...' : 'MISSING'}`;
     console.log(`[AGENT] ${msg}`);
     logToFile(msg);
 
@@ -135,8 +136,12 @@ app.use('/api', (req, res, next) => {
     const isSystem = req.originalUrl.includes('/api/system/');
     const isUpdates = req.originalUrl.includes('/api/agent/updates/');
 
-    if (isLocal && (isSystem || isUpdates)) {
-        console.log(`[AGENT] ✅ Bypass LOCAL concedido para: ${req.originalUrl} (IP detectada: ${ip})`);
+    // Permitir si es local O si tiene el fingerprint correcto de esta máquina
+    const { fingerprint: machineFingerprint } = getMachineFingerprint();
+    const hasValidFingerprint = fingerprint && fingerprint === machineFingerprint;
+
+    if ((isLocal || hasValidFingerprint) && (isSystem || isUpdates)) {
+        console.log(`[AGENT] ✅ Bypass concedido para: ${req.originalUrl} (IP: ${ip}, Fingerprint válido: ${hasValidFingerprint})`);
         return next();
     }
 
