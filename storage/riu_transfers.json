@@ -1,20 +1,5 @@
 [
     {
-        "transfer_id": "1772514785859",
-        "fecha": "2026-03-03",
-        "hora": "03:33",
-        "habitacion": "333",
-        "tipo": "TAXI",
-        "pax": 1,
-        "destino": "Aeropuerto Sur",
-        "nombre_cliente": null,
-        "externo": false,
-        "notas": null,
-        "compania": null,
-        "vuelo": null,
-        "autor": "Antonio"
-    },
-    {
         "transfer_id": "1772583364042",
         "fecha": "2026-03-04",
         "hora": "05:55",

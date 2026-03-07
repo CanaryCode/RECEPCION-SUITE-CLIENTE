@@ -7,10 +7,10 @@
     flex-wrap: wrap; /* Permite salto de línea controlado si no hay espacio */
     gap: 15px;
     background: #fff;
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .quadrant-header-content {
@@ -19,7 +19,7 @@
     align-items: center;
     flex-wrap: wrap; 
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
 }
 
 .week-navigation {
@@ -70,16 +70,17 @@
 .turnos-table th {
     background: #f8f9fa;
     color: #495057;
-    padding: 15px 10px;
+    padding: 8px 5px;
     text-align: center;
     border-bottom: 2px solid #dee2e6;
     font-weight: 700;
+    font-size: 0.85rem;
 }
 
 .turnos-table td {
     padding: 0;
     border: 1px solid #f1f2f6;
-    height: 60px;
+    height: 45px;
     vertical-align: middle;
 }
 
@@ -87,16 +88,24 @@
     background: #fff;
     font-weight: 700;
     text-align: left !important;
-    padding-left: 20px !important;
-    width: 200px;
+    padding-left: 12px !important;
+    width: 160px;
     color: #2c3e50;
     border-right: 2px solid #dee2e6 !important;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-cell:hover {
+    background-color: #f8f9fa !important;
+    color: #0d6efd;
 }
 
 /* Celdas de Turnos */
 .shift-cell {
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
     display: flex;
@@ -154,7 +163,7 @@
 .shift-practicas { background-color: #a55eea !important; color: #fff; }
 .shift-reservas { background-color: #2bcbba !important; color: #fff; }
 
-.shift-none { background-color: #fafafa; color: #ddd; font-weight: 400; }
+.shift-none { background-color: #fafafa !important; color: #ddd; font-weight: 400; }
 
 /* Legend */
 .legend-item {
@@ -199,9 +208,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 25px; /* Mas padding */
+    padding: 10px 15px; 
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 15px;
 }
 
 /* Botón Auto-asignar - Estilo Estándar pero con Toque Especial */
@@ -357,51 +366,71 @@
     cursor: grabbing;
 }
 
-/* VISTA MENSUAL - COMPACTA (MULTITABLA) */
-.monthly-week-block {
-    margin-bottom: 25px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    overflow: hidden;
-}
-
-.monthly-week-title {
-    background: #f8f9fa;
-    padding: 8px 15px;
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: #0d6efd;
-    border-bottom: 1px solid #eee;
-}
-
+/* VISTA MENSUAL - COMPACTA (UNIFICADA) */
 .turnos-table-compact {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
+    width: auto;
+    min-width: 100%;
+    table-layout: auto;
+    border-collapse: separate; /* Required for sticky */
+    border-spacing: 0;
+}
+
+.turnos-table-compact th, 
+.turnos-table-compact td {
+    border: 1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .turnos-table-compact th {
-    background: #fff;
-    font-size: 0.75rem;
-    padding: 10px 5px;
-    text-align: center;
-    border-bottom: 1px solid #dee2e6;
-    color: #666;
-}
-
-.turnos-table-compact td {
-    height: 45px; /* Más compacto */
-    border: 1px solid #f8f9fa;
-    padding: 0;
+    background: #f8f9fa;
+    z-index: 10;
 }
 
 .compact-user-cell {
     width: 140px;
+    min-width: 140px;
     font-size: 0.8rem;
     font-weight: 700;
     padding-left: 10px;
-    border-right: 2px solid #dee2e6 !important;
+    background: #fff;
+    cursor: pointer;
+}
+
+.compact-user-cell:hover {
+    background-color: #f8f9fa !important;
+    color: #0d6efd;
+}
+
+.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 20;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+thead .sticky-col {
+    z-index: 30;
+}
+
+.turnos-table-compact .shift-cell {
+    font-size: 0.55rem !important;
+    font-weight: 800;
+    min-width: 25px;
+}
+
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #0d6efd #f8f9fa;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #0d6efd;
+    border-radius: 10px;
 }
 
 .calendar-day.other-month {
@@ -525,7 +554,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     line-height: 1.2;
     text-align: center;
 }
@@ -562,4 +591,58 @@
 .vac-drag-target {
     background-color: rgba(13, 110, 253, 0.15) !important;
     border: 2px dashed #0d6efd !important;
+}
+
+/* Nav Buttons Styles */
+.btn-outline-secondary.px-1.py-0 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.btn-outline-secondary.px-1.py-0:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.days-name {
+    font-size: 0.75rem;
+}
+
+/* SELECCIÓN DE RANGO (ESTILO EXCEL) */
+.shift-cell.selected-range {
+    box-shadow: inset 0 0 0 2px #0d6efd !important;
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    z-index: 10;
+}
+
+.shift-cell.selected-start {
+    outline: 2px solid #0d6efd !important;
+    outline-offset: -2px;
+}
+
+.editable.selected-range:hover {
+    filter: brightness(0.9);
+}
+
+/* Selección en Vacaciones */
+.vac-day-cell.selected-range {
+    background-color: rgba(13, 110, 253, 0.2) !important;
+    box-shadow: inset 0 0 0 2px #0d6efd !important;
+    z-index: 10;
+}
+
+.stats-clickable {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.stats-clickable:hover {
+    color: #0d6efd !important;
+    text-decoration: underline;
 }

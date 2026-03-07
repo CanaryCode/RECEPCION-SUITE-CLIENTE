@@ -10,8 +10,8 @@
     <!-- Selectores de Vista (Izquierda) -->
     <div class="toolbar-group">
         <div class="btn-group shadow-sm" role="group">
-            <button class="btn btn-outline-primary active fw-bold" id="btnVistaCuadrante" onclick="TurnosManager.cambiarVista('cuadrante')" data-bs-toggle="tooltip" title="Vista de Cuadrante Semanal">
-                <i class="bi bi-grid-3x3 me-2"></i>Cuadrante
+            <button class="btn btn-outline-primary active fw-bold" id="btnVistaCuadrante" onclick="TurnosManager.cambiarVista('cuadrante')" data-bs-toggle="tooltip" title="Vista de Horario Semanal">
+                <i class="bi bi-grid-3x3 me-2"></i>Semanal
             </button>
             <button class="btn btn-outline-primary fw-bold" id="btnVistaMensual" onclick="TurnosManager.cambiarVista('mensual')" data-bs-toggle="tooltip" title="Vista Mensual de Calendario">
                 <i class="bi bi-calendar-month me-2"></i>Mensual
@@ -44,7 +44,7 @@
 <!-- CONTENEDOR PRINCIPAL -->
 <div id="turnos-main-container" class="animate__animated animate__fadeInUp">
     
-    <!-- VISTA 1: CUADRANTE SEMANAL -->
+    <!-- VISTA 1: HORARIO SEMANAL -->
     <div id="view-cuadrante" class="turnos-view">
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white quadrant-header-content d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -60,7 +60,7 @@
                     </button>
                 </div>
                 
-                <!-- Derecha: Acciones Específicas del Cuadrante -->
+                <!-- Derecha: Acciones Específicas -->
                 <div class="quadrant-actions d-flex gap-2 align-items-center" id="cuadrante-actions">
                     <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Cuadrante" onclick="TurnosManager.saveChanges()">
                         <i class="bi bi-check-lg me-1"></i>Guardar
@@ -68,7 +68,7 @@
                     <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Cuadrante" onclick="TurnosManager.cancelEdit()">
                         Cancelar
                     </button>
-                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Cuadrante" onclick="TurnosManager.loadData().then(() => TurnosManager.render())">
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Cuadrante" onclick="TurnosManager.confirmReload()">
                         <i class="bi bi-arrow-clockwise"></i>Refrescar
                     </button>
                     <button id="btnAutoAssign_Cuadrante" class="btn btn-outline-info btn-sm d-none fw-bold" onclick="TurnosManager.autoAssignWeek()" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
@@ -76,6 +76,9 @@
                     </button>
                     <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek_Cuadrante" onclick="TurnosManager.difundirSemana()" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
                         <i class="bi bi-share-fill me-1"></i>Difundir
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Cuadrante" onclick="TurnosManager.confirmClear('cuadrante')" title="Limpiar todos los turnos de la semana">
+                        <i class="bi bi-trash me-1"></i>Limpiar
                     </button>
                     <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" onclick="TurnosManager.openManageUsers()" title="Gestionar Personal">
                         <i class="bi bi-people me-1"></i>Personal
@@ -159,8 +162,17 @@
             <!-- Tabla de Acumulados -->
             <div class="col-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white py-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h6 class="mb-0 fw-bold"><i class="bi bi-table me-2 text-primary"></i>Tabla de Acumulados Anuales</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(-1, 'selectStatsYear')">
+                                <i class="bi bi-chevron-left small"></i>
+                            </button>
+                            <select id="selectStatsYear" class="form-select form-select-sm" style="width: 100px;" onchange="TurnosManager.renderStats()"></select>
+                            <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(1, 'selectStatsYear')">
+                                <i class="bi bi-chevron-right small"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
@@ -197,21 +209,81 @@
     <!-- VISTA 3: MENSUAL (Calendar Grid) -->
     <div id="view-mensual" class="turnos-view d-none">
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-3">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
                     <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-calendar-month me-2"></i>Vista Mensual</h6>
-                    <div class="d-flex gap-2">
-                        <select id="selectMensualMonth" class="form-select form-select-sm" style="width: 140px;"></select>
-                        <select id="selectMensualYear" class="form-select form-select-sm" style="width: 100px;"></select>
+                    <div class="d-flex align-items-center gap-1">
+                        <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustMonth(-1, 'mensual')">
+                            <i class="bi bi-chevron-left small"></i>
+                        </button>
+                        <select id="selectMensualMonth" class="form-select form-select-sm" style="width: 120px;"></select>
+                        <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustMonth(1, 'mensual')">
+                            <i class="bi bi-chevron-right small"></i>
+                        </button>
+
+                        <button class="btn btn-outline-secondary btn-sm px-1 py-0 ms-2" onclick="TurnosManager.adjustYear(-1, 'selectMensualYear')">
+                            <i class="bi bi-chevron-left small"></i>
+                        </button>
+                        <select id="selectMensualYear" class="form-select form-select-sm" style="width: 85px;"></select>
+                        <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(1, 'selectMensualYear')">
+                            <i class="bi bi-chevron-right small"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="text-muted small">
-                    <i class="bi bi-info-circle me-1"></i> Días de otros meses en color tenue
+                <div class="mensual-actions d-flex gap-2 align-items-center flex-wrap" id="mensual-actions">
+                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Mensual" onclick="TurnosManager.saveChanges()">
+                        <i class="bi bi-check-lg me-1"></i>Guardar
+                    </button>
+                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Mensual" onclick="TurnosManager.cancelEdit()">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Mensual" onclick="TurnosManager.confirmReload()">
+                        <i class="bi bi-arrow-clockwise"></i>Refrescar
+                    </button>
+                    <button id="btnAutoAssign_Mensual" class="btn btn-outline-info btn-sm d-none fw-bold" onclick="TurnosManager.autoAssignMonth()" data-bs-toggle="tooltip" title="Auto-completar mes entero">
+                        <i class="bi bi-magic me-1"></i> Auto-asignar
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportMonth_Mensual" onclick="TurnosManager.difundirMes()" data-bs-toggle="tooltip" title="Generar imagen del mes completo">
+                        <i class="bi bi-share-fill me-1"></i>Difundir
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Mensual" onclick="TurnosManager.confirmClear('mensual')" title="Limpiar todos los turnos del mes">
+                        <i class="bi bi-trash me-1"></i>Limpiar
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div id="monthly-compact-container" class="p-3">
                     <!-- JS Render: Las tablas de las semanas se generarán aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Leyenda en vista mensual -->
+        <div class="turnos-legend card border-0 shadow-sm p-3 mb-4">
+            <h6 class="fw-bold mb-3 small text-muted text-uppercase">Leyenda de Turnos</h6>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="legend-item"><div class="legend-color shift-manana"></div> Mañana</div>
+                <div class="legend-item"><div class="legend-color shift-tarde"></div> Tarde</div>
+                <div class="legend-item"><div class="legend-color shift-noche"></div> Noche</div>
+                <div class="legend-item"><div class="legend-color shift-partido"></div> H. Partido</div>
+                <div class="legend-item"><div class="legend-color shift-libre"></div> Libre</div>
+                <div class="legend-item"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
+                <div class="legend-item"><div class="legend-color shift-baja"></div> Baja</div>
+                <div class="legend-item"><div class="legend-color shift-extra"></div> Extra</div>
+                <div class="legend-item"><div class="legend-color shift-especial"></div> Especial</div>
+                <div class="legend-item"><div class="legend-color shift-practicas"></div> Prácticas</div>
+                <div class="legend-item"><div class="legend-color shift-reservas"></div> Reservas</div>
+                <div class="legend-item d-flex align-items-center gap-1">
+                    <div class="position-relative" style="width:16px;height:16px;">
+                        <span class="badge shift-marker-pedido" style="top:0;right:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">P</span>
+                    </div>
+                    <span>Pedido</span>
+                </div>
+                <div class="legend-item d-flex align-items-center gap-1">
+                    <div class="position-relative" style="width:16px;height:16px;">
+                        <span class="badge shift-marker-debido" style="top:0;left:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">D</span>
+                    </div>
+                    <span>Debido</span>
                 </div>
             </div>
         </div>
@@ -221,14 +293,19 @@
     <div id="view-anual" class="turnos-view d-none">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold"><i class="bi bi-calendar3 me-2 text-primary"></i>Cuadrante Anual <span id="labelAnualYear"></span></h6>
-                <div class="d-flex gap-2">
-                    <select id="selectAnualUser" class="form-select form-select-sm" style="width: 200px;">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-calendar3 me-2 text-primary"></i>Horario Anual <span id="labelAnualYear"></span></h6>
+                <div class="d-flex align-items-center gap-1">
+                    <select id="selectAnualUser" class="form-select form-select-sm me-2" style="width: 180px;">
                         <option value="all">Todos los Empleados</option>
                     </select>
-                    <select id="selectAnualYear" class="form-select form-select-sm" style="width: 100px;">
-                        <!-- JS Years -->
-                    </select>
+                    
+                    <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(-1, 'selectAnualYear')">
+                        <i class="bi bi-chevron-left small"></i>
+                    </button>
+                    <select id="selectAnualYear" class="form-select form-select-sm" style="width: 85px;"></select>
+                    <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(1, 'selectAnualYear')">
+                        <i class="bi bi-chevron-right small"></i>
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0 overflow-auto">
@@ -243,13 +320,22 @@
     <div id="view-vacaciones" class="turnos-view d-none">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div class="d-flex align-items-center gap-3">
-                    <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-sun-fill me-2"></i>Calendario de Vacaciones</h6>
-                    <select id="selectVacacionesYear" class="form-select form-select-sm" style="width: 100px;" onchange="TurnosManager.renderVacationView()"></select>
+                <div class="d-flex align-items-center gap-1">
+                    <h6 class="mb-0 fw-bold text-primary me-2"><i class="bi bi-sun-fill me-2"></i>Vacaciones</h6>
+                    <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(-1, 'selectVacacionesYear')">
+                        <i class="bi bi-chevron-left small"></i>
+                    </button>
+                    <select id="selectVacacionesYear" class="form-select form-select-sm" style="width: 85px;" onchange="TurnosManager.renderVacationView()"></select>
+                    <button class="btn btn-outline-secondary btn-sm px-1 py-0" onclick="TurnosManager.adjustYear(1, 'selectVacacionesYear')">
+                        <i class="bi bi-chevron-right small"></i>
+                    </button>
                 </div>
                 <div class="d-flex gap-2" id="vacaciones-actions">
-                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Vacaciones" onclick="TurnosManager.loadData().then(() => TurnosManager.renderVacationView())">
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Vacaciones" onclick="TurnosManager.confirmReload()">
                         <i class="bi bi-arrow-clockwise"></i>Refrescar
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Vacaciones" onclick="TurnosManager.confirmClear('vacaciones')" title="Limpiar todas las vacaciones del año">
+                        <i class="bi bi-eraser-fill me-1"></i>Limpiar
                     </button>
                     <button id="btnAutoAssignVac" class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.autoAssignVacations()">
                         <i class="bi bi-magic me-1"></i> Reparto Inteligente
@@ -481,3 +567,74 @@
         </div>
     </div>
 </div>
+</div>
+
+<!-- MODAL ESTADÍSTICAS INDIVIDUALES TRABAJADOR -->
+<div class="modal fade" id="workerStatsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title fw-bold small"><i class="bi bi-person-lines-fill me-2"></i>Estadísticas Anuales: <span id="statsWorkerName"></span></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tipo Turno</th>
+                                <th class="text-center">Total</th>
+                                <th class="text-center">Ranking</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workerStatsTableBody">
+                            <!-- JS Render -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0 py-2">
+                <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RANKING POR TIPO DE TURNO -->
+<div class="modal fade" id="shiftRankingModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-info text-white py-2">
+                <h6 class="modal-title fw-bold small"><i class="bi bi-trophy me-2"></i>Ranking: <span id="rankingShiftLabel"></span></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3 bg-light border-bottom text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Ratio calculado sobre días disponibles (excluyendo vacaciones, bajas, extras y especiales).
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th onclick="TurnosManager.sortRanking('user')" style="cursor:pointer">Nombre <i class="bi bi-sort-alpha-down"></i></th>
+                                <th onclick="TurnosManager.sortRanking('ratio')" style="cursor:pointer" class="text-center">Ratio (Días/Disp) <i class="bi bi-sort-numeric-down"></i></th>
+                                <th onclick="TurnosManager.sortRanking('count')" style="cursor:pointer" class="text-center">Total Días</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shiftRankingTableBody">
+                            <!-- JS Render -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0 py-2">
+                <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #workerStatsTableBody tr { cursor: pointer; transition: background-color 0.2s; }
+    #workerStatsTableBody tr:hover { background-color: rgba(13, 110, 253, 0.05) !important; }
+</style>

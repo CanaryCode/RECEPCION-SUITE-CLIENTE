@@ -46,7 +46,8 @@ export const Api = {
         if (cleanEndpoint.startsWith('api/')) {
             finalUrl = `/${cleanEndpoint}`;
         } else {
-            finalUrl = `${baseUrl}/${cleanEndpoint}`;
+            // Asegurar que baseUrl no termine en slash y cleanEndpoint no empiece con slash
+            finalUrl = `${baseUrl.replace(/\/+$/, '')}/${cleanEndpoint.replace(/^\/+/, '')}`;
         }
 
         // CRITICAL FIX: Si la URL es relativa y estamos en HTTP, forzar HTTPS

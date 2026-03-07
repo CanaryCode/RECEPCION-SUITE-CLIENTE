@@ -1024,6 +1024,7 @@ export const Configurator = {
         Ui.showToast("Configuración local exportada", "success");
     },
 
+
     importLocalConfig(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1058,7 +1059,6 @@ export const Configurator = {
         event.target.value = '';
     },
 
-
     /**
      * PROTECCIÓN POR PIN
      */
@@ -1076,7 +1076,7 @@ export const Configurator = {
                 const isOpening = !targetEl.classList.contains('show');
 
                 if (isOpening) {
-                    pendingAccordionButton = btn;
+                    window.pendingAccordionButton = btn;
                     this.showPinModal();
                 } else {
                     this.toggleAccordion(btn);
@@ -1105,7 +1105,7 @@ export const Configurator = {
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
             modalEl.addEventListener('shown.bs.modal', () => {
-                input.focus();
+                if (input) input.focus();
                 // Bloquear navegación mientras está el modal
                 document.body.classList.add('modal-open-config');
             }, { once: true });
@@ -1131,9 +1131,9 @@ export const Configurator = {
                 if (modal) modal.hide();
             }
 
-            if (pendingAccordionButton) {
-                this.toggleAccordion(pendingAccordionButton);
-                pendingAccordionButton = null;
+            if (typeof window.pendingAccordionButton !== 'undefined' && window.pendingAccordionButton) {
+                this.toggleAccordion(window.pendingAccordionButton);
+                window.pendingAccordionButton = null;
             }
             Ui.showToast("Acceso concedido", "success");
         } else {
@@ -1144,7 +1144,6 @@ export const Configurator = {
             }
         }
     },
-
 
     toggleAccordion(btn) {
         const targetId = btn.getAttribute('data-bs-target');

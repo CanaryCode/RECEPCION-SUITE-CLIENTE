@@ -71,56 +71,60 @@
 
 <!-- VISTA DE TRABAJO -->
 <div id="estancia-trabajo">
-    <div class="mb-4">
-        <div class="py-2 mb-3 border-bottom d-flex align-items-center">
-            <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-plus-circle me-2"></i>Registrar Ocupación Diaria</h6>
-        </div>
-        <form id="formEstancia" class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label small fw-bold text-muted">Fecha Registro</label>
-                <div class="input-group input-group-sm">
-                    <input type="date" id="estancia_fecha" class="form-control fw-bold" required readonly>
-                    <button class="btn btn-outline-secondary" type="button" id="btnToggleLockFecha">
-                        <i class="bi bi-lock-fill" id="iconLockFecha"></i>
-                    </button>
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="py-2 mb-3 border-bottom d-flex align-items-center">
+                <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-plus-circle me-2"></i>Registrar Ocupación Diaria</h6>
+            </div>
+            <form id="formEstancia" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">Fecha Registro</label>
+                    <div class="input-group input-group-sm">
+                        <input type="date" id="estancia_fecha" class="form-control fw-bold" required readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="btnToggleLockFecha">
+                            <i class="bi bi-lock-fill" id="iconLockFecha"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label small fw-bold text-muted">Hab. Ocupadas</label>
-                <input type="number" id="estancia_ocupadas" class="form-control form-control-sm fw-bold" min="0" max="190" required>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small fw-bold text-muted">Total Hotel</label>
-                <input type="text" id="estancia_total_ref" class="form-control form-control-sm bg-light fw-bold" value="190" readonly>
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold"><i class="bi bi-save-fill me-2"></i>Guardar Registro</button>
-            </div>
-        </form>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">Hab. Ocupadas</label>
+                    <input type="number" id="estancia_ocupadas" class="form-control form-control-sm fw-bold" min="0" max="190" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Total Hotel</label>
+                    <input type="text" id="estancia_total_ref" class="form-control form-control-sm bg-light fw-bold" value="190" readonly>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold"><i class="bi bi-save-fill me-2"></i>Guardar Registro</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="my-4">
-        <div class="py-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-table me-2"></i>Listado Diario</h6>
-            <button class="btn btn-sm btn-link text-success fw-bold p-0 text-decoration-none" onclick="exportarEstanciaExcel()">
-                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar Excel
-            </button>
-        </div>
-        <div class="table-responsive">
-            <table id="table-estancia" class="table table-sm table-hover align-middle mb-0 text-center">
-                <thead class="bg-light">
-                    <tr class="small text-uppercase text-muted">
-                        <th data-sort="d" class="ps-4 text-start">Día</th>
-                        <th data-sort="ocupadas">Ocupadas</th>
-                        <th data-sort="vacias">Vacías/Bloq.</th>
-                        <th data-sort="libres">Libres</th>
-                        <th data-sort="porcentaje">% Ocupación</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaEstanciaCuerpo"></tbody>
-                <tfoot class="fw-bold" id="tablaEstanciaPie"></tfoot>
-            </table>
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="py-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-table me-2"></i>Listado Diario</h6>
+                <button class="btn btn-sm btn-link text-success fw-bold p-0 text-decoration-none" onclick="exportarEstanciaExcel()">
+                    <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar Excel
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table id="table-estancia" class="table table-sm table-hover align-middle mb-0 text-center">
+                    <thead class="bg-light">
+                        <tr class="small text-uppercase text-muted">
+                            <th data-sort="d" class="ps-4 text-start">Día</th>
+                            <th data-sort="ocupadas">Ocupadas</th>
+                            <th data-sort="vacias">Vacías/Bloq.</th>
+                            <th data-sort="libres">Libres</th>
+                            <th data-sort="porcentaje">% Ocupación</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaEstanciaCuerpo"></tbody>
+                    <tfoot class="fw-bold" id="tablaEstanciaPie"></tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -129,17 +133,25 @@
 <div id="estancia-graficas" class="d-none">
     <div class="row g-4">
         <div class="col-md-8">
-            <div class="py-2 mb-3 border-bottom">
-                <h6 class="mb-0 fw-bold text-primary" id="grafica-estancia-titulo">Evolución de Ocupación (%)</h6>
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="py-2 mb-3 border-bottom">
+                        <h6 class="mb-0 fw-bold text-primary" id="grafica-estancia-titulo">Evolución de Ocupación (%)</h6>
+                    </div>
+                    <div style="height: 400px;"><canvas id="chartEstanciaEvolucion"></canvas></div>
+                </div>
             </div>
-            <div style="height: 400px;"><canvas id="chartEstanciaEvolucion"></canvas></div>
         </div>
         <div class="col-md-4">
-            <div class="py-2 mb-3 border-bottom">
-                <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-calculator me-2"></i>Resumen Estadístico</h6>
-            </div>
-            <div id="estancia_anual_stats">
-                <!-- Inyectado por JS -->
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="py-2 mb-3 border-bottom">
+                        <h6 class="mb-0 fw-bold text-primary"><i class="bi bi-calculator me-2"></i>Resumen Estadístico</h6>
+                    </div>
+                    <div id="estancia_anual_stats">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>

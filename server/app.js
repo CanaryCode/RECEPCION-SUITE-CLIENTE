@@ -1,4 +1,4 @@
-const express = require('express'); // Force restart 6
+const express = require('express'); // Force restart 8
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs'); // Changed from fsSync to fs
@@ -32,12 +32,15 @@ const storageRoutes = require('./routes/storage');
 const systemRoutes = require('./routes/system');
 const heartbeatRoutes = require('./routes/heartbeat');
 const adminRoutes = require('./routes/admin');
+console.log('[DEBUG] Loading Chat Routes...');
 const chatRoutes = require('./routes/chat');
+console.log('[DEBUG] Chat Routes loaded.');
 const guiaRoutes = require('./routes/guia');
 const updatesRoutes = require('./routes/updates');
 const ttsRoutes = require('./routes/tts');
 
 const app = express();
+app.set('logToFile', logToFile);
 // const PORT = 3000; // PORT moved to server start block
 
 // --- MIDDLEWARE ---
@@ -117,7 +120,7 @@ app.get('/api/health', async (req, res) => {
         status: 'ok',
         database: dbStatus,
         message: 'Modular Express Server Running',
-        version: '5.0 [EXPRESS REFIT]'
+        version: '5.1 [DEBUG ACTIVE]'
     });
 });
 
@@ -146,7 +149,8 @@ const adminAuthGate = (req, res, next) => {
     // Bypass gate for login and public agent-proxy routes
     if (req.originalUrl.includes('/api/admin/login') || 
         req.originalUrl.includes('/api/admin/agent-proxy/auth/id') || 
-        req.originalUrl.includes('/api/admin/agent-proxy/register')) {
+        req.originalUrl.includes('/api/admin/agent-proxy/register') ||
+        req.originalUrl.includes('/api/chat/')) {
         return next();
     }
 
@@ -185,13 +189,18 @@ app.use('/api/admin', adminAuthGate);
 logToFile('Mounting Admin Routes (behind gate)...');
 app.use('/api/admin', adminRoutes);
 logToFile('Mounting Chat Routes...');
-app.use('/api/chat', chatRoutes);
+app.use('/api/chat', (req, res, next) => {
+    logToFile(`[DEBUG] Request reaching /api/chat: ${req.method} ${req.originalUrl}`);
+    next();
+}, chatRoutes);
 logToFile('Mounting Guia Routes...');
 app.use('/api/guia', guiaRoutes);
 logToFile('Mounting Updates Routes...');
 app.use('/api/updates', updatesRoutes);
 logToFile('Mounting TTS Routes...');
 app.use('/api/tts', ttsRoutes);
+
+// --- RUTAS DE ADMINISTRACIÓN GLOBAL ---
 // app.use('/assets/admin', adminAuthGate); // ELIMINADO para permitir Password-Only Overlay
 
 // --- STATIC FILES ---
@@ -231,6 +240,7 @@ const broadcast = (data) => {
 
 // Export broadcast for routes to use
 app.set('broadcast', broadcast);
+global.broadcast = broadcast;
 
 // --- GLOBAL STATE ---
 global.agentTunnels = new Map();
@@ -307,7 +317,7 @@ function setupWebSocketServer(server) {
                     ).then(([result]) => {
                         const chatPayload = {
                             type: 'chat_message',
-                            payload: { id: result.insertId, sender, recipient: recipient || null, message, is_system: is_system || false, created_at: new Date() }
+                            payload: { id: result.insertId, sender, recipient: recipient || null, message, is_system: is_system || false, is_read: 0, created_at: new Date() }
                         };
                         if (recipient) {
                             const targetWs = global.chatUsers.get(recipient);
@@ -317,6 +327,21 @@ function setupWebSocketServer(server) {
                             broadcast(chatPayload);
                         }
                     }).catch(err => console.error('[WS CHAT ERROR]', err));
+                } else if (data.type === 'chat_read') {
+                    const { sender, recipient } = data.payload;
+                    const db = require('./db');
+                    db.query(
+                        'UPDATE chat_messages SET is_read = 1, read_at = NOW() WHERE sender = ? AND recipient = ? AND is_read = 0',
+                        [sender, recipient]
+                    ).then(() => {
+                        const senderWs = global.chatUsers.get(sender);
+                        if (senderWs && senderWs.readyState === WebSocket.OPEN) {
+                            senderWs.send(JSON.stringify({
+                                type: 'messages_read',
+                                payload: { sender, recipient }
+                            }));
+                        }
+                    }).catch(err => console.error('[WS CHAT READ ERROR]', err));
                 } else if (data.type === 'shell_input') {
                     const { command, target } = data.payload;
                     const sData = global.activeSessions.get(ws);
@@ -448,11 +473,13 @@ try {
         http.createServer(httpApp).listen(HTTP_PORT, '0.0.0.0');
 
         wss = setupWebSocketServer(server);
+        global.wss = wss;
     } else {
         const server = app.listen(PORT, '0.0.0.0', () => {
             console.log(`[SERVER] HTTP iniciado en puerto ${PORT} (AVISO: SSL No encontrado)`);
         });
         wss = setupWebSocketServer(server);
+        global.wss = wss;
     }
 } catch (err) {
     console.error(`[SERVER] Fallo al iniciar HTTPS: ${err.message}`);
@@ -467,31 +494,47 @@ try {
 setInterval(async () => {
     try {
         const db = require('./db');
+        // logToFile('[CHAT-CLEANUP] Ejecutando limpieza de mensajes con más de 5 minutos...'); // Too noisy if every minute
+        
         // Fetch IDs to be deleted to broadcast to clients
         const [rows] = await db.query(
-            'SELECT id FROM chat_messages WHERE created_at < NOW() - INTERVAL 30 MINUTE'
+            `SELECT id FROM chat_messages 
+             WHERE recipient IS NULL AND created_at < NOW() - INTERVAL 30 MINUTE`
         );
         
         if (rows.length > 0) {
-            const ids = rows.map(r => r.id);
-            const [result] = await db.query(
-                'DELETE FROM chat_messages WHERE id IN (?)',
-                [ids]
-            );
+            logToFile(`[CHAT-CLEANUP] Encontrados ${rows.length} mensajes para borrar.`);
+            const ids = rows.map(r => Number(r.id));
+            if (ids.length > 0) {
+                // Execute a raw query without prepare for IN clause, as pool.execute caches prepared statements 
+                // and dynamic IN clauses can cause issues or degrade performance if not handled properly.
+                // Building standard parameterized query for the IN clause
+                const placeholders = ids.map(() => '?').join(',');
+                const [result] = await db.query(
+                    `DELETE FROM chat_messages WHERE id IN (${placeholders})`,
+                    ids
+                );
             
              if (result.affectedRows > 0) {
-                console.log(`[CLEANUP] Borrados ${result.affectedRows} mensajes de chat expirados.`);
+                logToFile(`[CHAT-CLEANUP] ✓ Borrados ${result.affectedRows} mensajes expirados.`);
                 
-                const broadcastFn = app.get('broadcast');
-                if (broadcastFn) {
-                    broadcastFn({
+                // Intentar obtener la función de broadcast desde el router de chat o una variable global
+                // En este app.js el wss está disponible globalmente si se exporta o se accede
+                if (global.wss && global.wss.clients) {
+                    const message = JSON.stringify({
                         type: 'chat_delete_multiple',
                         payload: { ids }
                     });
+                    global.wss.clients.forEach(client => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(message);
+                        }
+                    });
                 }
             }
+            } // closes if (ids.length > 0)
         }
     } catch (err) {
-        // Silencioso para no ensuciar logs de arranque si la DB no está lista
+        logToFile(`[CHAT-CLEANUP] Error: ${err.message}`);
     }
 }, 1 * 60 * 1000); // Revisión cada minuto como solicitó el usuario

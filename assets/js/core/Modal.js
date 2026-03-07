@@ -16,6 +16,7 @@ const modalStyles = {
 };
 
 let systemModalInstance = null; // Instancia única del modal en el sistema
+let toastContainer = null; // Contenedor para notificaciones rápidas (toasts)
 
 // HTML base que se inyectará en la página al arrancar
 const modalHTML = `
@@ -84,6 +85,39 @@ export const Modal = {
         window.showAlert = Modal.showAlert;
         window.showConfirm = Modal.showConfirm;
         window.showPrompt = Modal.showPrompt;
+        window.showToast = Modal.showToast;
+    },
+
+    /**
+     * MUESTRA UNA NOTIFICACIÓN RÁPIDA (Toast) QUE SE CIERRA SOLA
+     */
+    showToast: (msg, type = 'success', duration = 2500) => {
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'globalToastContainer';
+            toastContainer.style = 'position:fixed; bottom:20px; left:20px; z-index:10070; pointer-events:none;';
+            document.body.appendChild(toastContainer);
+        }
+
+        const style = modalStyles[type] || modalStyles.info;
+        const toast = document.createElement('div');
+        toast.className = `animate__animated animate__fadeInUp bg-${style.color} text-white px-4 py-2 rounded-pill shadow-lg mb-2 d-flex align-items-center`;
+        toast.style = 'pointer-events: auto; min-width: 200px; cursor: pointer;';
+        toast.innerHTML = `
+            <i class="bi ${style.icon} me-3 fs-5"></i>
+            <div class="fw-bold">${msg}</div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Auto-eliminar
+        const hide = () => {
+            toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
+            setTimeout(() => toast.remove(), 500);
+        };
+
+        const timer = setTimeout(hide, duration);
+        toast.onclick = () => { clearTimeout(timer); hide(); };
     },
 
     /**

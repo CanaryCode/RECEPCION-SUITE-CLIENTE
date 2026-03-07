@@ -663,4 +663,22 @@ router.post('/agent-proxy', async (req, res) => {
     }
 });
 
+/**
+ * POST /broadcast
+ * Envía una señal de broadcast a todos los clientes conectados a través de WebSocket.
+ */
+router.post('/broadcast', express.json(), (req, res) => {
+    const { type, payload } = req.body;
+    if (!type) {
+        return res.status(400).json({ error: 'Broadcast type es requerido' });
+    }
+    
+    if (global.broadcast) {
+        global.broadcast({ type, payload: payload || {} });
+        return res.json({ success: true, message: `Señal ${type} enviada a todos los clientes.` });
+    }
+    
+    res.status(500).json({ error: 'Sistema de Broadcast no disponible' });
+});
+
 module.exports = router;

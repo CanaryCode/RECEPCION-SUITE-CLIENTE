@@ -16,6 +16,10 @@ export const TurnosManager = {
     charts: { persona: null, semana: null, zoom: null },
     modals: { pin: null, selector: null, zoom: null },
     sortConfig: { column: 'user', direction: 'asc' },
+    selection: { ranges: [], isSelecting: false },
+    activeVacationWorker: null,
+    copiedRange: null,
+    history: { undo: [], redo: [], maxSteps: 50 },
 
     /**
      * INICIALIZACIÓN
@@ -24,6 +28,7 @@ export const TurnosManager = {
         console.log("TurnosManager.inicializar() CALLED");
         this.setupEventListeners();
         this.setupVacationDragPropagation();
+        this.setupKeyboardShortcuts();
         await this.loadData();
         this.render();
     },
@@ -32,7 +37,9 @@ export const TurnosManager = {
      * CONFIGURAR EVENTOS
      */
     setupEventListeners() {
-        // ... (existing listeners for navigations, view toggles)
+        if (this._eventsSetup) return;
+        this._eventsSetup = true;
+
         // Navegación
         document.getElementById('prevWeekBtn')?.addEventListener('click', () => { this.currentDate.setDate(this.currentDate.getDate() - 7); this.render(); });
         document.getElementById('nextWeekBtn')?.addEventListener('click', () => { this.currentDate.setDate(this.currentDate.getDate() + 7); this.render(); });
@@ -46,13 +53,18 @@ export const TurnosManager = {
 
         // Acciones Globales
         document.getElementById('btnEditTurnos')?.addEventListener('click', () => this.handleEditRequest());
-        document.getElementById('btnManageUsers')?.addEventListener('click', () => this.showModal('modalManageUsers'));
+        document.getElementById('btnManageUsers')?.addEventListener('click', () => this.openManageUsers());
+        document.getElementById('btnAddReceptionist')?.addEventListener('click', () => this.añadirRecepcionista());
+        document.getElementById('inputNewReceptionist')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.añadirRecepcionista();
+        });
 
         // Acciones Cuadrante
         document.getElementById('btnSaveTurnos_Cuadrante')?.addEventListener('click', () => this.saveChanges());
         document.getElementById('btnCancelEdit_Cuadrante')?.addEventListener('click', () => this.cancelEdit());
         document.getElementById('btnAutoAssign_Cuadrante')?.addEventListener('click', () => this.autoAssignWeek());
         document.getElementById('btnExportWeek_Cuadrante')?.addEventListener('click', () => this.difundirSemana());
+        document.getElementById('btnExportMonth_Mensual')?.addEventListener('click', () => this.difundirMes());
 
         // Acciones Vacaciones
         document.getElementById('btnSaveVacaciones')?.addEventListener('click', () => this.saveChanges());
@@ -96,6 +108,7 @@ export const TurnosManager = {
 
         this.setupDragPropagation();
         this.setupAnnualReordering();
+        this.setupRangeSelection();
     },
 
     setupAnnualReordering() {
@@ -159,8 +172,9 @@ export const TurnosManager = {
                 this.receptionists = config?.HOTEL?.RECEPCIONISTAS || [];
             }
             
-            // Si el backend envía objetos (ej. {id, nombre}) en lugar de strings, los extraemos
-            this.receptionists = this.receptionists.map(r => typeof r === 'object' ? (r.nombre || r.id || 'Unknown') : r);
+            // Helper para obtener el nombre de un recepcionista de forma segura
+            this.getUserName = (r) => (typeof r === 'object' && r !== null) ? (r.nombre || r.id || 'Unknown') : (r || 'Unknown');
+            // NO sobreescribimos con strings para no perder '.vacaciones'
 
             const shiftsData = await Api.get('storage/turnos_empleados');
             console.log(`[Turnos] ${Array.isArray(shiftsData) ? shiftsData.length : 0} turnos recibidos.`);
@@ -178,6 +192,7 @@ export const TurnosManager = {
             this.populateAnnualSelectors();
             this.populateVacationSelectors();
             this.populateMonthlySelectors();
+            this.populateStatsSelectors();
         } catch (e) {
             console.error("[Turnos] Error en loadData:", e);
         }
@@ -191,15 +206,16 @@ export const TurnosManager = {
         // Users
         userSelect.innerHTML = '<option value="all">Todos los Empleados</option>';
         this.receptionists.forEach(u => {
+            const name = this.getUserName(u);
             const opt = document.createElement('option');
-            opt.value = u; opt.innerText = u;
+            opt.value = name; opt.innerText = name;
             userSelect.appendChild(opt);
         });
 
         // Years
         yearSelect.innerHTML = '';
         const currentYear = new Date().getFullYear();
-        for (let i = currentYear + 1; i >= currentYear - 2; i--) {
+        for (let i = currentYear + 10; i >= currentYear - 5; i--) {
             const opt = document.createElement('option');
             opt.value = i; opt.innerText = i;
             yearSelect.appendChild(opt);
@@ -212,7 +228,7 @@ export const TurnosManager = {
         if (!yearSelect) return;
         yearSelect.innerHTML = '';
         const currentYear = new Date().getFullYear();
-        for (let i = currentYear + 1; i >= currentYear - 2; i--) {
+        for (let i = currentYear + 10; i >= currentYear - 5; i--) {
             const opt = document.createElement('option');
             opt.value = i; opt.innerText = i;
             yearSelect.appendChild(opt);
@@ -236,12 +252,67 @@ export const TurnosManager = {
 
         yearSelect.innerHTML = '';
         const currentYear = new Date().getFullYear();
-        for (let i = currentYear + 1; i >= currentYear - 2; i--) {
+        for (let i = currentYear + 10; i >= currentYear - 5; i--) {
             const opt = document.createElement('option');
             opt.value = i; opt.innerText = i;
             yearSelect.appendChild(opt);
         }
         yearSelect.value = this.currentDate.getFullYear();
+    },
+
+    populateStatsSelectors() {
+        const yearSelect = document.getElementById('selectStatsYear');
+        if (!yearSelect) return;
+        yearSelect.innerHTML = '';
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear + 5; i >= currentYear - 5; i--) {
+            const opt = document.createElement('option');
+            opt.value = i; opt.innerText = i;
+            yearSelect.appendChild(opt);
+        }
+        yearSelect.value = currentYear;
+    },
+
+    adjustMonth(delta, view) {
+        const monthSelect = document.getElementById('selectMensualMonth');
+        if (!monthSelect) return;
+        let newMonth = parseInt(monthSelect.value) + delta;
+        
+        if (newMonth < 0) {
+            newMonth = 11;
+            this.adjustYear(-1, 'selectMensualYear');
+        } else if (newMonth > 11) {
+            newMonth = 0;
+            this.adjustYear(1, 'selectMensualYear');
+        }
+        
+        monthSelect.value = newMonth;
+        if (view === 'mensual') this.renderMonthlyView();
+    },
+
+    adjustYear(delta, selectorId) {
+        const yearSelect = document.getElementById(selectorId);
+        if (!yearSelect) return;
+        const newVal = parseInt(yearSelect.value) + delta;
+        
+        // Ensure newVal exists in options or add it
+        if (!Array.from(yearSelect.options).some(opt => parseInt(opt.value) === newVal)) {
+            const opt = document.createElement('option');
+            opt.value = newVal; opt.innerText = newVal;
+            yearSelect.appendChild(opt);
+            // Sort options
+            const opts = Array.from(yearSelect.options).sort((a,b) => parseInt(b.value) - parseInt(a.value));
+            yearSelect.innerHTML = '';
+            opts.forEach(o => yearSelect.appendChild(o));
+        }
+        
+        yearSelect.value = newVal;
+        
+        // Trigger render based on which view it belongs to
+        if (selectorId === 'selectMensualYear') this.renderMonthlyView();
+        else if (selectorId === 'selectAnualYear') this.renderAnnualView();
+        else if (selectorId === 'selectVacacionesYear') this.renderVacationView();
+        else if (selectorId === 'selectStatsYear') this.renderStats();
     },
 
     /**
@@ -315,81 +386,59 @@ export const TurnosManager = {
 
         container.innerHTML = '';
 
-        // Calcular todos los días que se mostrarán (calendario completo de 4-6 semanas)
-        const firstDayOfMonth = new Date(year, month, 1);
-        let firstDayWeekday = firstDayOfMonth.getDay() - 1; // Lunes=0
-        if (firstDayWeekday < 0) firstDayWeekday = 6; // Domingo=6
+        // Unified Monthly Table
+        const table = document.createElement('table');
+        table.className = 'turnos-table-compact w-100 mb-4';
+        
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysShort = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-        const startDate = new Date(year, month, 1 - firstDayWeekday);
-        const endDate = new Date(year, month + 1, 0);
-        let lastDayWeekday = endDate.getDay() - 1;
-        if (lastDayWeekday < 0) lastDayWeekday = 6;
-        const finalDate = new Date(year, month + 1, 6 - lastDayWeekday);
-
-        // Agrupar días en semanas
-        const weeks = [];
-        let currentDay = new Date(startDate);
-        while (currentDay <= finalDate) {
-            const week = [];
-            for (let i = 0; i < 7; i++) {
-                week.push(new Date(currentDay));
-                currentDay.setDate(currentDay.getDate() + 1);
-            }
-            weeks.push(week);
+        // Header
+        let headerHtml = `<thead><tr><th class="compact-user-cell sticky-col">Personal</th>`;
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(year, month, d);
+            const dayName = daysShort[date.getDay() === 0 ? 6 : date.getDay() - 1];
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            headerHtml += `<th class="${isWeekend ? 'bg-light-subtle text-danger' : ''}" style="width: 30px; font-size: 0.6rem;">${dayName}<br>${d}</th>`;
         }
+        headerHtml += `</tr></thead>`;
+        
+        // Body
+        let bodyHtml = '<tbody>';
+        this.receptionists.forEach(r => {
+            const user = this.getUserName(r);
+            bodyHtml += `<tr><td class="compact-user-cell sticky-col bg-light fw-bold" onclick="TurnosManager.showWorkerStats('${user}')">${user}</td>`;
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const shift = this.shifts.find(s => s.usuario === user && s.fecha === dateStr);
+                const type = (shift?.tipo_turno || '').trim();
+                const colorClass = this.getShiftClass(type);
+                const isPedido = shift?.es_pedido === true;
+                const debidoVal = parseInt(shift?.es_debido || '0');
 
-        // Renderizar cada semana como una tabla compacta
-        weeks.forEach((week, index) => {
-            const weekBlock = document.createElement('div');
-            weekBlock.className = 'monthly-week-block shadow-sm';
-            
-            const firstDate = week[0];
-            const lastDate = week[6];
-            weekBlock.innerHTML = `
-                <div class="monthly-week-title d-flex justify-content-between">
-                    <span>SEMANA ${index + 1}: ${Utils.formatDate(firstDate)} - ${Utils.formatDate(lastDate)}</span>
-                </div>
-                <table class="turnos-table-compact">
-                    <thead>
-                        <tr>
-                            <th class="compact-user-cell">Empleado</th>
-                            ${week.map(d => `
-                                <th class="${d.getMonth() !== month ? 'text-muted opacity-50' : 'fw-bold'}">
-                                    ${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'][d.getDay() === 0 ? 6 : d.getDay()-1]} ${d.getDate()}
-                                </th>
-                            `).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${this.receptionists.map(user => `
-                            <tr>
-                                <td class="compact-user-cell bg-light">${user}</td>
-                                ${week.map(d => {
-                                    const dateStr = Utils.parseDate(d);
-                                    const shift = this.shifts.find(s => s.usuario === user && s.fecha === dateStr);
-                                    const type = shift ? (shift.tipo_turno || '').trim() : '';
-                                    const colorClass = type ? this.getShiftClass(type) : 'shift-none';
-                                    const isOtherMonth = d.getMonth() !== month;
-                                    const debidoVal = parseInt(shift?.es_debido || '0');
-                                    return `
-                                        <td class="calendar-day ${isOtherMonth ? 'other-month' : ''}" 
-                                            onclick="TurnosManager.jumpToDate('${dateStr}')"
-                                            title="${user} - ${Utils.formatDate(d)}: ${type || 'Sin turno'}">
-                                            <div class="shift-cell ${colorClass}" style="height: 100%; border:0; font-size: 0.6rem; position: relative;">
-                                                ${type ? type.substring(0, 3).toUpperCase() : ''}
-                                                ${shift?.es_pedido ? '<span class="shift-marker-pedido" style="font-size: 6px;">P</span>' : ''}
-                                                ${debidoVal !== 0 ? `<span class="shift-marker-debido" style="font-size: 6px; ${debidoVal < 0 ? 'background-color: #636e72 !important;' : ''}">D</span>` : ''}
-                                            </div>
-                                        </td>
-                                    `;
-                                }).join('')}
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            container.appendChild(weekBlock);
+                bodyHtml += `
+                    <td class="p-0 border overflow-hidden" style="height: 40px; min-width: 30px;">
+                        <div class="shift-cell ${colorClass} ${this.isEditing ? 'editable' : ''}" 
+                             data-user="${user}" data-date="${dateStr}" data-shift="${type}"
+                             data-pedido="${isPedido}" data-debido="${debidoVal}"
+                             onclick="TurnosManager.handleCellClick(this)"
+                             style="height: 100%; border: 0; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer;">
+                            ${type ? type.substring(0, 2).toUpperCase() : ''}
+                            ${isPedido ? '<span class="shift-marker-pedido" style="font-size: 6px; width: 10px; height: 10px;">P</span>' : ''}
+                            ${debidoVal !== 0 ? `<span class="shift-marker-debido" style="font-size: 6px; width: 10px; height: 10px; ${debidoVal < 0 ? 'background-color: #636e72 !important;' : ''}">D</span>` : ''}
+                        </div>
+                    </td>`;
+            }
+            bodyHtml += '</tr>';
         });
+        bodyHtml += '</tbody>';
+        
+        table.innerHTML = headerHtml + bodyHtml;
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-responsive shadow-sm rounded-3';
+        wrapper.appendChild(table);
+        container.appendChild(wrapper);
     },
 
     jumpToDate(dateStr) {
@@ -437,9 +486,10 @@ export const TurnosManager = {
 
         const dates = this.getWeekRange();
 
-        this.receptionists.forEach(user => {
+        this.receptionists.forEach(r => {
+            const user = this.getUserName(r);
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td class="user-cell shadow-sm">${user}</td>`;
+            tr.innerHTML = `<td class="user-cell shadow-sm" onclick="TurnosManager.showWorkerStats('${user}')">${user}</td>`;
 
             dates.forEach(date => {
                 const td = document.createElement('td');
@@ -482,18 +532,18 @@ export const TurnosManager = {
         if (!container) return;
         container.innerHTML = '';
 
-        const usersToRender = userFilter === 'all' ? this.receptionists : [userFilter];
+        const usersToRender = userFilter === 'all' ? this.receptionists : this.receptionists.filter(r => this.getUserName(r) === userFilter);
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
         usersToRender.forEach(r => {
-            const name = typeof r === 'string' ? r : r.nombre;
+            const name = this.getUserName(r);
             const userSection = document.createElement('div');
             userSection.className = 'user-annual-section mb-4 p-3 border rounded shadow-sm bg-white';
             userSection.dataset.user = name;
             userSection.draggable = true;
             userSection.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0"><i class="bi bi-grip-vertical me-2 text-muted"></i>${name}</h6>
+                    <h6 class="fw-bold mb-0 stats-clickable" onclick="TurnosManager.showWorkerStats('${name}')"><i class="bi bi-grip-vertical me-2 text-muted"></i>${name}</h6>
                     <span class="badge bg-light text-muted small">Arrastra para reordenar</span>
                 </div>
             `;
@@ -535,47 +585,50 @@ export const TurnosManager = {
         Utils.setHtml('labelAnualYear', year);
     },
 
-    /**
-     * RENDERIZAR VISTA DE VACACIONES
-     */
+    updateVacationSummary() {
+        const summary = document.getElementById('vacation-counters-summary');
+        const yearSelect = document.getElementById('selectVacacionesYear');
+        const year = parseInt(yearSelect?.value || new Date().getFullYear());
+        
+        if (!summary) return;
+        summary.innerHTML = '';
+
+        this.receptionists.forEach(r => {
+            const name = this.getUserName(r);
+            const allowance = (typeof r === 'object' && r !== null) ? (r.vacaciones || 30) : 30;
+            const consumed = this.shifts.filter(s => s.usuario === name && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v') && s.fecha.startsWith(year.toString())).length;
+            
+            const isActive = this.activeVacationWorker === name;
+            const bgClass = isActive ? 'bg-primary' : (consumed > allowance ? 'bg-danger' : 'bg-primary-subtle text-primary border border-primary-subtle');
+            const userColor = this.getVacationColor(name);
+            
+            summary.innerHTML += `
+                <div class="position-relative d-inline-flex align-items-center me-3 mb-2">
+                    <span class="badge ${bgClass} px-3 py-2 fw-bold shadow-sm transition-all text-white stats-clickable" onclick="TurnosManager.showWorkerStats('${name}')">
+                        <i class="bi bi-person-fill me-1"></i> ${name}: ${consumed}/${allowance}
+                    </span>
+                    <span class="position-absolute shadow-sm" style="width:14px; height:14px; border-radius:50%; background-color:${userColor}; bottom:-4px; right:-4px; border: 2px solid white;"></span>
+                    ${this.isEditing ? `<button class="btn btn-sm btn-link text-muted ms-1 p-0" onclick="TurnosManager.promptVacationDays('${name}', ${allowance})" title="Editar límite de vacaciones"><i class="bi bi-pencil-square"></i></button>` : ''}
+                </div>
+            `;
+        });
+    },
+
     /**
      * RENDERIZAR VISTA DE VACACIONES
      */
     renderVacationView() {
         const container = document.getElementById('vacation-annual-container');
-        const summary = document.getElementById('vacation-counters-summary');
         const yearSelect = document.getElementById('selectVacacionesYear');
         const year = parseInt(yearSelect?.value || new Date().getFullYear());
         
         if (!container) return;
         container.innerHTML = '';
-        if (summary) summary.innerHTML = '';
+
+        this.updateVacationSummary();
 
         const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         const daysShort = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
-        // Resumen superior (Badges - actúan como paleta de colores)
-        this.receptionists.forEach(r => {
-            const name = typeof r === 'string' ? r : r.nombre;
-            const allowance = typeof r === 'string' ? 30 : (r.vacaciones || 30);
-            const consumed = this.shifts.filter(s => s.usuario === name && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v') && s.fecha.startsWith(year.toString())).length;
-            
-            if (summary) {
-                const isActive = this.activeVacationWorker === name;
-                const bgClass = isActive ? 'bg-primary' : (consumed > allowance ? 'bg-danger' : 'bg-primary-subtle text-primary border border-primary-subtle');
-                const userColor = this.getVacationColor(name);
-                
-                summary.innerHTML += `
-                    <div class="position-relative d-inline-flex align-items-center me-3 mb-2">
-                        <span class="badge ${bgClass} px-3 py-2 fw-bold shadow-sm transition-all text-white">
-                            <i class="bi bi-person-fill me-1"></i> ${name}: ${consumed}/${allowance}
-                        </span>
-                        <span class="position-absolute shadow-sm" style="width:14px; height:14px; border-radius:50%; background-color:${userColor}; bottom:-4px; right:-4px; border: 2px solid white;"></span>
-                        ${this.isEditing ? `<button class="btn btn-sm btn-link text-muted ms-1 p-0" onclick="TurnosManager.promptVacationDays('${name}', ${allowance})" title="Editar límite de vacaciones"><i class="bi bi-pencil-square"></i></button>` : ''}
-                    </div>
-                `;
-            }
-        });
 
         const grid = document.createElement('div');
         grid.className = 'vacation-shared-grid';
@@ -606,12 +659,12 @@ export const TurnosManager = {
                 const isWeekend = new Date(isoDate + 'T00:00:00').getDay() % 6 === 0;
 
                 // Find people on vacation this day
-                const vacPeople = this.shifts.filter(s => s.fecha === isoDate && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))
+                const vacPeople = this.shifts.filter(s => s.fecha === isoDate && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'))
                                              .map(s => s.usuario);
                 
                 const namesHtml = vacPeople.length > 2 
                     ? vacPeople.map(name => `<div class="vac-name-dot shadow-sm" style="background-color: ${this.getVacationColor(name)}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin: 1px;" title="${name}"></div>`).join('')
-                    : vacPeople.map(name => `<div class="vac-name-tag shadow-sm text-white fw-bold" style="background-color: ${this.getVacationColor(name)}; font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px;">${name}</div>`).join('');
+                    : vacPeople.map(name => `<div class="vac-name-tag shadow-sm text-white fw-bold" style="background-color: ${this.getVacationColor(name)}; font-size: 0.55rem; padding: 1px 3px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${name}</div>`).join('');
                 
                 html += `
                     <div class="vac-day-cell ${isWeekend ? 'is-weekend' : ''} ${this.isEditing ? 'editable' : ''}" 
@@ -667,11 +720,11 @@ export const TurnosManager = {
         
         // Find who is currently on vacation this day
         const currentVacPeople = this.shifts
-            .filter(s => s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))
+            .filter(s => s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'))
             .map(s => s.usuario);
 
         this.receptionists.forEach(r => {
-            const name = typeof r === 'string' ? r : r.nombre;
+            const name = this.getUserName(r);
             const userColor = this.getVacationColor(name);
             const isOnVacation = currentVacPeople.includes(name);
 
@@ -711,9 +764,9 @@ export const TurnosManager = {
 
     toggleDayVacation(dateStr, workerName, isAdd) {
         if (!isAdd) {
-            this.shifts = this.shifts.filter(s => !(s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v')));
+            this.shifts = this.shifts.filter(s => !(s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v') && s.usuario === workerName));
         } else {
-            const exists = this.shifts.some(s => s.usuario === workerName && s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'));
+            const exists = this.shifts.some(s => s.usuario === workerName && s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'));
             if (!exists) {
                 const idx = this.shifts.findIndex(s => s.usuario === workerName && s.fecha === dateStr);
                 if (idx !== -1) {
@@ -724,24 +777,15 @@ export const TurnosManager = {
             }
         }
         
-        const cell = document.querySelector(`.vac-day-cell[data-date="${dateStr}"]`);
-        if (cell) {
-            const container = cell.querySelector('.vac-names-container');
-            const vacPeople = this.shifts.filter(s => s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v')).map(s => s.usuario);
-            cell.dataset.workers = JSON.stringify(vacPeople);
-            if (container) {
-                container.innerHTML = vacPeople.length > 2 
-                    ? vacPeople.map(n => `<div class="vac-name-dot shadow-sm" style="background-color: ${this.getVacationColor(n)}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin: 1px;" title="${n}"></div>`).join('')
-                    : vacPeople.map(n => `<div class="vac-name-tag shadow-sm text-white fw-bold" style="background-color: ${this.getVacationColor(n)}; font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px;">${n}</div>`).join('');
-            }
-        }
+        this.updateVacationSummary(); // Actualizar contadores inmediatamente
+        this.hasPendingChanges = true;
     },
 
     handleVacationCellClick(e, dateStr, prettyDate) {
         // Solo abrir modales si NO venimos de un arrastre
         if (this.draggedDuringClick) return;
 
-        const vacPeople = this.shifts.filter(s => s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v')).map(s => s.usuario);
+        const vacPeople = this.shifts.filter(s => s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v')).map(s => s.usuario);
 
         if (!this.isEditing) {
             if (vacPeople.length > 0) {
@@ -767,7 +811,7 @@ export const TurnosManager = {
      */
     findVacationPeriod(user, dateStr) {
         const sortedShifts = this.shifts
-            .filter(s => s.usuario === user && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))
+            .filter(s => s.usuario === user && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'))
             .sort((a, b) => a.fecha.localeCompare(b.fecha));
         
         const dayIdx = sortedShifts.findIndex(s => s.fecha === dateStr);
@@ -867,9 +911,14 @@ export const TurnosManager = {
             cell.style.border = '2px dashed #4a69bd';
             
             const sourceWorkers = JSON.parse(this.dragStartVacationCell.dataset.workers || '[]');
-            this.shifts = this.shifts.filter(s => !(s.fecha === dateStr && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v')));
+            // Remove existing vacation shifts for the target date that are not in sourceWorkers
+            this.shifts = this.shifts.filter(s => !(s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v') && !sourceWorkers.includes(s.usuario)));
+            
             sourceWorkers.forEach(w => {
-                 this.shifts.push({ usuario: w, fecha: dateStr, tipo_turno: 'vacaciones' });
+                // Only add if not already present
+                if (!this.shifts.some(s => s.usuario === w && s.fecha === dateStr && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'))) {
+                    this.shifts.push({ usuario: w, fecha: dateStr, tipo_turno: 'vacaciones' });
+                }
             });
             
             cell.dataset.workers = JSON.stringify(sourceWorkers);
@@ -911,8 +960,184 @@ export const TurnosManager = {
         }
     },
 
+    // Las funciones actualizarDiasVacaciones y persistirConfiguracionPersonal se han movido al final para consolidación.
+
+    async autoAssignVacations() {
+        const year = parseInt(document.getElementById('selectVacacionesYear')?.value || new Date().getFullYear());
+        if (!await Ui.showConfirm(`¿Reparto Inteligente para ${year}? Se asignarán vacaciones intentando no solapar y dejando grupos contiguos.`)) return;
+
+        console.log(`[Vacaciones] Iniciando Reparto Inteligente ${year}...`);
+        
+        // 1. Datos base: Fechas ocupadas por CUALQUIER persona (para saber cuáles evitar si es posible)
+        // Guardamos también quién está de vacaciones para manejar solapamientos si es necesario.
+        const usedDates = new Map(); // Fecha -> Array de usuarios
+        this.shifts.filter(s => s.fecha.startsWith(year.toString()) && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v'))
+                   .forEach(s => {
+                       if (!usedDates.has(s.fecha)) usedDates.set(s.fecha, []);
+                       usedDates.get(s.fecha).push(s.usuario);
+                   });
+
+        // 2. Preparar bloques por empleado
+        // Sorteo inicial (aleatorio) de la cola de empleados
+        let queue = [...this.receptionists].sort(() => Math.random() - 0.5);
+        
+        let employeePool = queue.map(r => {
+            const name = this.getUserName(r);
+            const allowance = (typeof r === 'object' && r !== null) ? (r.vacaciones || 30) : 30;
+            const already = this.shifts.filter(s => s.usuario === name && s.fecha.startsWith(year.toString()) && (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v')).length;
+            let remaining = allowance - already;
+
+            let chunks = [];
+            while (remaining >= 15) { chunks.push(15); remaining -= 15; }
+            while (remaining >= 10) { chunks.push(10); remaining -= 10; }
+            if (remaining > 0) chunks.push(remaining);
+
+            return { name, chunks };
+        }).filter(p => p.chunks.length > 0);
+
+        let totalAssigned = 0;
+
+        // FUNCIÓN HELPER: Encontrar hueco para un bloque de tamaño 'len'
+        // Prioridad 1: Busca un hueco libre de solapamientos que se pegue al principio o final de otro bloque existente de vacaciones.
+        // Prioridad 2: Busca cualquier hueco totalmente libre de solapamientos.
+        // Prioridad 3: Busca el hueco con el *menor* nivel de solapamiento posible (overlapAllowed).
+        const findBestSlot = (len, allowOverlap = false) => {
+            const daysInYear = 365; // Aproximación, valdría 366
+            let bestStart = null;
+            let minOverlap = Infinity;
+
+            for (let i = 0; i <= daysInYear - len; i++) {
+                const start = new Date(year, 0, 1 + i);
+                let currentOverlap = 0;
+                let validPeriod = true;
+                let dates = [];
+
+                for (let j = 0; j < len; j++) {
+                    const d = new Date(start); d.setDate(d.getDate() + j);
+                    if (d.getFullYear() !== year) { validPeriod = false; break; } // Sale del año
+                    const iso = Utils.parseDate(d);
+                    dates.push(iso);
+                    if (usedDates.has(iso)) {
+                        currentOverlap += usedDates.get(iso).length;
+                    }
+                }
+
+                if (!validPeriod) continue;
+
+                if (!allowOverlap && currentOverlap > 0) continue; // Si no permite solapamiento, rechaza
+
+                if (currentOverlap < minOverlap) {
+                    // Check if it's "glued" to existing vacations to prioritize it heavily if we allow 0 overlap
+                    let isGlued = false;
+                    if (currentOverlap === 0 && usedDates.size > 0) {
+                        const before = new Date(start); before.setDate(before.getDate() - 1);
+                        const after = new Date(start); after.setDate(after.getDate() + len);
+                        if (usedDates.has(Utils.parseDate(before)) || usedDates.has(Utils.parseDate(after))) {
+                            isGlued = true;
+                        }
+                    }
+
+                    if (isGlued) {
+                         // Found a perfect glued slot! Stop looking.
+                         return dates;
+                    }
+
+                    minOverlap = currentOverlap;
+                    bestStart = dates;
+                }
+            }
+
+            return bestStart;
+        };
+
+        // Algoritmo Round-Robin (Bucle de asignación)
+        // 1ª y 2ª Pasada: Intentar meter turnos enteros sin solapar.
+        let someoneAssigned;
+        do {
+            someoneAssigned = false;
+            let pendingNextRound = [];
+
+            for (let i = 0; i < employeePool.length; i++) {
+                let p = employeePool[i];
+                if (p.chunks.length === 0) continue;
+
+                let nextChunk = p.chunks[0];
+                let dates = findBestSlot(nextChunk, false); // No overlap allowed yet
+
+                if (dates) {
+                    dates.forEach(iso => {
+                        this.shifts.push({ usuario: p.name, fecha: iso, tipo_turno: 'vacaciones' });
+                        if (!usedDates.has(iso)) usedDates.set(iso, []);
+                        usedDates.get(iso).push(p.name);
+                    });
+                    totalAssigned += nextChunk;
+                    p.chunks.shift(); // Remove chunk
+                    someoneAssigned = true;
+                }
+                
+                if (p.chunks.length > 0) {
+                    pendingNextRound.push(p);
+                }
+            }
+            employeePool = pendingNextRound;
+        } while (someoneAssigned && employeePool.length > 0);
+
+        // 3ª Pasada (Fallback): Si aún quedan bloques que no caben sin solapar, los metemos en el lugar con MENOR solape.
+        if (employeePool.length > 0) {
+             do {
+                someoneAssigned = false;
+                let pendingNextRound = [];
+
+                for (let i = 0; i < employeePool.length; i++) {
+                    let p = employeePool[i];
+                    if (p.chunks.length === 0) continue;
+
+                    let nextChunk = p.chunks[0];
+                    let dates = findBestSlot(nextChunk, true); // Allow overlap, minimizes it
+
+                    if (dates) {
+                        dates.forEach(iso => {
+                            this.shifts.push({ usuario: p.name, fecha: iso, tipo_turno: 'vacaciones' });
+                            if (!usedDates.has(iso)) usedDates.set(iso, []);
+                            usedDates.get(iso).push(p.name);
+                        });
+                        totalAssigned += nextChunk;
+                        p.chunks.shift();
+                        someoneAssigned = true;
+                    }
+                    
+                    if (p.chunks.length > 0) {
+                        pendingNextRound.push(p);
+                    }
+                }
+                employeePool = pendingNextRound;
+            } while (someoneAssigned && employeePool.length > 0);
+        }
+
+        // 4ª Pasada (Último Recurso Extremo): Trocear lo que quede irremediablemente, día a día en lugares con menor solape
+        if (employeePool.length > 0) {
+             employeePool.forEach(p => {
+                 p.chunks.forEach(len => {
+                     for (let j = 0; j < len; j++) {
+                         let date = findBestSlot(1, true); // Encuentra el día con menor solape
+                         if (date && date[0]) {
+                             const iso = date[0];
+                             this.shifts.push({ usuario: p.name, fecha: iso, tipo_turno: 'vacaciones' });
+                             if (!usedDates.has(iso)) usedDates.set(iso, []);
+                             usedDates.get(iso).push(p.name);
+                             totalAssigned++;
+                         }
+                     }
+                 });
+             });
+        }
+
+        this.renderVacationView();
+        Ui.showToast(`Reparto finalizado. Se han asignado ${totalAssigned} días de manera justa y equitativa.`, "success");
+    },
+
     actualizarDiasVacaciones(name, days) {
-        const idx = this.receptionists.findIndex(r => (typeof r === 'string' ? r : r.nombre) === name);
+        const idx = this.receptionists.findIndex(r => this.getUserName(r) === name);
         if (idx === -1) return;
         
         if (typeof this.receptionists[idx] === 'string') {
@@ -950,121 +1175,6 @@ export const TurnosManager = {
         }
     },
 
-    async autoAssignVacations() {
-        const year = parseInt(document.getElementById('selectVacacionesYear')?.value || new Date().getFullYear());
-        
-        if (!await Ui.showConfirm(`¿Auto-asignar vacaciones para ${year}? Se RESPETARÁN tus vacaciones actuales y solo se rellenará el cupo restante.`)) return;
-        
-        const usedDates = new Set();
-        // Inicializar con las fechas ya ocupadas por CUALQUIER persona
-        this.shifts.filter(s => s.fecha.startsWith(year.toString()) && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))
-                   .forEach(s => usedDates.add(s.fecha));
-
-        // Calcular días restantes por persona
-        const queue = [...this.receptionists].sort(() => Math.random() - 0.5);
-        let chunksByEmployee = {};
-        let totalChunks = 0;
-
-        queue.forEach(r => {
-            const name = typeof r === 'string' ? r : r.nombre;
-            const allowance = typeof r === 'string' ? 30 : (r.vacaciones || 30);
-            
-            // Contar cuántas ya tiene asignadas este año (normalizar tipo)
-            const alreadyAssigned = this.shifts.filter(s => 
-                s.usuario === name && 
-                s.fecha.startsWith(year.toString()) && 
-                (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v')
-            ).length;
-            
-            const remaining = allowance - alreadyAssigned;
-
-            if (remaining > 0) {
-                // Reglas de partición para los días que faltan
-                let periods = [];
-                if (remaining <= 7) {
-                    periods = [remaining];
-                } else if (remaining <= 15) {
-                    periods = [Math.floor(remaining/2), remaining - Math.floor(remaining/2)];
-                } else {
-                    periods = [10, 10, remaining - 20].filter(p => p > 0);
-                }
-                chunksByEmployee[name] = periods;
-                totalChunks += periods.length;
-            } else {
-                chunksByEmployee[name] = [];
-            }
-        });
-
-        if (totalChunks === 0) {
-            Ui.showToast("Todo el personal ya tiene su cupo de vacaciones completo.", "info");
-            return;
-        }
-
-        let attemptsLimit = 3000;
-        let assignedChunksCount = 0;
-
-        while(assignedChunksCount < totalChunks && attemptsLimit > 0) {
-            attemptsLimit--;
-            let madeProgress = false;
-            
-            for (let r of queue) {
-                const name = typeof r === 'string' ? r : r.nombre;
-                const chunks = chunksByEmployee[name];
-                if (chunks.length === 0) continue;
-
-                const len = chunks[0];
-                let assigned = false;
-                let bestStartDay = null;
-
-                // 1. Intentar aleatorio puro sin solapar con NADIE
-                for (let i = 0; i < 150 && !assigned; i++) {
-                    const startDay = Math.floor(Math.random() * (365 - len + 1));
-                    let overlaps = false;
-                    for (let j = 0; j < len; j++) {
-                        const d = new Date(year, 0, 1 + startDay + j);
-                        if (usedDates.has(Utils.parseDate(d))) { overlaps = true; break; }
-                    }
-                    if (!overlaps) {
-                        bestStartDay = startDay;
-                        assigned = true;
-                    }
-                }
-
-                // 2. Si falla aleatorio, búsqueda secuencial de huecos (Metódico)
-                if (!assigned) {
-                    for (let day = 0; day < 365 - len && !assigned; day++) {
-                        let potentialOverlaps = false;
-                        for (let j = 0; j < len; j++) {
-                            const d = new Date(year, 0, 1 + day + j);
-                            if (usedDates.has(Utils.parseDate(d))) { potentialOverlaps = true; break; }
-                        }
-                        if (!potentialOverlaps) {
-                            bestStartDay = day;
-                            assigned = true;
-                        }
-                    }
-                }
-
-                if (assigned && bestStartDay !== null) {
-                    for (let i = 0; i < len; i++) {
-                        const d = new Date(year, 0, 1 + bestStartDay + i);
-                        const iso = Utils.parseDate(d);
-                        // Push robusto
-                        this.shifts.push({ usuario: name, fecha: iso, tipo_turno: 'vacaciones' });
-                        usedDates.add(iso);
-                    }
-                    chunks.shift();
-                    assignedChunksCount++;
-                    madeProgress = true;
-                }
-            }
-            if (!madeProgress && attemptsLimit < 1000) break;
-        }
-
-        this.renderVacationView();
-        Ui.showToast(`Auto-asignación completada: ${assignedChunksCount} bloques añadidos.`, "success");
-    },
-
     /**
      * PROPAGACIÓN DE CELDAS (DRAG TO FILL)
      */
@@ -1072,10 +1182,9 @@ export const TurnosManager = {
     dragStartCell: null,
 
     setupDragPropagation() {
-        const container = document.getElementById('turnosTableBody');
-        if (!container) return;
-
-        container.addEventListener('mousedown', (e) => {
+        const containers = ['turnosTableBody', 'monthly-compact-container'];
+        
+        const onMouseDown = (e) => {
             if (!this.isEditing) return;
             const cell = e.target.closest('.shift-cell');
             if (cell) {
@@ -1083,24 +1192,31 @@ export const TurnosManager = {
                 this.dragStartCell = cell;
                 cell.classList.add('drag-origin');
             }
+        };
+
+        const onMouseOver = (e) => {
+            if (!this.isDragging || !this.dragStartCell) return;
+            const cell = e.target.closest('.shift-cell');
+            if (cell && cell !== this.dragStartCell && !cell.classList.contains('drag-target')) {
+                // Propagate value from start cell to this cell
+                const val = this.dragStartCell.dataset.shift || ''; 
+                this.updateCell(cell, val);
+                cell.classList.add('drag-target');
+            }
+        };
+
+        containers.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('mousedown', onMouseDown);
+                el.addEventListener('mouseover', onMouseOver);
+            }
         });
 
         window.addEventListener('mouseup', () => {
             if (this.isDragging) {
                 this.isDragging = false;
                 document.querySelectorAll('.shift-cell').forEach(c => c.classList.remove('drag-origin', 'drag-target'));
-            }
-        });
-
-        container.addEventListener('mouseover', (e) => {
-            if (!this.isDragging || !this.dragStartCell) return;
-            const cell = e.target.closest('.shift-cell');
-            if (cell && cell !== this.dragStartCell && !cell.classList.contains('drag-target')) {
-                // Propagate value from start cell to this cell
-                // PREVENCIÓN: Usamos el dataset para no arrastrar la 'P' o 'D' de los marcadores
-                const val = this.dragStartCell.dataset.shift || ''; 
-                this.updateCell(cell, val);
-                cell.classList.add('drag-target');
             }
         });
     },
@@ -1125,7 +1241,11 @@ export const TurnosManager = {
             currentYear: this.currentDate.getFullYear() // Default to currently viewed year
         };
 
-        const selectedYear = parseInt(document.getElementById('selectAnualYear')?.value || stats.currentYear);
+        const selectedYear = parseInt(
+            document.getElementById('selectStatsYear')?.value || 
+            document.getElementById('selectAnualYear')?.value || 
+            stats.currentYear
+        );
         
         // Mapeo robusto de tipos de turno para normalizar estadísticas
         const typeMap = {
@@ -1244,7 +1364,7 @@ export const TurnosManager = {
             if (isMe) tr.className = 'table-primary-subtle';
 
             tr.innerHTML = `
-            <td class="ps-4 fw-bold ${isMe ? 'text-primary' : ''}">${user} ${isMe ? '<small class="badge bg-primary ms-1">Tú</small>' : ''}</td>
+            <td class="ps-4 fw-bold stats-clickable ${isMe ? 'text-primary' : ''}" onclick="TurnosManager.showWorkerStats('${user}')">${user} ${isMe ? '<small class="badge bg-primary ms-1">Tú</small>' : ''}</td>
             <td><span class="badge shift-manana px-2 py-1">${data.mananas}</span></td>
             <td><span class="badge shift-tarde px-2 py-1">${data.tardes}</span></td>
             <td><span class="badge shift-noche px-2 py-1">${data.noches}</span></td>
@@ -1266,6 +1386,142 @@ export const TurnosManager = {
 
         this.setupTableSorting();
         if (window.Ui && Ui.initTooltips) Ui.initTooltips();
+    },
+
+    /**
+     * ESTADÍSTICAS INDIVIDUALES Y RANKING
+     */
+    showWorkerStats(userName) {
+        const year = this.currentDate.getFullYear();
+        const stats = this.calculateStats(); // Ya usa el año seleccionado
+        const userData = stats.users[userName];
+        
+        if (!userData) {
+            return Ui.showToast("No hay datos para este trabajador en el año seleccionado", "info");
+        }
+
+        const statsNameEl = document.getElementById('statsWorkerName');
+        if (statsNameEl) statsNameEl.innerText = `${userName} (${year})`;
+
+        const tbody = document.getElementById('workerStatsTableBody');
+        if (!tbody) return;
+
+        // Definir tipos a mostrar
+        const types = [
+            { key: 'mananas', label: 'Mañanas', color: 'shift-manana' },
+            { key: 'tardes', label: 'Tardes', color: 'shift-tarde' },
+            { key: 'noches', label: 'Noches', color: 'shift-noche' },
+            { key: 'partidos', label: 'H. Partido', color: 'shift-partido' },
+            { key: 'extra', label: 'Extra', color: 'shift-extra' },
+            { key: 'especial', label: 'Especial', color: 'shift-especial' },
+            { key: 'reservas', label: 'Reservas', color: 'shift-reservas' },
+            { key: 'libres', label: 'Libres', color: 'shift-libre' },
+            { key: 'vacaciones', label: 'Vacaciones', color: 'shift-vacaciones' },
+            { key: 'baja', label: 'Baja', color: 'shift-baja' }
+        ];
+
+        // Calcular rankings para todos los usuarios
+        const allUsers = Object.keys(stats.users);
+        const rankings = {};
+        
+        types.forEach(t => {
+            const sorted = allUsers.map(u => ({ user: u, val: stats.users[u][t.key] || 0 }))
+                                  .sort((a, b) => b.val - a.val);
+            const rank = sorted.findIndex(item => item.user === userName) + 1;
+            rankings[t.key] = `${rank}/${allUsers.length}`;
+        });
+
+        tbody.innerHTML = types.map(t => `
+            <tr onclick="TurnosManager.showShiftRanking('${t.key}', '${t.label}')">
+                <td class="fw-bold"><div class="legend-color ${t.color} d-inline-block me-2" style="width:12px;height:12px;border-radius:3px;"></div>${t.label}</td>
+                <td class="text-center font-monospace fw-bold">${userData[t.key] || 0}</td>
+                <td class="text-center"><span class="badge bg-light text-dark border">${rankings[t.key]}</span></td>
+            </tr>
+        `).join('');
+
+        // Añadir fila de Total Trabajado
+        const workSorted = allUsers.map(u => ({ user: u, val: stats.users[u].trabajadoYTD || 0 }))
+                                   .sort((a, b) => b.val - a.val);
+        const workRank = workSorted.findIndex(item => item.user === userName) + 1;
+        
+        tbody.innerHTML += `
+            <tr class="table-primary-subtle">
+                <td class="fw-bold">Total Trabajado (Días)</td>
+                <td class="text-center font-monospace fw-bold text-primary">${userData.trabajadoYTD}</td>
+                <td class="text-center"><span class="badge bg-primary">${workRank}/${allUsers.length}</span></td>
+            </tr>
+        `;
+
+        this.showModal('workerStatsModal');
+    },
+
+    /**
+     * MOSTRAR RANKING DETALLADO POR TIPO DE TURNO
+     */
+    rankingData: [],
+    rankingSort: { column: 'ratio', direction: 'desc' },
+
+    showShiftRanking(shiftKey, label) {
+        const stats = this.calculateStats();
+        const year = stats.currentYear;
+        const allUsers = Object.keys(stats.users);
+        
+        document.getElementById('rankingShiftLabel').innerText = `${label} (${year})`;
+
+        this.rankingData = allUsers.map(u => {
+            const data = stats.users[u];
+            const count = data[shiftKey] || 0;
+            // Disponibles = Total YTD - (Vacaciones + Baja + Extra + Especial)
+            const unavailable = (data.vacaciones || 0) + (data.baja || 0) + (data.extra || 0) + (data.especial || 0);
+            const available = Math.max(0, data.ytd - unavailable);
+            const ratio = available > 0 ? (count / available) : 0;
+
+            return {
+                user: u,
+                count: count,
+                available: available,
+                ratio: ratio
+            };
+        });
+
+        this.renderRankingTable();
+        this.showModal('shiftRankingModal');
+    },
+
+    renderRankingTable() {
+        const tbody = document.getElementById('shiftRankingTableBody');
+        if (!tbody) return;
+
+        // Ordenar datos
+        const sorted = [...this.rankingData].sort((a, b) => {
+            const valA = a[this.rankingSort.column];
+            const valB = b[this.rankingSort.column];
+            if (this.rankingSort.column === 'user') {
+                return this.rankingSort.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            return this.rankingSort.direction === 'asc' ? valA - valB : valB - valA;
+        });
+
+        tbody.innerHTML = sorted.map(d => `
+            <tr>
+                <td class="fw-bold">${d.user}</td>
+                <td class="text-center font-monospace">
+                    <span class="text-primary fw-bold">${(d.ratio * 100).toFixed(1)}%</span>
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">(${d.count}/${d.available})</small>
+                </td>
+                <td class="text-center">${d.count}</td>
+            </tr>
+        `).join('');
+    },
+
+    sortRanking(column) {
+        if (this.rankingSort.column === column) {
+            this.rankingSort.direction = this.rankingSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.rankingSort.column = column;
+            this.rankingSort.direction = column === 'user' ? 'asc' : 'desc';
+        }
+        this.renderRankingTable();
     },
 
     setupTableSorting() {
@@ -1451,6 +1707,86 @@ export const TurnosManager = {
     },
 
     /**
+     * DIFUNDIR MES (CAPTURA DE PANTALLA)
+     */
+    async difundirMes() {
+        const target = document.querySelector('#monthly-compact-container').closest('.card');
+        if (!target) return;
+
+        Ui.showToast("Generando imagen de difusión del mes...", "info");
+
+        try {
+            // Cargar html2canvas dinámicamente si no está
+            if (typeof html2canvas === 'undefined') {
+                await Utils.loadScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js');
+            }
+
+            // Preparar para la captura
+            const canvas = await html2canvas(target, {
+                scale: 1.5, // Un poco menos que semana para no generar archivos gigantes
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                onclone: (clonedDoc) => {
+                   const c = clonedDoc.querySelector('#monthly-compact-container').closest('.card');
+                   // Limpiar elementos que no queremos en la foto
+                   clonedDoc.querySelectorAll('.no-print, .btn, .bi-pencil-fill, .bi-grip-vertical, .turnos-legend').forEach(el => el.style.display = 'none');
+                   if (c) c.style.boxShadow = 'none';
+                   // Asegurar que las columnas pegajosas se vean bien en el canvas
+                   clonedDoc.querySelectorAll('.sticky-col').forEach(el => {
+                       el.style.position = 'static';
+                       el.style.backgroundColor = '#f8f9fa';
+                   });
+                }
+            });
+
+            // Convertir a blob y compartir/descargar
+            canvas.toBlob(async (blob) => {
+                const monthSelect = document.getElementById('selectMensualMonth');
+                const yearSelect = document.getElementById('selectMensualYear');
+                const monthName = monthSelect?.options[monthSelect.selectedIndex]?.text || 'Mes';
+                const year = yearSelect?.value || new Date().getFullYear();
+                const fileName = `Turnos_${monthName}_${year}.png`;
+
+                try {
+                    const data = [new ClipboardItem({ [blob.type]: blob })];
+                    await navigator.clipboard.write(data);
+                    Ui.showToast("¡Copiado al portapapeles! Ya puedes pegarlo.", "success");
+                    return;
+                } catch (clipErr) {
+                    console.warn("Clipboard failed, falling back to share/download:", clipErr);
+                }
+
+                try {
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
+                        await navigator.share({
+                            files: [new File([blob], fileName, { type: 'image/png' })],
+                            title: `Turnos Recepción - ${monthName} ${year}`,
+                            text: `Aquí tenéis los turnos de ${monthName} ${year}`
+                        });
+                        return;
+                    }
+                } catch (shareErr) {
+                    console.warn("Share failed:", shareErr);
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+                Ui.showToast("Imagen generada y descargada.", "success");
+            });
+        } catch (error) {
+            console.error("[Turnos] Error en difundirMes:", error);
+            Ui.showToast("No se pudo generar la imagen del mes. Inténtalo de nuevo.", "danger");
+        } finally {
+            Ui.hideLoading();
+        }
+    },
+
+    /**
      * HELPERS UI
      */
     getWeekRange() {
@@ -1479,6 +1815,8 @@ export const TurnosManager = {
 
     handleCellClick(el) {
         if (!this.isEditing) return;
+        if (window.event && window.event.ctrlKey) return; // Bloquear si se pulsa Ctrl
+        
         this.selectedCell = el;
         
         // Sincronizar inputs del modal con el estado actual de la celda
@@ -1513,7 +1851,12 @@ export const TurnosManager = {
         el.dataset.pedido = isPedido;
         el.dataset.debido = debidoVal;
         el.dataset.shift = val || ''; 
-        el.innerText = val || '';
+        
+        // FIX: En vista mensual compacta, abreviar texto para no romper layout
+        const isCompact = el.closest('.turnos-table-compact') !== null;
+        const displayVal = (isCompact && val) ? val.substring(0, 2).toUpperCase() : (val || '');
+        
+        el.innerText = displayVal;
         el.className = `shift-cell ${this.getShiftClass(val)}`;
         
         // Limpiar marcadores previos
@@ -1547,6 +1890,8 @@ export const TurnosManager = {
 
         if (hasShiftChanged || hasFlagsChanged) {
             if (safeNew || safeOld) {
+                // Mark cell as modified for saveChanges to detect it
+                el.classList.remove('bg-secondary-subtle');
                 el.classList.add('bg-warning-subtle');
                 
                 // SINCRONIZAREMOS EN MEMORIA PARA ESTADÍSTICAS EN TIEMPO REAL
@@ -1574,8 +1919,14 @@ export const TurnosManager = {
      */
     async handleEditRequest() {
         if (this.isEditing) {
+            const hasShiftChanges = document.querySelectorAll('.shift-cell.bg-warning-subtle').length > 0;
+            if (hasShiftChanges || this.hasPendingChanges) {
+                const ok = await Ui.showConfirm("Tienes cambios sin guardar. ¿Estás seguro de que quieres finalizar la edición y perder los cambios?");
+                if (!ok) return;
+            }
             this.isEditing = false;
             this.updateActionButtons();
+            this.render();
             Ui.showToast("Edición finalizada", "success");
             return;
         }
@@ -1627,6 +1978,14 @@ export const TurnosManager = {
         const inst = new bootstrap.Modal(el);
         this.modals[id] = inst;
         inst.show();
+
+        // Listen for hidden event to cleanup scroll lock automatically
+        el.addEventListener('hidden.bs.modal', () => {
+             document.body.classList.remove('modal-open');
+             document.body.style.overflow = '';
+             document.body.style.paddingRight = '';
+             document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+        }, { once: true });
     },
 
     hideModal(id) {
@@ -1639,14 +1998,20 @@ export const TurnosManager = {
             // Limpieza agresiva de backdrops y scroll lock para evitar bloqueos
             setTimeout(() => {
                 const backdrops = document.querySelectorAll('.modal-backdrop');
-                if (backdrops.length > 0 || document.body.classList.contains('modal-open')) {
-                    backdrops.forEach(b => b.remove());
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
-                }
-            }, 500);
+                backdrops.forEach(b => b.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            }, 300);
         }
+    },
+
+    async confirmReload() {
+        const ok = await Ui.showConfirm("¿Estás seguro de que quieres refrescar? Se perderán los cambios no guardados.");
+        if (!ok) return;
+        
+        await this.loadData();
+        this.render();
     },
 
     openManageUsers() {
@@ -1654,6 +2019,7 @@ export const TurnosManager = {
             Ui.showToast("Primero debes desbloquear el módulo con 'Modificar'", "warning");
             return;
         }
+        this.renderReceptionistList();
         this.showModal('modalManageUsers');
     },
 
@@ -1675,8 +2041,15 @@ export const TurnosManager = {
         const btnAutoVac = document.getElementById('btnAutoAssignVac');
         const btnReloadVac = document.getElementById('btnReloadTurnos_Vacaciones');
 
+        // Mensual specific
+        const btnSaveMensual = document.getElementById('btnSaveTurnos_Mensual');
+        const btnCancelMensual = document.getElementById('btnCancelEdit_Mensual');
+        const btnAutoMensual = document.getElementById('btnAutoAssign_Mensual');
+        const btnReloadMensual = document.getElementById('btnReloadTurnos_Mensual');
+
         const isCuadrante = this.currentView === 'cuadrante';
         const isVacaciones = this.currentView === 'vacaciones';
+        const isMensual = this.currentView === 'mensual';
 
         // Global Edit mode logic
         if (btnEdit) {
@@ -1689,22 +2062,42 @@ export const TurnosManager = {
             }
         }
         
-        if (btnManage) {
-            btnManage.classList.toggle('d-none', !this.isEditing || !isCuadrante);
-        }
+        const updateBtn = (btn, inView, requireEdit) => {
+            if (!btn) return;
+            btn.classList.toggle('d-none', !inView);
+            if (inView) {
+                btn.disabled = requireEdit ? !this.isEditing : false;
+            }
+        };
+
+        updateBtn(btnManage, isCuadrante, true);
 
         // Cuadrante tools
-        if (btnSaveCuad) btnSaveCuad.classList.toggle('d-none', !isCuadrante || !this.isEditing);
-        if (btnCancelCuad) btnCancelCuad.classList.toggle('d-none', !isCuadrante || !this.isEditing);
-        if (btnAutoCuad) btnAutoCuad.classList.toggle('d-none', !isCuadrante || !this.isEditing);
-        if (btnReloadCuad) btnReloadCuad.classList.toggle('d-none', !isCuadrante);
-        if (btnExportCuad) btnExportCuad.classList.toggle('d-none', !isCuadrante);
+        updateBtn(btnSaveCuad, isCuadrante, true);
+        updateBtn(btnCancelCuad, isCuadrante, true);
+        updateBtn(btnAutoCuad, isCuadrante, true);
+        updateBtn(btnReloadCuad, isCuadrante, false);
+        updateBtn(btnExportCuad, isCuadrante, false);
+
+        // Mensual tools
+        updateBtn(btnSaveMensual, isMensual, true);
+        updateBtn(btnCancelMensual, isMensual, true);
+        updateBtn(btnAutoMensual, isMensual, true);
+        updateBtn(btnReloadMensual, isMensual, false);
 
         // Vacaciones tools
-        if (btnSaveVac) btnSaveVac.classList.toggle('d-none', !isVacaciones || !this.isEditing);
-        if (btnCancelVac) btnCancelVac.classList.toggle('d-none', !isVacaciones || !this.isEditing);
-        if (btnAutoVac) btnAutoVac.classList.toggle('d-none', !isVacaciones || !this.isEditing);
-        if (btnReloadVac) btnReloadVac.classList.toggle('d-none', !isVacaciones);
+        updateBtn(btnSaveVac, isVacaciones, true);
+        updateBtn(btnCancelVac, isVacaciones, true);
+        updateBtn(btnAutoVac, isVacaciones, true);
+        updateBtn(btnReloadVac, isVacaciones, false);
+
+        // Clear buttons
+        const btnClearCuad = document.getElementById('btnClearTurnos_Cuadrante');
+        const btnClearMensual = document.getElementById('btnClearTurnos_Mensual');
+        const btnClearVac = document.getElementById('btnClearTurnos_Vacaciones');
+        updateBtn(btnClearCuad, isCuadrante, true);
+        updateBtn(btnClearMensual, isMensual, true);
+        updateBtn(btnClearVac, isVacaciones, true);
 
         // Visual hints
         document.querySelectorAll('.shift-cell').forEach(c => {
@@ -1718,7 +2111,11 @@ export const TurnosManager = {
         });
     },
 
-    cancelEdit() {
+    async cancelEdit() {
+        if (this.isEditing) {
+            const ok = await Ui.showConfirm("¿Estás seguro de que quieres cancelar? Se perderán los cambios no guardados.");
+            if (!ok) return;
+        }
         this.isEditing = false;
         this.updateActionButtons();
         this.render();
@@ -1726,44 +2123,68 @@ export const TurnosManager = {
 
     async saveChanges() {
         try {
-            const modified = document.querySelectorAll('.shift-cell.bg-warning-subtle');
-            // Allow save if quadrant cells were modified OR if there are pending vacation changes
-            if (modified.length === 0 && !this.hasPendingChanges) return this.cancelEdit();
+            const ok = await Ui.showConfirm(`¿Estás seguro de que quieres guardar los cambios?`);
+            if (!ok) return;
 
-            const newSet = [...this.shifts];
+            const modified = document.querySelectorAll('.shift-cell.bg-warning-subtle');
+
+            // We use a Map to ensure unique (user, date) pairs in the payload
+            const uniqueShifts = new Map();
+            
+            // 1. Start with current state in memory (which includes vacation changes)
+            this.shifts.forEach(s => {
+                const userKey = (s.usuario || 'Unknown').trim().toLowerCase();
+                const key = `${userKey}_${s.fecha}`;
+                uniqueShifts.set(key, {
+                    usuario: s.usuario?.trim() || 'Unknown',
+                    fecha: s.fecha,
+                    tipo_turno: (s.tipo_turno || '').trim(),
+                    es_pedido: !!s.es_pedido,
+                    es_debido: parseInt(s.es_debido || '0')
+                });
+            });
+
+            // 2. Overlay modified cells from the DOM (quadrant/monthly)
             modified.forEach(el => {
-                const { user, date, pedido } = el.dataset;
+                const { user, date, pedido, shift } = el.dataset;
+                if (!user || !date) return;
+
                 const debidoVal = parseInt(el.dataset.debido || '0');
-                const val = (el.innerText || '').trim();
+                const val = (shift || el.innerText || '').trim();
                 const isPedido = pedido === 'true';
-                const isDebido = debidoVal;
-                const idx = newSet.findIndex(s => s.usuario === user && s.fecha === date);
                 
-                if (idx !== -1) {
-                    if (val || isPedido || isDebido !== 0) {
-                        newSet[idx].tipo_turno = val;
-                        newSet[idx].es_pedido = isPedido;
-                        newSet[idx].es_debido = isDebido;
-                    } else newSet.splice(idx, 1);
-                } else if (val || isPedido || isDebido !== 0) {
-                    newSet.push({ 
-                        usuario: user, 
-                        fecha: date, 
+                const userKey = user.trim().toLowerCase();
+                const key = `${userKey}_${date}`;
+
+                if (val || isPedido || debidoVal !== 0) {
+                    uniqueShifts.set(key, {
+                        usuario: user.trim(),
+                        fecha: date,
                         tipo_turno: val,
                         es_pedido: isPedido,
-                        es_debido: isDebido
+                        es_debido: debidoVal
                     });
+                } else {
+                    uniqueShifts.delete(key);
                 }
             });
 
+            const newSet = Array.from(uniqueShifts.values());
+
+            console.log(`[Turnos] Guardando ${newSet.length} registros...`);
             await Api.post('storage/turnos_empleados', newSet);
+            
             this.shifts = newSet;
             this.hasPendingChanges = false;
-            this.cancelEdit();
-            Ui.showToast("Cambios guardados", "success");
+            
+            // NO cerramos el modo edición al guardar, permitimos seguir trabajando
+            this.updateActionButtons();
+            this.render();
+
+            Ui.showToast("Cambios guardados correctamente", "success");
         } catch (e) {
-            console.error(e);
-            Ui.showToast("Error al guardar", "danger");
+            console.error("[Turnos] Error en saveChanges:", e);
+            Ui.showToast("Error al guardar los cambios", "danger");
         }
     },
 
@@ -1799,14 +2220,83 @@ export const TurnosManager = {
      * IMPRESIÓN DEL MÓDULO
      */
     /**
-     * AUTO-ASIGNACIÓN DE TURNOS
+     * AUTO-ASIGNACIÓN MENSUAL
      */
-    /**
-     * AUTO-ASIGNACIÓN DINÁMICA DE TURNOS
-     * Implementa un sistema de pesos y variabilidad para evitar cuadrantes repetitivos.
-     */
-    autoAssignWeek() {
+    suggestShift(user, dateStr) {
+        const date = new Date(dateStr + 'T00:00:00');
+        const prevDate = new Date(date);
+        prevDate.setDate(date.getDate() - 1);
+        const prevDateStr = Utils.parseDate(prevDate);
+        
+        const prevShift = this.shifts.find(s => s.usuario === user && s.fecha === prevDateStr);
+        const type = prevShift?.tipo_turno?.toLowerCase() || '';
+
+        if (type.includes('mañana')) return 'Tarde';
+        if (type.includes('tarde')) return 'Noche';
+        if (type.includes('noche')) return 'Libre';
+        if (type.includes('libre') || type.includes('vacaciones')) return 'Mañana';
+        
+        const options = ['Mañana', 'Tarde', 'Noche'];
+        return options[Math.floor(Math.random() * options.length)];
+    },
+
+    async autoAssignMonth() {
         if (!this.isEditing) return;
+        
+        const ok = await Ui.showConfirm("¿Quieres auto-asignar todo el mes? Se llenarán los huecos vacíos con sugerencias inteligentes.");
+        if (!ok) return;
+
+        const monthSelect = document.getElementById('selectMensualMonth');
+        const yearSelect = document.getElementById('selectMensualYear');
+        const month = parseInt(monthSelect?.value ?? this.currentDate.getMonth());
+        const year = parseInt(yearSelect?.value ?? this.currentDate.getFullYear());
+
+        Ui.showLoading("Auto-asignando mes...");
+        try {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let totalFilled = 0;
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                // Mezclar recepcionistas para dar variabilidad
+                const shuffled = [...this.receptionists].sort(() => Math.random() - 0.5);
+                
+                shuffled.forEach(r => {
+                    const user = this.getUserName(r);
+                    const existing = this.shifts.find(s => s.usuario === user && s.fecha === dateStr);
+                    if (!existing || (!existing.tipo_turno || existing.tipo_turno.trim() === '')) {
+                        const suggested = this.suggestShift(user, dateStr);
+                        if (suggested) {
+                            if (!existing) {
+                                this.shifts.push({ usuario: user, fecha: dateStr, tipo_turno: suggested });
+                            } else {
+                                existing.tipo_turno = suggested;
+                            }
+                            totalFilled++;
+                        }
+                    }
+                });
+            }
+
+            this.renderMonthlyView();
+            Ui.showToast(`Auto-asignación completada: ${totalFilled} huecos llenados`, "success");
+        } catch (e) {
+            console.error(e);
+            Ui.showToast("Error en auto-asignación mensual", "danger");
+        } finally {
+            Ui.hideLoading();
+        }
+    },
+
+    /**
+     * AUTO-ASIGNACIÓN DINÁMICA DE TURNOS SEMANAL
+     */
+    async autoAssignWeek() {
+        if (!this.isEditing) return;
+        
+        const ok = await Ui.showConfirm("¿Quieres auto-asignar toda la semana? Se llenarán los huecos vacíos con sugerencias inteligentes.");
+        if (!ok) return;
         
         console.log("[Algo] Iniciando auto-asignación dinámica (Regla 3-2-2)...");
 
@@ -1842,7 +2332,7 @@ export const TurnosManager = {
             });
             
             // 2. Candidatos que no tienen turno hoy ni están marcados como 'Libre' manualmente
-            let candidates = this.receptionists.filter(u => {
+            let candidates = this.receptionists.map(r => this.getUserName(r)).filter(u => {
                 const hasShiftToday = dayShifts.some(s => s.usuario === u);
                 const cell = document.querySelector(`.shift-cell[data-user="${u}"][data-date="${date}"]`);
                 const isManuallyFree = cell && (cell.dataset.shift || '').trim().toLowerCase() === 'libre';
@@ -1949,8 +2439,9 @@ export const TurnosManager = {
             const cell = document.querySelector(`.shift-cell[data-user="${change.user}"][data-date="${change.date}"]`);
             if (cell) {
                 const currentVal = (cell.dataset.shift || '').trim();
+                // Si la celda está vacía o es 'libre' (sin color relevante), la llenamos
                 if (!currentVal || currentVal.toLowerCase() === 'libre') {
-                    // Evitamos sobrescribir un 'Libre' con otro 'Libre' innecesariamente para no manchar de amarillo
+                    // Si el nuevo valor es 'libre' y ya era 'libre', saltamos para no ensuciar
                     if (currentVal.toLowerCase() === 'libre' && change.val.toLowerCase() === 'libre') return;
                     
                     this.updateCell(cell, change.val);
@@ -2115,18 +2606,12 @@ export const TurnosManager = {
         
         this.receptionists.forEach(n => {
             const name = typeof n === 'string' ? n : n.nombre;
-            const vacDays = typeof n === 'string' ? 30 : (n.vacaciones || 30);
 
             const item = document.createElement('div');
             item.className = 'list-group-item d-flex justify-content-between align-items-center py-2';
             item.innerHTML = `
                 <div class="d-flex align-items-center gap-3">
                     <span class="fw-bold">${name}</span>
-                    <div class="input-group input-group-sm" style="width: 120px;">
-                        <span class="input-group-text bg-light"><i class="bi bi-sun"></i></span>
-                        <input type="number" class="form-control" value="${vacDays}" 
-                               onchange="TurnosManager.actualizarDiasVacaciones('${name}', this.value)" title="Días de vacaciones al año">
-                    </div>
                 </div>
                 <button class="btn btn-sm btn-outline-danger border-0" onclick="TurnosManager.eliminarRecepcionista('${name}')">
                     <i class="bi bi-trash"></i>
@@ -2199,6 +2684,387 @@ export const TurnosManager = {
             console.error("Error al persistir personal:", e);
             Ui.showToast("Error al guardar cambios de personal", "danger");
         }
+    },
+
+    /**
+     * LIMPIEZA DE TURNOS
+     */
+    async confirmClear(view) {
+        if (!this.isEditing) return;
+        
+        let msg = "¿Estás seguro de que quieres LIMPIAR TODA LA SEMANA?";
+        if (view === 'mensual') {
+            msg = "¿Estás seguro de que quieres LIMPIAR TODO EL MES? Esta acción no se puede deshacer hasta que recargues.";
+        } else if (view === 'vacaciones') {
+            const yearStr = document.getElementById('selectVacacionesYear')?.value || new Date().getFullYear().toString();
+            msg = `¿Estás seguro de que quieres LIMPIAR TODAS LAS VACACIONES DEL AÑO ${yearStr}? Esta acción no se puede deshacer hasta que recargues.`;
+        }
+        
+        const ok = await Ui.showConfirm(msg);
+        if (!ok) return;
+
+        this.clearShiftsInView(view);
+        if (view === 'vacaciones') {
+            this.renderVacationView();
+        } else {
+            this.render();
+        }
+        Ui.showToast("Vista limpiada (cambios no guardados)", "warning");
+    },
+
+    clearShiftsInView(view) {
+        this.saveHistory(); // Guardar estado antes de limpiar
+        
+        if (view === 'vacaciones') {
+            const yearStr = document.getElementById('selectVacacionesYear')?.value || new Date().getFullYear().toString();
+            
+            // Remove all vacations for the displayed year from memory
+            this.shifts = this.shifts.filter(s => {
+                const isVacation = (s.tipo_turno?.trim().toLowerCase() === 'vacaciones' || s.tipo_turno?.trim().toLowerCase() === 'v');
+                const isThisYear = s.fecha && s.fecha.startsWith(yearStr);
+                return !(isVacation && isThisYear);
+            });
+            
+            this.updateVacationSummary();
+            this.hasPendingChanges = true;
+            return;
+        }
+
+        const selector = view === 'mensual' ? '#monthly-compact-container .shift-cell' : '#turnosTableBody .shift-cell';
+        document.querySelectorAll(selector).forEach(cell => {
+            this.updateCell(cell, '');
+        });
+        this.hasPendingChanges = true;
+    },
+
+    /**
+     * SELECCIÓN DE RANGO (ESTILO EXCEL)
+     */
+    setupRangeSelection() {
+        const containers = ['turnosTableBody', 'monthly-compact-container', 'vacation-annual-container'];
+        
+        const onMouseDown = (e) => {
+            if (!this.isEditing) return;
+            const cell = e.target.closest('.shift-cell') || e.target.closest('.vac-day-cell');
+            if (cell) {
+                this.selectedCell = cell; // Siempre rastreamos la última celda pinchada
+                
+                if (e.ctrlKey) {
+                    this.selection.isSelecting = true;
+                    this.selection.ranges.push({ start: cell, end: cell });
+                    this.applySelectionUI();
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else {
+                    // Si pinchamos sin Ctrl, limpiamos selección previa pero marcamos esta como inicio potencial
+                    // this.clearSelection(); // Opcional: ¿queremos que el click limpie? Sí, estilo Excel.
+                }
+            }
+        };
+
+        const onMouseOver = (e) => {
+            if (!this.selection.isSelecting || this.selection.ranges.length === 0) return;
+            const cell = e.target.closest('.shift-cell') || e.target.closest('.vac-day-cell');
+            const lastRange = this.selection.ranges[this.selection.ranges.length - 1];
+            if (cell && cell !== lastRange.end) {
+                lastRange.end = cell;
+                this.applySelectionUI();
+            }
+        };
+
+        const onMouseUp = () => {
+            this.selection.isSelecting = false;
+        };
+
+        containers.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('mousedown', onMouseDown);
+            el.addEventListener('mouseover', onMouseOver);
+        });
+
+        window.addEventListener('mouseup', onMouseUp);
+
+        // Limpiar selección al pinchar fuera sin Ctrl
+        window.addEventListener('mousedown', (e) => {
+            if (!this.isEditing) return;
+            const isSelectable = e.target.closest('.shift-cell') || e.target.closest('.vac-day-cell');
+            if (!isSelectable && !e.ctrlKey) {
+                this.clearSelection();
+            }
+        });
+    },
+
+    clearSelection() {
+        this.selection.ranges = [];
+        this.selection.isSelecting = false;
+        document.querySelectorAll('.selected-range, .selected-start').forEach(c => {
+            c.classList.remove('selected-range', 'selected-start');
+        });
+    },
+
+    applySelectionUI() {
+        // Limpiar estilos previos
+        document.querySelectorAll('.selected-range, .selected-start').forEach(c => {
+            c.classList.remove('selected-range', 'selected-start');
+        });
+        
+        if (this.selection.ranges.length === 0) return;
+
+        this.selection.ranges.forEach(range => {
+            const cells = this.getCellsInRange(range.start, range.end);
+            cells.forEach(c => c.classList.add('selected-range'));
+            range.start.classList.add('selected-start');
+        });
+    },
+
+    getCellsInRange(startCell, endCell) {
+        const cells = [];
+        let selector = '.shift-cell';
+        if (this.currentView === 'vacaciones') selector = '.vac-day-cell';
+        else if (this.currentView === 'mensual') selector = '#monthly-compact-container .shift-cell';
+        else if (this.currentView === 'cuadrante') selector = '#turnosTableBody .shift-cell';
+        
+        const allCells = Array.from(document.querySelectorAll(selector));
+        
+        const u1 = startCell.dataset.user;
+        const d1 = startCell.dataset.date;
+        const u2 = endCell.dataset.user;
+        const d2 = endCell.dataset.date;
+
+        // Caso especial vista Vacaciones (un solo eje de fechas, sin usuarios en la celda)
+        if (this.currentView === 'vacaciones') {
+            const minDate = d1 < d2 ? d1 : d2;
+            const maxDate = d1 < d2 ? d2 : d1;
+            return allCells.filter(c => c.dataset.date >= minDate && c.dataset.date <= maxDate);
+        }
+
+        const users = this.receptionists.map(r => this.getUserName(r));
+        const userIdx1 = u1 ? users.indexOf(u1) : -1;
+        const userIdx2 = u2 ? users.indexOf(u2) : -1;
+        
+        const minUserIdx = Math.min(userIdx1, userIdx2);
+        const maxUserIdx = Math.max(userIdx1, userIdx2);
+        
+        const minDate = d1 < d2 ? d1 : d2;
+        const maxDate = d1 < d2 ? d2 : d1;
+
+        allCells.forEach(c => {
+            const u = c.dataset.user;
+            const d = c.dataset.date;
+            const uIdx = users.indexOf(u);
+            
+            if (uIdx !== -1 && uIdx >= minUserIdx && uIdx <= maxUserIdx && d >= minDate && d <= maxDate) {
+                cells.push(c);
+            }
+        });
+
+        return cells;
+    },
+
+    /**
+     * COPIAR / PEGAR
+     */
+    setupKeyboardShortcuts() {
+        window.addEventListener('keydown', (e) => {
+            if (!this.isEditing) return;
+            
+            const isCtrl = e.ctrlKey || e.metaKey;
+            
+            if (isCtrl && e.key.toLowerCase() === 'c') {
+                this.copySelection();
+            } else if (isCtrl && e.key.toLowerCase() === 'v') {
+                this.pasteSelection();
+            } else if (isCtrl && e.key.toLowerCase() === 'z') {
+                if (e.altKey) {
+                    this.redo();
+                } else {
+                    this.undo();
+                }
+            }
+        });
+    },
+
+    copySelection() {
+        let cellsToCopy = [];
+        if (this.selection.ranges.length > 0) {
+            this.selection.ranges.forEach(range => {
+                const rangeCells = this.getCellsInRange(range.start, range.end);
+                cellsToCopy.push(...rangeCells);
+            });
+            // Eliminar duplicados si los rangos se solapan
+            cellsToCopy = [...new Set(cellsToCopy)];
+        } else if (this.selectedCell) {
+            cellsToCopy = [this.selectedCell];
+        }
+
+        if (cellsToCopy.length === 0) return;
+
+        const users = this.receptionists.map(r => this.getUserName(r));
+        const usersInSelection = [...new Set(cellsToCopy.map(c => c.dataset.user).filter(u => !!u))];
+        const datesInSelection = [...new Set(cellsToCopy.map(c => c.dataset.date))].sort();
+
+        if (this.currentView === 'vacaciones') {
+            // Caso especial Vacaciones: Copiar lista de trabajadores por fecha
+            const grid = datesInSelection.map(date => {
+                const cell = cellsToCopy.find(c => c.dataset.date === date);
+                return {
+                    isVacation: true,
+                    workers: JSON.parse(cell?.dataset.workers || '[]')
+                };
+            });
+            this.copiedRange = { width: datesInSelection.length, height: 1, data: [grid], isVacation: true };
+        } else {
+            usersInSelection.sort((a, b) => users.indexOf(a) - users.indexOf(b));
+
+            const grid = [];
+            usersInSelection.forEach(user => {
+                const row = [];
+                datesInSelection.forEach(date => {
+                    const cell = cellsToCopy.find(c => c.dataset.user === user && c.dataset.date === date);
+                    row.push(cell ? {
+                        shift: cell.dataset.shift || '',
+                        pedido: cell.dataset.pedido === 'true',
+                        debido: parseInt(cell.dataset.debido || '0')
+                    } : null);
+                });
+                grid.push(row);
+            });
+
+            this.copiedRange = {
+                width: datesInSelection.length,
+                height: grid.length,
+                data: grid,
+                isVacation: false
+            };
+        }
+
+        Ui.showToast(`Copiado: ${this.copiedRange.width}x${this.copiedRange.height}`, "info");
+    },
+
+    pasteSelection() {
+        // En multi-range, si no hay selección explícita, usamos selectedCell
+        const targetCell = (this.selection.ranges.length > 0) ? this.selection.ranges[0].start : this.selectedCell;
+
+        if (!this.copiedRange || !targetCell) {
+            if (!this.copiedRange) Ui.showToast("No hay nada copiado", "warning");
+            else Ui.showToast("Selecciona una celda de destino", "warning");
+            return;
+        }
+
+        this.saveHistory(); // Guardar estado antes de pegar
+
+        const startU = targetCell.dataset.user;
+        const startD = targetCell.dataset.date;
+        
+        const users = this.receptionists.map(r => this.getUserName(r));
+        const startUIdx = users.indexOf(startU);
+        
+        const selector = this.currentView === 'mensual' ? '#monthly-compact-container .shift-cell' : '#turnosTableBody .shift-cell';
+        const allCells = Array.from(document.querySelectorAll(selector));
+        const uniqueDatesInView = [...new Set(allCells.map(c => c.dataset.date))].sort();
+        const startDIdx = uniqueDatesInView.indexOf(startD);
+
+        let count = 0;
+        
+        if (this.copiedRange.isVacation) {
+            // Pegar datos de vacaciones (lista de trabajadores por fecha)
+            this.copiedRange.data[0].forEach((colData, cIdx) => {
+                const currentDIdx = startDIdx + cIdx;
+                if (currentDIdx >= uniqueDatesInView.length) return;
+                const currentDate = uniqueDatesInView[currentDIdx];
+
+                if (!colData || !colData.workers) return;
+
+                // En vacaciones, "pegar" significa asignar vacaciones a esa lista de personas en esa fecha
+                colData.workers.forEach(worker => {
+                    // Evitar duplicados
+                    if (!this.shifts.find(s => s.usuario === worker && s.fecha === currentDate && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))) {
+                        this.shifts.push({ usuario: worker, fecha: currentDate, tipo_turno: 'vacaciones' });
+                        count++;
+                    }
+                });
+            });
+        } else {
+            this.copiedRange.data.forEach((row, rIdx) => {
+                const currentUIdx = startUIdx + rIdx;
+                if (currentUIdx >= users.length) return;
+                const currentUser = users[currentUIdx];
+
+                row.forEach((colData, cIdx) => {
+                    const currentDIdx = startDIdx + cIdx;
+                    if (currentDIdx >= uniqueDatesInView.length) return;
+                    const currentDate = uniqueDatesInView[currentDIdx];
+
+                    if (!colData) return;
+
+                    // Si estamos en vista vacaciones, el pegado regular solo funciona si el shift es 'v' o 'vacaciones'
+                    if (this.currentView === 'vacaciones') {
+                        const type = colData.shift?.toLowerCase();
+                        if (type === 'v' || type === 'vacaciones') {
+                            if (!this.shifts.find(s => s.usuario === currentUser && s.fecha === currentDate && (s.tipo_turno === 'vacaciones' || s.tipo_turno === 'v'))) {
+                                this.shifts.push({ usuario: currentUser, fecha: currentDate, tipo_turno: 'vacaciones' });
+                                count++;
+                            }
+                        }
+                    } else {
+                        const targetCell = allCells.find(c => c.dataset.user === currentUser && c.dataset.date === currentDate);
+                        if (targetCell) {
+                            this.updateCell(targetCell, colData.shift, colData.pedido, colData.debido);
+                            count++;
+                        }
+                    }
+                });
+            });
+        }
+
+        this.render(); // Refrescar vista completa después de pegar masivamente
+
+        Ui.showToast(`Pegado: ${count} celdas`, "success");
+        this.clearSelection();
+    },
+
+    /**
+     * SISTEMA DESHACER / REHACER (UNDO/REDO)
+     */
+    saveHistory() {
+        // Clonamos los shifts actuales
+        const snapshot = JSON.parse(JSON.stringify(this.shifts));
+        this.history.undo.push(snapshot);
+        if (this.history.undo.length > this.history.maxSteps) {
+            this.history.undo.shift();
+        }
+        this.history.redo = []; // Al hacer una acción nueva, limpiamos el redo
+    },
+
+    undo() {
+        if (this.history.undo.length === 0) {
+            Ui.showToast("Nada que deshacer", "info");
+            return;
+        }
+        
+        // Guardar estado actual en redo antes de volver atrás
+        this.history.redo.push(JSON.parse(JSON.stringify(this.shifts)));
+        
+        // Cargar estado anterior
+        this.shifts = this.history.undo.pop();
+        this.render();
+        Ui.showToast("Deshecho", "warning");
+    },
+
+    redo() {
+        if (this.history.redo.length === 0) {
+            Ui.showToast("Nada que rehacer", "info");
+            return;
+        }
+
+        // Guardar estado actual en undo antes de ir adelante
+        this.history.undo.push(JSON.parse(JSON.stringify(this.shifts)));
+
+        // Cargar estado de redo
+        this.shifts = this.history.redo.pop();
+        this.render();
+        Ui.showToast("Rehecho", "success");
     }
 };
 

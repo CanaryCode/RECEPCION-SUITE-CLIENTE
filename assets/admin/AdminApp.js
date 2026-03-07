@@ -285,6 +285,9 @@ class AdminApp {
         bindAction('btn-logs-refresh', () => this.refreshLogs(true));
         bindAction('btn-connections-refresh', () => this.refreshConnections(true));
         bindAction('btn-sessions-refresh', () => this.refreshActiveSessions(true));
+        bindAction('btn-force-reload-clients', () => this.forceReloadClients());
+        bindAction('btn-send-global-alert', () => this.sendGlobalAlert());
+        
         // These clear buttons will now clear the unified terminal
         bindAction('btn-clear-local', () => { if (this.terminalUnified) this.terminalUnified.innerHTML = ''; });
         bindAction('btn-clear-remote', () => { if (this.terminalUnified) this.terminalUnified.innerHTML = ''; });
@@ -591,6 +594,152 @@ class AdminApp {
                     setTimeout(() => this.refreshLogs(true), 1500);
                 }, 2500);
             }
+        }
+    }
+
+    async showConfirm(message, title = "Confirmar Acción") {
+        return new Promise(resolve => {
+            const modalId = 'adminConfirmModal' + Date.now();
+            const modalHtml = `
+            <div class="modal fade" id="${modalId}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-light border-secondary shadow-lg">
+                        <div class="modal-header border-secondary text-warning">
+                            <h6 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>${title}</h6>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">${message}</p>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" id="btnCancel${modalId}">Cancelar</button>
+                            <button type="button" class="btn btn-warning btn-sm fw-bold" id="btnOk${modalId}">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            const div = document.createElement('div');
+            div.innerHTML = modalHtml;
+            document.body.appendChild(div);
+            
+            const modalEl = document.getElementById(modalId);
+            const modal = new bootstrap.Modal(modalEl);
+            let resolved = false;
+            
+            document.getElementById(`btnOk${modalId}`).onclick = () => {
+                resolved = true;
+                modal.hide();
+                resolve(true);
+            };
+            
+            document.getElementById(`btnCancel${modalId}`).onclick = () => {
+                resolved = true;
+                modal.hide();
+                resolve(false);
+            };
+            
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                if (!resolved) resolve(false);
+                div.remove();
+            });
+            modal.show();
+        });
+    }
+
+    async showAlert(message, title = "Aviso del Sistema", type = "info") {
+        return new Promise(resolve => {
+            const modalId = 'adminAlertModal' + Date.now();
+            const icon = type === 'danger' ? 'bi-x-octagon-fill text-danger' : 
+                         type === 'success' ? 'bi-check-circle-fill text-success' : 
+                         'bi-info-circle-fill text-info';
+            const modalHtml = `
+            <div class="modal fade" id="${modalId}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-light border-secondary shadow-lg">
+                        <div class="modal-header border-secondary">
+                            <h6 class="modal-title fw-bold"><i class="bi ${icon} me-2"></i>${title}</h6>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">${message}</p>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-primary btn-sm px-4" data-bs-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            const div = document.createElement('div');
+            div.innerHTML = modalHtml;
+            document.body.appendChild(div);
+            
+            const modalEl = document.getElementById(modalId);
+            const modal = new bootstrap.Modal(modalEl);
+            
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                div.remove();
+                resolve();
+            });
+            modal.show();
+        });
+    }
+
+    async forceReloadClients() {
+        const ok = await this.showConfirm("¿Estás seguro de que quieres forzar a TODOS los clientes conectados a recargar la página remotamente?", "Alerta de Difusión");
+        if (!ok) return;
+        
+        try {
+            const res = await this.secureFetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'force_reload' })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                this.appendTerminal('BROADCAST', 'Señal de recarga enviada a todos.', 'success');
+                await this.showAlert("Señal de recarga enviada con éxito a todos los clientes conectados.", "Operación Exitosa", "success");
+            } else {
+                this.appendTerminal('BROADCAST ERROR', data.error || 'No autorizado', 'danger');
+                await this.showAlert("Error: " + (data.error || "No autorizado"), "Error de Difusión", "danger");
+            }
+        } catch (e) {
+            this.appendTerminal('BROADCAST ERROR', e.message, 'danger');
+            await this.showAlert("Error de red: " + e.message, "Error Crítico", "danger");
+        }
+    }
+
+    async sendGlobalAlert() {
+        const inputEl = document.getElementById('input-global-alert');
+        const msg = inputEl?.value?.trim();
+        
+        if (!msg) {
+            await this.showAlert("El mensaje no puede estar vacío.", "Campo Requerido", "info");
+            return;
+        }
+
+        const ok = await this.showConfirm("¿Quieres enviar esta alerta global a todas las pantallas conectadas?", "Alerta Global");
+        if (!ok) return;
+
+        try {
+            const res = await this.secureFetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'global_alert', payload: { message: msg } })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                this.appendTerminal('BROADCAST', `Mensaje enviado: "${msg}"`, 'success');
+                inputEl.value = ''; // Limpiar
+                await this.showAlert("Alerta enviada correctamente a todos los clientes.", "Enviado", "success");
+            } else {
+                this.appendTerminal('BROADCAST ERROR', data.error || 'No autorizado', 'danger');
+                await this.showAlert("Error: " + (data.error || "No autorizado"), "Error", "danger");
+            }
+        } catch (e) {
+            this.appendTerminal('BROADCAST ERROR', e.message, 'danger');
+            await this.showAlert("Error de red: " + e.message, "Error Crítico", "danger");
         }
     }
 

@@ -467,7 +467,9 @@ export const Ui = {
      * MOSTRAR NOTIFICACIÓN (Toast)
      */
     showToast: (message, type = 'success') => {
-        if (window.showAlert) {
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else if (window.showAlert) {
             window.showAlert(message, type);
         } else {
             // Fallback simple si no hay sistema de alertas cargado
@@ -501,7 +503,9 @@ export const Ui = {
                 try {
                     if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
                         const instance = bootstrap.Tooltip.getInstance(trigger);
-                        if (instance) instance.dispose();
+                        if (instance && typeof instance.dispose === 'function') {
+                            instance.dispose();
+                        }
                     }
                 } catch (e) { /* Ignore individual tooltip errors */ }
             });

@@ -399,7 +399,7 @@
         "RECEPCIONISTAS": [
             {
                 "nombre": "Pavel",
-                "vacaciones": 30
+                "vacaciones": 48
             },
             {
                 "nombre": "Javi",
@@ -407,7 +407,7 @@
             },
             {
                 "nombre": "Anadelia",
-                "vacaciones": 30
+                "vacaciones": 48
             },
             {
                 "nombre": "Marta",
@@ -527,38 +527,50 @@
         "USE_API": false,
         "LAUNCHERS": [
             {
-                "icon": "heart",
-                "path": "C:/Program Files/Calibre2/calibre.exe",
-                "type": "app",
-                "label": "prueba1",
-                "embedded": false
+                "icon": "spotify",
+                "path": "https://open.spotify.com/",
+                "type": "url",
+                "label": "Spotify",
+                "embedded": true
             },
             {
-                "icon": "save",
-                "path": "C:/Program Files/Calibre2/calibre.exe",
-                "type": "app",
-                "label": "prueba 2",
-                "embedded": false
+                "icon": "geo-alt-fill",
+                "path": "https://www.google.com/maps",
+                "type": "maps",
+                "label": "Google Maps",
+                "embedded": true
             },
             {
-                "icon": "trash",
-                "path": "C:/Program Files/PuTTY/putty.exe",
-                "type": "app",
-                "label": "otro",
-                "embedded": false
+                "icon": "whatsapp",
+                "path": "https://web.whatsapp.com/",
+                "type": "url",
+                "label": "WhatsApp",
+                "embedded": true
             },
             {
-                "icon": "save",
-                "path": "C:/Users/jesus",
-                "type": "folder",
-                "label": "car",
+                "icon": "cloud-sun",
+                "path": "https://www.eltiempo.es/",
+                "type": "url",
+                "label": "El Tiempo",
+                "embedded": true
+            },
+            {
+                "icon": "house",
+                "path": "C:/Users/usuario/Desktop/SIHOT.url",
+                "type": "app",
+                "label": "SIHOT",
                 "embedded": false
             }
         ],
-        "GALLERY_PATH": "C:/Users/jesus/Downloads",
+        "GALLERY_PATH": "C:/Users/usuario/Desktop/ANTONIO/RECURSOS/INFORMACIÓN",
         "SYNC_INTERVAL": 10000,
         "ADMIN_PASSWORD": "1234",
-        "GALLERY_FOLDERS": [],
+        "GALLERY_FOLDERS": [
+            {
+                "path": "Z:\\ESCANER",
+                "label": "ESCANER"
+            }
+        ],
         "USE_SYNC_SERVER": true
     },
     "TRANSFERS": {

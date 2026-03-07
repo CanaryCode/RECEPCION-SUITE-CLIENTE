@@ -141,6 +141,34 @@
                         <!-- Removed Card - Controls moved to sidebar -->
                     </div>
 
+                    <!-- Controles Globales -->
+                    <div class="col-12 mb-3 mt-0">
+                        <div class="card bg-black-glass border-warning shadow-sm">
+                            <div class="card-header border-warning d-flex justify-content-between align-items-center bg-warning bg-opacity-10 py-2">
+                                <span class="small font-monospace text-warning fw-bold"><i class="bi bi-broadcast border-warning me-2"></i>CONTROLES GLOBALES (BROADCAST)</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-danger w-100 fw-bold border-2" id="btn-force-reload-clients">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>FORZAR RECARGA REMOTA
+                                        </button>
+                                        <div class="small text-secondary mt-1" style="font-size: 0.75rem;">Obliga a todos los clientes conectados a refrescar la página.</div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <input type="text" id="input-global-alert" class="form-control bg-dark text-light border-secondary" placeholder="Mensaje de alerta a todos los usuarios...">
+                                            <button class="btn btn-warning fw-bold text-dark px-4" id="btn-send-global-alert">
+                                                <i class="bi bi-send-fill me-2"></i>ENVIAR ALERTA
+                                            </button>
+                                        </div>
+                                        <div class="small text-secondary mt-1" style="font-size: 0.75rem;">Muestra un Toast naranja persistente en todas las pantallas.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Terminal Unificada -->
                     <div class="col-12 mb-3 mt-2">
                         <div class="card bg-black-glass border-secondary shadow-sm terminal-card">

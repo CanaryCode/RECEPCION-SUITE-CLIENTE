@@ -450,8 +450,62 @@ router.get('/web-proxy', (req, res) => {
         });
 
     } catch (err) {
-        logToFile(`Web Proxy Fatal Error: ${err.message}`);
         res.status(500).send(`Invalid URL: ${err.message}`);
+    }
+});
+
+/**
+ * TEMPORARY DEBUG ROUTE
+ * GET /api/system/debug-chat-db
+ */
+router.get('/debug-chat-db', async (req, res) => {
+    try {
+        const db = require('../db');
+        const [columns] = await db.query('SHOW COLUMNS FROM chat_messages');
+        let sample = [];
+        try {
+           const [rows] = await db.query('SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 1');
+           sample = rows;
+        } catch(e) { sample = e.message; }
+        
+        // Execute the exact failing query
+        let queryErr = null;
+        try {
+            await db.query(`SELECT * FROM chat_messages WHERE recipient IS NULL ORDER BY created_at DESC LIMIT 50`, []);
+        } catch(e) {
+            queryErr = e.message;
+        }
+
+        res.json({
+            status: 'ok',
+            columns: columns.map(c => ({ Field: c.Field, Type: c.Type })),
+            sample,
+            queryErr
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message, stack: err.stack });
+    }
+});
+
+/**
+ * TEMPORARY DEBUG ROUTE
+ * GET /api/system/debug-pm2
+ */
+router.get('/debug-pm2', (req, res) => {
+    try {
+        const { execSync } = require('child_process');
+        const list = execSync('pm2 jlist', { encoding: 'utf-8' });
+        const apps = JSON.parse(list);
+        res.json({
+            apps: apps.map(app => ({
+                name: app.name,
+                status: app.pm2_env.status,
+                exec_path: app.pm2_env.pm_exec_path,
+                cwd: app.pm2_env.pm_cwd
+            }))
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

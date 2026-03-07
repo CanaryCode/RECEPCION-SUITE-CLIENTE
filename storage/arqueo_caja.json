@@ -1,188 +1,188 @@
 {
     "vales": [
         {
-            "id": 1772746043874.8452,
-            "origin": "vales_module",
-            "importe": 25.5,
-            "concepto": "[VALE] 101: Compra de flores para habitación VIP",
+            "id": 1772827386515.007,
             "moduloId": 1709136000000,
             "receptor": "101",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 101: Compra de flores para habitación VIP",
+            "importe": 25.5,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.7832,
-            "origin": "vales_module",
-            "importe": 10,
-            "concepto": "[VALE] 205: Reembolso por depósito de caja fuerte",
+            "id": 1772827386515.3574,
             "moduloId": 1709136060000,
             "receptor": "205",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 205: Reembolso por depósito de caja fuerte",
+            "importe": 10,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.8928,
-            "origin": "vales_module",
-            "importe": 15.75,
-            "concepto": "[VALE] 302: Pago a mensajería urgente (MRW)",
+            "id": 1772827386515.3633,
             "moduloId": 1709136120000,
             "receptor": "302",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 302: Pago a mensajería urgente (MRW)",
+            "importe": 15.75,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.2437,
-            "origin": "vales_module",
-            "importe": 12,
-            "concepto": "[VALE] 410: Compra de bombones bienvenida",
+            "id": 1772827386515.019,
             "moduloId": 1709136180000,
             "receptor": "410",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 410: Compra de bombones bienvenida",
+            "importe": 12,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.6428,
-            "origin": "vales_module",
-            "importe": 45,
-            "concepto": "[VALE] 105: Servicio de lavandería externa",
+            "id": 1772827386515.7305,
             "moduloId": 1709136240000,
             "receptor": "105",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 105: Servicio de lavandería externa",
+            "importe": 45,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.2324,
-            "origin": "vales_module",
-            "importe": 100,
-            "concepto": "[VALE] 105: Limpieza Especial",
+            "id": 1772827386515.463,
             "moduloId": 1709136300000,
             "receptor": "105",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 105: Limpieza Especial",
+            "importe": 100,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.7722,
-            "origin": "vales_module",
-            "importe": 12,
-            "concepto": "[VALE] 212: Alquiler Bici",
+            "id": 1772827386515.914,
             "moduloId": 1709136360000,
             "receptor": "212",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 212: Alquiler Bici",
+            "importe": 12,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.566,
-            "origin": "vales_module",
-            "importe": 18.9,
-            "concepto": "[VALE] 314: Consumo Minibar",
+            "id": 1772827386515.5923,
             "moduloId": 1709136420000,
             "receptor": "314",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 314: Consumo Minibar",
+            "importe": 18.9,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.7795,
-            "origin": "vales_module",
-            "importe": 24,
-            "concepto": "[VALE] 402: Parking 2 días",
+            "id": 1772827386515.9324,
             "moduloId": 1709136480000,
             "receptor": "402",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 402: Parking 2 días",
+            "importe": 24,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.1233,
-            "origin": "vales_module",
-            "importe": 20,
-            "concepto": "[VALE] 501: Acceso SPA",
+            "id": 1772827386515.4382,
             "moduloId": 1709136540000,
             "receptor": "501",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 501: Acceso SPA",
+            "importe": 20,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.0137,
-            "origin": "vales_module",
-            "importe": 22,
-            "concepto": "[VALE] 101: Vino Habitación",
+            "id": 1772827386515.9138,
             "moduloId": 1709136600000,
             "receptor": "101",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 101: Vino Habitación",
+            "importe": 22,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.9216,
-            "origin": "vales_module",
-            "importe": 150,
-            "concepto": "[VALE] 205: Upgrade Suite",
+            "id": 1772827386515.9773,
             "moduloId": 1709136660000,
             "receptor": "205",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 205: Upgrade Suite",
+            "importe": 150,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.8635,
-            "origin": "vales_module",
-            "importe": 12.5,
-            "concepto": "[VALE] 310: Desayuno Room Service",
+            "id": 1772827386515.8657,
             "moduloId": 1709136720000,
             "receptor": "310",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 310: Desayuno Room Service",
+            "importe": 12.5,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.8745,
-            "origin": "vales_module",
-            "importe": 45,
-            "concepto": "[VALE] 412: Tintorería",
+            "id": 1772827386515.6572,
             "moduloId": 1709136780000,
             "receptor": "412",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 412: Tintorería",
+            "importe": 45,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.492,
-            "origin": "vales_module",
-            "importe": 2,
-            "concepto": "[VALE] 510: Cambio Divisas Fee",
+            "id": 1772827386515.7222,
             "moduloId": 1709136840000,
             "receptor": "510",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 510: Cambio Divisas Fee",
+            "importe": 2,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.7363,
-            "origin": "vales_module",
-            "importe": 25.5,
-            "concepto": "[VALE] 101: Compra de flores para habitación VIP",
+            "id": 1772827386515.464,
             "moduloId": 1772420128678,
             "receptor": "101",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 101: Compra de flores para habitación VIP",
+            "importe": 25.5,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.4172,
-            "origin": "vales_module",
-            "importe": 10,
-            "concepto": "[VALE] 205: Reembolso por depósito de caja fuerte",
+            "id": 1772827386515.1484,
             "moduloId": 1772420128943,
             "receptor": "205",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 205: Reembolso por depósito de caja fuerte",
+            "importe": 10,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.9668,
-            "origin": "vales_module",
-            "importe": 15.75,
-            "concepto": "[VALE] 302: Pago a mensajería urgente (MRW)",
+            "id": 1772827386515.813,
             "moduloId": 1772420129015,
             "receptor": "302",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 302: Pago a mensajería urgente (MRW)",
+            "importe": 15.75,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.7837,
-            "origin": "vales_module",
-            "importe": 45,
-            "concepto": "[VALE] 105: Servicio de lavandería externa",
+            "id": 1772827386515.5127,
             "moduloId": 1772420129179,
             "receptor": "105",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 105: Servicio de lavandería externa",
+            "importe": 45,
+            "origin": "vales_module"
         },
         {
-            "id": 1772746043874.1052,
-            "origin": "vales_module",
-            "importe": 12,
-            "concepto": "[VALE] 410: Compra de bombones bienvenida",
+            "id": 1772827386515.1912,
             "moduloId": 1772420129279,
             "receptor": "410",
-            "comentario": ""
+            "comentario": "",
+            "concepto": "[VALE] 410: Compra de bombones bienvenida",
+            "importe": 12,
+            "origin": "vales_module"
         }
     ],
     "desembolsos": [],
-    "fecha": "2026-03-05",
+    "fecha": "2026-03-06",
     "turno": "TARDE",
     "comentarios": "",
     "id": 3,

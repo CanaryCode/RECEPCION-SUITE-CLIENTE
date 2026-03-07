@@ -55,6 +55,17 @@ class RealTimeSync {
                     const data = JSON.parse(event.data);
                     if (data.type === 'data-changed') {
                         this.handleDataChange(data.key);
+                    } else if (data.type === 'force_reload') {
+                        console.warn('[Sync-RT] 🔄 Recarga forzada por el administrador.');
+                        window.location.reload(true);
+                    } else if (data.type === 'global_alert') {
+                        console.info('[Sync-RT] 🔔 Alerta global recibida:', data.payload.message);
+                        if (window.showToast) {
+                            // Show toast with longer duration for alerts (10 seconds)
+                            window.showToast(`📢 MENSAJE DEL SISTEMA: ${data.payload.message}`, 'warning', 10000);
+                        } else {
+                            alert(`📢 MENSAJE DEL SISTEMA:\n\n${data.payload.message}`);
+                        }
                     } else if (data.type === 'chat_message' || data.type === 'chat_delete' || data.type === 'chat_delete_multiple' || data.type === 'user_connected' || data.type === 'online_users') {
                         // Re-emitir evento para que otros módulos (como el chat) lo escuchen sin tener su propio socket
                         window.dispatchEvent(new CustomEvent('sync:ws_message', { detail: data }));

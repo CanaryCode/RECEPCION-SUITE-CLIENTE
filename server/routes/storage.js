@@ -488,7 +488,13 @@ router.post('/:key', async (req, res) => {
                             }
                             if (typeof val === 'boolean') return val ? 1 : 0;
                             if (typeof val === 'object' && val !== null) return JSON.stringify(val);
-                            return (val === undefined || val === '') ? null : val;
+                            
+                            // Specific fix for turnos_empleados: tipo_turno should not be null
+                            if (key === 'turnos_empleados' && col === 'tipo_turno' && (val === null || val === undefined)) {
+                                return '';
+                            }
+
+                            return (val === undefined) ? null : val;
                         });
                         await connection.query(sql, values);
                     }
