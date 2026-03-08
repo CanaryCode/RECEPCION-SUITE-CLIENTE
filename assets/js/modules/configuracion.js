@@ -98,8 +98,10 @@ export const Configurator = {
             this.renderValoracionDescTriple();
             this.renderValoracionSuplNino();
 
-            // Cargar módulo de actualizaciones
-            this.loadActualizacionesModule();
+            // Cargar módulo de actualizaciones y esperar a que termine
+            this.loadActualizacionesModule().catch(err => {
+                console.error('[CONFIGURATOR] Error crítico cargando actualizaciones:', err);
+            });
         } catch (err) {
             console.error("FATAL ERROR in Configurator.renderInterfaz:", err);
             Ui.showToast("Error crítico cargando configuración: " + err.message, "danger");
@@ -1161,24 +1163,32 @@ export const Configurator = {
      */
     async loadActualizacionesModule() {
         try {
+            console.log('[CONFIGURATOR] 🔄 Iniciando carga de módulo de actualizaciones...');
+
             const container = document.getElementById('actualizaciones-module-container');
             if (!container) {
-                console.warn('[CONFIGURATOR] No se encontró contenedor para módulo de actualizaciones');
+                console.warn('[CONFIGURATOR] ❌ No se encontró contenedor para módulo de actualizaciones');
                 return;
             }
 
             // Importar el módulo
             const { default: Actualizaciones } = await import('./actualizaciones.js');
+            console.log('[CONFIGURATOR] ✓ Módulo importado');
 
             // Renderizar el HTML
             container.innerHTML = Actualizaciones.render();
+            console.log('[CONFIGURATOR] ✓ HTML renderizado');
+
+            // Pequeño delay para asegurar que el DOM está listo
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             // Inicializar el módulo
             Actualizaciones.init();
+            console.log('[CONFIGURATOR] ✓ Módulo inicializado');
 
-            console.log('[CONFIGURATOR] Módulo de actualizaciones cargado');
+            console.log('[CONFIGURATOR] ✅ Módulo de actualizaciones cargado completamente');
         } catch (error) {
-            console.error('[CONFIGURATOR] Error cargando módulo de actualizaciones:', error);
+            console.error('[CONFIGURATOR] ❌ Error cargando módulo de actualizaciones:', error);
         }
     }
 };

@@ -30,7 +30,7 @@ const Actualizaciones = {
         this._versionLoaded = true;
 
         try {
-            const versionData = await Api.get('/api/updates/version');
+            const versionData = await Api.getFromAgentProxy('/api/agent/updates/version');
             const currentVersionEl = document.getElementById('current-version');
             if (currentVersionEl) {
                 currentVersionEl.textContent = versionData.version || '1.0.0';
@@ -39,7 +39,14 @@ const Actualizaciones = {
             console.warn('[ACTUALIZACIONES] No se pudo cargar la versión actual:', error);
             const currentVersionEl = document.getElementById('current-version');
             if (currentVersionEl) {
-                currentVersionEl.textContent = 'No disponible';
+                if (error.message && error.message.includes('Not Found')) {
+                    currentVersionEl.innerHTML = '<span class="text-danger">1.x.x (Agente Legacy)</span>';
+                    // Desactivar botones de actualización ya que es imposible instalarla si no existe el endpoint
+                    const checkBtn = document.getElementById('btn-check-updates');
+                    if(checkBtn) checkBtn.disabled = true;
+                } else {
+                    currentVersionEl.textContent = 'No disponible';
+                }
             }
         }
     },
@@ -60,13 +67,16 @@ const Actualizaciones = {
         }
 
         // Detectar cuando el usuario abre el panel de actualizaciones
-        // Buscar el collapse del acordeón
-        const updateSection = document.querySelector('[data-bs-target="#collapse-actualizaciones"]');
+        const updateSection = document.getElementById('collapseActualizaciones');
         if (updateSection) {
-            updateSection.addEventListener('click', () => {
-                // Cargar la versión cuando el usuario abra el panel
-                setTimeout(() => this.loadVersion(), 100);
+            updateSection.addEventListener('show.bs.collapse', () => {
+                this.loadVersion();
             });
+            
+            // Cargar inmediatamente si ya está abierto al inicializar
+            if (updateSection.classList.contains('show')) {
+                this.loadVersion();
+            }
         }
     },
 
@@ -83,14 +93,15 @@ const Actualizaciones = {
         });
 
         try {
-            const versionData = await Api.get('/api/updates/version');
+            const versionData = await Api.getFromAgentProxy('/api/agent/updates/version');
             const currentVersionEl = document.getElementById('current-version');
             if (currentVersionEl) {
                 currentVersionEl.textContent = versionData.version || '1.0.0';
             }
 
-            const serverCheck = await Api.get('/api/updates/check?version=' + versionData.version);
-            console.log('[ACTUALIZACIONES]', serverCheck);
+            const checkUrl = `/api/agent/updates/check?serverUrl=${encodeURIComponent(window.location.origin)}`;
+            const agentCheck = await Api.getFromAgentProxy(checkUrl);
+            console.log('[ACTUALIZACIONES]', agentCheck);
 
             // Actualizar fecha de última verificación
             const lastCheckEl = document.getElementById('last-check');
@@ -99,18 +110,27 @@ const Actualizaciones = {
                 lastCheckEl.textContent = now.toLocaleString('es-ES');
             }
 
-            if (serverCheck.updateAvailable) {
-                this.showUpdateAvailable(serverCheck, agentVersion.version);
+            if (agentCheck.updateAvailable) {
+                this.showUpdateAvailable(agentCheck, versionData.version);
             } else {
-                this.showNoUpdates(agentVersion.version);
+                this.showNoUpdates(versionData.version);
             }
 
         } catch (error) {
             console.error('[ACTUALIZACIONES] Error verificando actualizaciones:', error);
-            Modal.error(
-                'Error al verificar actualizaciones',
-                error.message || 'No se pudo conectar con el servidor de actualizaciones'
-            );
+            if (error.message && error.message.includes('Not Found')) {
+                Modal.error(
+                    'Actualización Manual Requerida',
+                    'El Agente Local instalado en este equipo físico (Recepción) carece del módulo interno de actualizaciones automáticas integrado en la V2.<br><br>' +
+                    '<b>El error 404 no es un fallo de red</b>, es debido a que el endpoint remoto (`/api/agent/updates`) aún no existe en el PC.<br><br>' +
+                    'Por favor, instala esta última actualización del Agente de forma manual. Tras ello, las futuras actualizaciones te funcionarán automáticamente.'
+                );
+            } else {
+                Modal.error(
+                    'Error al verificar actualizaciones',
+                    error.message || 'No se pudo conectar con el agente local de actualizaciones'
+                );
+            }
         } finally {
             this.checking = false;
             this.updateUI({ checking: false });
@@ -180,17 +200,24 @@ const Actualizaciones = {
             this.installUpdate(true);
         };
         btnInstall.onclick = () => {
+            console.log('[ACTUALIZACIONES] Botón INSTALAR AHORA clickeado');
             modalInstance.hide();
 
             // Advertir que la actualización real está en desarrollo
             setTimeout(() => {
+                console.log('[ACTUALIZACIONES] Mostrando modal de confirmación...');
                 Modal.confirm(
                     'Actualización Real',
                     '⚠️ La actualización real está actualmente en fase de pruebas y puede fallar debido a validaciones de hash.\n\n' +
                     '¿Prefieres usar el <strong>Modo de Prueba</strong> que simula el proceso sin riesgos?\n\n' +
                     'Solo continúa si entiendes que puede haber errores.',
-                    () => this.installUpdate(false),
-                    () => {},
+                    () => {
+                        console.log('[ACTUALIZACIONES] Usuario confirmó instalación real');
+                        this.installUpdate(false);
+                    },
+                    () => {
+                        console.log('[ACTUALIZACIONES] Usuario canceló instalación');
+                    },
                     'Continuar de todas formas',
                     'Cancelar'
                 );
@@ -230,7 +257,11 @@ const Actualizaciones = {
                 ? '/api/agent/updates/install?mode=test'
                 : '/api/agent/updates/install';
 
-            const response = await Api.postToAgent(endpoint, {});
+            const payload = {
+                serverUrl: window.location.origin
+            };
+
+            const response = await Api.postToAgentProxy(endpoint, payload);
 
             if (!response.success) {
                 throw new Error('No se pudo iniciar la actualización');
@@ -405,7 +436,7 @@ const Actualizaciones = {
                     throw new Error('Tiempo de espera agotado');
                 }
 
-                const status = await Api.getFromAgent('/api/agent/updates/status');
+                const status = await Api.getFromAgentProxy('/api/agent/updates/status');
                 console.log('[ACTUALIZACIONES] Estado:', status);
 
                 this.updateProgressModal(modal, status);
@@ -416,7 +447,7 @@ const Actualizaciones = {
                     this.closeProgressModal(modal);
 
                     // Resetear el estado del updater
-                    await Api.postToAgent('/api/agent/updates/reset', {});
+                    await Api.postToAgentProxy('/api/agent/updates/reset', {});
 
                     Modal.error(
                         'Error en la Actualización',
@@ -442,7 +473,7 @@ const Actualizaciones = {
 
                 // Intentar resetear el estado
                 try {
-                    await Api.postToAgent('/api/agent/updates/reset', {});
+                    await Api.postToAgentProxy('/api/agent/updates/reset', {});
                 } catch (e) {
                     console.error('[ACTUALIZACIONES] No se pudo resetear el estado:', e);
                 }
@@ -496,7 +527,7 @@ const Actualizaciones = {
     async restartApplication() {
         try {
             // Intentar cerrar procesos vía API del agent
-            await Api.postToAgent('/api/system/restart', {});
+            await Api.postToAgentProxy('/api/system/restart', {});
         } catch (error) {
             console.log('[ACTUALIZACIONES] No se pudo reiniciar automáticamente');
         }

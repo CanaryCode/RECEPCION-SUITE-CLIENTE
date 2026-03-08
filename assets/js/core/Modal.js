@@ -270,18 +270,40 @@ export const Modal = {
 
             const el = document.getElementById('globalSystemModal');
             let result = false;
+            let buttonClicked = false;
 
             const btns = footer.querySelectorAll('button');
             btns.forEach(b => b.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (buttonClicked) return; // Evitar doble clic
+                buttonClicked = true;
+
                 result = e.currentTarget.dataset.action === 'confirm';
+                console.log('[Modal.confirm] Botón clickeado:', e.currentTarget.dataset.action, 'result:', result);
+
+                // Ejecutar callback ANTES de cerrar el modal
+                if (result && onConfirm) {
+                    console.log('[Modal.confirm] Ejecutando onConfirm...');
+                    onConfirm();
+                } else if (!result && onCancel) {
+                    console.log('[Modal.confirm] Ejecutando onCancel...');
+                    onCancel();
+                }
+
+                resolve(result);
                 systemModal.hide();
             }));
 
             const onHide = () => {
                 el.removeEventListener('hidden.bs.modal', onHide);
-                if (result && onConfirm) onConfirm();
-                if (!result && onCancel) onCancel();
-                resolve(result);
+                // Si el modal se cerró sin hacer clic en botones (ej: ESC), ejecutar onCancel
+                if (!buttonClicked) {
+                    console.log('[Modal.confirm] Modal cerrado sin botón. Ejecutando onCancel...');
+                    if (onCancel) onCancel();
+                    resolve(false);
+                }
             };
             el.addEventListener('hidden.bs.modal', onHide);
 

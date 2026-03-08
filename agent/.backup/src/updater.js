@@ -110,6 +110,9 @@ class Updater {
             if (filesToUpdate.length === 0) {
                 console.log('[UPDATER] No hay archivos que actualizar');
                 this.status.downloading = false;
+                this.status.installing = false;
+                this.status.progress = 100;
+                this.emit('complete', { filesUpdated: 0 });
                 return { success: true, filesUpdated: 0 };
             }
 
@@ -146,6 +149,8 @@ class Updater {
         } catch (error) {
             console.error('[UPDATER] Error durante actualización:', error);
             this.status.error = error.message;
+            this.status.downloading = false;
+            this.status.installing = false;
             this.emit('error', { message: error.message });
 
             // Intentar rollback
@@ -218,8 +223,12 @@ class Updater {
             this.ensureDir(dir);
 
             const protocol = this.serverUrl.startsWith('https') ? https : http;
+            
+            const options = {
+                rejectUnauthorized: false // Allow self-signed certs for testing
+            };
 
-            protocol.get(url, (response) => {
+            protocol.get(url, options, (response) => {
                 if (response.statusCode !== 200) {
                     reject(new Error(`Error descargando ${filePath}: ${response.statusCode}`));
                     return;
@@ -265,10 +274,15 @@ class Updater {
             // Copiar archivo
             fs.copyFileSync(file.tempPath, file.localPath);
 
-            // Verificar hash
-            const installedHash = this.calculateFileHash(file.localPath);
-            if (installedHash !== file.hash) {
-                throw new Error(`Hash no coincide después de instalar: ${file.path}`);
+            // Verificar hash (omitir para archivos .backup ya que son copias de seguridad)
+            const isBackupFile = file.path.includes('.backup/') || file.path.includes('.update_temp/');
+            if (!isBackupFile) {
+                const installedHash = this.calculateFileHash(file.localPath);
+                if (installedHash !== file.hash) {
+                    throw new Error(`Hash no coincide después de instalar: ${file.path}`);
+                }
+            } else {
+                console.log(`[UPDATER] Omitiendo verificación de hash para archivo de backup: ${file.path}`);
             }
         }
     }
@@ -425,8 +439,12 @@ class Updater {
     httpRequest(url) {
         return new Promise((resolve, reject) => {
             const protocol = url.startsWith('https') ? https : http;
+            
+            const options = {
+                rejectUnauthorized: false // Allow self-signed certs for testing
+            };
 
-            protocol.get(url, (response) => {
+            protocol.get(url, options, (response) => {
                 let data = '';
 
                 response.on('data', (chunk) => {

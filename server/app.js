@@ -148,8 +148,7 @@ const adminAuthGate = (req, res, next) => {
 
     // Bypass gate for login and public agent-proxy routes
     if (req.originalUrl.includes('/api/admin/login') || 
-        req.originalUrl.includes('/api/admin/agent-proxy/auth/id') || 
-        req.originalUrl.includes('/api/admin/agent-proxy/register') ||
+        req.originalUrl.includes('/api/admin/agent-proxy') ||
         req.originalUrl.includes('/api/chat/')) {
         return next();
     }

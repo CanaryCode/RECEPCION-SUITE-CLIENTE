@@ -28,11 +28,10 @@ function logToFile(msg) {
 }
 
 // Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
-// Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     
-    // Echo origin if present, otherwise fallback to *
+    // Chrome PNA requires explicit origin, not *
     if (origin) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     } else {
@@ -43,11 +42,13 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Max-Age', '86400'); // 24 horas
+    res.setHeader('Access-Control-Max-Age', '86400');
+    res.setHeader('Vary', 'Origin, Access-Control-Request-Private-Network');
 
     if (req.method === 'OPTIONS') {
-        // Para PNA preflights, Chrome requiere un 200 o 204 con los headers correctos
-        return res.status(204).end();
+        // Enforce Content-Length 0 for preflights
+        res.setHeader('Content-Length', '0');
+        return res.status(200).end();
     }
     next();
 });
@@ -114,13 +115,30 @@ try {
     process.exit(1);
 }
 
+// Bypass explícito y superior para las actualizaciones del agente (PNA, CORS y Auth)
+app.use('/api/agent/updates', (req, res, next) => {
+    // Si viene un preflight PNA u OPTIONS desde el front-end local, permitirlo
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', '*');
+        res.setHeader('Access-Control-Allow-Private-Network', 'true');
+        return res.status(200).end();
+    }
+    
+    // Log para ver que llegó a la ruta correcta sin ser filtrado
+    console.log(`[AGENT] 🛣️ Acceso concedido SUPER-BYPASS a /agent/updates${req.path}`);
+    next();
+}, require('./routes/updates'));
+
 // Middleware de Estación (Seguridad AJPD)
 app.use('/api', (req, res, next) => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const stationKey = req.headers['x-station-key'];
+    const fingerprint = req.headers['x-fingerprint'];
 
     // Log ultra-detallado para cazar ese 403/404
-    const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'}`;
+    const msg = `[API-REQ] ${req.method} ${req.originalUrl} | IP: ${ip} | Key: ${stationKey || 'MISSING'} | Fingerprint: ${fingerprint ? fingerprint.substring(0, 12) + '...' : 'MISSING'}`;
     console.log(`[AGENT] ${msg}`);
     logToFile(msg);
 
@@ -135,8 +153,20 @@ app.use('/api', (req, res, next) => {
     const isSystem = req.originalUrl.includes('/api/system/');
     const isUpdates = req.originalUrl.includes('/api/agent/updates/');
 
-    if (isLocal && (isSystem || isUpdates)) {
-        console.log(`[AGENT] ✅ Bypass LOCAL concedido para: ${req.originalUrl} (IP detectada: ${ip})`);
+    // Permitir si es local O si tiene el fingerprint correcto de esta máquina O si es una petición OPTIONS genérica de pre-flight CORS
+    const { fingerprint: machineFingerprint } = getMachineFingerprint();
+    const hasValidFingerprint = fingerprint && fingerprint === machineFingerprint;
+
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
+    if ((isLocal || hasValidFingerprint) && isSystem) {
+        console.log(`[AGENT] ✅ Bypass concedido para SISTEMA LOCAL: ${req.originalUrl} (IP: ${ip}, Fingerprint válido: ${hasValidFingerprint})`);
         return next();
     }
 
@@ -214,14 +244,10 @@ app.use('/api/system', (req, res, next) => {
 
 app.use('/api/admin', adminRoutes);
 
-// Rutas de actualización del agent
-const updatesRoutes = require('./routes/updates');
-app.use('/api/agent/updates', updatesRoutes);
-
 // Fallback para rutas no encontradas bajo /api
 app.use('/api', (req, res) => {
-    console.warn(`[AGENT] 404 on API: ${req.method} ${req.url}`);
-    res.status(404).json({ error: 'API route not found on Agent', path: req.url });
+    console.warn(`[AGENT] ❌ 404 on API fallback: ${req.method} ${req.originalUrl}`);
+    res.status(404).json({ error: 'API route not found on Agent', path: req.originalUrl });
 });
 
 // Servir estáticos (ajustado para la nueva estructura)
@@ -249,11 +275,23 @@ const BIND_ADDRESS = config.LOCAL_ONLY ? '127.0.0.1' : '0.0.0.0';
 const certPath = '/etc/letsencrypt/live/www.desdetenerife.com/fullchain.pem';
 const keyPath = '/etc/letsencrypt/live/www.desdetenerife.com/privkey.pem';
 
+// Leer versión del package.json
+let agentVersion = 'unknown';
+try {
+    const packageJson = require('../package.json');
+    agentVersion = packageJson.version;
+} catch (e) {
+    console.warn('[AGENT] No se pudo leer la versión del package.json');
+}
+
 try {
     if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
         // Servidor HTTPS para conexiones externas
         const options = { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) };
         https.createServer(options, app).listen(PORT, BIND_ADDRESS, () => {
+            console.log(`[AGENT] ============================================`);
+            console.log(`[AGENT] 🚀 Recepción Suite Agent v${agentVersion}`);
+            console.log(`[AGENT] ============================================`);
             console.log(`[AGENT] Servidor HTTPS iniciado en ${BIND_ADDRESS}:${PORT} (SSL ACTIVO)`);
         });
 
@@ -405,14 +443,64 @@ function connectToCentral() {
             } else if (data.type === 'command') {
                 console.log('[AGENT] Comando Remoto Recibido:', data.payload);
                 executeRemoteCommand(data.payload);
+            } else if (data.type === 'shell_input') {
+                handleShellInput(data.payload);
             }
         } catch (e) {
             console.error('[AGENT] Error parseando WS:', e.message);
         }
     });
 
-    wsTunnel.on('close', () => { setTimeout(connectToCentral, 5000); });
+    wsTunnel.on('close', () => { 
+        if (activeShells) {
+            activeShells.forEach(s => s.kill());
+            activeShells.clear();
+        }
+        setTimeout(connectToCentral, 5000); 
+    });
     wsTunnel.on('error', (err) => { wsTunnel.close(); });
+}
+
+const activeShells = new Map();
+
+function handleShellInput(payload) {
+    const { command, sessionId } = payload;
+    
+    if (!activeShells.has(sessionId)) {
+        const { spawn } = require('child_process');
+        const shell = spawn('bash', ['-i'], {
+            cwd: path.resolve(__dirname, '../..'),
+            env: { ...process.env, TERM: 'xterm-256color' },
+            shell: true
+        });
+
+        shell.stdout.on('data', (d) => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), sessionId } }));
+            }
+        });
+        shell.stderr.on('data', (d) => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: d.toString(), sessionId, isError: true } }));
+            }
+        });
+
+        shell.on('close', () => {
+            if (wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({ type: 'shell_output', payload: { output: `\n[SISTEMA] Shell remota cerrada.\n`, sessionId } }));
+            }
+            activeShells.delete(sessionId);
+        });
+
+        activeShells.set(sessionId, shell);
+    }
+
+    const shell = activeShells.get(sessionId);
+    if (command === 'SIGINT') {
+        shell.kill('SIGINT');
+    } else {
+        shell.stdin.write(command + '\n');
+    }
 }
 
 function executeRemoteCommand(payload) {
@@ -445,6 +533,15 @@ function executeRemoteCommand(payload) {
         require('child_process').exec('pm2 start server_v4.js --name "recepcion-central"', { cwd: path.join(__dirname, '../..') });
     } else if (action === 'stop-server') {
         require('child_process').exec('pm2 stop recepcion-central');
+    } else if (action === 'shell') {
+        console.log(`[AGENT] Executing remote shell command: ${command}`);
+        require('child_process').exec(command, { cwd: path.join(__dirname, '../..') }, (err, stdout, stderr) => {
+            // Ideally we should send this back via WS, but since it's a generic command 
+            // the server currently just enqueues it. In the future we can add real-time output.
+            if (err) console.error(`[AGENT] Shell error: ${err.message}`);
+            if (stdout) console.log(`[AGENT] Shell stdout: ${stdout}`);
+            if (stderr) console.error(`[AGENT] Shell stderr: ${stderr}`);
+        });
     }
 }
 

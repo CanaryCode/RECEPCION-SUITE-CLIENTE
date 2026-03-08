@@ -25,6 +25,13 @@ function getUpdater() {
 router.get('/check', async (req, res) => {
     try {
         const updater = getUpdater();
+        
+        // Use provided serverUrl if available
+        if (req.query && req.query.serverUrl) {
+            updater.serverUrl = req.query.serverUrl;
+            console.log(`[AGENT] Usando serverUrl (check): ${updater.serverUrl}`);
+        }
+
         const result = await updater.checkForUpdates();
         res.json(result);
     } catch (error) {
@@ -46,6 +53,12 @@ router.post('/install', async (req, res) => {
     try {
         const updater = getUpdater();
         const isTestMode = req.query.mode === 'test';
+        
+        // Use provided serverUrl if available
+        if (req.body && req.body.serverUrl) {
+            updater.serverUrl = req.body.serverUrl;
+            console.log(`[AGENT] Usando serverUrl: ${updater.serverUrl}`);
+        }
 
         // Verificar que no hay otra actualización en progreso
         const status = updater.getStatus();
@@ -59,31 +72,42 @@ router.post('/install', async (req, res) => {
         if (isTestMode) {
             console.log('[AGENT] Simulando actualización en modo TEST');
 
-            // Simular proceso de actualización
+            // Resetear estado
+            updater.status.checking = false;
+            updater.status.downloading = false;
+            updater.status.installing = false;
+            updater.status.error = null;
+            updater.status.progress = 0;
+            updater.status.currentFile = null;
+
+            // Simular proceso de actualización de forma gradual
             setTimeout(() => {
                 updater.status.downloading = true;
                 updater.status.progress = 25;
+                updater.status.currentFile = 'package.json';
+                console.log('[AGENT TEST] Progreso: 25% - Descargando...');
             }, 500);
 
             setTimeout(() => {
                 updater.status.progress = 50;
+                updater.status.currentFile = 'src/index.js';
+                console.log('[AGENT TEST] Progreso: 50%');
             }, 1500);
 
             setTimeout(() => {
                 updater.status.downloading = false;
                 updater.status.installing = true;
                 updater.status.progress = 75;
+                updater.status.currentFile = 'src/updater.js';
+                console.log('[AGENT TEST] Progreso: 75% - Instalando...');
             }, 2500);
 
             setTimeout(() => {
                 updater.status.installing = false;
                 updater.status.progress = 100;
+                updater.status.currentFile = null;
 
-                // Actualizar versión en memoria (no en disco)
-                const pkg = require(updater.versionFile);
-                pkg.version = '1.0.1';
-
-                console.log('[AGENT] Simulación completada - Versión actualizada a 1.0.1 (solo en memoria)');
+                console.log('[AGENT TEST] Simulación completada (100%)');
             }, 3500);
 
             res.json({

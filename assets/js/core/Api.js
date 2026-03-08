@@ -111,6 +111,7 @@ export const Api = {
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
+                credentials: 'same-origin',
                 body: JSON.stringify(data)
             });
             if (response.status === 403) {
@@ -210,19 +211,40 @@ export const Api = {
             // PRIORIDAD: Probar HTTPS primero (puerto 3001) ya que el navegador carga desde HTTPS
             // Esto evita problemas de Mixed Content (HTTPS → HTTP bloqueado)
             let localToken = null;
-            const testUrls = [
-                `https://localhost:3001/local-token?_t=${Date.now()}`,
-                `https://127.0.0.1:3001/local-token?_t=${Date.now()}`,
-                `http://localhost:3001/local-token?_t=${Date.now()}`,
-                `http://127.0.0.1:3001/local-token?_t=${Date.now()}`
-            ];
+            let testUrls = [];
+            const savedUrl = sessionStorage.getItem('RS_LOCAL_AGENT_URL');
+            
+            if (savedUrl) {
+                testUrls.push(`${savedUrl}/local-token`);
+            } else {
+                testUrls = [
+                    'http://127.0.0.1:3002/local-token',
+                    'http://localhost:3002/local-token',
+                    'http://127.0.0.1:3001/local-token',
+                    'http://localhost:3001/local-token',
+                    'https://127.0.0.1:3001/local-token',
+                    'https://localhost:3001/local-token'
+                ];
+            }
 
-            for (const url of testUrls) {
+            for (const baseUrl of testUrls) {
+                const url = `${baseUrl}?_t=${Date.now()}`;
                 try {
-                    console.log(`[AUTH] Intentando obtener token de: ${url}`);
+                    // Mute spam logs on subsequent checks if it's the known working url
+                    if (!savedUrl) {
+                        console.log(`[AUTH] Intentando obtener token de: ${url}`);
+                    }
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1500);
+
                     const directRes = await fetch(url, {
-                        headers: { 'Accept': 'application/json' }
+                        headers: { 'Accept': 'application/json' },
+                        signal: controller.signal
                     });
+                    
+                    clearTimeout(timeoutId);
+
                     if (directRes.ok) {
                         const data = await directRes.json();
                         localToken = data.token || null;
@@ -249,7 +271,37 @@ export const Api = {
             }
 
             if (!localToken) {
-                console.warn('[AUTH] No se pudo obtener token. El agente debe estar instalado EN ESTE EQUIPO.');
+                console.warn('[AUTH] Fallaron las peticiones locales directas. Intentando fallback a través del túnel inverso del servidor...');
+                try {
+                    const proxyUrl = '/api/admin/agent-proxy/local-token';
+                    // We need to pass the client IP or unique ID if the proxy requires it to route to the correct agent
+                    const proxyRes = await fetch(proxyUrl, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    
+                    if (proxyRes.ok) {
+                        const data = await proxyRes.json();
+                        localToken = data.token || null;
+                        const fingerprint = data.fingerprint;
+                        if (localToken) {
+                            console.log(`[AUTH] Token obtenido con éxito mediante Proxy del Servidor`);
+                            if (fingerprint) {
+                                sessionStorage.setItem('RS_FINGERPRINT', fingerprint);
+                                console.log(`[AUTH] Fingerprint (Proxy) guardado: ${fingerprint.substring(0, 12)}...`);
+                            }
+                            // Store a dummy or proxy base URL to indicate we are tunneled
+                            sessionStorage.setItem('RS_LOCAL_AGENT_URL', '/api/admin/agent-proxy');
+                        }
+                    } else {
+                         console.warn(`[AUTH] Proxy fallback también falló con status: ${proxyRes.status}`);
+                    }
+                } catch (pe) {
+                    console.warn(`[AUTH] Proxy fallback error de red:`, pe.message);
+                }
+            }
+
+            if (!localToken) {
+                console.warn('[AUTH] No se pudo obtener token ni localmente ni por proxy. El agente debe estar instalado y conectado.');
                 return null;
             }
 
@@ -353,6 +405,51 @@ export const Api = {
             return await response.json();
         } catch (error) {
             console.error(`[API] Error en POST a Agent ${endpoint}:`, error);
+            throw error;
+        }
+    },
+
+    /**
+     * Utiliza el proxy del servidor central para comunicarse con el agente local 
+     * ocultando los errores HTTP de la consola del navegador.
+     */
+    async getFromAgentProxy(endpoint) {
+        try {
+            const proxyRes = await this.post('admin/agent-proxy', {
+                endpoint,
+                method: 'GET',
+                ignoreHttpErrors: true
+            });
+            if (proxyRes._proxyError) {
+                const err = new Error(proxyRes.error || 'Agent API Error');
+                err.status = proxyRes._proxyStatus;
+                if (proxyRes._proxyStatus === 404) err.message = 'Not Found';
+                throw err;
+            }
+            return proxyRes.data;
+        } catch (error) {
+            console.error(`[API] Error en GET via Proxy ${endpoint}:`, error);
+            throw error;
+        }
+    },
+    
+    async postToAgentProxy(endpoint, payload = {}) {
+        try {
+            const proxyRes = await this.post('admin/agent-proxy', {
+                endpoint,
+                method: 'POST',
+                payload,
+                ignoreHttpErrors: true
+            });
+            if (proxyRes._proxyError) {
+                const err = new Error(proxyRes.error || 'Agent API Error');
+                err.status = proxyRes._proxyStatus;
+                if (proxyRes._proxyStatus === 404) err.message = 'Not Found';
+                throw err;
+            }
+            return proxyRes.data;
+        } catch (error) {
+            console.error(`[API] Error en POST via Proxy ${endpoint}:`, error);
             throw error;
         }
     }

@@ -1,7 +1,17 @@
 {
-  "version": "1.0.1",
-  "buildDate": "2026-03-07",
+  "version": "1.0.3",
+  "buildDate": "2026-03-08",
   "changelog": {
+    "1.0.3": [
+      "Añadida ruta /api/system/restart para reinicio automático post-actualización",
+      "Corregido problema de carga del módulo de actualizaciones en configuración",
+      "Mejoras en la sincronización de versiones entre agente y servidor"
+    ],
+    "1.0.2": [
+      "Añadido mensaje de bienvenida en logs del Agent",
+      "Mejoras en el sistema de auto-actualización",
+      "Corrección de exclusión de archivos .backup en manifest"
+    ],
     "1.0.1": [
       "Corrección del error 403 en actualizaciones",
       "Mejoras en el sistema de autenticación Agent-Browser",

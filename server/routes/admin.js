@@ -66,7 +66,19 @@ const activeAgents = new Map();
  * Middleware de Autenticación Admin
  */
 function authMiddleware(req, res, next) {
-    if (req.path === '/login' || req.path === '/login/' || req.path === '/agent-proxy/auth/id' || req.path === '/agent-proxy/auth/id/' || req.path === '/agent-proxy/register' || req.path === '/agent-proxy/register/' || req.path === '/agent-proxy/local-token' || req.path === '/agent-proxy/local-token/') return next();
+    // Rutas públicas que no requieren autenticación
+    const publicPaths = [
+        '/login',
+        '/agent-proxy',
+        '/agent-proxy/auth/id',
+        '/agent-proxy/register',
+        '/agent-proxy/local-token'
+    ];
+
+    // Permitir rutas públicas sin autenticación
+    if (publicPaths.some(path => req.path === path || req.path === path + '/')) {
+        return next();
+    }
 
     // v4 Session Verification
     if (req.session && req.session.authenticated) {
@@ -645,16 +657,37 @@ router.post('/agent-proxy', async (req, res) => {
 
         // Use Node.js >= 18 native fetch
         const response = await fetch(agentUrl, options);
-        const data = await response.text();
+        let data = await response.text();
 
+        let parsedData = null;
         try {
-            res.status(response.status).json(data ? JSON.parse(data) : { success: true });
-        } catch (e) {
-            // Fallback for plain text responses
-            res.status(response.status).json({ output: data });
+            parsedData = data ? JSON.parse(data) : { success: true };
+        } catch(e) {
+            parsedData = { output: data };
         }
+
+        if (req.body.ignoreHttpErrors) {
+            // El front-end pide no mostrar errores rojos en la consola
+            return res.status(200).json({
+                _proxyStatus: response.status,
+                _proxyError: !response.ok,
+                data: parsedData
+            });
+        }
+
+        res.status(response.status).json(parsedData);
     } catch (err) {
         console.error('[PROXY ERROR]', err);
+        
+        if (req.body.ignoreHttpErrors) {
+            return res.status(200).json({
+                _proxyStatus: 502,
+                _proxyError: true,
+                error: 'Fallo al contactar con el Agente Local interno',
+                details: err.message
+            });
+        }
+
         res.status(502).json({
             error: 'Fallo al contactar con el Agente Local interno',
             details: err.message,

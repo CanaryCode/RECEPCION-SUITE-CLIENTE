@@ -28,11 +28,10 @@ function logToFile(msg) {
 }
 
 // Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
-// Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     
-    // Echo origin if present, otherwise fallback to *
+    // Chrome PNA requires explicit origin, not *
     if (origin) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     } else {
@@ -43,11 +42,13 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Max-Age', '86400'); // 24 horas
+    res.setHeader('Access-Control-Max-Age', '86400');
+    res.setHeader('Vary', 'Origin, Access-Control-Request-Private-Network');
 
     if (req.method === 'OPTIONS') {
-        // Para PNA preflights, Chrome requiere un 200 o 204 con los headers correctos
-        return res.status(204).end();
+        // Enforce Content-Length 0 for preflights
+        res.setHeader('Content-Length', '0');
+        return res.status(200).end();
     }
     next();
 });
@@ -114,6 +115,22 @@ try {
     process.exit(1);
 }
 
+// Bypass explícito y superior para las actualizaciones del agente (PNA, CORS y Auth)
+app.use('/api/agent/updates', (req, res, next) => {
+    // Si viene un preflight PNA u OPTIONS desde el front-end local, permitirlo
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', '*');
+        res.setHeader('Access-Control-Allow-Private-Network', 'true');
+        return res.status(200).end();
+    }
+    
+    // Log para ver que llegó a la ruta correcta sin ser filtrado
+    console.log(`[AGENT] 🛣️ Acceso concedido SUPER-BYPASS a /agent/updates${req.path}`);
+    next();
+}, require('./routes/updates'));
+
 // Middleware de Estación (Seguridad AJPD)
 app.use('/api', (req, res, next) => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
@@ -136,12 +153,20 @@ app.use('/api', (req, res, next) => {
     const isSystem = req.originalUrl.includes('/api/system/');
     const isUpdates = req.originalUrl.includes('/api/agent/updates/');
 
-    // Permitir si es local O si tiene el fingerprint correcto de esta máquina
+    // Permitir si es local O si tiene el fingerprint correcto de esta máquina O si es una petición OPTIONS genérica de pre-flight CORS
     const { fingerprint: machineFingerprint } = getMachineFingerprint();
     const hasValidFingerprint = fingerprint && fingerprint === machineFingerprint;
 
-    if ((isLocal || hasValidFingerprint) && (isSystem || isUpdates)) {
-        console.log(`[AGENT] ✅ Bypass concedido para: ${req.originalUrl} (IP: ${ip}, Fingerprint válido: ${hasValidFingerprint})`);
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
+
+    if ((isLocal || hasValidFingerprint) && isSystem) {
+        console.log(`[AGENT] ✅ Bypass concedido para SISTEMA LOCAL: ${req.originalUrl} (IP: ${ip}, Fingerprint válido: ${hasValidFingerprint})`);
         return next();
     }
 
@@ -219,14 +244,10 @@ app.use('/api/system', (req, res, next) => {
 
 app.use('/api/admin', adminRoutes);
 
-// Rutas de actualización del agent
-const updatesRoutes = require('./routes/updates');
-app.use('/api/agent/updates', updatesRoutes);
-
 // Fallback para rutas no encontradas bajo /api
 app.use('/api', (req, res) => {
-    console.warn(`[AGENT] 404 on API: ${req.method} ${req.url}`);
-    res.status(404).json({ error: 'API route not found on Agent', path: req.url });
+    console.warn(`[AGENT] ❌ 404 on API fallback: ${req.method} ${req.originalUrl}`);
+    res.status(404).json({ error: 'API route not found on Agent', path: req.originalUrl });
 });
 
 // Servir estáticos (ajustado para la nueva estructura)
@@ -254,11 +275,23 @@ const BIND_ADDRESS = config.LOCAL_ONLY ? '127.0.0.1' : '0.0.0.0';
 const certPath = '/etc/letsencrypt/live/www.desdetenerife.com/fullchain.pem';
 const keyPath = '/etc/letsencrypt/live/www.desdetenerife.com/privkey.pem';
 
+// Leer versión del package.json
+let agentVersion = 'unknown';
+try {
+    const packageJson = require('../package.json');
+    agentVersion = packageJson.version;
+} catch (e) {
+    console.warn('[AGENT] No se pudo leer la versión del package.json');
+}
+
 try {
     if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
         // Servidor HTTPS para conexiones externas
         const options = { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) };
         https.createServer(options, app).listen(PORT, BIND_ADDRESS, () => {
+            console.log(`[AGENT] ============================================`);
+            console.log(`[AGENT] 🚀 Recepción Suite Agent v${agentVersion}`);
+            console.log(`[AGENT] ============================================`);
             console.log(`[AGENT] Servidor HTTPS iniciado en ${BIND_ADDRESS}:${PORT} (SSL ACTIVO)`);
         });
 

@@ -51,7 +51,9 @@ function getUpdateableFiles() {
         'node_modules/**/*',
         '*.log',
         '.agent_token',
-        'RecepcionSuite.exe' // Se recompila después
+        'RecepcionSuite.exe', // Se recompila después
+        '.backup/**/*', // No incluir backups en actualizaciones
+        '.update_temp/**/*' // No incluir archivos temporales
     ];
 
     function scanDirectory(dir, baseDir = dir) {
@@ -65,7 +67,7 @@ function getUpdateableFiles() {
             const shouldExclude = excludePatterns.some(pattern => {
                 const regex = new RegExp(pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'));
                 return regex.test(relativePath);
-            });
+            }) || relativePath.startsWith('.backup') || relativePath.startsWith('.update_temp');
 
             if (shouldExclude) continue;
 

@@ -276,6 +276,44 @@ router.post('/list-files', async (req, res) => {
 });
 
 /**
+ * POST /api/system/restart
+ * Reinicia los procesos pm2 de la aplicación
+ */
+router.post('/restart', (req, res) => {
+    console.log('[AGENT] Restart request received');
+
+    // Responder inmediatamente antes de reiniciar
+    res.json({ success: true, message: 'Reiniciando aplicación...' });
+
+    // Reiniciar procesos después de un pequeño delay
+    setTimeout(() => {
+        console.log('[AGENT] Executing pm2 restart...');
+
+        // Reiniciar el servidor central primero
+        exec('pm2 restart recepcion-central', (err, stdout, stderr) => {
+            if (err) {
+                console.error('[AGENT] Error restarting recepcion-central:', err);
+                console.error('[AGENT] stderr:', stderr);
+            } else {
+                console.log('[AGENT] Process recepcion-central restarted successfully');
+            }
+
+            // Reiniciar el agente después (con un delay adicional)
+            setTimeout(() => {
+                console.log('[AGENT] Restarting agent process...');
+                exec('pm2 restart agent', (agentErr, agentStdout, agentStderr) => {
+                    if (agentErr) {
+                        console.error('[AGENT] Error restarting agent:', agentErr);
+                    } else {
+                        console.log('[AGENT] Agent process restarted successfully');
+                    }
+                });
+            }, 1000);
+        });
+    }, 500);
+});
+
+/**
  * POST /api/system/web-proxy
  * Proxy para cargar páginas web externas evitando bloqueos CSP/X-Frame
  */
