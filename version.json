@@ -1,7 +1,19 @@
 {
-  "version": "1.0.3",
-  "buildDate": "2026-03-08",
+  "version": "1.0.6",
+  "buildDate": "2026-03-09",
   "changelog": {
+    "1.0.6": [
+      "PRUEBA FINAL: Actualización remota real",
+      "Añadido archivo test-update-v6.js para verificar descarga"
+    ],
+    "1.0.5": [
+      "TEST: Actualización forzada para verificar sistema auto-update",
+      "Añadido archivo proof-v5.js con timestamp único"
+    ],
+    "1.0.4": [
+      "Prueba de actualización remota: Añadido endpoint /api/proof",
+      "Verificación de integridad de archivos post-actualización"
+    ],
     "1.0.3": [
       "Añadida ruta /api/system/restart para reinicio automático post-actualización",
       "Corregido problema de carga del módulo de actualizaciones en configuración",

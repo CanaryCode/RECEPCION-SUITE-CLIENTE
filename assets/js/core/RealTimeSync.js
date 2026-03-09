@@ -66,6 +66,14 @@ class RealTimeSync {
                         } else {
                             alert(`📢 MENSAJE DEL SISTEMA:\n\n${data.payload.message}`);
                         }
+                    } else if (data.type === 'system_notification') {
+                        console.info('[Sync-RT] 🔔 Notificación del sistema:', data);
+                        if (window.showToast) {
+                            const message = data.title ? `${data.title}: ${data.message}` : data.message;
+                            const variant = data.variant || 'info';
+                            const duration = data.duration !== undefined ? data.duration : 5000;
+                            window.showToast(message, variant, duration);
+                        }
                     } else if (data.type === 'chat_message' || data.type === 'chat_delete' || data.type === 'chat_delete_multiple' || data.type === 'user_connected' || data.type === 'online_users') {
                         // Re-emitir evento para que otros módulos (como el chat) lo escuchen sin tener su propio socket
                         window.dispatchEvent(new CustomEvent('sync:ws_message', { detail: data }));

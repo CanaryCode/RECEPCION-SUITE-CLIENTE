@@ -140,6 +140,9 @@ router.get('/active-sessions-v2', async (req, res) => {
                 if (s.username && s.username.toLowerCase() !== 'invitado' && existing.username.toLowerCase() === 'invitado') {
                     existing.username = s.username;
                 }
+                // Asegurar que stationKey y fingerprint se mantienen si están presentes
+                if (s.stationKey && !existing.stationKey) existing.stationKey = s.stationKey;
+                if (s.fingerprint && !existing.fingerprint) existing.fingerprint = s.fingerprint;
             }
         }
 
@@ -410,7 +413,7 @@ router.post('/execute', async (req, res) => {
     const { script, action, target } = req.body;
 
     // 1. Handle Server Control & Shell Actions (Forward to Tunnel if remote)
-    if (action === 'start-server' || action === 'stop-server' || action === 'restart-server' || action === 'shell' || action === 'run-tests') {
+    if (action === 'start-server' || action === 'stop-server' || action === 'restart-server' || action === 'shell' || action === 'run-tests' || action === 'update-agent') {
         
         if (target === 'local') {
             if (action === 'shell') {
@@ -443,15 +446,46 @@ router.post('/execute', async (req, res) => {
             }
         } else {
             // REMOTE TARGET LOGIC (TENERIFE)
+            const logToFile = (msg) => {
+                try {
+                    const fs = require('fs');
+                    const path = require('path');
+                    const entry = `[${new Date().toISOString()}] [EXECUTE-DEBUG] ${msg}\n`;
+                    fs.appendFileSync(path.resolve(__dirname, '../../storage/server_debug.log'), entry);
+                } catch (e) {}
+            };
+
             const stationKey = req.headers['x-station-key'];
+            logToFile(`Comprobando túnel para stationKey: ${stationKey}`);
+            logToFile(`Túneles activos: ${global.agentTunnels ? global.agentTunnels.size : 0}`);
             
-            if (stationKey && global.agentTunnels && global.agentTunnels.has(stationKey)) {
-                const ws = global.agentTunnels.get(stationKey);
-                if (ws.readyState === 1) {
-                    ws.send(JSON.stringify({
+            if (stationKey && global.agentTunnels) {
+                let ws = global.agentTunnels.get(stationKey);
+                
+                if (ws) logToFile(`Túnel encontrado por clave exacta.`);
+
+                // Fallback: Si no está por clave simple, buscar en las claves compuestas (stationKey::fingerprint)
+                if (!ws) {
+                    logToFile(`Buscando en claves compuestas...`);
+                    for (const [key, socket] of global.agentTunnels.entries()) {
+                        logToFile(`Comparando con clave: ${key}`);
+                        if (key === stationKey || key.startsWith(`${stationKey}::`)) {
+                            ws = socket;
+                            logToFile(`Túnel encontrado por coincidencia parcial: ${key}`);
+                            break;
+                        }
+                    }
+                }
+
+                if (ws && ws.readyState === 1) {
+                    const mensaje = {
                         type: 'command',
                         payload: { action, target: target || 'local', command: req.body.command }
-                    }));
+                    };
+                    logToFile(`Enviando comando a través del WebSocket para stationKey: ${stationKey}`);
+                    logToFile(`Mensaje completo: ${JSON.stringify(mensaje)}`);
+                    ws.send(JSON.stringify(mensaje));
+                    logToFile(`Mensaje enviado correctamente. ReadyState: ${ws.readyState}`);
                     return res.json({ success: true, message: `Comando ${action} enviado por Túnel WS.`, output: 'Orden encolada en WS' });
                 }
             }

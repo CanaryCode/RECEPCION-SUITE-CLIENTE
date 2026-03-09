@@ -251,11 +251,12 @@ function setupWebSocketServer(server) {
     const wss = new WebSocket.Server({ server });
     
     wss.on('connection', (ws, req) => {
+        const ip = req.socket.remoteAddress;
+        logToFile(`[WSS] Nueva conexión desde IP: ${ip}`);
         console.log('[WSS] Nuevo cliente conectado');
         ws.isAlive = true;
 
         // Identificar sesión (Usar un ID compatible con versiones antiguas de Node)
-        const ip = req.socket.remoteAddress;
         const ua = req.headers['user-agent'] || 'Borrador/Unknown';
         const sessionId = crypto.randomBytes(16).toString('hex');
         
@@ -275,22 +276,27 @@ function setupWebSocketServer(server) {
             try {
                 const data = JSON.parse(message.toString());
                 if (data.type === 'auth') {
-                    const { stationKey, fingerprint } = data.payload;
+                    const { stationKey, fingerprint, version } = data.payload;
                     if (stationKey && fingerprint) {
                         const tunnelKey = `${stationKey}::${fingerprint}`;
-                        console.log(`[WSS] Agente autenticado para túnel: ${tunnelKey}`);
+                        logToFile(`[WSS] Agente autenticado para túnel: ${tunnelKey} (v${version || 'unknown'}) desde IP: ${req.socket.remoteAddress}`);
+                        console.log(`[WSS] Agente autenticado para túnel: ${tunnelKey} (v${version || 'unknown'})`);
                         global.agentTunnels.set(tunnelKey, ws);
                         ws.tunnelKey = tunnelKey;
                         ws.stationKey = stationKey;
                         ws.fingerprint = fingerprint;
-                        
+                        ws.agentVersion = version || 'unknown';
+
                         // Mark as agent in session data
                         const sData = global.activeSessions.get(ws);
                         if (sData) {
                             sData.isAgent = true;
+                            sData.stationKey = stationKey;
+                            sData.fingerprint = fingerprint;
+                            sData.version = version || 'unknown';
                             sData.username = `Agente: ${stationKey.substring(0, 8)}`;
                         }
-                        
+
                         ws.send(JSON.stringify({ type: 'auth_success' }));
                     } else {
                         ws.send(JSON.stringify({ type: 'auth_fail', reason: 'Missing credentials' }));
@@ -391,6 +397,10 @@ function setupWebSocketServer(server) {
                     }
                 } else if (data.type === 'pong') {
                     ws.isAlive = true;
+                } else if (data.type === 'broadcast_to_clients') {
+                    // Agent solicita broadcast de un mensaje a todos los clientes
+                    logToFile(`[WSS] Agent solicitó broadcast: ${JSON.stringify(data.payload)}`);
+                    broadcast(data.payload);
                 } else if (data.type === 'shell_output') {
                     // Forward agent shell output to all admin consoles
                     const adminPayload = JSON.stringify({
@@ -418,6 +428,7 @@ function setupWebSocketServer(server) {
                 ws.shells.clear();
             }
             if (ws.tunnelKey) {
+                logToFile(`[WSS] Agente desconectado: ${ws.tunnelKey}`);
                 console.log(`[WSS] Agente desconectado: ${ws.tunnelKey}`);
                 global.agentTunnels.delete(ws.tunnelKey);
             }
@@ -426,6 +437,7 @@ function setupWebSocketServer(server) {
                 broadcast({ type: 'user_connected', payload: { username: ws.username, online: false } });
             }
             global.activeSessions.delete(ws);
+            logToFile(`[WSS] Cliente desconectado. IP: ${req.socket.remoteAddress}`);
             console.log('[WSS] Cliente desconectado');
         });
     });

@@ -20,6 +20,7 @@ class Updater {
         this.backupDir = path.join(this.agentRoot, '.backup');
         this.tempDir = path.join(this.agentRoot, '.update_temp');
         this.versionFile = path.join(this.agentRoot, 'package.json');
+        this.logFile = path.join(this.agentRoot, 'logs', 'agent.log');
 
         this.status = {
             checking: false,
@@ -34,6 +35,19 @@ class Updater {
     }
 
     /**
+     * Escribe logs en el archivo agent.log
+     */
+    logToFile(msg) {
+        try {
+            const time = new Date().toISOString();
+            fs.appendFileSync(this.logFile, `[UPDATER-CORE] ${time} - ${msg}\n`);
+            console.log(`[UPDATER-CORE] ${msg}`);
+        } catch (e) {
+            console.error('Error escribiendo en agent.log:', e);
+        }
+    }
+
+    /**
      * Registrar listeners para eventos de actualización
      */
     on(event, callback) {
@@ -41,6 +55,7 @@ class Updater {
     }
 
     emit(event, data) {
+        this.logToFile(`Emitting event: ${event} ${JSON.stringify(data || {})}`);
         this.listeners
             .filter(l => l.event === event)
             .forEach(l => l.callback(data));
@@ -89,39 +104,51 @@ class Updater {
      * Descarga e instala la actualización
      */
     async downloadAndInstall() {
+        this.logToFile('Iniciando proceso downloadAndInstall...');
         try {
             this.status.downloading = true;
             this.status.progress = 0;
             this.emit('download_start', {});
 
             // 1. Obtener manifiesto de archivos
+            this.logToFile('Obteniendo manifiesto del servidor...');
             const manifest = await this.getManifest();
-            console.log(`[UPDATER] Archivos a actualizar: ${manifest.files.length}`);
+            this.logToFile(`Manifiesto recibido. Versión servidor: ${manifest.version}. Archivos: ${manifest.files.length}`);
 
             // 2. Crear backup
             await this.createBackup();
 
             // 3. Crear directorio temporal
+            this.logToFile(`Asegurando directorio temporal: ${this.tempDir}`);
             this.ensureDir(this.tempDir);
 
             // 4. Descargar archivos
+            this.logToFile('Comparando y descargando archivos...');
             const filesToUpdate = await this.compareAndDownloadFiles(manifest.files);
+            this.logToFile(`Comparación finalizada. Archivos que requieren actualización: ${filesToUpdate.length}`);
 
             if (filesToUpdate.length === 0) {
-                console.log('[UPDATER] No hay archivos que actualizar');
+                this.logToFile('No hay archivos que actualizar, actualizando package.json...');
+                
+                // Actualizar versión en package.json de todas formas si no hay archivos modificados
+                await this.updateVersion(manifest.version);
+                
                 this.status.downloading = false;
                 this.status.installing = false;
                 this.status.progress = 100;
                 this.emit('complete', { filesUpdated: 0 });
-                return { success: true, filesUpdated: 0 };
+                this.logToFile('Actualización completada (sin cambios en archivos)');
+                return { success: true, filesUpdated: 0, needsRestart: true };
             }
 
             // 5. Instalar archivos
+            this.logToFile(`Iniciando instalación de ${filesToUpdate.length} archivos...`);
             this.status.downloading = false;
             this.status.installing = true;
             this.emit('install_start', {});
 
             await this.installFiles(filesToUpdate);
+            this.logToFile('Archivos instalados correctamente.');
 
             // 6. Actualizar versión en package.json
             await this.updateVersion(manifest.version);
@@ -129,6 +156,7 @@ class Updater {
             // 7. Recompilar launcher si es necesario
             const needsRecompile = filesToUpdate.some(f => f.path.includes('launcher/'));
             if (needsRecompile) {
+                this.logToFile('Se detectaron cambios en el launcher. Recompilando...');
                 await this.recompileLauncher();
             }
 
@@ -138,6 +166,7 @@ class Updater {
             this.status.installing = false;
             this.status.progress = 100;
             this.emit('complete', { filesUpdated: filesToUpdate.length });
+            this.logToFile('PROCESO DE ACTUALIZACIÓN FINALIZADO CON ÉXITO');
 
             return {
                 success: true,
@@ -147,7 +176,8 @@ class Updater {
             };
 
         } catch (error) {
-            console.error('[UPDATER] Error durante actualización:', error);
+            this.logToFile(`FATAL ERROR EN ACTUALIZACIÓN: ${error.message}`);
+            if (error.stack) this.logToFile(`Stack: ${error.stack}`);
             this.status.error = error.message;
             this.status.downloading = false;
             this.status.installing = false;
@@ -155,9 +185,10 @@ class Updater {
 
             // Intentar rollback
             try {
+                this.logToFile('Iniciando ROLLBACK automático por error...');
                 await this.rollback();
             } catch (rollbackError) {
-                console.error('[UPDATER] Error en rollback:', rollbackError);
+                this.logToFile(`Error CRÍTICO en rollback: ${rollbackError.message}`);
             }
 
             throw error;
@@ -169,13 +200,16 @@ class Updater {
      */
     async getManifest() {
         const url = `${this.serverUrl}/api/updates/manifest`;
-        return await this.httpRequest(url);
+        this.logToFile(`Solicitando manifiesto a: ${url}`);
+        const manifest = await this.httpRequest(url);
+        return manifest;
     }
 
     /**
      * Compara archivos y descarga solo los modificados
      */
     async compareAndDownloadFiles(serverFiles) {
+        this.logToFile(`Iniciando comparación de ${serverFiles.length} archivos.`);
         const filesToUpdate = [];
         const total = serverFiles.length;
         let current = 0;
@@ -197,11 +231,15 @@ class Updater {
                 const localHash = this.calculateFileHash(localPath);
                 if (localHash === fileInfo.hash) {
                     needsUpdate = false;
+                } else {
+                    this.logToFile(`Hash mismatch en ${fileInfo.path}: Local=${localHash}, Server=${fileInfo.hash}`);
                 }
+            } else {
+                this.logToFile(`Archivo local no existe: ${fileInfo.path}`);
             }
 
             if (needsUpdate) {
-                console.log(`[UPDATER] Descargando: ${fileInfo.path}`);
+                this.logToFile(`[UPDATER] Descargando: ${fileInfo.path}`);
                 const tempPath = path.join(this.tempDir, fileInfo.path);
                 await this.downloadFile(fileInfo.path, tempPath);
                 filesToUpdate.push({ ...fileInfo, tempPath, localPath });
@@ -215,6 +253,7 @@ class Updater {
      * Descarga un archivo del servidor
      */
     async downloadFile(filePath, destPath) {
+        this.logToFile(`Descargando archivo: ${filePath} -> ${destPath}`);
         return new Promise((resolve, reject) => {
             const url = `${this.serverUrl}/api/updates/download/${filePath}`;
 
@@ -228,9 +267,12 @@ class Updater {
                 rejectUnauthorized: false // Allow self-signed certs for testing
             };
 
+            const startTime = Date.now();
             protocol.get(url, options, (response) => {
                 if (response.statusCode !== 200) {
-                    reject(new Error(`Error descargando ${filePath}: ${response.statusCode}`));
+                    const err = new Error(`Error descargando ${filePath}: ${response.statusCode}`);
+                    this.logToFile(err.message);
+                    reject(err);
                     return;
                 }
 
@@ -239,14 +281,20 @@ class Updater {
 
                 fileStream.on('finish', () => {
                     fileStream.close();
+                    const duration = Date.now() - startTime;
+                    this.logToFile(`Descarga completa: ${filePath} (${duration}ms)`);
                     resolve();
                 });
 
                 fileStream.on('error', (err) => {
-                    fs.unlinkSync(destPath);
+                    this.logToFile(`Error escribiendo archivo temporal ${destPath}: ${err.message}`);
+                    if (fs.existsSync(destPath)) fs.unlinkSync(destPath);
                     reject(err);
                 });
-            }).on('error', reject);
+            }).on('error', (err) => {
+                this.logToFile(`Error de red descargando ${filePath}: ${err.message}`);
+                reject(err);
+            });
         });
     }
 
@@ -254,6 +302,7 @@ class Updater {
      * Instala los archivos descargados
      */
     async installFiles(files) {
+        this.logToFile(`Instalando ${files.length} archivos.`);
         const total = files.length;
         let current = 0;
 
@@ -265,24 +314,31 @@ class Updater {
                 file: file.path
             });
 
-            console.log(`[UPDATER] Instalando: ${file.path}`);
+            this.logToFile(`[UPDATER] Instalando: ${file.path}`);
 
             // Crear directorio si no existe
             const dir = path.dirname(file.localPath);
             this.ensureDir(dir);
 
             // Copiar archivo
-            fs.copyFileSync(file.tempPath, file.localPath);
+            try {
+                fs.copyFileSync(file.tempPath, file.localPath);
+            } catch (err) {
+                this.logToFile(`Error copiando ${file.tempPath} a ${file.localPath}: ${err.message}`);
+                throw err;
+            }
 
             // Verificar hash (omitir para archivos .backup ya que son copias de seguridad)
             const isBackupFile = file.path.includes('.backup/') || file.path.includes('.update_temp/');
             if (!isBackupFile) {
                 const installedHash = this.calculateFileHash(file.localPath);
                 if (installedHash !== file.hash) {
-                    throw new Error(`Hash no coincide después de instalar: ${file.path}`);
+                    const err = new Error(`Hash no coincide después de instalar: ${file.path}. Esperado: ${file.hash}, Instalado: ${installedHash}`);
+                    this.logToFile(err.message);
+                    throw err;
                 }
             } else {
-                console.log(`[UPDATER] Omitiendo verificación de hash para archivo de backup: ${file.path}`);
+                this.logToFile(`Omitiendo verificación de hash para archivo de backup: ${file.path}`);
             }
         }
     }
@@ -291,11 +347,12 @@ class Updater {
      * Crea un backup de los archivos actuales
      */
     async createBackup() {
-        console.log('[UPDATER] Creando backup...');
+        this.logToFile('Creando backup de seguridad...');
         this.emit('backup_start', {});
 
         // Limpiar backup anterior
         if (fs.existsSync(this.backupDir)) {
+            this.logToFile(`Eliminando backup antiguo en ${this.backupDir}`);
             fs.rmSync(this.backupDir, { recursive: true, force: true });
         }
 
@@ -303,46 +360,55 @@ class Updater {
 
         // Copiar archivos importantes
         const filesToBackup = ['src', 'launcher', 'package.json'];
+        this.logToFile(`Items a respaldar: ${filesToBackup.join(', ')}`);
 
         for (const item of filesToBackup) {
             const sourcePath = path.join(this.agentRoot, item);
             const destPath = path.join(this.backupDir, item);
 
             if (fs.existsSync(sourcePath)) {
+                this.logToFile(`Respaldando ${item}...`);
                 this.copyRecursive(sourcePath, destPath);
+            } else {
+                this.logToFile(`Aviso: Item ${item} no existe, saltando backup.`);
             }
         }
 
-        console.log('[UPDATER] Backup creado exitosamente');
+        this.logToFile('Backup creado exitosamente.');
     }
 
     /**
      * Restaura desde backup en caso de error
      */
     async rollback() {
-        console.log('[UPDATER] Iniciando rollback...');
+        this.logToFile('!!! INICIANDO ROLLBACK !!!');
         this.emit('rollback_start', {});
 
         if (!fs.existsSync(this.backupDir)) {
-            throw new Error('No existe backup para restaurar');
+            const err = new Error('No existe backup para restaurar');
+            this.logToFile(err.message);
+            throw err;
         }
 
         // Restaurar archivos
         const items = fs.readdirSync(this.backupDir);
+        this.logToFile(`Restaurando items: ${items.join(', ')}`);
         for (const item of items) {
             const sourcePath = path.join(this.backupDir, item);
             const destPath = path.join(this.agentRoot, item);
 
             // Eliminar actual
             if (fs.existsSync(destPath)) {
+                this.logToFile(`Eliminando ${destPath} antes de restaurar...`);
                 fs.rmSync(destPath, { recursive: true, force: true });
             }
 
             // Restaurar backup
+            this.logToFile(`Copiando desde backup: ${item}`);
             this.copyRecursive(sourcePath, destPath);
         }
 
-        console.log('[UPDATER] Rollback completado');
+        this.logToFile('Rollback completado satisfactoriamente.');
         this.emit('rollback_complete', {});
     }
 

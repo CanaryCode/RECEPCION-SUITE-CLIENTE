@@ -38,14 +38,13 @@ function getUpdateableFiles() {
     // Archivos y carpetas a incluir
     const includePatterns = [
         'src/**/*.js',
-        'launcher/**/*',
-        'config/agent_config.json', // Configuración base (no local)
         'package.json',
         'README_AGENT.md'
     ];
 
     // Archivos a excluir (preservar configuración local)
     const excludePatterns = [
+        'config/agent_config.json', // Proteger credenciales y Station ID
         'config/local_config.json',
         'logs/**/*',
         'node_modules/**/*',

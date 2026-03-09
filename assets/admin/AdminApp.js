@@ -743,6 +743,39 @@ class AdminApp {
         }
     }
 
+    async forceUpdateAgent(stationKey) {
+        if (!stationKey || stationKey === 'undefined') {
+            await this.showAlert("No se pudo identificar la Station Key del Agente.", "Error", "danger");
+            return;
+        }
+
+        const ok = await this.showConfirm("¿Estás seguro de que deseas forzar a este Agente a descargar e instalar la versión más reciente del servidor?", "Forzar Actualización Remota");
+        if (!ok) return;
+
+        try {
+            const res = await this.secureFetch('/api/admin/execute', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-station-key': stationKey
+                },
+                body: JSON.stringify({ action: 'update-agent', target: 'remote' })
+            });
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                this.appendTerminal('UPDATE', `Comando de actualización enviado al Agente.`, 'success', 'remote');
+                await this.showAlert("Se ha ordenado al Agente que inicie su proceso de actualización. Puedes verificar el progreso en los terminales remotos.", "Comando Enviado", "success");
+            } else {
+                this.appendTerminal('UPDATE ERROR', data.error || 'Fallo al enviar comando', 'danger', 'remote');
+                await this.showAlert("Error al enviar comando: " + (data.error || "Túnel desconectado"), "Fallo", "danger");
+            }
+        } catch (e) {
+            this.appendTerminal('UPDATE ERROR', e.message, 'danger', 'remote');
+            await this.showAlert("Error de red: " + e.message, "Error Crítico", "danger");
+        }
+    }
+
     async refreshActiveSessions(manual = false) {
         if (this.isRefreshingSessions) return;
         this.isRefreshingSessions = true;
@@ -772,7 +805,7 @@ class AdminApp {
         if (countEl) countEl.textContent = `${sessions.length} DISPOSITIVOS`;
 
         if (sessions.length === 0) {
-            body.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-secondary italic">No hay sesiones activas en este momento.</td></tr>';
+            body.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-secondary italic">No hay sesiones activas en este momento.</td></tr>';
             return;
         }
 
@@ -808,11 +841,20 @@ class AdminApp {
             }
 
             const safeUsername = (s.username || '').replace(/'/g, "\\'");
-            const actions = isAgent ? '---' : `
+            const actions = isAgent ? `
+                <button class="btn btn-xs btn-outline-warning p-1" onclick="window.app.forceUpdateAgent('${s.stationKey}')" title="Forzar Actualización Remota">
+                    <i class="bi bi-cloud-arrow-down-fill"></i>
+                </button>
+            ` : `
                 <button class="btn btn-xs btn-outline-info p-1" onclick="window.app.showVisitorActivity('${s.ip}', '${safeUsername}')" title="Ver actividad">
                     <i class="bi bi-eye-fill"></i>
                 </button>
             `;
+
+            // Mostrar versión solo para Agents
+            const versionDisplay = isAgent && s.version
+                ? `<span class="badge bg-primary fw-normal">v${s.version}</span>`
+                : '<span class="text-secondary small">-</span>';
 
             return `
                 <tr class="animate__animated animate__fadeIn">
@@ -828,6 +870,7 @@ class AdminApp {
                             </div>
                         </div>
                     </td>
+                    <td class="text-center">${versionDisplay}</td>
                     <td class="text-center">${actions}</td>
                     <td class="text-end pe-4">
                         <div class="fw-bold text-light">${time}</div>

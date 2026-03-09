@@ -95,6 +95,16 @@ app.get('/debug-agent', (req, res) => {
     });
 });
 
+// NUEVA RUTA DE PRUEBA DE ACTUALIZACIÓN
+app.get('/api/proof', (req, res) => {
+    try {
+        const proof = require('./proof');
+        res.json(proof);
+    } catch (e) {
+        res.status(404).json({ error: 'Archivo de prueba no encontrado', details: e.message });
+    }
+});
+
 // Logging básico para depuración
 app.use((req, res, next) => {
     const remoteIp = req.ip || req.socket.remoteAddress || 'unknown';
@@ -418,35 +428,64 @@ let wsTunnel = null;
 
 function connectToCentral() {
     const { fingerprint } = getMachineFingerprint();
-    console.log(`[AGENT] Conectando Túnel Central WSS: ${CENTRAL_SERVER_URL}`);
+    
+    // Auto-detect URL: Si estamos en local y config.LOCAL_ONLY es true, preferir localhost
+    let tryUrls = [CENTRAL_SERVER_URL];
+    const wsBaseLocal = `wss://127.0.0.1:3000/agent-tunnel`;
+    if (config.LOCAL_ONLY && !tryUrls.includes(wsBaseLocal)) {
+        tryUrls.unshift(wsBaseLocal); // Probar local primero
+    }
 
-    wsTunnel = new WebSocket(CENTRAL_SERVER_URL, { rejectUnauthorized: false });
+    // Usaremos el primero que funcione
+    const targetUrl = tryUrls[0];
+    const logInfo = `[AGENT] Intentando conectar Túnel Central WSS: ${targetUrl} (Alternativas: ${tryUrls.join(', ')})`;
+    console.log(logInfo);
+    logToFile(logInfo);
+
+    wsTunnel = new WebSocket(targetUrl, { rejectUnauthorized: false });
 
     wsTunnel.on('open', () => {
-        console.log('[AGENT] Túnel WS Abierto. Autenticando huella...');
+        const msg = `[AGENT] ✅ Túnel WS Abierto en ${targetUrl}. Autenticando huella...`;
+        console.log(msg);
+        logToFile(msg);
         wsTunnel.send(JSON.stringify({
             type: 'auth',
             payload: { stationKey: config.STATION_KEY, fingerprint: fingerprint }
         }));
     });
 
+    wsTunnel.on('error', (err) => {
+        const msg = `[AGENT] ❌ Error en WebSocket (${targetUrl}): ${err.message}`;
+        console.error(msg);
+        logToFile(msg);
+    });
+
     wsTunnel.on('message', (message) => {
         try {
             const data = JSON.parse(message);
+            logToFile(`Mensaje WS recibido: ${data.type}`);
+            
             if (data.type === 'auth_success') {
-                console.log(`[AGENT] ✅ SECURE TUNNEL ESTABLISHED.`);
+                const msg = `[AGENT] ✅ SECURE TUNNEL ESTABLISHED.`;
+                console.log(msg);
+                logToFile(msg);
             } else if (data.type === 'auth_fail') {
-                console.error(`[AGENT] ❌ CONEXIÓN WS RECHAZADA.`);
+                const msg = `[AGENT] ❌ CONEXIÓN WS RECHAZADA.`;
+                console.error(msg);
+                logToFile(msg);
                 wsTunnel.close();
             } else if (data.type === 'ping') {
                 wsTunnel.send(JSON.stringify({ type: 'pong' }));
             } else if (data.type === 'command') {
-                console.log('[AGENT] Comando Remoto Recibido:', data.payload);
+                const msg = `[AGENT] Comando Remoto Recibido: ${JSON.stringify(data.payload)}`;
+                console.log(msg);
+                logToFile(msg);
                 executeRemoteCommand(data.payload);
             } else if (data.type === 'shell_input') {
                 handleShellInput(data.payload);
             }
         } catch (e) {
+            logToFile(`Error parseando WS: ${e.message}`);
             console.error('[AGENT] Error parseando WS:', e.message);
         }
     });
@@ -541,6 +580,33 @@ function executeRemoteCommand(payload) {
             if (err) console.error(`[AGENT] Shell error: ${err.message}`);
             if (stdout) console.log(`[AGENT] Shell stdout: ${stdout}`);
             if (stderr) console.error(`[AGENT] Shell stderr: ${stderr}`);
+        });
+    } else if (action === 'update-agent') {
+        const { fingerprint } = getMachineFingerprint();
+        const msg = `[AGENT] Recibida orden remota de ACTUALIZACIÓN FORZADA (URL: http://127.0.0.1:3002/api/agent/updates/install)`;
+        console.log(msg);
+        logToFile(msg);
+        
+        // Disparar la actualización internamente llamando a nuestra propia API (HTTP plano en 3002 para evitar líos SSL)
+        fetch('http://127.0.0.1:3002/api/agent/updates/install', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-station-key': config.STATION_KEY || 'MISSING',
+                'x-fingerprint': fingerprint
+            },
+            body: JSON.stringify({ mode: 'remote' })
+        })
+        .then(async res => {
+            const data = await res.json();
+            const logMsg = `[AGENT] Respuesta de inicio de actualización (status ${res.status}): ${JSON.stringify(data)}`;
+            console.log(logMsg);
+            logToFile(logMsg);
+        })
+        .catch(err => {
+            const errorMsg = `[AGENT] Error al disparar actualización remota: ${err.message}`;
+            console.error(errorMsg);
+            logToFile(errorMsg);
         });
     }
 }

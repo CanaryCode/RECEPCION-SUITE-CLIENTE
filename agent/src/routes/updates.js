@@ -4,6 +4,16 @@
 
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs');
+
+const logToFile = (msg) => {
+    try {
+        const LOG_FILE = path.join(__dirname, '../../logs/agent.log');
+        const time = new Date().toISOString();
+        fs.appendFileSync(LOG_FILE, `[UPDATER-ROUTE] ${time} - ${msg} \n`);
+    } catch (e) {}
+};
 const Updater = require('../updater');
 
 // Instancia global del updater
@@ -50,6 +60,7 @@ router.get('/check', async (req, res) => {
  * MODO TESTING: Usa el parámetro ?mode=test para simular sin cambiar archivos
  */
 router.post('/install', async (req, res) => {
+    logToFile(`Petición /install recibida. Payload: ${JSON.stringify(req.body)}`);
     try {
         const updater = getUpdater();
         const isTestMode = req.query.mode === 'test';
@@ -116,13 +127,16 @@ router.post('/install', async (req, res) => {
                 testMode: true
             });
         } else {
+            logToFile(`Iniciada descarga e instalación real en segundo plano.`);
             // Iniciar actualización real en segundo plano
             updater.downloadAndInstall()
                 .then(result => {
                     console.log('[AGENT] Actualización completada:', result);
+                    logToFile(`Actualización completada: ${JSON.stringify(result)}`);
                 })
                 .catch(error => {
                     console.error('[AGENT] Error en actualización:', error);
+                    logToFile(`Error en actualización: ${error.message}`);
                 });
 
             // Responder inmediatamente
