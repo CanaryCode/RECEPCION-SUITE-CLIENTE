@@ -9,21 +9,65 @@ const WebSocket = require('ws');
 const STORAGE_DIR = path.resolve(__dirname, '../storage');
 const LOG_FILE = path.join(STORAGE_DIR, 'server_debug.log');
 
-// Visitor Activity Tracking Storage
-global.visitorHistory = new Map(); // sessionId -> Array of { path, method, time }
+// --- DATABASE INITIALIZATION ---
+const db = require('./db');
 
 const logToFile = (msg) => {
     const timestamp = new Date().toISOString();
     const entry = `[${timestamp}] [SERVER] ${msg}\n`;
     try {
-        if (!fs.existsSync(STORAGE_DIR)) { // Changed fsSync to fs
-            fs.mkdirSync(STORAGE_DIR, { recursive: true }); // Changed fsSync to fs
+        if (!fs.existsSync(STORAGE_DIR)) {
+            fs.mkdirSync(STORAGE_DIR, { recursive: true });
         }
-        fs.appendFileSync(LOG_FILE, entry); // Changed fsSync to fs
+        fs.appendFileSync(LOG_FILE, entry);
     } catch (e) {
         console.error('CRITICAL: Could not write to log file from app.js', e);
     }
 };
+
+async function initChatDB() {
+    try {
+        logToFile('[INIT] Verifying Chat Database schema...');
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS chat_user_presence (
+                username VARCHAR(50) PRIMARY KEY,
+                last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
+                is_online TINYINT(1) DEFAULT 0
+            )
+        `);
+        logToFile('[CHAT DB] Table chat_user_presence is ready.');
+
+        // Verify chat_messages columns
+        const [columns] = await db.query('SHOW COLUMNS FROM chat_messages LIKE "is_read"');
+        if (columns.length === 0) {
+            logToFile('[CHAT DB] Migrating chat_messages: Adding is_read column...');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN is_read TINYINT(1) DEFAULT 0');
+            logToFile('[CHAT DB] Column is_read added successfully.');
+        }
+
+        const [columnsFile] = await db.query('SHOW COLUMNS FROM chat_messages LIKE "file_path"');
+        if (columnsFile.length === 0) {
+            logToFile('[CHAT DB] Migrating chat_messages: Adding file_path and file_type columns...');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN file_path VARCHAR(255) DEFAULT NULL');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN file_type VARCHAR(50) DEFAULT NULL');
+            logToFile('[CHAT DB] File columns added successfully.');
+        }
+
+        const [colsDelivered] = await db.query('SHOW COLUMNS FROM chat_messages LIKE "is_delivered"');
+        if (colsDelivered.length === 0) {
+            logToFile('[CHAT DB] Migrating chat_messages: Adding is_delivered, delivered_at, and read_at pillars...');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN is_delivered TINYINT(1) DEFAULT 0');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN delivered_at DATETIME DEFAULT NULL');
+            await db.query('ALTER TABLE chat_messages ADD COLUMN read_at DATETIME DEFAULT NULL');
+            logToFile('[CHAT DB] Status pillars added successfully.');
+        }
+
+    } catch (err) {
+        logToFile(`[CHAT DB ERROR] ${err.message}`);
+        console.error('[CHAT DB ERROR]', err);
+    }
+}
+initChatDB();
 
 logToFile('Starting Server Lifecycle');
 
@@ -245,6 +289,7 @@ global.broadcast = broadcast;
 global.agentTunnels = new Map();
 global.chatUsers = new Map(); // username -> ws
 global.activeSessions = new Map(); // ws -> sessionData
+global.visitorHistory = new Map();
 
 // --- WEBSOCKET LOGIC ---
 function setupWebSocketServer(server) {
@@ -309,44 +354,111 @@ function setupWebSocketServer(server) {
                         if (sData) sData.username = username;
                         global.chatUsers.set(username, ws);
                         console.log(`[WSS] Usuario chat logueado: ${username}`);
+                        // Update presence in DB
+                        const db = require('./db');
+                        db.query(
+                            'INSERT INTO chat_user_presence (username, is_online) VALUES (?, 1) ON DUPLICATE KEY UPDATE is_online = 1, last_seen = NOW()',
+                            [username]
+                        ).catch(err => console.error('[WSS PRESENCE ERROR]', err));
+
                         broadcast({ type: 'user_connected', payload: { username, online: true } });
                         const users = Array.from(global.chatUsers.keys());
                         ws.send(JSON.stringify({ type: 'online_users', payload: { users } }));
                     }
+                } else if (data.type === 'chat_typing') {
+                    const { sender, recipient } = data.payload;
+                    logToFile(`[WSS CHAT] Typing: ${sender} -> ${recipient}`);
+                    if (recipient) {
+                        const targetWs = global.chatUsers.get(recipient);
+                        if (targetWs && targetWs.readyState === WebSocket.OPEN) {
+                            targetWs.send(JSON.stringify({
+                                type: 'chat_typing',
+                                payload: { sender, recipient }
+                            }));
+                        }
+                    }
+                } else if (data.type === 'chat_stop_typing') {
+                    const { sender, recipient } = data.payload;
+                    logToFile(`[WSS CHAT] Stop Typing: ${sender} -> ${recipient}`);
+                    if (recipient) {
+                        const targetWs = global.chatUsers.get(recipient);
+                        if (targetWs && targetWs.readyState === WebSocket.OPEN) {
+                            targetWs.send(JSON.stringify({
+                                type: 'chat_stop_typing',
+                                payload: { sender, recipient }
+                            }));
+                        }
+                    }
                 } else if (data.type === 'chat_message') {
                     const { sender, recipient, message, is_system } = data.payload;
                     const db = require('./db');
+                    
+                    // Check if recipient is online for delivery status
+                    const targetWs = recipient ? global.chatUsers.get(recipient) : null;
+                    const isDelivered = (targetWs && targetWs.readyState === WebSocket.OPEN) ? 1 : 0;
+                    
                     db.query(
-                        'INSERT INTO chat_messages (sender, recipient, message, is_system) VALUES (?, ?, ?, ?)',
-                        [sender, recipient || null, message, is_system || false]
+                        'INSERT INTO chat_messages (sender, recipient, message, is_system, is_delivered, delivered_at) VALUES (?, ?, ?, ?, ?, ?)',
+                        [sender, recipient || null, message, is_system || false, isDelivered, isDelivered ? new Date() : null]
                     ).then(([result]) => {
                         const chatPayload = {
                             type: 'chat_message',
-                            payload: { id: result.insertId, sender, recipient: recipient || null, message, is_system: is_system || false, is_read: 0, created_at: new Date() }
+                            payload: { 
+                                id: result.insertId, 
+                                sender, 
+                                recipient: recipient || null, 
+                                message, 
+                                is_system: is_system || false, 
+                                is_read: 0, 
+                                is_delivered: isDelivered,
+                                created_at: new Date(),
+                                delivered_at: isDelivered ? new Date() : null
+                            }
                         };
                         if (recipient) {
-                            const targetWs = global.chatUsers.get(recipient);
-                            if (targetWs && targetWs.readyState === WebSocket.OPEN) targetWs.send(JSON.stringify(chatPayload));
+                            if (isDelivered) targetWs.send(JSON.stringify(chatPayload));
                             if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(chatPayload));
                         } else {
                             broadcast(chatPayload);
                         }
                     }).catch(err => console.error('[WS CHAT ERROR]', err));
-                } else if (data.type === 'chat_read') {
-                    const { sender, recipient } = data.payload;
+                } else if (data.type === 'chat_delivered') {
+                    const { messageId, sender, recipient } = data.payload;
                     const db = require('./db');
                     db.query(
-                        'UPDATE chat_messages SET is_read = 1, read_at = NOW() WHERE sender = ? AND recipient = ? AND is_read = 0',
-                        [sender, recipient]
+                        'UPDATE chat_messages SET is_delivered = 1, delivered_at = NOW() WHERE id = ? AND is_delivered = 0',
+                        [messageId]
                     ).then(() => {
                         const senderWs = global.chatUsers.get(sender);
                         if (senderWs && senderWs.readyState === WebSocket.OPEN) {
                             senderWs.send(JSON.stringify({
-                                type: 'messages_read',
-                                payload: { sender, recipient }
+                                type: 'message_delivered',
+                                payload: { messageId, sender, recipient, delivered_at: new Date() }
                             }));
                         }
-                    }).catch(err => console.error('[WS CHAT READ ERROR]', err));
+                    }).catch(err => console.error('[WS CHAT DELIVERED ERROR]', err));
+                } else if (data.type === 'chat_read') {
+                    const { sender, recipient } = data.payload;
+                    logToFile(`[WSS CHAT] Read Notice from ${recipient} to ${sender}`);
+                    const db = require('./db');
+                    const readAt = new Date();
+                    db.query(
+                        'UPDATE chat_messages SET is_read = 1, is_delivered = 1, read_at = ?, delivered_at = IFNULL(delivered_at, ?) WHERE sender = ? AND recipient = ? AND is_read = 0',
+                        [readAt, readAt, sender, recipient]
+                    ).then(([result]) => {
+                        logToFile(`[WSS CHAT] Marked as read: ${result.affectedRows} messages`);
+                        const senderWs = global.chatUsers.get(sender);
+                        if (senderWs && senderWs.readyState === WebSocket.OPEN) {
+                            senderWs.send(JSON.stringify({
+                                type: 'messages_read',
+                                payload: { sender, recipient, read_at: readAt }
+                            }));
+                            logToFile(`[WSS CHAT] Sent messages_read to sender ${sender}`);
+                        }
+                    }).catch(err => {
+                        console.error('[WS CHAT READ ERROR]', err);
+                        logToFile(`[WS CHAT READ ERROR] ${err.message}`);
+                    });
                 } else if (data.type === 'shell_input') {
                     const { command, target } = data.payload;
                     const sData = global.activeSessions.get(ws);
@@ -434,6 +546,13 @@ function setupWebSocketServer(server) {
             }
             if (ws.username) {
                 global.chatUsers.delete(ws.username);
+                // Update presence in DB
+                const db = require('./db');
+                db.query(
+                    'UPDATE chat_user_presence SET is_online = 0, last_seen = NOW() WHERE username = ?',
+                    [ws.username]
+                ).catch(err => console.error('[WSS DISCONNECT PRESENCE ERROR]', err));
+
                 broadcast({ type: 'user_connected', payload: { username: ws.username, online: false } });
             }
             global.activeSessions.delete(ws);

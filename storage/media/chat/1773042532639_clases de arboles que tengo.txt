@@ -1,0 +1,20 @@
+1 guayabo fresa
+2 níspero
+3 higo pico rojo
+4 laurel
+5 piña
+6 papaya
+7 higo negro
+8 breva
+9 aguacate
+10 paraguayo
+11 chirimoya
+12 moral
+13 pitahaya
+14 durazno
+15 kaki
+16 lima
+17 mango
+18 naranja
+19 guayabo
+20 limonero

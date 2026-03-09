@@ -1,5 +1,6 @@
 import { Api } from "../core/Api.js";
 import { Ui } from "../core/Ui.js";
+import { realTimeSync } from "../core/RealTimeSync.js";
 
 /**
  * NATIVE CHAT MODULE
@@ -25,6 +26,9 @@ class ChatModule {
             'global': []
         };
         this.unreadCounts = {}; // user -> count
+        this.typingTimeout = null;
+        this.isTyping = false;
+        this.presenceInterval = null;
     }
 
     async init() {
@@ -38,7 +42,11 @@ class ChatModule {
         // El id se actualizó a chat-user-list
         this.userList = document.getElementById('chat-user-list');
         this.currentLabel = document.getElementById('chat-current-recipient-label');
+        this.presenceStatus = document.getElementById('chat-presence-status');
         this.muteBtn = document.getElementById('chat-mute-btn');
+        this.fileBtn = document.getElementById('chat-btn-attach');
+        this.fileInput = document.getElementById('chat-file-input');
+        this.emojiBtn = document.getElementById('chat-btn-emoji');
 
         this.setupEventListeners();
         this.updateMuteIcon();
@@ -48,6 +56,7 @@ class ChatModule {
         // Listen for shared WebSocket messages
         window.addEventListener('sync:ws_message', (e) => {
             const data = e.detail;
+            console.log(`[CHAT] Event received: ${data.type}`, data.payload);
             if (data.type === 'chat_message') {
                 this.handleIncomingMessage(data.payload);
             } else if (data.type === 'chat_delete' || data.type === 'chat_delete_multiple') {
@@ -59,8 +68,15 @@ class ChatModule {
                 this.handleOnlineUsersList(data.payload.users);
             } else if (data.type === 'messages_read') {
                 this.handleMessagesRead(data.payload);
+            } else if (data.type === 'message_delivered') {
+                this.handleMessageDelivered(data.payload);
             } else if (data.type === 'chat_clear_conversation') {
                 this.handleClearConversation(data.payload);
+            } else if (data.type === 'chat_typing') {
+                this.handleRemoteTyping(data.payload);
+            } else if (data.type === 'chat_stop_typing') {
+                const stopPayload = { ...data.payload, stop: true };
+                this.handleRemoteTyping(stopPayload);
             }
         });
 
@@ -106,10 +122,86 @@ class ChatModule {
             });
         }
 
+        if (this.fileBtn) {
+            this.fileBtn.addEventListener('click', () => this.fileInput.click());
+        }
+
+        if (this.fileInput) {
+            this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+        }
+
+        if (this.emojiBtn) {
+            this.emojiBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleEmojiPicker();
+            });
+        }
+
         window.addEventListener('user-updated', (e) => {
             this.currentUser = e.detail.name || 'Invitado';
             // Note: Re-identification is handled by RealTimeSync
         });
+
+        // Typing indicator and Enter to send
+        if (this.input) {
+            this.input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+
+            this.input.addEventListener('input', () => {
+                this.autoResizeInput();
+                if (!this.currentRecipient) return;
+                
+                if (!this.isTyping) {
+                    this.sendTypingStatus(true);
+                }
+
+                clearTimeout(this.typingTimeout);
+                this.typingTimeout = setTimeout(() => {
+                    this.sendTypingStatus(false);
+                }, 2000);
+            });
+        }
+
+        // Drag and Drop support
+        if (this.container) {
+            const dropArea = this.container;
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.add('drag-over');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.remove('drag-over');
+                }, false);
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    this.handleFileSelect({ target: { files: files } });
+                }
+            }, false);
+        }
+    }
+
+    autoResizeInput() {
+        if (!this.input) return;
+        this.input.style.height = 'auto';
+        this.input.style.height = (this.input.scrollHeight) + 'px';
     }
 
     async loadHistory() {
@@ -143,7 +235,7 @@ class ChatModule {
     async loadUnreadCounts() {
         try {
             const counts = await Api.get(`/chat/unread-counts?user=${this.currentUser}`);
-            this.unreadCounts = counts;
+            this.unreadCounts = counts || {};
             this.updateTotalUnreadBadge();
             this.updateRecipientList();
         } catch (err) {
@@ -168,30 +260,65 @@ class ChatModule {
 
         // Notify server
         import('../core/RealTimeSync.js').then(m => {
-            if (m.realTimeSync && m.realTimeSync.socket && m.realTimeSync.socket.readyState === WebSocket.OPEN) {
-                m.realTimeSync.socket.send(JSON.stringify({
+            const sync = m.realTimeSync || window.realTimeSync;
+            if (sync && sync.socket && sync.socket.readyState === WebSocket.OPEN) {
+                sync.socket.send(JSON.stringify({
                     type: 'chat_read',
                     payload: { sender: sender, recipient: this.currentUser }
                 }));
             }
+            // Force a refresh of unread counts from server to be safe
+            this.loadUnreadCounts();
         });
     }
 
     handleMessagesRead(payload) {
-        // payload: { sender, recipient } (where sender is me, recipient is the one who read it)
+        // payload: { sender, recipient, read_at } (where sender is me, recipient is the one who read it)
         if (payload.recipient === this.currentRecipient && payload.sender === this.currentUser) {
+            const timeStr = this.formatStatusTime(payload.read_at);
             // Update all grey checkmarks to blue checkmarks in the current view
-            this.list.querySelectorAll('.bi-check:not(.text-primary)').forEach(el => {
+            this.list.querySelectorAll('.bi-check, .bi-check-all:not(.text-primary)').forEach(el => {
                 el.classList.remove('bi-check');
                 el.classList.add('bi-check-all', 'text-primary');
+                el.title = `Leído ${timeStr}`;
             });
         }
     }
 
+    formatStatusTime(dateInput) {
+        if (!dateInput) return '';
+        try {
+            const date = new Date(dateInput);
+            if (isNaN(date.getTime())) return '';
+            return 'hoy a las ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+            return '';
+        }
+    }
+
+    handleMessageDelivered(payload) {
+        // payload: { messageId, sender, recipient, delivered_at }
+        if (payload.sender === this.currentUser && payload.recipient === this.currentRecipient) {
+            const el = this.list.querySelector(`[data-id="${payload.messageId}"]`);
+            if (el) {
+                const check = el.querySelector('.bi-check');
+                if (check) {
+                    check.classList.remove('bi-check');
+                    check.classList.add('bi-check-all');
+                    const timeStr = this.formatStatusTime(payload.delivered_at);
+                    check.title = `Entregado ${timeStr}`;
+                }
+            }
+        }
+    }
+
     // WebSocket connection is now managed by RealTimeSync
-    sendMessage() {
-        const text = this.input.value.trim();
+    sendMessage(forceText = null) {
+        const text = forceText !== null ? forceText : this.input.value.trim();
         if (!text) return;
+
+        // Hide emoji picker if open
+        this.hideEmojiPicker();
 
         const payload = {
             sender: this.currentUser,
@@ -202,8 +329,9 @@ class ChatModule {
 
         // Use the shared socket from realTimeSync if available
         import('../core/RealTimeSync.js').then(m => {
-            if (m.realTimeSync && m.realTimeSync.socket && m.realTimeSync.socket.readyState === WebSocket.OPEN) {
-                m.realTimeSync.socket.send(JSON.stringify({
+            const sync = m.realTimeSync || window.realTimeSync;
+            if (sync && sync.socket && sync.socket.readyState === WebSocket.OPEN) {
+                sync.socket.send(JSON.stringify({
                     type: 'chat_message',
                     payload: payload
                 }));
@@ -212,10 +340,120 @@ class ChatModule {
             }
         });
 
-        this.input.value = '';
+        if (forceText === null) {
+            this.input.value = '';
+            this.autoResizeInput();
+            this.sendTypingStatus(false);
+        }
     }
 
+    async handleFileSelect(e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        for (const file of files) {
+            try {
+                const path = await this.uploadFile(file);
+                if (path) {
+                    this.sendMessage(path);
+                }
+            } catch (err) {
+                console.error("[CHAT] Error uploading file:", err);
+                Ui.showToast(`Error al subir ${file.name}`, 'error');
+            }
+        }
+        this.fileInput.value = ''; // Reset input
+    }
+
+    async uploadFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async () => {
+                try {
+                    const base64Data = reader.result;
+                    const response = await Api.post('/storage/upload', {
+                        fileName: `${Date.now()}_${file.name}`,
+                        fileData: base64Data,
+                        folder: 'chat'
+                    });
+                    if (response && response.success) {
+                        resolve(response.path);
+                    } else {
+                        reject(new Error("Upload failed"));
+                    }
+                } catch (err) {
+                    reject(err);
+                }
+            };
+            reader.onerror = () => reject(new Error("File read error"));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    isOnlyEmoji(text) {
+        if (!text) return false;
+        // Basic emoji regex. WhatsApp uses a similar approach.
+        // This covers most emojis but avoids plain text.
+        const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|\s)+$/;
+        return emojiRegex.test(text.trim());
+    }
+
+    toggleEmojiPicker() {
+        if (this.emojiPicker) {
+            this.hideEmojiPicker();
+        } else {
+            this.showEmojiPicker();
+        }
+    }
+
+    showEmojiPicker() {
+        if (this.emojiPicker) return;
+
+        const emojis = [
+            '😊', '😂', '🥰', '😍', '😒', '😭', '😘', '😩', '😔', '👌', '👍', '🙏', '❤️', '✨', '🔥', '✔️', '❌', '🚀', '⭐', '🏨', '🛌', '🛎️', '🧹', '🍽️',
+            '😀', '😃', '😄', '😁', '😅', '🤣', '😇', '🙂', '🙃', '😉', '😌', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😞', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧',
+            '👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '🤜', '🤛', '👊', '✊', '🤛', '🤜', '🤚', '👋', '🤟', '🤘', '🤙',
+            '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟',
+            '💥', '💢', '💨', '💦', '💧', '💤'
+        ];
+        
+        this.emojiPicker = document.createElement('div');
+        this.emojiPicker.className = 'emoji-picker animate__animated animate__fadeInUp';
+        
+        emojis.forEach(emoji => {
+            const span = document.createElement('span');
+            span.className = 'emoji-item';
+            span.textContent = emoji;
+            span.addEventListener('click', () => {
+                this.input.value += emoji;
+                this.input.focus();
+                this.hideEmojiPicker();
+            });
+            this.emojiPicker.appendChild(span);
+        });
+
+        // Close on click outside
+        const closeHandler = (e) => {
+            if (this.emojiPicker && !this.emojiPicker.contains(e.target) && e.target !== this.emojiBtn) {
+                this.hideEmojiPicker();
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        document.addEventListener('click', closeHandler);
+
+        this.container.appendChild(this.emojiPicker);
+    }
+
+    hideEmojiPicker() {
+        if (this.emojiPicker) {
+            this.emojiPicker.remove();
+            this.emojiPicker = null;
+        }
+    }
+
+
     handleOnlineUsersList(users) {
+        this.onlineUsers.clear();
         users.forEach(user => {
             if (user !== this.currentUser) this.onlineUsers.add(user);
         });
@@ -230,6 +468,11 @@ class ChatModule {
         } else {
             this.onlineUsers.delete(payload.username);
         }
+        
+        if (this.currentRecipient === payload.username) {
+            this.updatePresenceUI();
+        }
+        
         this.updateRecipientList();
     }
 
@@ -301,6 +544,9 @@ class ChatModule {
         
         if (user) {
             this.markConversationAsRead(user);
+            this.updatePresenceUI();
+        } else {
+            if (this.presenceStatus) this.presenceStatus.innerHTML = '';
         }
 
         // Update UI info
@@ -321,6 +567,39 @@ class ChatModule {
         this.loadHistory();
     }
 
+    async updatePresenceUI() {
+        console.log(`[CHAT] Updating presence UI for: ${this.currentRecipient}`);
+        if (!this.presenceStatus) return;
+        
+        if (!this.currentRecipient) {
+            this.presenceStatus.innerHTML = '';
+            return;
+        }
+
+        try {
+            const presence = await Api.get(`/chat/presence/${this.currentRecipient}`);
+            if (presence.is_online) {
+                this.presenceStatus.innerHTML = '<span class="text-success fw-bold">en línea</span>';
+            } else if (presence.last_seen) {
+                const date = new Date(presence.last_seen);
+                const now = new Date();
+                let timeStr = '';
+                
+                if (date.toDateString() === now.toDateString()) {
+                    timeStr = 'hoy a las ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    timeStr = 'el ' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+                
+                this.presenceStatus.innerHTML = `Visto por última vez: ${timeStr}`;
+            } else {
+                this.presenceStatus.innerHTML = '';
+            }
+        } catch (err) {
+            console.warn("[CHAT] Failed to fetch presence:", err);
+        }
+    }
+
     handleIncomingMessage(msg) {
         // Decide if we show it now
         const isCurrentGlobal = !this.currentRecipient && !msg.recipient;
@@ -332,6 +611,19 @@ class ChatModule {
             this.appendMessage(msg);
             if (isCurrentPrivate && msg.sender !== this.currentUser && this.isOpen) {
                 this.markConversationAsRead(msg.sender);
+            }
+            
+            // Ack delivery if it's a private message for me
+            if (msg.recipient === this.currentUser && msg.sender !== this.currentUser) {
+                import('../core/RealTimeSync.js').then(m => {
+                    const sync = m.realTimeSync || window.realTimeSync;
+                    if (sync && sync.socket && sync.socket.readyState === WebSocket.OPEN) {
+                        sync.socket.send(JSON.stringify({
+                            type: 'chat_delivered',
+                            payload: { messageId: msg.id, sender: msg.sender, recipient: this.currentUser }
+                        }));
+                    }
+                });
             }
         }
 
@@ -351,7 +643,12 @@ class ChatModule {
         const el = this.list.querySelector(`[data-id="${messageId}"]`);
         if (el) {
             el.classList.add('animate__animated', 'animate__fadeOutRight');
-            setTimeout(() => el.remove(), 500);
+            setTimeout(() => {
+                el.remove();
+                if (this.list.children.length === 0) {
+                    this.list.innerHTML = '<div class="text-center text-secondary small my-4 opacity-50 italic">No hay mensajes previos</div>';
+                }
+            }, 500);
         }
     }
 
@@ -368,16 +665,57 @@ class ChatModule {
         if (msg.is_system) {
             div.innerHTML = `<div class="system-message">${msg.message}</div>`;
         } else {
-            const checkIcon = msg.is_read 
-                ? '<i class="bi bi-check-all text-primary ms-1" title="Leído"></i>' 
-                : '<i class="bi bi-check ms-1" title="Enviado"></i>';
-            const statusHTML = isOwn && msg.recipient ? checkIcon : '';
+            let statusHTML = '';
+            if (isOwn && msg.recipient) {
+                let statusClass = 'bi-check';
+                let title = 'Enviado';
+                let colorClass = '';
+
+                if (msg.is_read) {
+                    statusClass = 'bi-check-all';
+                    colorClass = 'text-primary';
+                    const time = this.formatStatusTime(msg.read_at);
+                    title = `Leído ${time}`;
+                } else if (msg.is_delivered) {
+                    statusClass = 'bi-check-all';
+                    const time = this.formatStatusTime(msg.delivered_at);
+                    title = `Entregado ${time}`;
+                }
+                
+                statusHTML = `<i class="bi ${statusClass} ${colorClass} ms-1" title="${title}"></i>`;
+            }
+
+            // Handle images and files
+            let contentHTML = '';
+            const isPath = typeof msg.message === 'string' && (msg.message.startsWith('storage/') || msg.message.startsWith('http'));
+            
+            if (isPath) {
+                const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.message);
+                if (isImage) {
+                    contentHTML = `<img src="${msg.message}" class="chat-image-attachment" onclick="window.open('${msg.message}', '_blank')">`;
+                } else {
+                    const fileName = msg.message.split('/').pop().split('_').slice(1).join('_') || msg.message.split('/').pop();
+                    contentHTML = `
+                        <a href="${msg.message}" target="_blank" class="chat-attachment">
+                            <i class="bi bi-file-earmark-arrow-down"></i>
+                            <div class="chat-attachment-info">
+                                <span class="chat-attachment-name">${fileName}</span>
+                                <span class="chat-attachment-size">Archivo adjunto</span>
+                            </div>
+                        </a>`;
+                }
+            } else {
+                contentHTML = `<div class="message-text">${this.escapeHtml(msg.message)}</div>`;
+            }
+
+            const isOnlyEmoji = !isPath && this.isOnlyEmoji(msg.message);
+            const bubbleClass = isOnlyEmoji ? 'large-emoji-bubble' : '';
 
             div.innerHTML = `
                 ${!isOwn ? `<div class="message-sender">${msg.sender}${msg.recipient ? ' (Privado)' : ''}</div>` : ''}
-                <div class="message-bubble shadow-sm animate__animated animate__fadeInUp">
+                <div class="message-bubble ${bubbleClass} shadow-sm animate__animated animate__fadeInUp">
                     ${isOwn ? `<button class="btn btn-delete-msg" onclick="chat.deleteMessage('${msg.id}')" title="Borrar mensaje"><i class="bi bi-trash"></i></button>` : ''}
-                    <div class="message-text">${this.escapeHtml(msg.message)}</div>
+                    ${contentHTML}
                     <div class="message-time">${time}${statusHTML}</div>
                 </div>
             `;
@@ -467,7 +805,7 @@ class ChatModule {
             const result = await Api.delete(`/chat/conversation?user1=${this.currentUser}&user2=${this.currentRecipient}`);
             if (result.success) {
                 Ui.showToast("Conversación borrada", "success");
-                // The broadcast will trigger handleClearConversation for all, including us
+                this.list.innerHTML = '<div class="text-center text-secondary small my-4 opacity-50 italic">Conversación borrada</div>';
             }
         } catch (err) {
             console.error("[CHAT] Error deleting conversation:", err);
@@ -483,6 +821,37 @@ class ChatModule {
         
         if (isCurrent) {
             this.list.innerHTML = '<div class="text-center text-secondary small my-4 opacity-50 italic">Conversación borrada</div>';
+        }
+    }
+
+    sendTypingStatus(isTyping) {
+        if (!this.currentRecipient || this.isTyping === isTyping) return;
+        this.isTyping = isTyping;
+
+        import('../core/RealTimeSync.js').then(m => {
+            const sync = m.realTimeSync || window.realTimeSync;
+            if (sync && sync.socket && sync.socket.readyState === WebSocket.OPEN) {
+                sync.socket.send(JSON.stringify({
+                    type: isTyping ? 'chat_typing' : 'chat_stop_typing',
+                    payload: { sender: this.currentUser, recipient: this.currentRecipient }
+                }));
+            }
+        });
+    }
+
+    handleRemoteTyping(payload) {
+        // payload: { sender, recipient, stop }
+        if (payload.sender === this.currentRecipient && payload.recipient === this.currentUser) {
+            if (this.presenceStatus) {
+                if (payload.stop) {
+                    this.updatePresenceUI(); // Restore online/last-seen
+                } else {
+                    this.presenceStatus.innerHTML = '<span class="text-info animate__animated animate__pulse animate__infinite">escribiendo...</span>';
+                    // Auto-stop after 5 seconds if no stop event received
+                    if (this.remoteTypingTimeout) clearTimeout(this.remoteTypingTimeout);
+                    this.remoteTypingTimeout = setTimeout(() => this.updatePresenceUI(), 5000);
+                }
+            }
         }
     }
 }

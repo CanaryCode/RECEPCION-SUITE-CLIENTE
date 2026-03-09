@@ -74,8 +74,17 @@ class RealTimeSync {
                             const duration = data.duration !== undefined ? data.duration : 5000;
                             window.showToast(message, variant, duration);
                         }
-                    } else if (data.type === 'chat_message' || data.type === 'chat_delete' || data.type === 'chat_delete_multiple' || data.type === 'user_connected' || data.type === 'online_users') {
+                    } else if (data.type === 'chat_message' || 
+                               data.type === 'chat_delete' || 
+                               data.type === 'chat_delete_multiple' || 
+                               data.type === 'user_connected' || 
+                               data.type === 'chat_typing' ||
+                               data.type === 'chat_stop_typing' ||
+                               data.type === 'messages_read' ||
+                               data.type === 'message_delivered' ||
+                               data.type === 'chat_clear_conversation') {
                         // Re-emitir evento para que otros módulos (como el chat) lo escuchen sin tener su propio socket
+                        console.log(`[Sync-RT] Re-emitting event: ${data.type}`, data.payload);
                         window.dispatchEvent(new CustomEvent('sync:ws_message', { detail: data }));
                     }
                 } catch (e) {

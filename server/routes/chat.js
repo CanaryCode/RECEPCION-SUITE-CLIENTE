@@ -9,6 +9,32 @@ router.use((req, res, next) => {
 const db = require('../db');
 
 /**
+ * GET /api/chat/presence/:username
+ * Returns the last seen and online status of a user.
+ */
+router.get('/presence/:username', async (req, res) => {
+    const { username } = req.params;
+    const logToFile = req.app.get('logToFile') || console.log;
+    logToFile(`[DEBUG CHAT] Request for presence: ${username}`);
+    try {
+        const [rows] = await db.query(
+            'SELECT last_seen, is_online FROM chat_user_presence WHERE username = ?',
+            [username]
+        );
+        logToFile(`[DEBUG CHAT] Presence DB Result for ${username}: ${JSON.stringify(rows)}`);
+        if (rows.length > 0) {
+            res.json(rows[0]);
+        } else {
+            res.json({ is_online: 0, last_seen: null });
+        }
+    } catch (err) {
+        console.error('[CHAT ERROR]', err);
+        logToFile(`[CHAT ERROR] Presence fetch fail: ${err.message}`);
+        res.status(500).json({ error: 'Fallo al obtener presencia' });
+    }
+});
+
+/**
  * GET /api/chat/history
  * Returns the latest 50 chat messages.
  */
@@ -198,5 +224,10 @@ router.delete('/conversation', async (req, res) => {
         res.status(500).json({ error: 'Fallo al borrar conversación' });
     }
 });
+
+/**
+ * GET /api/chat/presence/:username
+ * Returns the last seen and online status of a user.
+ */
 
 module.exports = router;

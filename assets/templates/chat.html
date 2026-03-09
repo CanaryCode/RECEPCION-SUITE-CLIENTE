@@ -21,12 +21,19 @@
 
         <!-- Área principal -->
         <div class="d-flex flex-column flex-grow-1" style="width: calc(100% - 140px);">
-            <div class="chat-expiration-notice px-2 py-1 text-center border-bottom border-light">
-                <span id="chat-current-recipient-label" class="fw-bold px-2 py-1 rounded bg-white shadow-sm d-inline-block mt-1 mb-1" style="font-size: 0.75rem;"><i class="bi bi-globe me-1 text-primary"></i>Chat Global</span>
-                <div class="d-flex align-items-center justify-content-center gap-2 mt-1 mb-1">
-                    <div id="chat-expiration-text" class="small text-muted" style="font-size: 0.65rem;">Se borran en 30m</div>
+            <div class="chat-header-info px-2 py-2 text-center border-bottom border-light bg-white">
+                <div id="chat-current-recipient-label" class="fw-bold px-2 py-1 rounded bg-light border shadow-sm d-inline-block" style="font-size: 0.8rem;">
+                    <i class="bi bi-globe me-1 text-primary"></i>Chat Global
+                </div>
+                <!-- WhatsApp style: Status sub-label -->
+                <div id="chat-presence-status" class="small text-muted mt-1" style="font-size: 0.65rem; height: 14px; line-height: 14px;">
+                    <!-- "En línea", "Visto por última vez..." o "Escribiendo..." -->
+                </div>
+                
+                <div class="d-flex align-items-center justify-content-center gap-2 mt-1">
+                    <div id="chat-expiration-text" class="small text-muted" style="font-size: 0.6rem; opacity: 0.7;">Se borran en 30m</div>
                     <button id="chat-btn-delete-conversation" class="btn btn-link p-0 text-danger d-none" title="Borrar toda la conversación" onclick="chat.deleteConversation()">
-                        <i class="bi bi-trash-fill" style="font-size: 0.75rem;"></i>
+                        <i class="bi bi-trash-fill" style="font-size: 0.7rem;"></i>
                     </button>
                 </div>
             </div>
@@ -38,9 +45,19 @@
             </div>
             
             <div class="chat-footer p-2 border-top border-light bg-white mt-auto">
-                <form id="chat-form" class="d-flex gap-2">
-                    <input type="text" id="chat-input" class="form-control form-control-sm border-0 bg-light px-3 rounded-pill" 
-                        placeholder="Mensaje..." autocomplete="off">
+                <form id="chat-form" class="d-flex align-items-center gap-2">
+                    <button type="button" id="chat-btn-attach" class="btn-chat-attach" title="Adjuntar archivo o imagen">
+                        <i class="bi bi-paperclip"></i>
+                    </button>
+                    <input type="file" id="chat-file-input" class="d-none" multiple>
+                    
+                    <button type="button" id="chat-btn-emoji" class="btn-chat-attach" title="Añadir emoticono">
+                        <i class="bi bi-emoji-smile"></i>
+                    </button>
+                    
+                    <textarea id="chat-input" class="form-control form-control-sm border-0 bg-light px-3 py-2 rounded-3" 
+                        placeholder="Mensaje..." autocomplete="off" rows="2" style="resize: none;"></textarea>
+                        
                     <button type="submit" class="btn btn-primary btn-sm rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px;">
                         <i class="bi bi-send-fill" style="font-size: 0.8rem;"></i>
                     </button>
