@@ -1,7 +1,12 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "buildDate": "2026-03-09",
   "changelog": {
+    "1.0.9": [
+      "🚀 AUTO-RESTART: Agent se reinicia automáticamente después de actualizar",
+      "Badge del admin se actualiza sin intervención manual",
+      "Añadido archivo auto-restart-test.js para verificar funcionalidad"
+    ],
     "1.0.8": [
       "✅ PRUEBA FINAL: Sistema de actualización remota forzada FUNCIONAL",
       "Añadido archivo remote-update-success.js",
