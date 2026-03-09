@@ -448,9 +448,23 @@ function connectToCentral() {
         const msg = `[AGENT] ✅ Túnel WS Abierto en ${targetUrl}. Autenticando huella...`;
         console.log(msg);
         logToFile(msg);
+
+        // Leer versión del package.json
+        let agentVersion = '1.0.0';
+        try {
+            const packageJson = require(path.join(__dirname, '../package.json'));
+            agentVersion = packageJson.version;
+        } catch (e) {
+            console.warn('[AGENT] No se pudo leer la versión del package.json:', e.message);
+        }
+
         wsTunnel.send(JSON.stringify({
             type: 'auth',
-            payload: { stationKey: config.STATION_KEY, fingerprint: fingerprint }
+            payload: {
+                stationKey: config.STATION_KEY,
+                fingerprint: fingerprint,
+                version: agentVersion
+            }
         }));
     });
 
@@ -583,30 +597,91 @@ function executeRemoteCommand(payload) {
         });
     } else if (action === 'update-agent') {
         const { fingerprint } = getMachineFingerprint();
-        const msg = `[AGENT] Recibida orden remota de ACTUALIZACIÓN FORZADA (URL: http://127.0.0.1:3002/api/agent/updates/install)`;
+        const serverUrl = 'https://www.desdetenerife.com:3000';
+        const msg = `[AGENT] ⚡ ACTUALIZACIÓN REMOTA FORZADA desde Admin Panel\n[AGENT] 📡 Servidor: ${serverUrl}`;
         console.log(msg);
         logToFile(msg);
-        
+
+        // Enviar notificación visual al navegador a través del túnel WS
+        if (wsTunnel && wsTunnel.readyState === WebSocket.OPEN) {
+            wsTunnel.send(JSON.stringify({
+                type: 'broadcast_to_clients',
+                payload: {
+                    type: 'system_notification',
+                    title: 'Actualización del Sistema',
+                    message: '🔄 Descargando actualización desde el servidor central...',
+                    variant: 'info',
+                    duration: 0 // Permanente hasta que termine
+                }
+            }));
+        }
+
         // Disparar la actualización internamente llamando a nuestra propia API (HTTP plano en 3002 para evitar líos SSL)
         fetch('http://127.0.0.1:3002/api/agent/updates/install', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'x-station-key': config.STATION_KEY || 'MISSING',
                 'x-fingerprint': fingerprint
             },
-            body: JSON.stringify({ mode: 'remote' })
+            body: JSON.stringify({
+                mode: 'remote',
+                serverUrl: serverUrl
+            })
         })
         .then(async res => {
             const data = await res.json();
             const logMsg = `[AGENT] Respuesta de inicio de actualización (status ${res.status}): ${JSON.stringify(data)}`;
             console.log(logMsg);
             logToFile(logMsg);
+
+            if (res.ok && data.success) {
+                // Notificación de éxito
+                if (wsTunnel && wsTunnel.readyState === WebSocket.OPEN) {
+                    wsTunnel.send(JSON.stringify({
+                        type: 'broadcast_to_clients',
+                        payload: {
+                            type: 'system_notification',
+                            title: 'Actualización Exitosa',
+                            message: '✅ Sistema actualizado correctamente. Reiniciando aplicación...',
+                            variant: 'success',
+                            duration: 5000
+                        }
+                    }));
+                }
+            } else {
+                // Notificación de error
+                if (wsTunnel && wsTunnel.readyState === WebSocket.OPEN) {
+                    wsTunnel.send(JSON.stringify({
+                        type: 'broadcast_to_clients',
+                        payload: {
+                            type: 'system_notification',
+                            title: 'Error de Actualización',
+                            message: `❌ ${data.error || 'No se pudo completar la actualización'}`,
+                            variant: 'danger',
+                            duration: 10000
+                        }
+                    }));
+                }
+            }
         })
         .catch(err => {
             const errorMsg = `[AGENT] Error al disparar actualización remota: ${err.message}`;
             console.error(errorMsg);
             logToFile(errorMsg);
+
+            if (wsTunnel && wsTunnel.readyState === WebSocket.OPEN) {
+                wsTunnel.send(JSON.stringify({
+                    type: 'broadcast_to_clients',
+                    payload: {
+                        type: 'system_notification',
+                        title: 'Error de Red',
+                        message: `❌ No se pudo conectar al servidor de actualización: ${err.message}`,
+                        variant: 'danger',
+                        duration: 10000
+                    }
+                }));
+            }
         });
     }
 }

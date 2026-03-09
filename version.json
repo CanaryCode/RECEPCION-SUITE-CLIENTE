@@ -1,7 +1,17 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.8",
   "buildDate": "2026-03-09",
   "changelog": {
+    "1.0.8": [
+      "✅ PRUEBA FINAL: Sistema de actualización remota forzada FUNCIONAL",
+      "Añadido archivo remote-update-success.js",
+      "Confirmación de descarga y notificaciones en tiempo real"
+    ],
+    "1.0.7": [
+      "🎯 PRUEBA DE ACTUALIZACIÓN FORZADA desde Panel de Admin",
+      "Añadido archivo update-test-v7.js para verificar actualización remota",
+      "Sistema de notificaciones visuales completamente funcional"
+    ],
     "1.0.6": [
       "PRUEBA FINAL: Actualización remota real",
       "Añadido archivo test-update-v6.js para verificar descarga"
