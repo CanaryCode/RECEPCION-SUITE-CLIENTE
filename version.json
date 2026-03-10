@@ -1,7 +1,12 @@
 {
-  "version": "1.0.9",
-  "buildDate": "2026-03-09",
+  "version": "1.0.10",
+  "buildDate": "2026-03-10",
   "changelog": {
+    "1.0.10": [
+      "✅ FIX: Botón de chat ahora visible al iniciar la aplicación",
+      "Eliminada clase d-none de botones flotantes de chat",
+      "Simplificada inicialización del módulo de chat"
+    ],
     "1.0.9": [
       "🚀 AUTO-RESTART: Agent se reinicia automáticamente después de actualizar",
       "Badge del admin se actualiza sin intervención manual",
