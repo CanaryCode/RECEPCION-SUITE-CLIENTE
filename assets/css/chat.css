@@ -468,3 +468,21 @@
     background: rgba(0,0,0,0.05);
     transform: scale(1.1);
 }
+/* AVATARS IN SIDEBAR */
+.avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
+
+.bg-primary-soft {
+    background-color: rgba(13, 110, 253, 0.1);
+}

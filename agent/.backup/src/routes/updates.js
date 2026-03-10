@@ -128,15 +128,93 @@ router.post('/install', async (req, res) => {
             });
         } else {
             logToFile(`Iniciada descarga e instalación real en segundo plano.`);
+
+            // Obtener referencia al túnel WebSocket para notificaciones
+            const getWsTunnel = () => {
+                try {
+                    const mainModule = require('../index.js');
+                    return mainModule.wsTunnel ? mainModule.wsTunnel() : null;
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            // Función auxiliar para enviar notificaciones
+            const sendNotification = (title, message, variant = 'info', duration = 5000) => {
+                const wsTunnel = getWsTunnel();
+                if (wsTunnel && wsTunnel.readyState === 1) { // WebSocket.OPEN
+                    wsTunnel.send(JSON.stringify({
+                        type: 'broadcast_to_clients',
+                        payload: {
+                            type: 'system_notification',
+                            title,
+                            message,
+                            variant,
+                            duration
+                        }
+                    }));
+                }
+            };
+
             // Iniciar actualización real en segundo plano
             updater.downloadAndInstall()
                 .then(result => {
                     console.log('[AGENT] Actualización completada:', result);
                     logToFile(`Actualización completada: ${JSON.stringify(result)}`);
+
+                    // Si la actualización fue exitosa y se requiere reinicio
+                    if (result.success && result.needsRestart) {
+                        const restartDelay = 5000; // 5 segundos
+                        console.log(`[AGENT] ⚡ Reiniciando agent en ${restartDelay/1000} segundos para aplicar cambios...`);
+                        logToFile(`Auto-restart programado en ${restartDelay}ms`);
+
+                        // Notificación de éxito + reinicio inminente
+                        sendNotification(
+                            '✅ Actualización Completada',
+                            `Sistema actualizado correctamente. Reiniciando en ${restartDelay/1000} segundos...`,
+                            'success',
+                            restartDelay
+                        );
+
+                        // Programar reinicio automático
+                        setTimeout(() => {
+                            console.log('[AGENT] 🔄 Ejecutando auto-restart...');
+                            logToFile('Ejecutando process.exit(0) para reinicio automático vía PM2');
+
+                            // Notificación final justo antes de reiniciar
+                            sendNotification(
+                                '🔄 Reiniciando...',
+                                'La aplicación se reiniciará ahora. Vuelve a conectar en unos segundos.',
+                                'warning',
+                                3000
+                            );
+
+                            // Reiniciar después de un breve delay
+                            setTimeout(() => {
+                                process.exit(0); // PM2 reiniciará automáticamente el proceso
+                            }, 500);
+                        }, restartDelay);
+                    } else if (result.success && !result.needsRestart) {
+                        // Actualización exitosa pero no requiere reinicio
+                        sendNotification(
+                            '✅ Sistema Actualizado',
+                            'El sistema se actualizó correctamente sin necesidad de reiniciar.',
+                            'success',
+                            5000
+                        );
+                    }
                 })
                 .catch(error => {
                     console.error('[AGENT] Error en actualización:', error);
                     logToFile(`Error en actualización: ${error.message}`);
+
+                    // Notificación de error
+                    sendNotification(
+                        '❌ Error de Actualización',
+                        `No se pudo completar la actualización: ${error.message}`,
+                        'danger',
+                        10000
+                    );
                 });
 
             // Responder inmediatamente

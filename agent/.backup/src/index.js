@@ -687,3 +687,8 @@ function executeRemoteCommand(payload) {
 }
 
 setTimeout(connectToCentral, 3000);
+
+// Exportar wsTunnel para que otros módulos puedan acceder a él
+module.exports = {
+    wsTunnel: () => wsTunnel
+};

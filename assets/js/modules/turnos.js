@@ -20,6 +20,7 @@ export const TurnosManager = {
     activeVacationWorker: null,
     copiedRange: null,
     history: { undo: [], redo: [], maxSteps: 50 },
+    lastRaffleResults: [],
 
     /**
      * INICIALIZACIÓN
@@ -65,11 +66,23 @@ export const TurnosManager = {
         document.getElementById('btnAutoAssign_Cuadrante')?.addEventListener('click', () => this.autoAssignWeek());
         document.getElementById('btnExportWeek_Cuadrante')?.addEventListener('click', () => this.difundirSemana());
         document.getElementById('btnExportMonth_Mensual')?.addEventListener('click', () => this.difundirMes());
+        document.getElementById('btnAutoAssign_Mensual')?.addEventListener('click', () => this.autoAssignMonth());
+        document.getElementById('btnSaveTurnos_Mensual')?.addEventListener('click', () => this.saveChanges());
+        document.getElementById('btnCancelEdit_Mensual')?.addEventListener('click', () => this.cancelEdit());
+        document.getElementById('btnReloadTurnos_Cuadrante')?.addEventListener('click', () => this.confirmReload());
+        document.getElementById('btnReloadTurnos_Mensual')?.addEventListener('click', () => this.confirmReload());
+        document.getElementById('btnReloadTurnos_Vacaciones')?.addEventListener('click', () => this.confirmReload());
+        document.getElementById('btnClearTurnos_Cuadrante')?.addEventListener('click', () => this.confirmClear('cuadrante'));
+        document.getElementById('btnClearTurnos_Mensual')?.addEventListener('click', () => this.confirmClear('mensual'));
+        document.getElementById('btnClearTurnos_Vacaciones')?.addEventListener('click', () => this.confirmClear('vacaciones'));
 
         // Acciones Vacaciones
         document.getElementById('btnSaveVacaciones')?.addEventListener('click', () => this.saveChanges());
         document.getElementById('btnCancelVacaciones')?.addEventListener('click', () => this.cancelEdit());
         document.getElementById('btnAutoAssignVac')?.addEventListener('click', () => this.autoAssignVacations());
+        document.getElementById('btnAutoAssign_Cuadrante')?.addEventListener('click', () => this.autoAssignWeek());
+        document.getElementById('btnImprimirTurnos')?.addEventListener('click', () => this.imprimirTurnos());
+        document.getElementById('btnSaveVacationAllowance')?.addEventListener('click', () => this.saveVacationAllowance());
 
         // Eventos del Modal PIN
         document.getElementById('btnConfirmPinTurnos')?.addEventListener('click', () => this.verifyPin());
@@ -83,7 +96,9 @@ export const TurnosManager = {
         document.getElementById('selectMensualMonth')?.addEventListener('change', () => this.renderMonthlyView());
         document.getElementById('selectMensualYear')?.addEventListener('change', () => this.renderMonthlyView());
         document.getElementById('selectVacacionesYear')?.addEventListener('change', () => this.renderVacationView());
-        document.getElementById('btnAutoAssignVacations')?.addEventListener('click', () => this.autoAssignVacations());
+        document.getElementById('btnSorteoVacaciones')?.addEventListener('click', () => this.generarSorteoVacaciones());
+        document.getElementById('btnStartLottery')?.addEventListener('click', () => this.ejecutarSorteoConAnimacion());
+        document.getElementById('btnRepeatSorteo')?.addEventListener('click', () => this.generarSorteoVacaciones());
 
         // Modal de selección de turno (dentro del modal body)
         document.querySelectorAll('#shiftSelectorModal .list-group-item').forEach(btn => {
@@ -234,6 +249,25 @@ export const TurnosManager = {
             yearSelect.appendChild(opt);
         }
         yearSelect.value = currentYear;
+        this.renderRafflePanel();
+    },
+
+    renderRafflePanel() {
+        const container = document.getElementById('raffle-results-container');
+        const list = document.getElementById('persistentSorteoList');
+        if (!container || !list) return;
+
+        if (!this.lastRaffleResults || this.lastRaffleResults.length === 0) {
+            container.classList.add('d-none');
+            return;
+        }
+
+        container.classList.remove('d-none');
+        list.innerHTML = this.lastRaffleResults.map((name, i) => `
+            <div class="badge bg-white text-dark border shadow-sm p-2 animate__animated animate__fadeIn" style="font-size: 0.9rem;">
+                <span class="text-primary fw-bold me-1">#${i + 1}</span> ${name}
+            </div>
+        `).join('');
     },
 
     populateMonthlySelectors() {
@@ -1258,7 +1292,8 @@ export const TurnosManager = {
             'p': 'horario partido', 'h. partido': 'horario partido', 'horario partido': 'horario partido',
             'e': 'extra', 'extra': 'extra',
             'r': 'reservas', 'reservas': 'reservas',
-            'esp': 'especial', 'especial': 'especial'
+            'esp': 'especial', 'especial': 'especial',
+            'pr': 'prácticas', 'prácticas': 'prácticas'
         };
 
         this.shifts.forEach(s => {
@@ -1417,7 +1452,9 @@ export const TurnosManager = {
             { key: 'reservas', label: 'Reservas', color: 'shift-reservas' },
             { key: 'libres', label: 'Libres', color: 'shift-libre' },
             { key: 'vacaciones', label: 'Vacaciones', color: 'shift-vacaciones' },
-            { key: 'baja', label: 'Baja', color: 'shift-baja' }
+            { key: 'baja', label: 'Baja', color: 'shift-baja' },
+            { key: 'pedidos', label: 'Días Pedidos', color: 'bg-primary' },
+            { key: 'debidos', label: 'Días Debidos', color: 'bg-danger' }
         ];
 
         // Calcular rankings para todos los usuarios
@@ -1432,9 +1469,14 @@ export const TurnosManager = {
         });
 
         tbody.innerHTML = types.map(t => `
-            <tr onclick="TurnosManager.showShiftRanking('${t.key}', '${t.label}')">
-                <td class="fw-bold"><div class="legend-color ${t.color} d-inline-block me-2" style="width:12px;height:12px;border-radius:3px;"></div>${t.label}</td>
-                <td class="text-center font-monospace fw-bold">${userData[t.key] || 0}</td>
+            <tr onclick="${t.key !== 'pedidos' && t.key !== 'debidos' ? `TurnosManager.showShiftRanking('${t.key}', '${t.label}')` : ''}" style="${t.key !== 'pedidos' && t.key !== 'debidos' ? 'cursor:pointer' : ''}">
+                <td class="fw-bold">
+                    <div class="legend-color ${t.color.startsWith('bg-') ? t.color : t.color} d-inline-block me-2" style="width:12px;height:12px;border-radius:3px;"></div>
+                    ${t.label}
+                </td>
+                <td class="text-center font-monospace fw-bold ${t.key === 'debidos' ? (userData[t.key] < 0 ? 'text-danger' : (userData[t.key] > 0 ? 'text-success' : '')) : ''}">
+                    ${t.key === 'debidos' && userData[t.key] > 0 ? '+' : ''}${userData[t.key] || 0}
+                </td>
                 <td class="text-center"><span class="badge bg-light text-dark border">${rankings[t.key]}</span></td>
             </tr>
         `).join('');
@@ -1480,7 +1522,9 @@ export const TurnosManager = {
                 user: u,
                 count: count,
                 available: available,
-                ratio: ratio
+                ratio: ratio,
+                pedidos: data.pedidos || 0,
+                debidos: data.debidos || 0
             };
         });
 
@@ -1509,7 +1553,9 @@ export const TurnosManager = {
                     <span class="text-primary fw-bold">${(d.ratio * 100).toFixed(1)}%</span>
                     <small class="text-muted d-block" style="font-size: 0.65rem;">(${d.count}/${d.available})</small>
                 </td>
-                <td class="text-center">${d.count}</td>
+                <td class="text-center fw-bold text-success">${d.count}</td>
+                <td class="text-center"><span class="badge bg-primary px-2">${d.pedidos}</span></td>
+                <td class="text-center fw-bold ${d.debidos < 0 ? 'text-danger' : (d.debidos > 0 ? 'text-success' : 'text-muted')}">${d.debidos > 0 ? '+' : ''}${d.debidos}</td>
             </tr>
         `).join('');
     },
@@ -2040,12 +2086,14 @@ export const TurnosManager = {
         const btnCancelVac = document.getElementById('btnCancelVacaciones');
         const btnAutoVac = document.getElementById('btnAutoAssignVac');
         const btnReloadVac = document.getElementById('btnReloadTurnos_Vacaciones');
+        const btnSorteoVac = document.getElementById('btnSorteoVacaciones');
 
         // Mensual specific
         const btnSaveMensual = document.getElementById('btnSaveTurnos_Mensual');
         const btnCancelMensual = document.getElementById('btnCancelEdit_Mensual');
         const btnAutoMensual = document.getElementById('btnAutoAssign_Mensual');
         const btnReloadMensual = document.getElementById('btnReloadTurnos_Mensual');
+        const btnExportMensual = document.getElementById('btnExportMonth_Mensual');
 
         const isCuadrante = this.currentView === 'cuadrante';
         const isVacaciones = this.currentView === 'vacaciones';
@@ -2076,20 +2124,22 @@ export const TurnosManager = {
         updateBtn(btnSaveCuad, isCuadrante, true);
         updateBtn(btnCancelCuad, isCuadrante, true);
         updateBtn(btnAutoCuad, isCuadrante, true);
-        updateBtn(btnReloadCuad, isCuadrante, false);
-        updateBtn(btnExportCuad, isCuadrante, false);
+        updateBtn(btnReloadCuad, isCuadrante, true);
+        updateBtn(btnExportCuad, isCuadrante, true);
 
         // Mensual tools
         updateBtn(btnSaveMensual, isMensual, true);
         updateBtn(btnCancelMensual, isMensual, true);
         updateBtn(btnAutoMensual, isMensual, true);
-        updateBtn(btnReloadMensual, isMensual, false);
+        updateBtn(btnReloadMensual, isMensual, true);
+        updateBtn(btnExportMensual, isMensual, true);
 
         // Vacaciones tools
         updateBtn(btnSaveVac, isVacaciones, true);
         updateBtn(btnCancelVac, isVacaciones, true);
         updateBtn(btnAutoVac, isVacaciones, true);
-        updateBtn(btnReloadVac, isVacaciones, false);
+        updateBtn(btnReloadVac, isVacaciones, true);
+        updateBtn(btnSorteoVac, isVacaciones, true);
 
         // Clear buttons
         const btnClearCuad = document.getElementById('btnClearTurnos_Cuadrante');
@@ -3065,6 +3115,114 @@ export const TurnosManager = {
         this.shifts = this.history.redo.pop();
         this.render();
         Ui.showToast("Rehecho", "success");
+    },
+
+    /**
+     * SORTEO DE VACACIONES (ORDEN ALEATORIO)
+     */
+    generarSorteoVacaciones() {
+        if (!this.isEditing) {
+            Ui.showToast("Primero debes desbloquear el módulo con 'Modificar'", "warning");
+            return;
+        }
+
+        // Resetear estados del modal
+        document.getElementById('sorteo-state-ready')?.classList.remove('d-none');
+        document.getElementById('sorteo-state-anim')?.classList.add('d-none');
+        document.getElementById('sorteo-state-results')?.classList.add('d-none');
+
+        this.showModal('modalSorteoVacaciones');
+    },
+
+    async ejecutarSorteoConAnimacion() {
+        const activeWorkers = [...this.receptionists];
+        if (activeWorkers.length === 0) {
+            Ui.showToast("No hay personal para el sorteo", "danger");
+            return;
+        }
+
+        // 1. Barajar el resultado final de antemano
+        const finalOrder = [...activeWorkers];
+        for (let i = finalOrder.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [finalOrder[i], finalOrder[j]] = [finalOrder[j], finalOrder[i]];
+        }
+        
+        // Guardar para persistencia
+        this.lastRaffleResults = finalOrder.map(w => typeof w === 'string' ? w : w.nombre);
+
+        // 2. Preparar UI - Mostrar AMBOS estados (Animación y Resultados)
+        document.getElementById('sorteo-state-ready')?.classList.add('d-none');
+        document.getElementById('sorteo-state-anim')?.classList.remove('d-none');
+        document.getElementById('sorteo-state-results')?.classList.add('d-none'); 
+        
+        const spotlightName = document.getElementById('lottery-spotlight-name');
+        const persistentList = document.getElementById('persistentSorteoList');
+        const raffleContainer = document.getElementById('raffle-results-container');
+        const pickingTitle = document.getElementById('lottery-picking-title');
+        const btnRepeat = document.getElementById('btnRepeatSorteo');
+        
+        if (persistentList) persistentList.innerHTML = '';
+        if (raffleContainer) raffleContainer.classList.remove('d-none');
+        if (btnRepeat) btnRepeat.classList.add('d-none');
+
+        // 3. Revelación uno a uno con efecto Slot Machine
+        for (let i = 0; i < finalOrder.length; i++) {
+            const winner = finalOrder[i];
+            const winnerName = typeof winner === 'string' ? winner : winner.nombre;
+
+            // Título dinámico
+            if (pickingTitle) pickingTitle.innerText = `Buscando el puesto #${i + 1}...`;
+
+            // EFECTO SPINNING (Slot Machine)
+            const spinDuration = i === 0 ? 1800 : 1000; 
+            const startTime = Date.now();
+            
+            while (Date.now() - startTime < spinDuration) {
+                const randomWorker = activeWorkers[Math.floor(Math.random() * activeWorkers.length)];
+                const randomName = typeof randomWorker === 'object' ? randomWorker.nombre : randomWorker;
+                
+                if (spotlightName) {
+                    spotlightName.innerText = randomName;
+                    spotlightName.className = 'display-5 fw-bold animate__animated animate__slideInDown';
+                }
+                await new Promise(r => setTimeout(r, 60));
+            }
+
+            // REVELACIÓN DEL GANADOR EN EL FOCO
+            if (spotlightName) {
+                spotlightName.innerText = winnerName;
+                spotlightName.className = 'display-4 fw-bold text-warning animate__animated animate__tada';
+            }
+
+            // Pausa dramática en el foco
+            await new Promise(r => setTimeout(r, 800));
+
+            // AÑADIR A LA LISTA PERSISTENTE (crece a medida que sale)
+            if (persistentList) {
+                const badge = document.createElement('div');
+                badge.className = 'badge bg-white text-dark border shadow-sm p-2 animate__animated animate__zoomIn';
+                badge.style.fontSize = '0.9rem';
+                badge.innerHTML = `<span class="text-primary fw-bold me-1">#${i + 1}</span> ${winnerName}`;
+                persistentList.appendChild(badge);
+            }
+            
+            await new Promise(r => setTimeout(r, 200));
+        }
+
+        // 4. Finalizar
+        if (pickingTitle) pickingTitle.innerText = "¡Sorteo finalizado!";
+        if (spotlightName) {
+            spotlightName.innerText = "¡COMPLETO!";
+            spotlightName.className = 'display-5 fw-bold text-success animate__animated animate__pulse animate__infinite';
+        }
+        
+        await new Promise(r => setTimeout(r, 1000));
+        document.getElementById('sorteo-state-results')?.classList.remove('d-none');
+        document.getElementById('sorteo-state-anim')?.classList.add('d-none');
+        if (btnRepeat) btnRepeat.classList.remove('d-none');
+        
+        Ui.showToast("Sorteo completado con éxito", "success");
     }
 };
 

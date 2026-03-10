@@ -146,6 +146,11 @@ export class ModuleLoader {
             initFunction: 'inicializarNotasPermanentes',
             critical: false
         },
+        'perfil': {
+            selector: '#perfil-content',
+            importPath: 'assets/js/modules/perfil.js',
+            initFunction: 'inicializarPerfil'
+        },
         'precios': {
             selector: '#precios-content',
             importPath: 'assets/js/modules/precios.js',

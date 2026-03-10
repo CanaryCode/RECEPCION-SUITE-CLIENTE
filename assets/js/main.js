@@ -214,6 +214,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 3. Inicializar Sistemas Base
 
     Ui.init();
+    Ui.updateUserUi();
+
+    window.addEventListener('app:login-success', () => {
+      Ui.updateUserUi();
+    });
+
     clock.init();
     Modal.init();
     Router.init();
@@ -239,6 +245,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       { id: "transfers-content", path: "assets/templates/transfers.html" },
       { id: "lost-found-content", path: "assets/templates/lost_found.html" },
       { id: "notas-content", path: "assets/templates/notas_permanentes.html" },
+      { id: "perfil-content", path: "assets/templates/perfil.html" },
       { id: "precios-content", path: "assets/templates/precios.html" },
       {
         id: "system-alarms-content",
@@ -291,8 +298,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       await actualizarWidgetCalendario();
 
       // Inicializar Chat
-      import("./modules/chat.js").then((m) => m.chat && m.chat.init());
-    }, 100);
+      console.log('[Main] Inicializando módulo de chat...');
+      try {
+        const { chat } = await import("./modules/chat.js");
+        if (chat) {
+          console.log('[Main] Módulo chat.js importado. Llamando a init()...');
+          await chat.init();
+          console.log('[Main] ✓ Chat inicializado correctamente.');
+        }
+      } catch (err) {
+        console.error('[Main] Error al inicializar chat:', err);
+      }
+    }, 200);
 
     // --- 5.5 WATCHDOG DE SEGURIDAD (Refresco de Handshake) ---
     // Verifica cada 30 segundos si el agente local sigue vivo

@@ -368,7 +368,13 @@ router.post('/:key', async (req, res) => {
                         id: item.id,
                         msg: item.mensaje || item.msg || '',
                         prioridad: item.prioridad || 'Normal',
-                        activo: item.active !== undefined ? item.active : (item.activo !== undefined ? item.activo : 1)
+                        activo: item.active !== undefined ? item.active : (item.activo !== undefined ? item.activo : 1),
+                        hora: item.hora || null,
+                        type: item.type || 'daily',
+                        date: item.date || null,
+                        days: item.days || null,
+                        day: item.day || null,
+                        usuario: item.usuario || null
                     }));
                 } else if (key === 'riu_precios') {
                     itemsToInsert = data.map(item => ({
@@ -466,9 +472,36 @@ router.post('/:key', async (req, res) => {
 
                 // Inserción genérica con validación de columnas
                 if (itemsToInsert.length > 0) {
-                    const [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
-                    const validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
-                    logToFile(`[Storage] Inserting ${itemsToInsert.length} items into ${tableName}. Valid columns: ${Array.from(validDbColumns).join(',')}`);
+                    let [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
+                    let validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+
+                    // AUTO-MIGRACIÓN NOTAS (Fallback if initNotasDB didn't run or failed)
+                    if (tableName === 'notas' && !validDbColumns.has('protegida')) {
+                        logToFile(`[Storage] Detection: Table 'notas' missing 'protegida' column. Columns found: ${Array.from(validDbColumns).join(',')}`);
+                        try {
+                            if (!validDbColumns.has('protegida')) {
+                                logToFile('[Storage] Migration: Adding column protegida to notas');
+                                await connection.query('ALTER TABLE notas ADD COLUMN protegida TINYINT(1) DEFAULT 0');
+                            }
+                            if (!validDbColumns.has('favorito')) {
+                                logToFile('[Storage] Migration: Adding column favorito to notas');
+                                await connection.query('ALTER TABLE notas ADD COLUMN favorito TINYINT(1) DEFAULT 0');
+                            }
+                            if (!validDbColumns.has('modifiedAt')) {
+                                logToFile('[Storage] Migration: Adding column modifiedAt to notas');
+                                await connection.query('ALTER TABLE notas ADD COLUMN modifiedAt BIGINT DEFAULT NULL');
+                            }
+                            
+                            // Re-fetch columns after migration
+                            [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
+                            validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+                            logToFile(`[Storage] Auto-migration success. New columns: ${Array.from(validDbColumns).join(',')}`);
+                        } catch (migErr) {
+                            logToFile(`[Storage] CRITICAL: Auto-migration failed for notas: ${migErr.message}`);
+                        }
+                    }
+
+                    logToFile(`[Storage] Saving to ${tableName}. Available DB Columns: ${Array.from(validDbColumns).join(', ')}`);
 
                     for (const item of itemsToInsert) {
                         const itemColumns = Object.keys(item).filter(col => validDbColumns.has(col));

@@ -509,4 +509,49 @@ router.get('/debug-pm2', (req, res) => {
     }
 });
 
+/**
+ * GET /api/system/migrate-notas
+ * Forces the migration of the 'notas' table.
+ */
+router.get('/migrate-notas', async (req, res) => {
+    try {
+        logToFile('[SYSTEM] Manual migration for notas triggered');
+        const db = require('../db');
+        const [columns] = await db.query('SHOW COLUMNS FROM notas');
+        const colNames = columns.map(c => c.Field);
+        const results = [];
+
+        logToFile(`[SYSTEM] Current columns in notas: ${colNames.join(', ')}`);
+
+        if (!colNames.includes('protegida')) {
+            await db.query('ALTER TABLE notas ADD COLUMN protegida TINYINT(1) DEFAULT 0');
+            results.push('Added protegida');
+            logToFile('[SYSTEM] Added column content: protegida');
+        }
+        if (!colNames.includes('favorito')) {
+            await db.query('ALTER TABLE notas ADD COLUMN favorito TINYINT(1) DEFAULT 0');
+            results.push('Added favorito');
+            logToFile('[SYSTEM] Added column content: favorito');
+        }
+        if (!colNames.includes('modifiedAt')) {
+            await db.query('ALTER TABLE notas ADD COLUMN modifiedAt BIGINT DEFAULT NULL');
+            results.push('Added modifiedAt');
+            logToFile('[SYSTEM] Added column content: modifiedAt');
+        }
+
+        const [newColumns] = await db.query('SHOW COLUMNS FROM notas');
+        const newColNames = newColumns.map(c => c.Field);
+
+        res.json({
+            success: true,
+            changes: results,
+            before: colNames,
+            after: newColNames
+        });
+    } catch (err) {
+        logToFile(`[SYSTEM] ERROR in manual migration: ${err.message}`);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

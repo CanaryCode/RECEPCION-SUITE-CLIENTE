@@ -59,7 +59,6 @@ export const Api = {
             finalUrl = `https://${host}:${port}${finalUrl.startsWith('/') ? '' : '/'}${finalUrl}`;
         }
 
-        console.log(`[DEBUG API] endpoint: ${endpoint} -> finalUrl: ${finalUrl}`);
         return finalUrl;
     },
 
@@ -71,7 +70,7 @@ export const Api = {
      * PETICIÓN GET (Lectura)
      * Se usa para pedir datos al servidor (ej: leer una nota o un archivo).
      */
-    async get(endpoint) {
+    async get(endpoint, options = {}) {
         try {
             const finalUrl = this._getFinalUrl(endpoint);
             const separator = endpoint.includes('?') ? '&' : '?';
@@ -80,10 +79,11 @@ export const Api = {
 
             const headers = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                ...(options.headers || {})
             };
 
-            const response = await fetch(url, { headers });
+            const response = await fetch(url, { ...options, headers });
             if (response.status === 403) {
                 SecurityBarrier.show('UNAUTHORIZED');
                 throw new Error('Unauthorized');
@@ -100,16 +100,18 @@ export const Api = {
      * PETICIÓN POST (Creación/Acción)
      * Se usa para enviar datos nuevos o ejecutar acciones (ej: guardar cambios o lanzar una app).
      */
-    async post(endpoint, data) {
+    async post(endpoint, data, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
             const headers = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
-                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || ''
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                ...(options.headers || {})
             };
             const response = await fetch(url, {
                 method: 'POST',
+                ...options,
                 headers,
                 credentials: 'same-origin',
                 body: JSON.stringify(data)
@@ -126,16 +128,18 @@ export const Api = {
         }
     },
 
-    async put(endpoint, data) {
+    async put(endpoint, data, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
             const headers = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
-                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || ''
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                ...(options.headers || {})
             };
             const response = await fetch(url, {
                 method: 'PUT',
+                ...options,
                 headers,
                 body: JSON.stringify(data)
             });
@@ -151,14 +155,16 @@ export const Api = {
         }
     },
 
-    async delete(endpoint) {
+    async delete(endpoint, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
             const headers = {
-                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                ...(options.headers || {})
             };
             const response = await fetch(url, {
                 method: 'DELETE',
+                ...options,
                 headers
             });
             if (response.status === 403) {

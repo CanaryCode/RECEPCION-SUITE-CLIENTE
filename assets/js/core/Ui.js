@@ -13,8 +13,49 @@ export const Ui = {
      * INICIALIZACIÓN GLOBAL DE UI
      */
     init() {
-        // Placeholder para inicialización global si fuera necesaria
-        // Por ahora lo dejamos vacío para evitar el crash en main.js
+        // Escuchar cambios de usuario para actualizar la UI global
+        window.addEventListener('user-updated', () => {
+            this.updateUserUi();
+        });
+    },
+
+    /**
+     * ACTUALIZAR UI DE USUARIO (Avatar y Nombre)
+     * Sincroniza los indicadores de usuario en la barra de navegación.
+     */
+    updateUserUi: async () => {
+        const { sessionService } = await import('../services/SessionService.js');
+        const { userService } = await import('../services/UserService.js');
+        
+        const username = sessionService.getUser();
+        if (!username) {
+            document.getElementById('globalUserName').innerText = 'Usuario';
+            document.getElementById('globalUserAvatar')?.classList.add('d-none');
+            document.getElementById('globalUserIcon')?.classList.remove('d-none');
+            return;
+        }
+
+        try {
+            const user = await userService.getCurrentProfile();
+            const displayName = user?.display_name || username;
+            
+            document.getElementById('globalUserName').innerText = displayName;
+            
+            const avatarImg = document.getElementById('globalUserAvatar');
+            const userIcon = document.getElementById('globalUserIcon');
+            
+            if (user?.avatar_url && avatarImg) {
+                avatarImg.src = user.avatar_url;
+                avatarImg.classList.remove('d-none');
+                userIcon?.classList.add('d-none');
+            } else if (avatarImg) {
+                avatarImg.classList.add('d-none');
+                userIcon?.classList.remove('d-none');
+            }
+        } catch (e) {
+            console.warn('[Ui] Error al actualizar UI de usuario:', e);
+            document.getElementById('globalUserName').innerText = username;
+        }
     },
 
     /**

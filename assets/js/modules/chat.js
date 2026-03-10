@@ -29,75 +29,113 @@ class ChatModule {
         this.typingTimeout = null;
         this.isTyping = false;
         this.presenceInterval = null;
+        this.isInitialized = false;
+        this.userAvatars = null;
     }
 
     async init() {
-        console.log("[CHAT] Initializing module...");
+        if (this.isInitialized) return;
+        this.isInitialized = true;
         
-        this.container = document.getElementById('chat-container');
-        this.toggleBtn = document.getElementById('chat-toggle-btn');
-        this.badge = document.getElementById('chat-badge');
-        this.list = document.getElementById('chat-messages-list');
-        this.input = document.getElementById('chat-input');
-        // El id se actualizó a chat-user-list
-        this.userList = document.getElementById('chat-user-list');
-        this.currentLabel = document.getElementById('chat-current-recipient-label');
-        this.presenceStatus = document.getElementById('chat-presence-status');
-        this.muteBtn = document.getElementById('chat-mute-btn');
-        this.fileBtn = document.getElementById('chat-btn-attach');
-        this.fileInput = document.getElementById('chat-file-input');
-        this.emojiBtn = document.getElementById('chat-btn-emoji');
+        // Refresh current user from session just in case
+        this.currentUser = sessionStorage.getItem('session_user') || 'Invitado';
+        
+        console.log(`[CHAT] Initializing module for user: ${this.currentUser}...`);
+        
+        try {
+            this.container = document.getElementById('chat-container');
+            this.toggleBtn = document.getElementById('chat-toggle-btn');
+            this.badge = document.getElementById('chat-badge');
+            this.list = document.getElementById('chat-messages-list');
+            this.input = document.getElementById('chat-input');
+            this.userList = document.getElementById('chat-user-list');
+            this.currentLabel = document.getElementById('chat-current-recipient-label');
+            this.presenceStatus = document.getElementById('chat-presence-status');
+            this.muteBtn = document.getElementById('chat-mute-btn');
+            this.fileBtn = document.getElementById('chat-btn-attach');
+            this.fileInput = document.getElementById('chat-file-input');
+            this.emojiBtn = document.getElementById('chat-btn-emoji');
 
-        this.setupEventListeners();
-        this.updateMuteIcon();
-        await this.loadUnreadCounts();
-        this.loadHistory(); // Load global initially
+            console.log("[CHAT] DOM Elements found:", {
+                container: !!this.container,
+                toggleBtn: !!this.toggleBtn,
+                userList: !!this.userList,
+                messagesList: !!this.list,
+                badge: !!this.badge
+            });
 
-        // Listen for shared WebSocket messages
-        window.addEventListener('sync:ws_message', (e) => {
-            const data = e.detail;
-            console.log(`[CHAT] Event received: ${data.type}`, data.payload);
-            if (data.type === 'chat_message') {
-                this.handleIncomingMessage(data.payload);
-            } else if (data.type === 'chat_delete' || data.type === 'chat_delete_multiple') {
-                const ids = data.type === 'chat_delete' ? [data.payload.id] : data.payload.ids;
-                if (ids && Array.isArray(ids)) ids.forEach(id => this.handleDeletedMessage(id));
-            } else if (data.type === 'user_connected') {
-                this.handleUserPresence(data.payload);
-            } else if (data.type === 'online_users') {
-                this.handleOnlineUsersList(data.payload.users);
-            } else if (data.type === 'messages_read') {
-                this.handleMessagesRead(data.payload);
-            } else if (data.type === 'message_delivered') {
-                this.handleMessageDelivered(data.payload);
-            } else if (data.type === 'chat_clear_conversation') {
-                this.handleClearConversation(data.payload);
-            } else if (data.type === 'chat_typing') {
-                this.handleRemoteTyping(data.payload);
-            } else if (data.type === 'chat_stop_typing') {
-                const stopPayload = { ...data.payload, stop: true };
-                this.handleRemoteTyping(stopPayload);
+            if (!this.container || !this.toggleBtn) {
+                console.warn("[CHAT] Essential DOM elements missing. Is chat.html loaded?");
+                return;
             }
-        });
 
-        this.toggleBtn.classList.remove('d-none');
-        if (this.muteBtn) this.muteBtn.classList.remove('d-none');
-        
-        // Cargar lista completa de usuarios del sistema
-        if (window.APP_CONFIG && window.APP_CONFIG.HOTEL && window.APP_CONFIG.HOTEL.RECEPCIONISTAS) {
-            this.allUsers = window.APP_CONFIG.HOTEL.RECEPCIONISTAS.map(r => typeof r === 'string' ? r : r.nombre);
+            this.setupEventListeners();
+            if (this.muteBtn) this.updateMuteIcon();
+            
+            console.log("[CHAT] Loading unread counts...");
+            await this.loadUnreadCounts();
+            
+            console.log("[CHAT] Loading history...");
+            this.loadHistory(); // Load global initially
+
+            // Listen for shared WebSocket messages
+            window.addEventListener('sync:ws_message', (e) => {
+                const data = e.detail;
+                console.log(`[CHAT] WS Message Event: ${data.type}`, data.payload);
+                if (data.type === 'chat_message') {
+                    this.handleIncomingMessage(data.payload);
+                } else if (data.type === 'chat_delete' || data.type === 'chat_delete_multiple') {
+                    const ids = data.type === 'chat_delete' ? [data.payload.id] : data.payload.ids;
+                    if (ids && Array.isArray(ids)) ids.forEach(id => this.handleDeletedMessage(id));
+                } else if (data.type === 'user_connected') {
+                    this.handleUserPresence(data.payload);
+                } else if (data.type === 'online_users') {
+                    this.handleOnlineUsersList(data.payload.users);
+                } else if (data.type === 'messages_read') {
+                    this.handleMessagesRead(data.payload);
+                } else if (data.type === 'message_delivered') {
+                    this.handleMessageDelivered(data.payload);
+                } else if (data.type === 'chat_clear_conversation') {
+                    this.handleClearConversation(data.payload);
+                } else if (data.type === 'chat_typing') {
+                    this.handleRemoteTyping(data.payload);
+                } else if (data.type === 'chat_stop_typing') {
+                    const stopPayload = { ...data.payload, stop: true };
+                    this.handleRemoteTyping(stopPayload);
+                }
+            });
+
+            if (this.toggleBtn) this.toggleBtn.classList.remove('d-none');
+            if (this.muteBtn) this.muteBtn.classList.remove('d-none');
+            
+            // Cargar lista completa de usuarios del sistema
+            if (window.APP_CONFIG && window.APP_CONFIG.HOTEL && window.APP_CONFIG.HOTEL.RECEPCIONISTAS) {
+                this.allUsers = window.APP_CONFIG.HOTEL.RECEPCIONISTAS.map(r => typeof r === 'string' ? r : r.nombre);
+            }
+            
+            // Renderizar inmediatamente la lista de usuarios en el panel lateral
+            this.updateRecipientList();
+        } catch (err) {
+            console.error("[CHAT] Critical error during init:", err);
         }
-        
-        // Renderizar inmediatamente la lista de usuarios en el panel lateral
-        this.updateRecipientList();
     }
 
     setupEventListeners() {
-        this.toggleBtn.addEventListener('click', () => this.toggleChat());
-        document.getElementById('chat-btn-close').addEventListener('click', () => this.toggleChat());
-        document.getElementById('chat-btn-minimize').addEventListener('click', () => {
-            this.container.classList.toggle('minimized');
-        });
+        if (this.toggleBtn) {
+            this.toggleBtn.addEventListener('click', () => this.toggleChat());
+        }
+        
+        const closeBtn = document.getElementById('chat-btn-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.toggleChat());
+        }
+
+        const minBtn = document.getElementById('chat-btn-minimize');
+        if (minBtn) {
+            minBtn.addEventListener('click', () => {
+                if (this.container) this.container.classList.toggle('minimized');
+            });
+        }
 
         if (this.muteBtn) {
             this.muteBtn.addEventListener('click', (e) => {
@@ -106,10 +144,13 @@ class ChatModule {
             });
         }
 
-        document.getElementById('chat-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.sendMessage();
-        });
+        const form = document.getElementById('chat-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.sendMessage();
+            });
+        }
 
         // Event delegation para los clicks en la lista de usuarios
         if (this.userList) {
@@ -138,8 +179,8 @@ class ChatModule {
         }
 
         window.addEventListener('user-updated', (e) => {
-            this.currentUser = e.detail.name || 'Invitado';
-            // Note: Re-identification is handled by RealTimeSync
+            const newName = (e.detail && e.detail.name) || (window.sessionService ? window.sessionService.getUser() : null) || 'Invitado';
+            this.currentUser = newName || 'Invitado';
         });
 
         // Typing indicator and Enter to send
@@ -476,18 +517,41 @@ class ChatModule {
         this.updateRecipientList();
     }
 
-    updateRecipientList() {
+    async fetchUserAvatars() {
+        try {
+            const data = await Api.get('storage/recepcionistas');
+            this.userAvatars = {};
+            if (Array.isArray(data)) {
+                data.forEach(u => {
+                    const name = typeof u === 'string' ? u : u.nombre;
+                    const avatar = typeof u === 'object' ? u.avatar_url : null;
+                    if (avatar) this.userAvatars[name] = avatar;
+                });
+            }
+        } catch (e) {
+            console.warn("[CHAT] Could not fetch user avatars:", e);
+        }
+    }
+
+    async updateRecipientList() {
         if (!this.userList) return;
         
+        // Cargar avatares si aún no los tenemos
+        if (!this.userAvatars) {
+            await this.fetchUserAvatars();
+        }
+
         const isGlobalActive = this.currentRecipient === null ? 'active' : '';
         this.userList.innerHTML = `
-            <div class="list-group-item list-group-item-action border-0 mb-1 rounded ${isGlobalActive}" data-user="global">
-                <i class="bi bi-globe me-2 text-primary"></i>Chat Global
+            <div class="list-group-item list-group-item-action border-0 mb-1 rounded d-flex align-items-center ${isGlobalActive}" data-user="global">
+                <div class="avatar-circle bg-primary-soft me-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-globe text-primary" style="font-size: 0.9rem;"></i>
+                </div>
+                <span>Chat Global</span>
             </div>
             <div class="px-2 pt-2 pb-1 text-uppercase text-secondary" style="font-size: 0.65rem; font-weight: 800; opacity: 0.7;">Usuarios</div>
         `;
         
-        // Unir usuarios del sistema y usuarios conectados loggeados
         const allPotentialUsers = new Set([...this.allUsers, ...Array.from(this.onlineUsers)]);
         const usersArray = Array.from(allPotentialUsers).filter(u => u !== this.currentUser).sort((a, b) => {
             const aOnline = this.onlineUsers.has(a);
@@ -500,23 +564,28 @@ class ChatModule {
         usersArray.forEach(user => {
             const isOnline = this.onlineUsers.has(user);
             const isActive = this.currentRecipient === user ? 'active' : '';
-            
-            // Usar un punto verde o gris según el estado
-            const dotColor = isOnline ? 'success' : 'secondary';
-            const iconHTML = `<i class="bi bi-circle-fill text-${dotColor} me-2" style="font-size: 0.5rem; vertical-align: middle;"></i>`;
-            const nameHTML = isOnline ? `<strong>${user}</strong>` : user;
             const unreadCount = this.unreadCounts[user] || 0;
+            const avatarUrl = this.userAvatars && this.userAvatars[user];
+            
+            const dotColor = isOnline ? 'success' : 'secondary';
+            const avatarHtml = avatarUrl 
+                ? `<img src="/${avatarUrl}" class="avatar-img shadow-sm">`
+                : `<div class="avatar-circle bg-light d-flex align-items-center justify-content-center"><i class="bi bi-person text-secondary"></i></div>`;
+
             const badgeHTML = unreadCount > 0 ? `<span class="badge rounded-pill bg-danger ms-auto" style="font-size: 0.6rem;">${unreadCount}</span>` : '';
 
             this.userList.innerHTML += `
                 <div class="list-group-item list-group-item-action border-0 px-2 py-2 mb-1 rounded d-flex align-items-center ${isActive}" data-user="${user}">
-                    ${iconHTML} <span class="text-truncate" style="flex: 1;">${nameHTML}</span>
+                    <div class="position-relative me-3">
+                        ${avatarHtml}
+                        <span class="position-absolute bottom-0 end-0 p-1 bg-${dotColor} border border-2 border-white rounded-circle" style="width: 10px; height: 10px;"></span>
+                    </div>
+                    <span class="text-truncate" style="flex: 1; font-size: 0.85rem;">${isOnline ? `<strong>${user}</strong>` : user}</span>
                     ${badgeHTML}
                 </div>
             `;
         });
 
-        // Actualizar label actual si el destinatario se desconectó
         if (this.currentRecipient && !usersArray.includes(this.currentRecipient) && !this.onlineUsers.has(this.currentRecipient)) {
             this.setRecipient(null);
         }

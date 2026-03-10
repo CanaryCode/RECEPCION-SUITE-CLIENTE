@@ -97,9 +97,20 @@
                     </div>
                 </div>
 
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="sys_alarm_active" checked>
-                    <label class="form-check-label" for="sys_alarm_active">Alarma Activa</label>
+                <div class="row align-items-end mb-3">
+                    <div class="col-8">
+                        <label class="form-label small fw-bold">Alcance de la Alerta</label>
+                        <select id="sys_alarm_scope" class="form-select bg-light fw-bold" name="sys_alarm_scope">
+                            <option value="global" class="fw-bold">🌍 General (Para todos)</option>
+                            <option value="personal" class="fw-bold">👤 Personal (Solo para mi)</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="sys_alarm_active" name="sys_alarm_active" checked>
+                            <label class="form-check-label small fw-bold" for="sys_alarm_active">Activa</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="d-grid gap-2 mt-4">
@@ -122,6 +133,7 @@
                 <table id="table-system-alarms" class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
+                            <th style="width: 40px;"></th>
                             <th style="width: 80px;" data-sort="hora">Hora</th>
                             <th data-sort="mensaje">Mensaje</th>
                             <th data-sort="type">Frecuencia</th>

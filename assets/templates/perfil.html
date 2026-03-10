@@ -1,0 +1,187 @@
+<div class="container-fluid py-4 animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                    <i class="bi bi-person-gear fs-2"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-1">Mi Perfil</h2>
+                    <p class="text-muted mb-0">Gestiona tu información personal y de seguridad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar: Usuario y Foto -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="position-relative d-inline-block mb-3">
+                        <img id="profileAvatarPrew" src="assets/img/default-avatar.png" 
+                             class="rounded-circle shadow-sm border border-4 border-white" 
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             onerror="this.src='https://ui-avatars.com/api/?name=' + document.getElementById('globalUserName').innerText + '&background=random&size=150'">
+                        <button class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 shadow-sm" 
+                                onclick="document.getElementById('inputAvatar').click()"
+                                title="Cambiar foto">
+                            <i class="bi bi-camera-fill"></i>
+                        </button>
+                        <input type="file" id="inputAvatar" class="d-none" accept="image/*">
+                    </div>
+                    
+                    <h4 class="fw-bold mb-1" id="profileDisplayNameHead">Recepcionista</h4>
+                    <p class="text-muted small mb-3" id="profileUsernameHead">@username</p>
+                    
+                    <div class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                        <i class="bi bi-check-circle-fill me-1"></i> Cuenta Activa
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-start">
+                        <h6 class="fw-bold mb-3">Información de Sistema</h6>
+                        <div class="d-flex align-items-center mb-2 small">
+                            <i class="bi bi-shield-lock me-2 text-muted"></i>
+                            <span class="text-muted">Nivel de Acceso:</span>
+                            <span class="ms-auto fw-medium">Recepcionista</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-0 small">
+                            <i class="bi bi-calendar3 me-2 text-muted"></i>
+                            <span class="text-muted">Miembro desde:</span>
+                            <span class="ms-auto fw-medium" id="profileCreatedAt">--/--/----</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content: Formularios -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold mb-0">Datos Personales</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formPerfilDatos">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Nombre a mostrar</label>
+                                <input type="text" class="form-control" id="profileDisplayNameInput" placeholder="Tu nombre público">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="profileEmailInput" placeholder="usuario@hotelgaroe.com">
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm border-start border-4 border-warning">
+                <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+                    <h5 class="card-title fw-bold mb-0">Seguridad y Contraseña</h5>
+                    <div id="passwordStatusBadge" class="badge bg-secondary">Cargando...</div>
+                </div>
+                <div class="card-body p-4">
+                    <form id="formPerfilSeguridad">
+                        <div class="row g-3">
+                            <div class="col-md-12" id="currentPasswordGroup">
+                                <label class="form-label small fw-bold text-muted">Contraseña Actual <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="profilePasswordInput">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="Utils.togglePassword('profilePasswordInput')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">Obligatoria para cualquier cambio de seguridad.</div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Nueva Contraseña</label>
+                                <input type="password" class="form-control" id="profileNewPasswordInput" placeholder="Dejar en blanco para no cambiar">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">Confirmar Nueva Contraseña</label>
+                                <input type="password" class="form-control" id="profileConfirmPasswordInput">
+                            </div>
+                            
+                            <div class="col-12 mt-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-warning fw-bold px-4">
+                                    <i class="bi bi-key me-2"></i>Actualizar Contraseña
+                                </button>
+                                <button type="button" id="btnRemovePassword" class="btn btn-outline-danger px-4 d-none">
+                                    <i class="bi bi-shield-slash me-2"></i>Quitar Contraseña
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Recortar Imagen -->
+    <div class="modal fade" id="modalCropAvatar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-white border-0">
+                    <h5 class="modal-title fw-bold">Ajustar Foto de Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div id="cropPreviewContainer" class="position-relative overflow-hidden rounded-circle mx-auto border border-4 border-white shadow-sm"
+                         style="width: 250px; height: 250px; background-color: #f0f2f5; cursor: move;">
+                        <img id="cropPreviewImage" src="" style="position: absolute; display: none; user-select: none; pointer-events: none;">
+                    </div>
+                    
+                    <p class="text-muted small mt-3">Arrastra la imagen para centrarla como prefieras</p>
+                    
+                    <div class="mt-4">
+                        <label class="form-label small fw-bold text-muted d-block mb-2">Zoom</label>
+                        <input type="range" class="form-range" id="cropZoomRange" min="1" max="3" step="0.01" value="1">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnSaveCrop" class="btn btn-primary px-4 fw-bold">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-panel {
+        background-color: #f8f9fa;
+    }
+    .custom-file-upload {
+        cursor: pointer;
+    }
+    .login-user-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .login-user-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    #cropPreviewContainer {
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        border: 2px dashed #ccc !important;
+    }
+    #cropPreviewImage {
+        max-width: none !important;
+    }
+</style>

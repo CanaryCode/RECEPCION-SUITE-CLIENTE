@@ -142,6 +142,16 @@
                         <textarea class="form-control" id="notaContenido" rows="5"
                             placeholder="Ej: La contraseña es 1234..."></textarea>
                     </div>
+                    <!-- Alcance de la Nota -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Alcance de la Nota</label>
+                        <select id="notaScope" class="form-select bg-light fw-bold">
+                            <option value="global" class="fw-bold">🌍 General (Todos pueden ver)</option>
+                            <option value="personal" class="fw-bold">👤 Personal (Solo yo puedo ver)</option>
+                        </select>
+                        <div class="form-text small">Las notas personales solo son visibles para ti.</div>
+                    </div>
+
                     <!-- Nota Protegida Checkbox -->
                     <div class="mb-4">
                         <div class="form-check form-switch bg-light p-2 ps-5 rounded border shadow-sm">

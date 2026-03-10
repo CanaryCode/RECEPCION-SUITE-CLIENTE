@@ -10,19 +10,19 @@
     <!-- Selectores de Vista (Izquierda) -->
     <div class="toolbar-group">
         <div class="btn-group shadow-sm" role="group">
-            <button class="btn btn-outline-primary active fw-bold" id="btnVistaCuadrante" onclick="TurnosManager.cambiarVista('cuadrante')" data-bs-toggle="tooltip" title="Vista de Horario Semanal">
+            <button class="btn btn-outline-primary active fw-bold" id="btnVistaCuadrante" data-bs-toggle="tooltip" title="Vista de Horario Semanal">
                 <i class="bi bi-grid-3x3 me-2"></i>Semanal
             </button>
-            <button class="btn btn-outline-primary fw-bold" id="btnVistaMensual" onclick="TurnosManager.cambiarVista('mensual')" data-bs-toggle="tooltip" title="Vista Mensual de Calendario">
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaMensual" data-bs-toggle="tooltip" title="Vista Mensual de Calendario">
                 <i class="bi bi-calendar-month me-2"></i>Mensual
             </button>
-            <button class="btn btn-outline-primary fw-bold" id="btnVistaAnual" onclick="TurnosManager.cambiarVista('anual')" data-bs-toggle="tooltip" title="Vista Anual Heatmap">
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaAnual" data-bs-toggle="tooltip" title="Vista Anual Heatmap">
                 <i class="bi bi-calendar3 me-2"></i>Anual
             </button>
-            <button class="btn btn-outline-primary fw-bold" id="btnVistaVacaciones" onclick="TurnosManager.cambiarVista('vacaciones')" data-bs-toggle="tooltip" title="Gestión Anual de Vacaciones">
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaVacaciones" data-bs-toggle="tooltip" title="Gestión Anual de Vacaciones">
                 <i class="bi bi-sun-fill me-2"></i>Vacaciones
             </button>
-            <button class="btn btn-outline-primary fw-bold" id="btnVistaEstadisticas" onclick="TurnosManager.cambiarVista('stats')" data-bs-toggle="tooltip" title="Estadísticas y Gráficas">
+            <button class="btn btn-outline-primary fw-bold" id="btnVistaEstadisticas" data-bs-toggle="tooltip" title="Estadísticas y Gráficas">
                 <i class="bi bi-bar-chart-fill me-2"></i>Estadísticas
             </button>
         </div>
@@ -31,11 +31,11 @@
     <!-- Acciones Globais (Derecha) -->
     <div class="toolbar-group d-flex gap-2 align-items-center">
         <!-- Acciones de Edición Unificadas -->
-        <button class="btn btn-primary fw-bold shadow-sm" id="btnEditTurnos" onclick="TurnosManager.handleEditRequest()">
+        <button class="btn btn-primary fw-bold shadow-sm" id="btnEditTurnos">
             <i class="bi bi-pencil-fill me-1"></i>Modificar
         </button>
         <!-- Impresión -->
-        <button class="btn btn-outline-dark fw-bold shadow-sm" onclick="TurnosManager.imprimirTurnos()">
+        <button class="btn btn-outline-dark fw-bold shadow-sm" id="btnImprimirTurnos">
             <i class="bi bi-printer me-2"></i>Imprimir
         </button>
     </div>
@@ -62,25 +62,25 @@
                 
                 <!-- Derecha: Acciones Específicas -->
                 <div class="quadrant-actions d-flex gap-2 align-items-center" id="cuadrante-actions">
-                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Cuadrante" onclick="TurnosManager.saveChanges()">
+                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Cuadrante">
                         <i class="bi bi-check-lg me-1"></i>Guardar
                     </button>
-                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Cuadrante" onclick="TurnosManager.cancelEdit()">
+                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Cuadrante">
                         Cancelar
                     </button>
-                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Cuadrante" onclick="TurnosManager.confirmReload()">
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Cuadrante">
                         <i class="bi bi-arrow-clockwise"></i>Refrescar
                     </button>
-                    <button id="btnAutoAssign_Cuadrante" class="btn btn-outline-info btn-sm d-none fw-bold" onclick="TurnosManager.autoAssignWeek()" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
+                    <button id="btnAutoAssign_Cuadrante" class="btn btn-outline-info btn-sm d-none fw-bold" data-bs-toggle="tooltip" title="Auto-completar turnos vacíos de la semana">
                         <i class="bi bi-magic me-1"></i> Auto-asignar
                     </button>
-                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek_Cuadrante" onclick="TurnosManager.difundirSemana()" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
+                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportWeek_Cuadrante" data-bs-toggle="tooltip" title="Generar imagen para WhatsApp/Difusión">
                         <i class="bi bi-share-fill me-1"></i>Difundir
                     </button>
-                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Cuadrante" onclick="TurnosManager.confirmClear('cuadrante')" title="Limpiar todos los turnos de la semana">
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Cuadrante" title="Limpiar todos los turnos de la semana">
                         <i class="bi bi-trash me-1"></i>Limpiar
                     </button>
-                    <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" onclick="TurnosManager.openManageUsers()" title="Gestionar Personal">
+                    <button class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" id="btnManageUsers" title="Gestionar Personal">
                         <i class="bi bi-people me-1"></i>Personal
                     </button>
                 </div>
@@ -105,24 +105,24 @@
         <div class="turnos-legend card border-0 shadow-sm p-3">
             <h6 class="fw-bold mb-3 small text-muted text-uppercase">Leyenda de Turnos</h6>
             <div class="d-flex flex-wrap gap-3">
-                <div class="legend-item"><div class="legend-color shift-manana"></div> Mañana</div>
-                <div class="legend-item"><div class="legend-color shift-tarde"></div> Tarde</div>
-                <div class="legend-item"><div class="legend-color shift-noche"></div> Noche</div>
-                <div class="legend-item"><div class="legend-color shift-partido"></div> H. Partido</div>
-                <div class="legend-item"><div class="legend-color shift-libre"></div> Libre</div>
-                <div class="legend-item"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
-                <div class="legend-item"><div class="legend-color shift-baja"></div> Baja</div>
-                <div class="legend-item"><div class="legend-color shift-extra"></div> Extra</div>
-                <div class="legend-item"><div class="legend-color shift-especial"></div> Especial</div>
-                <div class="legend-item"><div class="legend-color shift-practicas"></div> Prácticas</div>
-                <div class="legend-item"><div class="legend-color shift-reservas"></div> Reservas</div>
-                <div class="legend-item d-flex align-items-center gap-1">
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('mananas', 'Mañana')"><div class="legend-color shift-manana"></div> Mañana</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('tardes', 'Tarde')"><div class="legend-color shift-tarde"></div> Tarde</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('noches', 'Noche')"><div class="legend-color shift-noche"></div> Noche</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('partidos', 'H. Partido')"><div class="legend-color shift-partido"></div> H. Partido</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('libres', 'Libre')"><div class="legend-color shift-libre"></div> Libre</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('vacaciones', 'Vacaciones')"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('baja', 'Baja')"><div class="legend-color shift-baja"></div> Baja</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('extra', 'Extra')"><div class="legend-color shift-extra"></div> Extra</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('especial', 'Especial')"><div class="legend-color shift-especial"></div> Especial</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('practicas', 'Prácticas')"><div class="legend-color shift-practicas"></div> Prácticas</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('reservas', 'Reservas')"><div class="legend-color shift-reservas"></div> Reservas</div>
+                <div class="legend-item stats-clickable d-flex align-items-center gap-1" onclick="TurnosManager.showShiftRanking('pedidos', 'Días Pedidos')">
                     <div class="position-relative" style="width:16px;height:16px;">
                         <span class="badge shift-marker-pedido" style="top:0;right:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">P</span>
                     </div>
                     <span>Pedido</span>
                 </div>
-                <div class="legend-item d-flex align-items-center gap-1">
+                <div class="legend-item stats-clickable d-flex align-items-center gap-1" onclick="TurnosManager.showShiftRanking('debidos', 'Días Debidos')">
                     <div class="position-relative" style="width:16px;height:16px;">
                         <span class="badge shift-marker-debido" style="top:0;left:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">D</span>
                     </div>
@@ -231,22 +231,22 @@
                     </div>
                 </div>
                 <div class="mensual-actions d-flex gap-2 align-items-center flex-wrap" id="mensual-actions">
-                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Mensual" onclick="TurnosManager.saveChanges()">
+                    <button class="btn btn-success btn-sm fw-bold shadow-sm d-none" id="btnSaveTurnos_Mensual">
                         <i class="bi bi-check-lg me-1"></i>Guardar
                     </button>
-                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Mensual" onclick="TurnosManager.cancelEdit()">
+                    <button class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" id="btnCancelEdit_Mensual">
                         Cancelar
                     </button>
-                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Mensual" onclick="TurnosManager.confirmReload()">
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Mensual">
                         <i class="bi bi-arrow-clockwise"></i>Refrescar
                     </button>
-                    <button id="btnAutoAssign_Mensual" class="btn btn-outline-info btn-sm d-none fw-bold" onclick="TurnosManager.autoAssignMonth()" data-bs-toggle="tooltip" title="Auto-completar mes entero">
+                    <button id="btnAutoAssign_Mensual" class="btn btn-outline-info btn-sm d-none fw-bold" data-bs-toggle="tooltip" title="Auto-completar mes entero">
                         <i class="bi bi-magic me-1"></i> Auto-asignar
                     </button>
-                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportMonth_Mensual" onclick="TurnosManager.difundirMes()" data-bs-toggle="tooltip" title="Generar imagen del mes completo">
+                    <button class="btn btn-outline-primary btn-sm fw-bold shadow-sm" id="btnExportMonth_Mensual" data-bs-toggle="tooltip" title="Generar imagen del mes completo">
                         <i class="bi bi-share-fill me-1"></i>Difundir
                     </button>
-                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Mensual" onclick="TurnosManager.confirmClear('mensual')" title="Limpiar todos los turnos del mes">
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Mensual" title="Limpiar todos los turnos del mes">
                         <i class="bi bi-trash me-1"></i>Limpiar
                     </button>
                 </div>
@@ -262,24 +262,24 @@
         <div class="turnos-legend card border-0 shadow-sm p-3 mb-4">
             <h6 class="fw-bold mb-3 small text-muted text-uppercase">Leyenda de Turnos</h6>
             <div class="d-flex flex-wrap gap-3">
-                <div class="legend-item"><div class="legend-color shift-manana"></div> Mañana</div>
-                <div class="legend-item"><div class="legend-color shift-tarde"></div> Tarde</div>
-                <div class="legend-item"><div class="legend-color shift-noche"></div> Noche</div>
-                <div class="legend-item"><div class="legend-color shift-partido"></div> H. Partido</div>
-                <div class="legend-item"><div class="legend-color shift-libre"></div> Libre</div>
-                <div class="legend-item"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
-                <div class="legend-item"><div class="legend-color shift-baja"></div> Baja</div>
-                <div class="legend-item"><div class="legend-color shift-extra"></div> Extra</div>
-                <div class="legend-item"><div class="legend-color shift-especial"></div> Especial</div>
-                <div class="legend-item"><div class="legend-color shift-practicas"></div> Prácticas</div>
-                <div class="legend-item"><div class="legend-color shift-reservas"></div> Reservas</div>
-                <div class="legend-item d-flex align-items-center gap-1">
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('mananas', 'Mañana')"><div class="legend-color shift-manana"></div> Mañana</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('tardes', 'Tarde')"><div class="legend-color shift-tarde"></div> Tarde</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('noches', 'Noche')"><div class="legend-color shift-noche"></div> Noche</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('partidos', 'H. Partido')"><div class="legend-color shift-partido"></div> H. Partido</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('libres', 'Libre')"><div class="legend-color shift-libre"></div> Libre</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('vacaciones', 'Vacaciones')"><div class="legend-color shift-vacaciones"></div> Vacaciones</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('baja', 'Baja')"><div class="legend-color shift-baja"></div> Baja</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('extra', 'Extra')"><div class="legend-color shift-extra"></div> Extra</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('especial', 'Especial')"><div class="legend-color shift-especial"></div> Especial</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('practicas', 'Prácticas')"><div class="legend-color shift-practicas"></div> Prácticas</div>
+                <div class="legend-item stats-clickable" onclick="TurnosManager.showShiftRanking('reservas', 'Reservas')"><div class="legend-color shift-reservas"></div> Reservas</div>
+                <div class="legend-item stats-clickable d-flex align-items-center gap-1" onclick="TurnosManager.showShiftRanking('pedidos', 'Días Pedidos')">
                     <div class="position-relative" style="width:16px;height:16px;">
                         <span class="badge shift-marker-pedido" style="top:0;right:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">P</span>
                     </div>
                     <span>Pedido</span>
                 </div>
-                <div class="legend-item d-flex align-items-center gap-1">
+                <div class="legend-item stats-clickable d-flex align-items-center gap-1" onclick="TurnosManager.showShiftRanking('debidos', 'Días Debidos')">
                     <div class="position-relative" style="width:16px;height:16px;">
                         <span class="badge shift-marker-debido" style="top:0;left:0;width:12px;height:12px;display:flex;align-items:center;justify-content:center;">D</span>
                     </div>
@@ -331,24 +331,40 @@
                     </button>
                 </div>
                 <div class="d-flex gap-2" id="vacaciones-actions">
-                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Vacaciones" onclick="TurnosManager.confirmReload()">
+                    <button class="btn btn-outline-warning btn-sm fw-bold shadow-sm" id="btnSorteoVacaciones" data-bs-toggle="tooltip" title="Realizar sorteo para el orden de elección">
+                        <i class="bi bi-dice-5-fill me-1"></i>Sorteo
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btnReloadTurnos_Vacaciones">
                         <i class="bi bi-arrow-clockwise"></i>Refrescar
                     </button>
-                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Vacaciones" onclick="TurnosManager.confirmClear('vacaciones')" title="Limpiar todas las vacaciones del año">
+                    <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm d-none" id="btnClearTurnos_Vacaciones" title="Limpiar todas las vacaciones del año">
                         <i class="bi bi-eraser-fill me-1"></i>Limpiar
                     </button>
-                    <button id="btnAutoAssignVac" class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.autoAssignVacations()">
+                    <button id="btnAutoAssignVac" class="btn btn-outline-info btn-sm fw-bold shadow-sm d-none">
                         <i class="bi bi-magic me-1"></i> Reparto Inteligente
                     </button>
-                    <button id="btnSaveVacaciones" class="btn btn-success btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.saveChanges()">
+                    <button id="btnSaveVacaciones" class="btn btn-success btn-sm fw-bold shadow-sm d-none">
                         <i class="bi bi-check-lg me-1"></i>Guardar Todo
                     </button>
-                    <button id="btnCancelVacaciones" class="btn btn-secondary btn-sm fw-bold shadow-sm d-none" onclick="TurnosManager.cancelEdit()">
+                    <button id="btnCancelVacaciones" class="btn btn-secondary btn-sm fw-bold shadow-sm d-none">
                         Cancelar
                     </button>
                 </div>
             </div>
             <div class="card-body p-0">
+                <!-- PANEL PERSISTENTE DE SORTEO -->
+                <div id="raffle-results-container" class="bg-warning bg-opacity-10 p-3 border-bottom d-none animate__animated animate__fadeIn">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-stars me-2"></i>Resultado del último Sorteo</h6>
+                        <button class="btn btn-sm btn-link text-dark p-0" onclick="document.getElementById('raffle-results-container').classList.add('d-none')">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div id="persistentSorteoList" class="d-flex flex-wrap gap-2">
+                        <!-- JS: [1] Pavel, [2] Anadelia... -->
+                    </div>
+                </div>
+
                 <div class="p-3 bg-light border-bottom mb-0 small text-muted d-flex justify-content-between align-items-center">
                     <div>
                         <i class="bi bi-info-circle me-1"></i> Haz clic en los días para asignar/quitar vacaciones cuando el modo edición esté activo.
@@ -544,7 +560,7 @@
                     <input type="number" id="inputVacationAllowance" class="form-control text-center fw-bold" min="0" value="30">
                     <span class="input-group-text bg-light text-muted">Días</span>
                 </div>
-                <button type="button" class="btn btn-success fw-bold w-100 shadow-sm" onclick="TurnosManager.saveVacationAllowance()">Guardar</button>
+                <button type="button" id="btnSaveVacationAllowance" class="btn btn-success fw-bold w-100 shadow-sm">Guardar</button>
             </div>
         </div>
     </div>
@@ -615,10 +631,12 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 small">
                         <thead class="table-light">
-                            <tr>
+                             <tr>
                                 <th onclick="TurnosManager.sortRanking('user')" style="cursor:pointer">Nombre <i class="bi bi-sort-alpha-down"></i></th>
                                 <th onclick="TurnosManager.sortRanking('ratio')" style="cursor:pointer" class="text-center">Ratio (Días/Disp) <i class="bi bi-sort-numeric-down"></i></th>
                                 <th onclick="TurnosManager.sortRanking('count')" style="cursor:pointer" class="text-center">Total Días</th>
+                                <th onclick="TurnosManager.sortRanking('pedidos')" style="cursor:pointer" class="text-center">Pedidos</th>
+                                <th onclick="TurnosManager.sortRanking('debidos')" style="cursor:pointer" class="text-center">Debidos</th>
                             </tr>
                         </thead>
                         <tbody id="shiftRankingTableBody">
@@ -628,6 +646,69 @@
                 </div>
             </div>
             <div class="modal-footer bg-light border-0 py-2">
+                <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: SORTEO VACACIONES (REDISEÑADO) -->
+<div class="modal fade" id="modalSorteoVacaciones" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg overflow-hidden">
+            <div class="modal-header bg-warning text-dark border-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-dice-5-fill me-2"></i>Sorteo de Vacaciones
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 position-relative" style="min-height: 350px;">
+                <!-- ESTADO 1: PREPARACIÓN -->
+                <div id="sorteo-state-ready" class="p-5 text-center animate__animated animate__fadeIn">
+                    <div class="display-1 text-warning mb-4">
+                        <i class="bi bi-trophy animate__animated animate__pulse animate__infinite"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">¿Todo listo para el sorteo?</h4>
+                    <p class="text-muted mb-4">Se generará un orden aleatorio entre todo los empleados activos para la elección de vacaciones.</p>
+                    <button class="btn btn-warning btn-lg fw-bold px-5 py-3 shadow-sm" id="btnStartLottery">
+                        <i class="bi bi-play-circle-fill me-2"></i>¡EMPEZAR SORTEO!
+                    </button>
+                </div>
+
+                <!-- ESTADO 2: ANIMACIÓN (SORTEANDO) -->
+                <div id="sorteo-state-anim" class="p-4 text-center d-none animate__animated animate__fadeIn">
+                    <div class="lottery-spinner mb-3">
+                        <i class="bi bi-dice-6 display-3 text-warning animate__animated animate__infinite animate__swing d-inline-block"></i>
+                    </div>
+                    
+                    <!-- AREA DE SPINNING (SLOT MACHINE) -->
+                    <div class="spotlight-container bg-dark text-white rounded-3 p-4 mb-3 shadow-inner position-relative overflow-hidden" style="height: 120px;">
+                        <div id="lottery-spotlight-name" class="display-5 fw-bold animate__animated animate__fast">
+                            ???
+                        </div>
+                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.4) 100%); pointer-events: none;"></div>
+                    </div>
+
+                    <h4 class="fw-bold mb-0 text-primary" id="lottery-picking-title">Buscando el próximo...</h4>
+                    <p class="text-muted small" id="lottery-status-text">La suerte está echada</p>
+                </div>
+
+                <!-- ESTADO 3: CIERRE (SOLO BOTÓN REPETIR) -->
+                <div id="sorteo-state-results" class="p-5 text-center d-none animate__animated animate__fadeIn">
+                    <div class="display-1 text-success mb-4">
+                        <i class="bi bi-check-circle-fill animate__animated animate__bounceIn"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">¡Sorteo finalizado!</h4>
+                    <p class="text-muted mb-4">El orden de elección ha quedado registrado en el panel de vacaciones.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btn-outline-warning fw-bold px-4" id="btnRepeatSorteo">
+                            <i class="bi bi-arrow-repeat me-1"></i>REPETIR
+                        </button>
+                        <button class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal">VER LISTA</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light py-2">
                 <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>

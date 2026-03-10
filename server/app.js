@@ -1,4 +1,4 @@
-const express = require('express'); // Force restart 8
+const express = require('express'); // Force restart 10
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs'); // Changed from fsSync to fs
@@ -11,6 +11,7 @@ const LOG_FILE = path.join(STORAGE_DIR, 'server_debug.log');
 
 // --- DATABASE INITIALIZATION ---
 const db = require('./db');
+const usersRoutes = require('./routes/users');
 
 const logToFile = (msg) => {
     const timestamp = new Date().toISOString();
@@ -67,7 +68,69 @@ async function initChatDB() {
         console.error('[CHAT DB ERROR]', err);
     }
 }
+
+async function initNotasDB() {
+    try {
+        logToFile('[INIT] Verifying Notas Database schema...');
+        const [columns] = await db.query('SHOW COLUMNS FROM notas');
+        const colNames = columns.map(c => c.Field);
+
+        logToFile(`[NOTAS DB] Found columns: ${colNames.join(', ')}`);
+
+        if (!colNames.includes('protegida')) {
+            logToFile('[NOTAS DB] Adding missing column: protegida');
+            await db.query('ALTER TABLE notas ADD COLUMN protegida TINYINT(1) DEFAULT 0');
+        }
+        if (!colNames.includes('favorito')) {
+            logToFile('[NOTAS DB] Adding missing column: favorito');
+            await db.query('ALTER TABLE notas ADD COLUMN favorito TINYINT(1) DEFAULT 0');
+        }
+        if (!colNames.includes('modifiedAt')) {
+            logToFile('[NOTAS DB] Adding missing column: modifiedAt');
+            await db.query('ALTER TABLE notas ADD COLUMN modifiedAt BIGINT DEFAULT NULL');
+        }
+        
+        logToFile('[NOTAS DB] Table schema verification complete.');
+    } catch (err) {
+        logToFile(`[NOTAS DB ERROR] ${err.message}`);
+        console.error('[NOTAS DB ERROR]', err);
+    }
+}
+
+async function initUsersDB() {
+    try {
+        logToFile('[INIT] Verifying Users Database schema...');
+        const [columns] = await db.query('SHOW COLUMNS FROM usuarios_recepcion');
+        const colNames = columns.map(c => c.Field);
+
+        if (!colNames.includes('password_hash')) {
+            logToFile('[USERS DB] Adding missing column: password_hash');
+            await db.query('ALTER TABLE usuarios_recepcion ADD COLUMN password_hash VARCHAR(255) DEFAULT NULL');
+        }
+        if (!colNames.includes('avatar_url')) {
+            logToFile('[USERS DB] Adding missing column: avatar_url');
+            await db.query('ALTER TABLE usuarios_recepcion ADD COLUMN avatar_url TEXT DEFAULT NULL');
+        }
+        if (!colNames.includes('email')) {
+            logToFile('[USERS DB] Adding missing column: email');
+            await db.query('ALTER TABLE usuarios_recepcion ADD COLUMN email VARCHAR(255) DEFAULT NULL');
+        }
+        if (!colNames.includes('display_name')) {
+            logToFile('[USERS DB] Adding missing column: display_name');
+            await db.query('ALTER TABLE usuarios_recepcion ADD COLUMN display_name VARCHAR(255) DEFAULT NULL');
+        }
+        
+        logToFile('[USERS DB] Table schema verification complete.');
+    } catch (err) {
+        logToFile(`[USERS DB ERROR] ${err.message}`);
+        console.error('[USERS DB ERROR]', err);
+    }
+}
+
 initChatDB();
+initNotasDB();
+initUsersDB();
+// initAlarmsDB(); // Comentado porque falta la definición
 
 logToFile('Starting Server Lifecycle');
 
@@ -102,7 +165,7 @@ app.use('/api', (req, res, next) => {
     // Incluimos todos los endpoints 'admin' porque tienen su propio middleware de autenticación
     // Incluimos 'updates' para permitir actualizaciones desde cualquier cliente
     // Incluimos 'tts' porque HTML5 Audio no envía cabeceras custom
-    const isPublic = /health|heartbeat|admin|\/chat\/|storage|system|guia|updates|tts/.test(req.originalUrl);
+    const isPublic = /health|heartbeat|admin|\/chat\/|storage|system|guia|updates|tts|users/.test(req.originalUrl);
     if (isPublic) return next();
 
     const stationKey = req.headers['x-station-key'];
@@ -163,13 +226,15 @@ app.get('/api/health', async (req, res) => {
     res.json({
         status: 'ok',
         database: dbStatus,
-        message: 'Modular Express Server Running',
-        version: '5.1 [DEBUG ACTIVE]'
+        message: 'Modular Express Server Running [ASSET-FIX ACTIVE]',
+        version: '5.2 [SCHEMA-LOG ACTIVE]'
     });
 });
 
 logToFile('Mounting Storage Routes...');
 app.use('/api/storage', storageRoutes);
+logToFile('Mounting Users Routes...');
+app.use('/api/users', usersRoutes);
 logToFile('Mounting System Routes...');
 try {
     app.use('/api/system', systemRoutes);
@@ -249,6 +314,12 @@ app.use('/api/tts', ttsRoutes);
 // --- STATIC FILES ---
 // Servidor de archivos estáticos para el frontend
 const frontendPath = path.resolve(__dirname, '..');
+
+// FIX: Servir explícitamente la carpeta assets para evitar fallos de resolución relativa
+const assetsPath = path.join(frontendPath, 'assets');
+app.use('/assets', express.static(assetsPath));
+
+// Servidor general (para index.html y otros archivos en la raíz)
 app.use(express.static(frontendPath));
 
 // FIX: Servir explícitamente la carpeta storage para que las imágenes sean accesibles
@@ -257,6 +328,9 @@ app.use('/storage', express.static(storagePath));
 
 // Fallback para SPA (aunque el index.html está en la raíz, express.static ya lo sirve si safePath era '/')
 app.get('*', (req, res) => {
+    if (req.originalUrl.startsWith('/api/')) {
+        return res.status(404).json({ error: 'Endpoint no encontrado' });
+    }
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 

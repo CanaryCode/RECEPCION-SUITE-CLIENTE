@@ -15,18 +15,41 @@ class SystemAlarmsService extends BaseService {
             id: 'string',
             titulo: 'string',
             hora: 'string',
-            active: 'boolean'
+            active: 'boolean',
+            usuario: 'any',
+            type: 'string',
+            date: 'any',
+            days: 'any',
+            day: 'any'
         };
     }
 
     async init() {
-        const data = await super.init();
+        let data = await super.init();
         
         // RECOVERY: If data is corrupted (Object instead of Array), force a reset
         if (data && !Array.isArray(data)) {
             console.warn("[SystemAlarms] Data corruption detected (Object instead of Array). Resetting database.");
             this.clear(); // Wipes LocalStorage and Cache
             return this.initializeDefaults();
+        }
+
+        // SANITIZATION: Ensure all items have the required fields for the new schema
+        if (Array.isArray(data)) {
+            let changed = false;
+            data.forEach(item => {
+                const schemaKeys = Object.keys(this.schema);
+                schemaKeys.forEach(key => {
+                    if (!(key in item)) {
+                        item[key] = (key === 'active') ? true : (key === 'type' ? 'daily' : null);
+                        changed = true;
+                    }
+                });
+            });
+            if (changed) {
+                console.log("[SystemAlarms] Migrated legacy alarms to new schema.");
+                this.save(data);
+            }
         }
 
         // Only initialize defaults if the key doesn't exist at all (null)
@@ -47,8 +70,13 @@ class SystemAlarmsService extends BaseService {
             const defaults = APP_CONFIG.HOTEL.ALARMAS_SISTEMA.map((a, i) => ({
                 id: `sys_default_${i}`,
                 ...a,
-                titulo: a.titulo || a.mensaje || 'Alarma Sistema', // Polyfill for missing title
-                active: true
+                titulo: a.titulo || a.mensaje || 'Alarma Sistema',
+                active: true,
+                usuario: null,
+                type: a.type || 'daily',
+                date: a.date || null,
+                days: a.days || null,
+                day: a.day || null
             }));
             return this.save(defaults);
         }
@@ -56,7 +84,24 @@ class SystemAlarmsService extends BaseService {
 
     getAlarms() {
         const data = this.getAll();
-        return Array.isArray(data) ? data : [];
+        const alarms = Array.isArray(data) ? data : [];
+        
+        // Filter by user: Global (no usuario) OR matches current session user
+        import('./SessionService.js').then(({ sessionService }) => {
+            const currentUser = sessionService.getUser();
+            // This filtering might be better done by callers if we want to be reactive,
+            // but for now we follow the existing pattern.
+        });
+
+        return alarms;
+    }
+
+    /**
+     * Retorna las alarmas visibles para un usuario específico (Global + Personales)
+     */
+    getVisibleAlarms(username) {
+        const alarms = this.getAlarms();
+        return alarms.filter(a => !a.usuario || a.usuario === username);
     }
 
     /**

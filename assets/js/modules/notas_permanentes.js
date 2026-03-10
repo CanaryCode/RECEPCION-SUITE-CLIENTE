@@ -1,4 +1,5 @@
 import { notasService } from '../services/NotasService.js';
+import { sessionService } from '../services/SessionService.js';
 import { Utils } from '../core/Utils.js';
 import { Ui } from '../core/Ui.js';
 
@@ -22,13 +23,14 @@ let filterFavs = false;     // Filtrar solo favoritos
 // ==========================================
 
 export async function inicializarNotasPermanentes() {
+    // El contenedor ahora es el offcanvas en vez de un tab-pane
     const container = document.getElementById('notas-content');
     if (!container) return;
 
     // Carga de datos autoritativa (JSON Server)
     await notasService.init();
 
-    // Event Listeners
+    // Event Listeners (USANDO DELEGACIÓN O SELECTORES GLOBALES)
     const form = document.getElementById('formNota');
     if (form) {
         form.removeEventListener('submit', guardarNota);
@@ -37,12 +39,13 @@ export async function inicializarNotasPermanentes() {
 
     const searchInput = document.getElementById('searchNotas');
     if (searchInput) {
+        // Limpiamos listeners previos clonando (patrón común en este proyecto)
         const newSearch = searchInput.cloneNode(true);
         searchInput.parentNode.replaceChild(newSearch, searchInput);
         newSearch.addEventListener('input', () => renderNotas());
     }
 
-    // Configurar botones globales del módulo
+    // Configurar botones globales del módulo (ahora en el offcanvas)
     document.getElementById('btn-nueva-nota')?.addEventListener('click', () => abrirModalNota());
     document.getElementById('btn-lock-notas')?.addEventListener('click', toggleEdicionNotas);
 
@@ -52,13 +55,21 @@ export async function inicializarNotasPermanentes() {
         renderNotas();
     });
 
-    document.getElementById('btn-filter-favs')?.addEventListener('click', () => {
-        filterFavs = !filterFavs;
-        actualizarUIPiltros();
-        renderNotas();
-    });
-
     renderNotas();
+
+    // 🚩 EXPOSICIÓN GLOBAL (VITAL para eventos inline en el Offcanvas)
+    window.abrirModalNota = abrirModalNota;
+    window.toggleEdicionNotas = toggleEdicionNotas;
+    window.eliminarNota = eliminarNota;
+    window.toggleFavorito = toggleFavorito;
+    window.imprimirNotas = imprimirNotas;
+    
+    // Handlers de Drag & Drop
+    window.handleDragStart = handleDragStart;
+    window.handleDragOver = handleDragOver;
+    window.handleDragEnter = handleDragEnter;
+    window.handleDragLeave = handleDragLeave;
+    window.handleDrop = handleDrop;
 }
 
 // ==========================================
@@ -81,6 +92,12 @@ export async function toggleEdicionNotas() {
 }
 
 export function abrirModalNota(id = null) {
+    // ⚠️ Verificar que el módulo esté desbloqueado
+    if (!modoEdicion) {
+        Ui.showToast("Módulo bloqueado: No se pueden crear ni editar notas", "warning");
+        return;
+    }
+
     notaEnEdicionId = id;
     const modalEl = document.getElementById('modalNota');
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
@@ -98,6 +115,10 @@ export function abrirModalNota(id = null) {
             Utils.setVal('notaContenido', nota.contenido);
             document.getElementById('notaProtegida').checked = !!nota.protegida;
 
+            // Seleccionar scope (personal/global)
+            const scope = nota.usuario ? 'personal' : 'global';
+            Utils.setVal('notaScope', scope);
+
             // Seleccionar color
             const colorRadio = document.querySelector(`input[name="colorNota"][value="${nota.color}"]`);
             if (colorRadio) colorRadio.checked = true;
@@ -105,6 +126,7 @@ export function abrirModalNota(id = null) {
     } else {
         title.innerText = "Nueva Nota";
         document.getElementById('notaProtegida').checked = false;
+        Utils.setVal('notaScope', 'global'); // Default: nota global
     }
 
     modal.show();
@@ -117,6 +139,7 @@ function guardarNota(e) {
     const contenido = document.getElementById('notaContenido').value.trim();
     const color = document.querySelector('input[name="colorNota"]:checked').value;
     const protegida = document.getElementById('notaProtegida').checked;
+    const scope = document.getElementById('notaScope').value;
     const modifiedAt = Date.now();
 
     if (!titulo && !contenido) {
@@ -126,6 +149,11 @@ function guardarNota(e) {
 
     const now = new Date();
     const fechaStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Determinar usuario y autor según el alcance
+    const currentUser = sessionService.getUser();
+    const usuario = (scope === 'personal') ? currentUser : null;
+    const autor = currentUser;
 
     if (notaEnEdicionId) {
         // Editar
@@ -138,7 +166,9 @@ function guardarNota(e) {
                 color,
                 protegida,
                 modifiedAt,
-                fecha: fechaStr
+                fecha: fechaStr,
+                usuario,
+                autor
             };
             notasService.saveNota(notaActualizada);
         }
@@ -153,7 +183,9 @@ function guardarNota(e) {
             modifiedAt,
             favorito: false,
             fecha: fechaStr,
-            rotacion: (Math.random() * 4 - 2).toFixed(1)
+            rotacion: (Math.random() * 4 - 2).toFixed(1),
+            usuario,
+            autor
         };
         notasService.saveNota(nuevaNota);
     }
@@ -172,6 +204,10 @@ function guardarNota(e) {
 
 export async function toggleFavorito(id, event) {
     if(event) event.stopPropagation();
+    if (!modoEdicion) {
+        Ui.showToast("Módulo bloqueado: No se pueden marcar favoritos", "warning");
+        return;
+    }
     const nota = notasService.getNotaById(id);
     if (nota) {
         nota.favorito = !nota.favorito;
@@ -214,19 +250,32 @@ function renderNotas() {
     const grid = document.getElementById('grid-notas');
     if (!grid) return;
 
+    // ⚠️ ACTUALIZAR UI DEL BOTÓN DE BLOQUEO ANTES DE RENDERIZAR
     actualizarEstadoBotonLock();
+
     const notas = notasService.getNotas();
 
     const searchInput = document.getElementById('searchNotas');
     const filtroText = searchInput ? searchInput.value.toLowerCase().trim() : "";
-    
+    const currentUser = sessionService.getUser();
+
     let notasFiltradas = notas.filter(n => {
-        const matchesSearch = !filtroText || 
+        // 🔐 FILTRO DE PROTECCIÓN: Las notas protegidas NO se muestran si el módulo está bloqueado
+        if (n.protegida && !modoEdicion) {
+            return false; // Excluir nota protegida cuando está bloqueado
+        }
+
+        // 👤 FILTRO DE USUARIO: Solo mostrar notas globales (usuario=null) o del usuario actual
+        if (n.usuario !== null && n.usuario !== currentUser) {
+            return false; // Excluir notas personales de otros usuarios
+        }
+
+        const matchesSearch = !filtroText ||
             (n.titulo && n.titulo.toLowerCase().includes(filtroText)) ||
             (n.contenido && n.contenido.toLowerCase().includes(filtroText));
-        
+
         const matchesFav = !filterFavs || !!n.favorito;
-        
+
         return matchesSearch && matchesFav;
     });
 
@@ -257,31 +306,26 @@ function renderNotas() {
         const rotacion = nota.rotacion || (Math.random() * 4 - 2).toFixed(1);
         const visibilityClass = modoEdicion ? '' : 'd-none';
 
-        // LÓGICA DE PROTECCIÓN (Notas ocultas si está bloqueado)
+        // INDICADORES VISUALES
         const isProtected = !!nota.protegida;
-        const hideContent = isProtected && !modoEdicion;
-        
-        const cardTitle = hideContent ? `<i class="bi bi-shield-lock-fill me-2 text-muted"></i>Nota Protegida` : nota.titulo;
-        const cardBody = hideContent ? 
-            `<div class="text-center py-4 opacity-75">
-                <i class="bi bi-eye-slash display-6 mb-2"></i>
-                <p class="small mb-0">Contenido oculto.<br>Desbloquea para ver.</p>
-             </div>` : 
-            `<p class="card-text flex-grow-1" style="white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5;">${nota.contenido}</p>`;
+        const isPersonal = !!nota.usuario;
+
+        const cardTitle = nota.titulo;
+        const cardBody = `<p class="card-text flex-grow-1" style="white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5;">${nota.contenido}</p>`;
 
         // Gestión de Drag & Drop (Solo si está desbloqueado)
         const dragAttrs = modoEdicion ? `draggable="true" ondragstart="handleDragStart(event, ${nota.id})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${nota.id})" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)"` : '';
         const cursorStyle = modoEdicion ? 'cursor: grab;' : '';
 
         grid.innerHTML += `
-            <div class="col-md-6 col-lg-4 col-xl-3 animate__animated animate__fadeIn" ${dragAttrs} style="${cursorStyle}">
+            <div class="col-md-6 col-lg-4 col-xl-3 mb-4 animate__animated animate__fadeIn" ${dragAttrs} style="${cursorStyle}">
                 <div class="card post-it ${nota.color || 'note-yellow'} h-100 ${isProtected ? 'border-primary border-opacity-25 shadow' : ''}" style="--rotation: ${rotacion}deg;">
                     <div class="card-body d-flex flex-column p-3">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title fw-bold mb-0 text-dark" style="font-family: 'Inter', sans-serif; font-size: 1.1rem;">${cardTitle}</h5>
                             <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-link p-0 ${nota.favorito ? 'text-warning' : 'text-dark opacity-25'} hover-opacity-100" 
-                                    onclick="toggleFavorito(${nota.id}, event)" title="Marcar como favorita">
+                                <button class="btn btn-link p-0 ${nota.favorito ? 'text-warning' : 'text-dark opacity-10'} ${modoEdicion ? 'hover-opacity-100' : 'pe-none opacity-25'}" 
+                                    onclick="toggleFavorito(${nota.id}, event)" title="${modoEdicion ? 'Marcar como favorita' : ''}">
                                     <i class="bi ${nota.favorito ? 'bi-star-fill' : 'bi-star'}"></i>
                                 </button>
                                 <div class="dropdown ${visibilityClass}">
@@ -297,7 +341,10 @@ function renderNotas() {
                         </div>
                         ${cardBody}
                         <div class="mt-2 d-flex justify-content-between align-items-center">
-                            ${isProtected ? '<i class="bi bi-shield-lock-fill text-primary opacity-50" style="font-size: 0.8rem;" title="Nota Protegida"></i>' : '<span></span>'}
+                            <div class="d-flex gap-2">
+                                ${isProtected ? '<i class="bi bi-shield-lock-fill text-primary opacity-50" style="font-size: 0.8rem;" title="Nota Protegida"></i>' : ''}
+                                ${isPersonal ? '<i class="bi bi-person-fill text-secondary opacity-50" style="font-size: 0.8rem;" title="Nota Personal (Solo visible para ti)"></i>' : ''}
+                            </div>
                             <small class="text-muted opacity-50" style="font-size: 0.7rem;">${nota.fecha}</small>
                         </div>
                     </div>

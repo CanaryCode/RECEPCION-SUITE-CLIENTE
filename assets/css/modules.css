@@ -177,6 +177,7 @@
 /* ==========================================================================
    ESTILOS PARA NOTAS PERMANENTES (POST-ITS)
    ========================================================================== */
+
 .post-it {
   background-color: var(--post-it-color, #fff740) !important;
   /* Amarillo por defecto */
@@ -987,6 +988,7 @@
   h6 .bi {
     color: inherit !important;
     -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   #otros-container .input-group-text,

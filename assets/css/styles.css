@@ -147,47 +147,73 @@
 }
 
 .login-user-card {
-    background: none;
-    border: none;
-    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem 1rem;
     margin: 0;
     cursor: pointer;
-    width: 160px;
+    width: 180px;
     outline: none;
-    color: rgba(255, 255, 255, 0.6);
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.login-user-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 .login-user-avatar {
     width: 100%;
     aspect-ratio: 1/1;
     background: rgba(255, 255, 255, 0.05);
-    border: 4px solid transparent;
-    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px; /* More rounded for premium feel */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 5rem;
     margin-bottom: 1.2rem;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    overflow: hidden; /* Crucial: ensures image stays inside */
+    position: relative;
+}
+
+.login-user-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the square area */
+    transition: transform 0.5s ease;
+}
+
+.login-user-card:hover .login-user-img {
+    transform: scale(1.1); /* Subtle zoom on hover */
 }
 
 .login-user-name {
     font-size: 1.25rem;
     font-weight: 600;
     transition: all 0.3s ease;
+    display: block;
 }
 
 .login-user-card:hover {
     color: white;
-    transform: scale(1.1);
+    transform: translateY(-10px);
 }
 
 .login-user-card:hover .login-user-avatar {
     background: rgba(255, 255, 255, 0.15);
-    border-color: white;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(255,255,255,0.1);
 }
 
 .login-user-card:focus .login-user-avatar {

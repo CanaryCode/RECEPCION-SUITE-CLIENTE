@@ -88,6 +88,19 @@ export class BaseService {
                     } else if (item[key] !== null && item[key] !== undefined && item[key] !== '') {
                         console.warn(`[BaseService] No se pudo estandarizar fecha para '${key}':`, item[key]);
                     }
+                } else if (type === 'boolean') {
+                    // Soporte para 0/1 de la base de datos MariaDB
+                    if (typeof item[key] === 'number') {
+                        item[key] = item[key] === 1;
+                    } else if (typeof item[key] === 'string') {
+                        const val = item[key].toLowerCase();
+                        if (val === '1' || val === 'true') item[key] = true;
+                        else if (val === '0' || val === 'false') item[key] = false;
+                    }
+                    
+                    if (typeof item[key] !== 'boolean') {
+                        throw new Error(`El campo '${key}' debe ser booleano (recibido ${typeof item[key]})`);
+                    }
                 } else if (item[key] === null) {
                     // Permitir nulls (común cuando la DB no tiene valor)
                     continue;

@@ -9,6 +9,7 @@
 import { systemAlarmsService } from '../services/SystemAlarmsService.js';
 import { Utils } from '../core/Utils.js';
 import { Ui } from '../core/Ui.js';
+import { sessionService } from '../services/SessionService.js';
 export function inicializarSystemAlarmsUI() {
     // 1. GESTIÓN DE FORMULARIO (Ui.handleFormSubmission)
     Ui.handleFormSubmission({
@@ -24,8 +25,12 @@ export function inicializarSystemAlarmsUI() {
                 hora: rawData.sys_alarm_hora,
                 mensaje: rawData.sys_alarm_msg,
                 titulo: rawData.sys_alarm_msg, // Required by Service Schema
+                active: rawData.sys_alarm_active === 'on' || rawData.sys_alarm_active === true,
                 type: type,
-                active: rawData.sys_alarm_active === 'on' || rawData.sys_alarm_active === true
+                date: null,
+                days: null,
+                day: null,
+                usuario: null
             };
 
             if (type === 'date') {
@@ -42,7 +47,12 @@ export function inicializarSystemAlarmsUI() {
             } else {
                 alarmData.dias = 'todos'; // Legacy compatibility
             }
-            alarmData.autor = rawData.autor || 'Sistema';
+            
+            // Handle Scope (Personal vs General)
+            const scope = rawData.sys_alarm_scope;
+            alarmData.usuario = (scope === 'personal') ? sessionService.getUser() : null;
+            alarmData.autor = sessionService.getUser();
+            
             console.log("[UI] Mapped Alarm Data:", alarmData);
             return alarmData;
         },
@@ -151,7 +161,8 @@ function renderAlarmsList() {
     const tbody = document.getElementById('tableSystemAlarmsBody');
     if (!tbody) return;
 
-    const alarms = systemAlarmsService.getAlarms().sort((a, b) => {
+    const currentUser = sessionService.getUser();
+    const alarms = systemAlarmsService.getVisibleAlarms(currentUser).sort((a, b) => {
         const hA = a.hora || '00:00';
         const hB = b.hora || '00:00';
         return hA.localeCompare(hB);
@@ -179,8 +190,13 @@ function renderAlarmsList() {
             <input class="form-check-input" type="checkbox" ${a.active ? 'checked' : ''} onclick="toggleActiveSystemAlarm('${a.id}')">
         </div>`;
 
+        const scopeIcon = a.usuario 
+            ? `<i class="bi bi-person-fill text-primary" title="Personal (${a.usuario})"></i>` 
+            : `<i class="bi bi-globe-americas text-success" title="General"></i>`;
+
         return `
             <tr class="${!a.active ? 'opacity-50' : ''}">
+                <td class="text-center">${scopeIcon}</td>
                 <td class="fw-bold text-primary fs-5 font-monospace">${a.hora}</td>
                 <td>${a.mensaje}</td>
                 <td>${freqBadge}</td>
@@ -241,6 +257,11 @@ function editSystemAlarm(id) {
     const activeCk = document.getElementById('sys_alarm_active');
     if(activeCk) activeCk.checked = alarm.active;
 
+    const scopeSelector = document.getElementById('sys_alarm_scope');
+    if(scopeSelector) {
+        scopeSelector.value = alarm.usuario ? 'personal' : 'global';
+    }
+
     const btn = document.querySelector('#formSystemAlarm button[type="submit"]');
     if(btn) btn.innerHTML = '<i class="bi bi-save me-2"></i>Actualizar';
 }
@@ -268,7 +289,8 @@ function resetForm() {
 }
 
 function updateBadge() {
-    const alarmsData = systemAlarmsService.getAlarms() || []; 
+    const currentUser = sessionService.getUser();
+    const alarmsData = systemAlarmsService.getVisibleAlarms(currentUser) || []; 
     const alarms = Array.isArray(alarmsData) ? alarmsData.filter(a => a.active) : [];
     const badge = document.getElementById('badgeSystemAlarms');
     const bellBtn = document.getElementById('btnSystemAlarms');

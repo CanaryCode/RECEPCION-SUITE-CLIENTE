@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reception Suite - Hotel Garoé</title>
   <link rel="icon" href="resources/icono.ico" type="image/x-icon" />
@@ -200,6 +201,13 @@
               </button>
             </li>
             <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#notas-content">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Notas informativas y recordatorios operativos"><i
+                    class="bi bi-journal-bookmark-fill me-2"></i>Notas Permanentes</span>
+              </button>
+            </li>
+            <li>
               <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#calendario-content">
                 <span data-tooltip="true" data-bs-placement="right" data-bs-title="Calendario de eventos"><i
                     class="bi bi-calendar3 me-2"></i>Calendario</span>
@@ -372,6 +380,7 @@
 
         <!-- Utilidades (Alarma, Usuario, Buscador) -->
         <li class="nav-item d-flex align-items-center ms-auto">
+
           <button class="btn btn-link text-secondary position-relative p-0 mx-2" id="btnSystemAlarms"
             data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body"
             data-bs-title="Alarmas del Sistema">
@@ -387,12 +396,18 @@
         <!-- 2. Usuario Global -->
         <li class="nav-item d-flex align-items-center">
           <div class="dropdown mx-1">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="globalUserBtn"
+            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="globalUserBtn"
               data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-person-circle me-1"></i>
+              <img id="globalUserAvatar" src="assets/img/default-avatar.png" class="rounded-circle me-2 d-none" style="width: 24px; height: 24px; object-fit: cover;">
+              <i id="globalUserIcon" class="bi bi-person-circle me-1"></i>
               <span id="globalUserName" class="custom-tooltip" data-bs-title="Seleccionar Usuario">Usuario</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="globalUserBtn" id="globalUserList">
+              <li>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="navegarA('#perfil-content')">
+                  <i class="bi bi-person-gear me-2"></i>Mi Perfil
+                </a>
+              </li>
               <li>
                 <hr class="dropdown-divider" />
               </li>
@@ -428,6 +443,10 @@
     <div class="tab-content" id="mainTabsContent">
       <!-- Pestaña de Valoración -->
       <div class="tab-pane fade bg-soft-panel" id="valoracion-content" role="tabpanel">
+        <!-- Template will be loaded here -->
+      </div>
+
+      <div class="tab-pane fade bg-soft-panel" id="perfil-content" role="tabpanel">
         <!-- Template will be loaded here -->
       </div>
 
@@ -2406,167 +2425,9 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="notas-content" role="tabpanel">
-        <div class="d-none d-print-block report-header-print">
-          <div class="report-info-left">
-            <h2>Tablón de Notas</h2>
-            <p>Hotel Garoé • Recepción</p>
-          </div>
-          <div class="report-info-right">
-            <div>
-              <strong>Fecha:</strong> <span id="print-date-notas"></span>
-            </div>
-            <div class="text-muted" style="font-size: 7pt; margin-top: 5px">
-              Documento Interno de Uso Operativo
-            </div>
-          </div>
-        </div>
-
-        <h4 class="module-title-discrete">
-          <i class="bi bi-journal-bookmark-fill"></i>Tablón de Notas
-        </h4>
-
-        <!-- 1. BARRA DE IMPRESIÓN (Toolbar estándar) -->
-        <div class="module-toolbar d-flex justify-content-end align-items-center p-2 mb-3 border-bottom no-print">
-          <div class="btn-print-wrapper">
-            <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="window.imprimirNotas()"
-              data-bs-toggle="tooltip" data-bs-title="Imprimir Tablón">
-              <i class="bi bi-printer me-2"></i>Imprimir Tablón
-            </button>
-          </div>
-        </div>
-
-        <!-- 2. PANEL DE GESTIÓN (Subtítulo dinámico + Controles) -->
-        <div class="card shadow-sm border-0 mb-4 bg-light no-print">
-          <div class="card-body py-2 px-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <!-- Izquierda: Subtítulo y Botones -->
-            <div class="d-flex align-items-center gap-4">
-              <h6 class="sub-title-dynamic mb-0">
-                <i class="bi bi-gear-wide-connected"></i>Panel de Gestión
-              </h6>
-
-              <div class="vr h-100 mx-1 opacity-25"></div>
-
-              <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm group-control"
-                  id="btn-lock-notas" data-bs-toggle="tooltip" data-bs-title="Gestionar Permisos">
-                  <i class="bi bi-lock-fill" id="icon-lock-notas"></i>
-                  <span id="text-lock-notas" class="ms-2">Bloqueado</span>
-                </button>
-
-                <button type="button"
-                  class="btn btn-success btn-sm fw-bold shadow-sm d-none animate__animated animate__fadeIn group-control"
-                  id="btn-nueva-nota" onclick="abrirModalNota()" data-bs-toggle="tooltip" data-bs-title="Añadir Nota">
-                  <i class="bi bi-plus-lg me-2"></i>Nueva Nota
-                </button>
-              </div>
-            </div>
-
-            <!-- Derecha: Buscador -->
-            <div class="input-group input-group-sm shadow-sm" style="width: 250px">
-              <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-              <input type="text" id="searchNotas" class="form-control border-start-0 ps-0"
-                placeholder="Buscar nota..." />
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-4 px-3 pb-4" id="grid-notas">
-          <!-- Aquí se renderizan los post-its -->
-        </div>
-
-        <!-- Modal para Crear/Editar Nota -->
-        <div class="modal fade" id="modalNota" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-              <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="modalNotaTitle">
-                  Nueva Nota
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form id="formNota">
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Color del Post-it</label>
-                    <div class="d-flex gap-2 justify-content-center p-2 bg-light rounded">
-                      <input type="radio" class="btn-check" name="colorNota" id="color-yellow" value="note-yellow"
-                        checked />
-                      <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
-                        for="color-yellow" style="
-                            width: 40px;
-                            height: 40px;
-                            background-color: #fff740;
-                            border-color: transparent;
-                          "><i class="bi bi-check-lg d-none text-dark"></i></label>
-
-                      <input type="radio" class="btn-check" name="colorNota" id="color-pink" value="note-pink" />
-                      <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
-                        for="color-pink" style="
-                            width: 40px;
-                            height: 40px;
-                            background-color: #ff7eb9;
-                            border-color: transparent;
-                          "><i class="bi bi-check-lg d-none text-dark"></i></label>
-
-                      <input type="radio" class="btn-check" name="colorNota" id="color-blue" value="note-blue" />
-                      <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
-                        for="color-blue" style="
-                            width: 40px;
-                            height: 40px;
-                            background-color: #7afcff;
-                            border-color: transparent;
-                          "><i class="bi bi-check-lg d-none text-dark"></i></label>
-
-                      <input type="radio" class="btn-check" name="colorNota" id="color-green" value="note-green" />
-                      <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
-                        for="color-green" style="
-                            width: 40px;
-                            height: 40px;
-                            background-color: #c7f464;
-                            border-color: transparent;
-                          "><i class="bi bi-check-lg d-none text-dark"></i></label>
-
-                      <input type="radio" class="btn-check" name="colorNota" id="color-orange" value="note-orange" />
-                      <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center"
-                        for="color-orange" style="
-                            width: 40px;
-                            height: 40px;
-                            background-color: #ffb347;
-                            border-color: transparent;
-                          "><i class="bi bi-check-lg d-none text-dark"></i></label>
-                    </div>
-                    <style>
-                      .btn-check:checked+label {
-                        border-color: #666 !important;
-                        transform: scale(1.1);
-                      }
-
-                      .btn-check:checked+label i {
-                        display: block !important;
-                      }
-                    </style>
-                  </div>
-                  <div class="mb-3">
-                    <label for="notaTitulo" class="form-label small fw-bold text-muted">Título</label>
-                    <input type="text" class="form-control fw-bold" id="notaTitulo"
-                      placeholder="Ej: Contraseñas Wifi..." />
-                  </div>
-                  <div class="mb-3">
-                    <label for="notaContenido" class="form-label small fw-bold text-muted">Contenido</label>
-                    <textarea class="form-control" id="notaContenido" rows="5"
-                      placeholder="Ej: La contraseña es 1234..."></textarea>
-                  </div>
-                  <div class="d-grid">
-                    <button type="submit" class="btn btn-primary fw-bold">
-                      Guardar Nota
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Pestaña de Notas Permanentes -->
+      <div class="tab-pane fade bg-soft-panel" id="notas-content" role="tabpanel">
+        <!-- Template will be loaded here -->
       </div>
       <div class="tab-pane fade" id="gallery-content" role="tabpanel">
         <h4 class="module-title-discrete">
@@ -3467,6 +3328,85 @@
     </div>
   </div>
 
+  <!-- SIDEBAR: NOTAS PERMANENTES -->
+  <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasNotas" aria-labelledby="offcanvasNotasLabel" style="width: 500px; max-width: 90vw;">
+    <div class="offcanvas-header bg-primary text-white py-3">
+      <h5 class="offcanvas-title fw-bold" id="offcanvasNotasLabel">
+        <i class="bi bi-journal-bookmark-fill me-2"></i>Tablón de Notas
+      </h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body bg-light p-0">
+      <!-- Toolbar -->
+      <div class="module-toolbar d-flex justify-content-between align-items-center p-3 border-bottom bg-white sticky-top no-print">
+          <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="window.imprimirNotas()">
+            <i class="bi bi-printer me-2"></i>Imprimir
+          </button>
+          
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" id="btn-lock-notas">
+              <i class="bi bi-lock-fill" id="icon-lock-notas"></i>
+              <span id="text-lock-notas" class="ms-1 d-none d-sm-inline">Bloqueado</span>
+            </button>
+            <button type="button" class="btn btn-success btn-sm fw-bold shadow-sm d-none animate__animated animate__fadeIn" id="btn-nueva-nota" onclick="abrirModalNota()">
+              <i class="bi bi-plus-lg me-1"></i>Nuevo
+            </button>
+          </div>
+      </div>
+
+      <!-- Buscador -->
+      <div class="px-3 py-2 bg-white border-bottom no-print">
+         <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="searchNotas" class="form-control border-start-0 pe-2" placeholder="Buscar nota..." />
+         </div>
+      </div>
+
+      <!-- Grid de Notas -->
+      <div class="p-3">
+        <div class="row g-3" id="grid-notas">
+          <!-- Renderizado dinámico de post-its -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Crear/Editar Nota (Fuera del offcanvas para evitar conflictos de z-index) -->
+  <div class="modal fade" id="modalNota" tabindex="-1" aria-hidden="true" style="z-index: 10600;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="modalNotaTitle">Nueva Nota</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formNota">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">Color del Post-it</label>
+              <div class="d-flex gap-2 justify-content-center p-2 bg-light rounded">
+                <input type="radio" class="btn-check" name="colorNota" id="color-yellow" value="note-yellow" checked />
+                <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center" for="color-yellow" style="width: 40px; height: 40px; background-color: #fff740; border-color: #f7e000 !important; cursor: pointer;"></label>
+
+                <input type="radio" class="btn-check" name="colorNota" id="color-blue" value="note-blue" />
+                <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center" for="color-blue" style="width: 40px; height: 40px; background-color: #7afcff; border-color: #00e5ff !important; cursor: pointer;"></label>
+
+                <input type="radio" class="btn-check" name="colorNota" id="color-green" value="note-green" />
+                <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center" for="color-green" style="width: 40px; height: 40px; background-color: #9aff9a; border-color: #00e676 !important; cursor: pointer;"></label>
+
+                <input type="radio" class="btn-check" name="colorNota" id="color-pink" value="note-pink" />
+                <label class="btn rounded-circle border-2 d-flex align-items-center justify-content-center" for="color-pink" style="width: 40px; height: 40px; background-color: #ff7eb9; border-color: #ff4081 !important; cursor: pointer;"></label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <input type="text" class="form-control fw-bold border-0 border-bottom rounded-0 px-0" id="notaTitulo" placeholder="Título de la nota..." required />
+            </div>
+
+            <div class="mb-3">
+              <textarea class="form-control border-0 bg-light" id="notaContenido" rows="5" placeholder="Escribe algo aquí..."></textarea>
+    </div>
+  </div>
+
   <!-- ARCHIVO JS PRINCIPAL (Punto de entrada) -->
   <script type="module" src="assets/js/main.js"></script>
 
@@ -3500,7 +3440,7 @@
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: "es",
-        includedLanguages: "en,de,fr,it,pt,ru,nl,pl",
+        includedLanguages: "en,de,fr,it,pt,ru,nl,pl,cs,ro,hu,sk,bg,hr,tr,et,lt,lv,sl,is",
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
       }, "google_translate_element");

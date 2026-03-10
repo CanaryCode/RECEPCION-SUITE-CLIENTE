@@ -77,6 +77,11 @@ CREATE TABLE IF NOT EXISTS notas (
     color VARCHAR(20) DEFAULT 'note-yellow',
     rotacion VARCHAR(10) DEFAULT '0',
     fecha_creacion VARCHAR(50), -- String format stored in frontend currently
+    protegida TINYINT(1) DEFAULT 0,
+    favorito TINYINT(1) DEFAULT 0,
+    modifiedAt BIGINT DEFAULT NULL,
+    usuario VARCHAR(100) DEFAULT NULL, -- NULL = nota global, username = nota personal
+    autor VARCHAR(100) DEFAULT NULL,   -- Quien creó la nota
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

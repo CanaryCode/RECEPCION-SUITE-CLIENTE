@@ -275,7 +275,7 @@ const Traductor = {
         const volInput = document.getElementById('trad-volume');
         const speedInput = document.getElementById('trad-speed');
         
-        const volume = volInput ? (parseFloat(volInput.value) || 0.8) : 0.8;
+        const volume = volInput ? (parseFloat(volInput.value) || 1.0) : 1.0;
         const rate = speedInput ? (parseFloat(speedInput.value) || 1.0) : 1.0;
 
         // --- UI ESTADO CARGA ---
