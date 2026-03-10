@@ -80,6 +80,8 @@ export const Api = {
             const headers = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                'X-User-Name': sessionStorage.getItem('session_user') || '',
                 ...(options.headers || {})
             };
 
@@ -107,6 +109,8 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                'X-User-Name': sessionStorage.getItem('session_user') || '',
+
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -135,6 +139,8 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                'X-User-Name': sessionStorage.getItem('session_user') || '',
+
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -160,6 +166,8 @@ export const Api = {
             const url = this._getFinalUrl(endpoint);
             const headers = {
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
+                'X-User-Name': sessionStorage.getItem('session_user') || '',
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -314,9 +322,14 @@ export const Api = {
             // 2. Validar con el Servidor Central enviando el Token
             // El servidor verifica que el token corresponde a un agente activo.
             // Ya no valida IP — la seguridad de dispositivo la da el paso 1 (localhost).
-            const authUrl = APP_CONFIG.SYSTEM.API_URL
-                ? `${APP_CONFIG.SYSTEM.API_URL}/admin/agent-proxy/auth/id?token=${localToken}`
-                : `/api/admin/agent-proxy/auth/id?token=${localToken}`;
+            let authUrl;
+            if (APP_CONFIG.SYSTEM.REMOTE_API_URL) {
+                authUrl = `${APP_CONFIG.SYSTEM.REMOTE_API_URL.replace(/\/+$/, '')}/api/admin/agent-proxy/auth/id?token=${localToken}`;
+            } else {
+                authUrl = APP_CONFIG.SYSTEM.API_URL
+                    ? `${APP_CONFIG.SYSTEM.API_URL}/admin/agent-proxy/auth/id?token=${localToken}`
+                    : `/api/admin/agent-proxy/auth/id?token=${localToken}`;
+            }
 
             // Retry 401: el agente puede tardar unos segundos en registrar su token
             let attempts = 0;

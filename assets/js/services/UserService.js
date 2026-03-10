@@ -15,9 +15,7 @@ class UserService {
         const username = sessionService.getUser();
         if (!username) return null;
 
-        return await Api.get('users/current', {
-            headers: { 'x-user-name': username }
-        });
+        return await Api.get('users/current');
     }
 
     /**
@@ -29,9 +27,7 @@ class UserService {
         const username = sessionService.getUser();
         if (!username) throw new Error('Usuario no identificado');
 
-        return await Api.post('users/update', data, {
-            headers: { 'x-user-name': username }
-        });
+        return await Api.post('users/update', data);
     }
 
     /**

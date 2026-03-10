@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Elementos Flotantes</title>
+    <link href="assets/vendor/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/vendor/bootstrap-icons.css" />
+    <link rel="stylesheet" href="assets/css/chat.css" />
+    <link rel="stylesheet" href="assets/css/calculadora.css" />
+    <link rel="stylesheet" href="assets/css/layout_fix.css" />
+    <style>
+        body {
+            padding: 50px;
+            background: #f0f0f0;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box">
+        <h2>Test de Elementos Flotantes</h2>
+        <p>Este archivo prueba si los elementos se renderizan correctamente.</p>
+        <button onclick="testElements()" class="btn btn-primary">Ejecutar Diagnóstico</button>
+    </div>
+
+    <div id="results" class="info-box" style="display:none;">
+        <h3>Resultados:</h3>
+        <pre id="output"></pre>
+    </div>
+
+    <!-- ELEMENTOS DEL CHAT -->
+    <div id="chat-wrapper">
+        <button id="chat-mute-btn" class="btn btn-light rounded-circle shadow-sm animate-fade-in"
+                title="Silenciar notificaciones"
+                style="position: fixed; bottom: 35px; right: 95px; width: 40px; height: 40px; padding: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: all 0.2s;">
+            <i class="bi bi-volume-up-fill text-secondary"></i>
+        </button>
+        <button id="chat-toggle-btn" class="chat-toggle-btn shadow-lg animate-fade-in" style="z-index: 1050;">
+            <i class="bi bi-chat-fill"></i>
+            <span id="chat-badge" class="badge rounded-pill bg-danger d-none">0</span>
+        </button>
+    </div>
+
+    <!-- SPOTIFY -->
+    <div id="spotify-footer-player" class="spotify-footer-player no-print" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1030; display: flex; background: #191414;">
+        <button class="spotify-footer-toggle" style="width: 100%; background: #1DB954; color: white; border: none; padding: 8px;">
+            <i class="bi bi-spotify me-2"></i>
+            <span>SPOTIFY TEST</span>
+        </button>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div id="calculadora-flotante" class="calculadora-window shadow-lg" style="position: fixed; top: 100px; right: 50px; z-index: 1040; display: block;">
+        <div class="calculadora-header d-flex justify-content-between align-items-center px-3 py-2">
+            <span class="fw-bold small">Calculadora Test</span>
+            <button class="btn btn-sm btn-link text-danger p-0" onclick="this.parentElement.parentElement.style.display='none'">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="p-3">
+            <div class="text-center">Calculadora de prueba</div>
+        </div>
+    </div>
+
+    <script>
+        function testElements() {
+            const output = document.getElementById('output');
+            const results = document.getElementById('results');
+            let text = '';
+
+            // Test Chat Toggle
+            const chatBtn = document.getElementById('chat-toggle-btn');
+            text += '=== CHAT TOGGLE BUTTON ===\n';
+            text += 'Encontrado: ' + !!chatBtn + '\n';
+            if (chatBtn) {
+                const styles = window.getComputedStyle(chatBtn);
+                const rect = chatBtn.getBoundingClientRect();
+                text += 'Display: ' + styles.display + '\n';
+                text += 'Visibility: ' + styles.visibility + '\n';
+                text += 'Opacity: ' + styles.opacity + '\n';
+                text += 'Position: ' + styles.position + '\n';
+                text += 'Z-Index: ' + styles.zIndex + '\n';
+                text += 'Width: ' + styles.width + '\n';
+                text += 'Height: ' + styles.height + '\n';
+                text += 'Bottom: ' + styles.bottom + '\n';
+                text += 'Right: ' + styles.right + '\n';
+                text += 'Rect (top, left, width, height): ' + rect.top + ', ' + rect.left + ', ' + rect.width + ', ' + rect.height + '\n';
+                text += '¿Visible en viewport?: ' + (rect.width > 0 && rect.height > 0) + '\n';
+            }
+            text += '\n';
+
+            // Test Mute Button
+            const muteBtn = document.getElementById('chat-mute-btn');
+            text += '=== CHAT MUTE BUTTON ===\n';
+            text += 'Encontrado: ' + !!muteBtn + '\n';
+            if (muteBtn) {
+                const styles = window.getComputedStyle(muteBtn);
+                const rect = muteBtn.getBoundingClientRect();
+                text += 'Display: ' + styles.display + '\n';
+                text += 'Visibility: ' + styles.visibility + '\n';
+                text += 'Z-Index: ' + styles.zIndex + '\n';
+                text += '¿Visible en viewport?: ' + (rect.width > 0 && rect.height > 0) + '\n';
+            }
+            text += '\n';
+
+            // Test Spotify
+            const spotify = document.getElementById('spotify-footer-player');
+            text += '=== SPOTIFY ===\n';
+            text += 'Encontrado: ' + !!spotify + '\n';
+            if (spotify) {
+                const styles = window.getComputedStyle(spotify);
+                const rect = spotify.getBoundingClientRect();
+                text += 'Display: ' + styles.display + '\n';
+                text += 'Visibility: ' + styles.visibility + '\n';
+                text += 'Z-Index: ' + styles.zIndex + '\n';
+                text += '¿Visible?: ' + (rect.width > 0 && rect.height > 0) + '\n';
+            }
+            text += '\n';
+
+            // Test Calculadora
+            const calc = document.getElementById('calculadora-flotante');
+            text += '=== CALCULADORA ===\n';
+            text += 'Encontrado: ' + !!calc + '\n';
+            if (calc) {
+                const styles = window.getComputedStyle(calc);
+                const rect = calc.getBoundingClientRect();
+                text += 'Display: ' + styles.display + '\n';
+                text += 'Visibility: ' + styles.visibility + '\n';
+                text += 'Z-Index: ' + styles.zIndex + '\n';
+                text += '¿Visible?: ' + (rect.width > 0 && rect.height > 0) + '\n';
+            }
+
+            output.textContent = text;
+            results.style.display = 'block';
+        }
+
+        // Auto-ejecutar al cargar
+        window.onload = function() {
+            setTimeout(testElements, 500);
+        };
+    </script>
+</body>
+</html>

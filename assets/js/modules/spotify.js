@@ -11,16 +11,25 @@ export const Spotify = {
      * INICIALIZACIÓN DEL REPRODUCTOR
      */
     initPlayer() {
+        console.log('[Spotify] Initializing player...');
         const playlists = APP_CONFIG.HOTEL?.SPOTIFY_PLAYLISTS || [];
         const container = document.getElementById('spotify-footer-player');
         const switcher = document.getElementById('spotify-playlist-switcher');
 
-        if (!container) return;
+        if (!container) {
+            console.error('[Spotify] ✗ Error: Container #spotify-footer-player not found in DOM.');
+            return;
+        }
+
+        console.log(`[Spotify] Found container. Playlists count: ${playlists.length}`);
 
         // 1. Determinar URL inicial
         let initialUrl = "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM3M"; // Fallback
         if (playlists.length > 0) {
             initialUrl = playlists[0].url;
+            console.log(`[Spotify] Using first configured playlist: ${playlists[0].label}`);
+        } else {
+            console.log('[Spotify] No playlists configured, using fallback.');
         }
 
         // 2. Renderizar Selector si hay múltiples listas
@@ -35,6 +44,7 @@ export const Spotify = {
                         <i class="bi bi-music-note-list me-1"></i>${p.label}
                     </button>
                 `).join('');
+                console.log('[Spotify] Playlist switcher rendered.');
             } else {
                 switcher.classList.add('d-none');
             }
@@ -43,14 +53,16 @@ export const Spotify = {
         this.switchPlaylist(initialUrl);
 
         // 3. Iniciar Minimizado por defecto
-        if (container) {
-            container.classList.add('minimized');
-            const icon = document.getElementById('spotify-toggle-icon');
-            if (icon) {
-                icon.classList.remove('bi-chevron-up');
-                icon.classList.add('bi-chevron-down');
-            }
+        container.classList.add('minimized');
+        container.style.setProperty('display', 'flex', 'important'); // Force display
+
+        const icon = document.getElementById('spotify-toggle-icon');
+        if (icon) {
+            icon.classList.remove('bi-chevron-up');
+            icon.classList.add('bi-chevron-down');
         }
+        
+        console.log('[Spotify] ✓ Player initialized and minimized.');
     },
 
     /**

@@ -133,7 +133,7 @@
   padding: 0.8rem;
   margin-top: 12px !important;
   animation: fadeInUp 0.3s ease forwards;
-  z-index: 10000;
+  z-index: 1060;
   /* Siempre por encima de la barra de navegación */
 }
 

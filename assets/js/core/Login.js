@@ -1,6 +1,7 @@
 import { APP_CONFIG } from './Config.js';
 import { sessionService } from '../services/SessionService.js';
 import { Api } from './Api.js';
+import { Ui } from './Ui.js';
 
 /**
  * LOGIN COMPONENT
@@ -77,13 +78,13 @@ export class Login {
             const user = await Api.get(`users/info/${username}`);
             
             if (user.hasPassword) {
-                const password = prompt(`Introduce la contraseña para ${username}:`);
+                const password = await this.showPasswordPrompt(username, overlay);
                 if (password === null) return; // Cancelado
 
                 // 2. Validar contraseña
                 const auth = await Api.post('users/login-check', { username, password });
                 if (!auth.success) {
-                    alert('Contraseña incorrecta');
+                    Ui.showToast('Contraseña incorrecta', 'danger');
                     return;
                 }
             }
@@ -105,7 +106,72 @@ export class Login {
 
         } catch (err) {
             console.error('[Login] Error during auth:', err);
-            alert('Error al iniciar sesión: ' + err.message);
+            Ui.showToast('Error al iniciar sesión: ' + err.message, 'danger');
         }
+    }
+
+    static showPasswordPrompt(username, overlay) {
+        const grid = overlay.querySelector('.login-users-grid');
+        const originalContent = overlay.innerHTML;
+        
+        return new Promise((resolve) => {
+            const modalContent = `
+                <div class="login-container d-flex flex-column align-items-center justify-content-center h-100">
+                    <div class="login-password-modal animate__animated animate__zoomIn">
+                        <h2 class="mb-4 text-white">Hola, ${username}</h2>
+                        <p class="text-white-50 mb-4">Introduce tu contraseña para entrar</p>
+                        <input type="password" id="login-pwd-input" class="form-control login-password-input" placeholder="••••••••" autofocus>
+                        <button id="login-pwd-confirm" class="login-password-btn">ENTRAR</button>
+                        <button id="login-pwd-cancel" class="login-password-cancel">No soy yo, volver atrás</button>
+                    </div>
+                </div>
+            `;
+            
+            overlay.innerHTML = modalContent;
+            
+            const input = overlay.querySelector('#login-pwd-input');
+            const confirmBtn = overlay.querySelector('#login-pwd-confirm');
+            const cancelBtn = overlay.querySelector('#login-pwd-cancel');
+            
+            const handleConfirm = () => {
+                const password = input.value;
+                if (!password) {
+                    input.classList.add('animate__animated', 'animate__headShake');
+                    setTimeout(() => input.classList.remove('animate__animated', 'animate__headShake'), 500);
+                    return;
+                }
+                resolve(password);
+            };
+            
+            const handleCancel = () => {
+                overlay.innerHTML = originalContent;
+                // Re-attach grid click events because we replaced innerHTML
+                overlay.addEventListener('click', (e) => {
+                    const card = e.target.closest('.login-user-card');
+                    if (card) {
+                        const uname = card.dataset.username;
+                        this.handleLogin(uname, overlay, (val) => {
+                            // This part is tricky because of the original resolve from showSelector
+                            // But usually handleLogin will eventually resolve the top-level promise
+                        });
+                    }
+                });
+                // Effectively we just need to re-render the selector.
+                // Shortcut: reload selector logic or just resolve null to stop current flow
+                resolve(null);
+                this.showSelector(); // Re-trigger selector cleanly
+                overlay.remove();
+            };
+            
+            confirmBtn.onclick = handleConfirm;
+            cancelBtn.onclick = handleCancel;
+            
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') handleConfirm();
+                if (e.key === 'Escape') handleCancel();
+            };
+            
+            setTimeout(() => input.focus(), 100);
+        });
     }
 }

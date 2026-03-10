@@ -53,19 +53,19 @@
 
 /* Clases generadas por Bootstrap */
 .tooltip {
-    z-index: 100000 !important; /* Ultimate priority */
+    z-index: 10700 !important;
 }
 
 /* FIX: Ensure Dropdowns are ALWAYS on top */
 .dropdown-menu {
-    z-index: 99999 !important; 
+    z-index: 1060 !important;
     position: absolute !important; /* Force standard positioning */
     /* Ensure it's not clipped */
     box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
 }
 
 .custom-nav-tooltip {
-    z-index: 100000 !important;
+    z-index: 10700 !important;
     pointer-events: none; 
 }
 /* Asegurar que el inner también hereda o respeta */
@@ -121,7 +121,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999999; /* Por encima de todo */
+    z-index: 10800; /* Por encima de todo */
     color: white;
 }
 
@@ -175,7 +175,7 @@
     aspect-ratio: 1/1;
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px; /* More rounded for premium feel */
+    border-radius: 50%; /* Make them perfectly circular as requested */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -233,4 +233,66 @@
     .login-user-avatar {
         font-size: 3.5rem;
     }
+}
+
+/* MODAL DE CONTRASEÑA PREMIUM */
+.login-password-modal {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.login-password-input {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 15px !important;
+    font-size: 1.25rem !important;
+    text-align: center;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.login-password-input:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: white !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+.login-password-btn {
+    background: white;
+    color: black;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    font-weight: 700;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.login-password-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: #f8f9fa;
+}
+
+.login-password-cancel {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.login-password-cancel:hover {
+    color: white;
 }

@@ -56,32 +56,31 @@ class ChatModule {
             this.fileInput = document.getElementById('chat-file-input');
             this.emojiBtn = document.getElementById('chat-btn-emoji');
 
-            console.log("[CHAT] DOM Elements found:", {
-                container: !!this.container,
-                toggleBtn: !!this.toggleBtn,
-                userList: !!this.userList,
-                messagesList: !!this.list,
-                badge: !!this.badge
-            });
-
             if (!this.container || !this.toggleBtn) {
-                console.warn("[CHAT] Essential DOM elements missing. Is chat.html loaded?");
+                console.warn("[CHAT] Essential DOM elements missing. Re-searching in 500ms...");
+                this.isInitialized = false; // Allow retry
+                setTimeout(() => this.init(), 500);
                 return;
             }
+
+            // CRITICAL: Show the toggle button IMMEDIATELY so the user sees it's working
+            this.toggleBtn.classList.remove('d-none');
+            this.toggleBtn.style.setProperty('display', 'flex', 'important');
+            this.toggleBtn.style.setProperty('visibility', 'visible', 'important');
+            this.toggleBtn.style.setProperty('opacity', '1', 'important');
+
+            if (this.muteBtn) {
+                this.muteBtn.classList.remove('d-none');
+                this.muteBtn.style.setProperty('display', 'flex', 'important');
+            }
+            console.log("[CHAT] Toggle button shown and forced visible.");
 
             this.setupEventListeners();
             if (this.muteBtn) this.updateMuteIcon();
             
-            console.log("[CHAT] Loading unread counts...");
-            await this.loadUnreadCounts();
-            
-            console.log("[CHAT] Loading history...");
-            this.loadHistory(); // Load global initially
-
             // Listen for shared WebSocket messages
             window.addEventListener('sync:ws_message', (e) => {
                 const data = e.detail;
-                console.log(`[CHAT] WS Message Event: ${data.type}`, data.payload);
                 if (data.type === 'chat_message') {
                     this.handleIncomingMessage(data.payload);
                 } else if (data.type === 'chat_delete' || data.type === 'chat_delete_multiple') {
@@ -105,18 +104,21 @@ class ChatModule {
                 }
             });
 
-            if (this.toggleBtn) this.toggleBtn.classList.remove('d-none');
-            if (this.muteBtn) this.muteBtn.classList.remove('d-none');
-            
-            // Cargar lista completa de usuarios del sistema
-            if (window.APP_CONFIG && window.APP_CONFIG.HOTEL && window.APP_CONFIG.HOTEL.RECEPCIONISTAS) {
+            // Start background tasks without blocking visibility
+            this.allUsers = [];
+            if (window.APP_CONFIG?.HOTEL?.RECEPCIONISTAS) {
                 this.allUsers = window.APP_CONFIG.HOTEL.RECEPCIONISTAS.map(r => typeof r === 'string' ? r : r.nombre);
             }
             
-            // Renderizar inmediatamente la lista de usuarios en el panel lateral
             this.updateRecipientList();
+            
+            // Heavy data loading
+            this.loadUnreadCounts().catch(e => console.warn("[CHAT] Error loading counts:", e));
+            this.loadHistory().catch(e => console.warn("[CHAT] Error loading history:", e));
+            
         } catch (err) {
             console.error("[CHAT] Critical error during init:", err);
+            this.isInitialized = false;
         }
     }
 

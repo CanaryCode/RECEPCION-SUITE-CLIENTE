@@ -78,7 +78,7 @@ function inyectarToolbarFlotante() {
         const toolbar = document.createElement('div');
         toolbar.id = 'editor-toolbar';
         toolbar.className = 'position-absolute bg-white border border-secondary rounded shadow p-2 d-none align-items-center gap-2';
-        toolbar.style.zIndex = '9999';
+        toolbar.style.zIndex = '1070';
         toolbar.innerHTML = `
             <div class="btn-group btn-group-sm" role="group">
                 <button type="button" class="btn btn-light border border-secondary" onmousedown="event.preventDefault()" onclick="aplicarFormato('bold')"><i class="bi bi-type-bold"></i></button>

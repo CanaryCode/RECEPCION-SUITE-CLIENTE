@@ -12,7 +12,7 @@
     height: 400px;
     background-color: var(--bs-body-bg);
     border-radius: 12px;
-    z-index: 10700 !important; /* Top priority over everything including Modals and Navbars */
+    z-index: 1045;
     display: flex;
     flex-direction: column;
     overflow: hidden;

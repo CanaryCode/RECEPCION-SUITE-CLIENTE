@@ -1,7 +1,7 @@
 {
     "vales": [
         {
-            "id": 1773096182173.967,
+            "id": 1773116013397.4849,
             "moduloId": 1709136000000,
             "receptor": "101",
             "comentario": "",
@@ -10,7 +10,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.9573,
+            "id": 1773116013397.0686,
             "moduloId": 1709136060000,
             "receptor": "205",
             "comentario": "",
@@ -19,7 +19,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.3208,
+            "id": 1773116013397.3064,
             "moduloId": 1709136120000,
             "receptor": "302",
             "comentario": "",
@@ -28,7 +28,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.16,
+            "id": 1773116013397.6804,
             "moduloId": 1709136180000,
             "receptor": "410",
             "comentario": "",
@@ -37,7 +37,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.8062,
+            "id": 1773116013397.3928,
             "moduloId": 1709136240000,
             "receptor": "105",
             "comentario": "",
@@ -46,7 +46,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.558,
+            "id": 1773116013397.0442,
             "moduloId": 1709136300000,
             "receptor": "105",
             "comentario": "",
@@ -55,7 +55,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.2363,
+            "id": 1773116013397.8425,
             "moduloId": 1709136360000,
             "receptor": "212",
             "comentario": "",
@@ -64,7 +64,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.492,
+            "id": 1773116013397.9834,
             "moduloId": 1709136420000,
             "receptor": "314",
             "comentario": "",
@@ -73,7 +73,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.697,
+            "id": 1773116013397.9634,
             "moduloId": 1709136480000,
             "receptor": "402",
             "comentario": "",
@@ -82,7 +82,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.62,
+            "id": 1773116013397.8252,
             "moduloId": 1709136540000,
             "receptor": "501",
             "comentario": "",
@@ -91,7 +91,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.1,
+            "id": 1773116013397.9666,
             "moduloId": 1709136600000,
             "receptor": "101",
             "comentario": "",
@@ -100,7 +100,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.3853,
+            "id": 1773116013397.1804,
             "moduloId": 1709136660000,
             "receptor": "205",
             "comentario": "",
@@ -109,7 +109,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.4102,
+            "id": 1773116013397.4958,
             "moduloId": 1709136720000,
             "receptor": "310",
             "comentario": "",
@@ -118,7 +118,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.9187,
+            "id": 1773116013397.6323,
             "moduloId": 1709136780000,
             "receptor": "412",
             "comentario": "",
@@ -127,7 +127,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.3032,
+            "id": 1773116013397.617,
             "moduloId": 1709136840000,
             "receptor": "510",
             "comentario": "",
@@ -136,7 +136,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.5354,
+            "id": 1773116013397.0996,
             "moduloId": 1772420128678,
             "receptor": "101",
             "comentario": "",
@@ -145,7 +145,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.123,
+            "id": 1773116013397.7307,
             "moduloId": 1772420128943,
             "receptor": "205",
             "comentario": "",
@@ -154,7 +154,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.151,
+            "id": 1773116013397.5498,
             "moduloId": 1772420129015,
             "receptor": "302",
             "comentario": "",
@@ -163,7 +163,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.2622,
+            "id": 1773116013397.9543,
             "moduloId": 1772420129179,
             "receptor": "105",
             "comentario": "",
@@ -172,7 +172,7 @@
             "origin": "vales_module"
         },
         {
-            "id": 1773096182173.3606,
+            "id": 1773116013397.261,
             "moduloId": 1772420129279,
             "receptor": "410",
             "comentario": "",
@@ -182,8 +182,8 @@
         }
     ],
     "desembolsos": [],
-    "fecha": "2026-03-09",
-    "turno": "TARDE",
+    "fecha": "2026-03-10",
+    "turno": "NOCHE",
     "comentarios": "",
     "id": 3,
     "created_at": "2026-02-24T00:00:00.000Z"
