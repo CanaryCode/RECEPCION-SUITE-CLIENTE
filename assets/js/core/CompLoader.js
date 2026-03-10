@@ -22,17 +22,23 @@ export const CompLoader = {
     loadComponent: async (id, path, retries = 2) => {
         try {
             const container = document.getElementById(id);
-            if (!container) return;
+            if (!container) {
+                console.warn(`[CompLoader] Contenedor no encontrado: ${id}`);
+                return;
+            }
 
             let lastError = null;
             for (let i = 0; i <= retries; i++) {
                 try {
                     const version = APP_CONFIG.SYSTEM.VERSION || 'V1.0.0';
-                    const response = await fetch(`${path}?v=${version}`);
+                    const url = `${path}?v=${version}`;
+                    console.log(`[CompLoader] Cargando ${id} desde ${url}...`);
+                    const response = await fetch(url);
                     if (!response.ok) throw new Error(`HTTP ${response.status}: ${path}`);
-                    
+
                     const html = await response.text();
                     container.innerHTML = html;
+                    console.log(`[CompLoader] ✓ ${id} cargado correctamente (${html.length} chars)`);
                     return; // Éxito
                 } catch (err) {
                     lastError = err;
@@ -44,7 +50,7 @@ export const CompLoader = {
             }
             throw lastError;
         } catch (error) {
-            console.error(`Error crítico cargando el componente [${id}]:`, error);
+            console.error(`[CompLoader] ✗ Error crítico cargando [${id}]:`, error);
         }
     },
 
