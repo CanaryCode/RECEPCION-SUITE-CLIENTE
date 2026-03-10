@@ -30,7 +30,8 @@ export const CompLoader = {
             let lastError = null;
             for (let i = 0; i <= retries; i++) {
                 try {
-                    const version = APP_CONFIG.SYSTEM.VERSION || 'V1.0.0';
+                    // Usar timestamp para forzar carga sin caché
+                    const version = Date.now();
                     const url = `${path}?v=${version}`;
                     console.log(`[CompLoader] Cargando ${id} desde ${url}...`);
                     const response = await fetch(url);
