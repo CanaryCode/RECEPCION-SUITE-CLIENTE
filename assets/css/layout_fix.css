@@ -131,13 +131,15 @@
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        z-index: 99999 !important;
+        z-index: 10000 !important; /* Above navbar (5000) */
         background: #191414 !important;
         border-top: 1px solid #1DB954 !important;
         box-shadow: 0 -8px 24px rgba(0,0,0,0.6) !important;
         display: flex !important;
         flex-direction: column !important;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     /* HANDLE AT THE TOP */

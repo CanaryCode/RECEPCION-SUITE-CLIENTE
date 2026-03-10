@@ -129,7 +129,7 @@ function setupEventListeners() {
                 return;
             }
 
-            if (!confirm('¿Estás seguro de que quieres quitar tu contraseña? Cualquier persona podrá entrar en tu sesión.')) {
+            if (!await Ui.showConfirm('¿Estás seguro de que quieres quitar tu contraseña? Cualquier persona podrá entrar en tu sesión.')) {
                 return;
             }
 

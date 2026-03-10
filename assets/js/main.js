@@ -198,8 +198,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Actualizar UI inmediatamente después de login
     updateUserUI(currentUser);
 
-    // 2. MULTIMEDIA INIT (Spotify)...
-    Spotify.initPlayer();
+    if (typeof Spotify !== 'undefined' && Spotify.initPlayer) {
+      console.log('[Main] Inicializando reproductor de Spotify...');
+      Spotify.initPlayer();
+    } else {
+      console.error('[Main] ✗ Error: Módulo Spotify no disponible o sin initPlayer.');
+    }
 
     // Diagnóstico de Almacenamiento Local
     try {
@@ -283,8 +287,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.ModuleLoader = ModuleLoader;
 
     // 5.1 Forzar refresh del dashboard después de cargar módulos críticos
-    // Los módulos críticos (Despertadores, Transfers, etc.) renderizan sus widgets
-    // pero necesitamos asegurar que el dashboard esté visible si hay datos
     setTimeout(async () => {
       // Llamar a las funciones de mostrar para cada módulo crítico que tenga widget
       if (window.mostrarDespertadores) window.mostrarDespertadores();
@@ -432,6 +434,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 10. Iniciar sincronización en tiempo real
     realTimeSync.connect();
+
+    // 11. Exponer abrirCalculadora (Asegurar que esté disponible para el Dashboard)
+    import("./modules/calculadora.js").then(m => {
+      window.abrirCalculadora = () => m.calculadora.abrir();
+    });
   } catch (criticalError) {
     console.error("CRITICAL BOOT ERROR:", criticalError);
     const errorBox = document.getElementById("global-error-box");
@@ -1016,11 +1023,20 @@ window.abrirCaja = async function() {
 };
 
 window.abrirCalculadora = async function() {
-  // Carga e inicializa el módulo de forma perezosa
-  const m = await import("./modules/calculadora.js");
-  if (m.calculadora) {
-    await m.calculadora.init();
-    m.calculadora.abrir();
+  console.log('[Calculadora] Intentando abrir...');
+  try {
+    // Carga e inicializa el módulo de forma perezosa
+    const m = await import("./modules/calculadora.js");
+    if (m.calculadora) {
+      console.log('[Calculadora] Módulo importado. Llamando a init()...');
+      await m.calculadora.init();
+      m.calculadora.abrir();
+    } else {
+      console.error('[Calculadora] ✗ Error: No se encontró el objeto "calculadora" en el módulo importado.');
+    }
+  } catch (err) {
+    console.error('[Calculadora] ✗ Error crítico al cargar el módulo:', err);
+    alert('Error al abrir la calculadora. Revisa la consola para más detalles.');
   }
 };
 

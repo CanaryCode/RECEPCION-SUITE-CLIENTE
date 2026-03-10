@@ -16,23 +16,45 @@ let calcState = {
 
 const Calculadora = {
     async init() {
+        if (this.isInitialized) return;
         console.log('[Calculadora] Inicializando...');
         
         // Cargar template si no existe
         if (!document.getElementById('calculadora-flotante')) {
-            const html = await fetch('/assets/templates/calculadora.html').then(r => r.text());
-            document.body.insertAdjacentHTML('beforeend', html);
+            console.log('[Calculadora] Template no encontrado, intentando cargar...');
+            try {
+                // Quitamos el slash inicial para mayor compatibilidad con rutas relativas
+                const response = await fetch('assets/templates/calculadora.html');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const html = await response.json ? await response.json() : await response.text();
+                const content = typeof html === 'string' ? html : html.content || '';
+                document.body.insertAdjacentHTML('beforeend', content);
+                console.log('[Calculadora] ✓ Template cargado e insertado.');
+            } catch (err) {
+                console.error('[Calculadora] ✗ Error al cargar template:', err);
+                // Fallback: tratar de usar el contenedor de CompLoader si ya existe
+                const container = document.getElementById('calculadora-container');
+                if (container && container.innerHTML.trim() !== '') {
+                    console.log('[Calculadora] Usando contenido precargado en #calculadora-container');
+                } else {
+                    throw err;
+                }
+            }
+        } else {
+            console.log('[Calculadora] Template ya presente en el DOM.');
         }
 
         this.setupDragAndDrop();
         this.setupResizing();
         this.attachEvents();
+        this.isInitialized = true;
     },
 
     abrir() {
+        console.log('[Calculadora] Abriendo ventana...');
         const win = document.getElementById('calculadora-flotante');
         if (!win) {
-            // Si por alguna razón se llama antes de init, inicializar rápido
+            console.warn('[Calculadora] Ventana no encontrada, re-inicializando...');
             this.init().then(() => this._abrirEfectivo());
             return;
         }
@@ -41,9 +63,13 @@ const Calculadora = {
 
     _abrirEfectivo() {
         const win = document.getElementById('calculadora-flotante');
-        win.classList.remove('d-none');
-        win.classList.add('animate-pop-in');
-        this.updateDisplay();
+        if (win) {
+            win.classList.remove('d-none');
+            win.classList.add('animate-pop-in');
+            win.style.setProperty('display', 'block', 'important');
+            this.updateDisplay();
+            console.log('[Calculadora] ✓ Ventana mostrada.');
+        }
     },
 
     cerrar() {
@@ -219,9 +245,9 @@ const Calculadora = {
             win.style.transition = 'none'; // Quitar animaciones mientras se arrastra
             
             // Bring to front vs. translator
-            win.style.zIndex = '10710';
+            win.style.zIndex = '10001';
             const traductor = document.getElementById('traductor-flotante');
-            if(traductor) traductor.style.setProperty('z-index', '10700', 'important');
+            if(traductor) traductor.style.zIndex = '10000';
         };
 
         document.onmousemove = (e) => {
