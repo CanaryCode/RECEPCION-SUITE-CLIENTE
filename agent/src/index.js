@@ -28,26 +28,20 @@ function logToFile(msg) {
 }
 
 // Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
+// Middleware de CORS 100% personalizado para soportar Private Network Access (PNA)
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    
-    // Chrome PNA requires explicit origin, not *
-    if (origin) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    } else {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    }
+    if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
+    else res.setHeader('Access-Control-Allow-Origin', '*');
     
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint, X-User-Name, x-user-name');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Max-Age', '86400');
     res.setHeader('Vary', 'Origin, Access-Control-Request-Private-Network');
 
     if (req.method === 'OPTIONS') {
-        // Enforce Content-Length 0 for preflights
-        res.setHeader('Content-Length', '0');
         return res.status(200).end();
     }
     next();

@@ -28,6 +28,7 @@
 | C6  | **Registrar tabla en TABLE_MAP** | Todo nuevo módulo con persistencia debe registrarse en `server/routes/storage.js`.         |
 | C7  | **Cómputo pesado en cliente**    | OCR, PDF, imágenes → JavaScript del navegador. El servidor es solo para persistencia.      |
 | C8  | **Sin magic strings**            | Usar `core/Constants.js` para eventos, nombres de módulos y claves.                        |
+| C9  | **Minimalismo en headers para Agente** | Prohibido enviar headers de sesión (`X-User-Name`, etc.) a peticiones locales (localhost) para evitar bloqueos CORS/PNA innecesarios. |
 
 ## INTERFAZ Y UX
 

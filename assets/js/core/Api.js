@@ -35,7 +35,7 @@ export const Api = {
 
         // Asegurar prefijo /api si es remoto y no lo tiene (evita 404/HTML en producción)
         // Pero no lo añadimos si ya lo tiene o si es una URL local que ya lo manejará
-        if (!isForcedLocal && baseUrl.startsWith('http') && !baseUrl.includes('/api') && !cleanEndpoint.startsWith('storage')) {
+        if (!isForcedLocal && baseUrl.startsWith('http') && !baseUrl.includes('/api')) {
             baseUrl += '/api';
         } else if (isForcedLocal && !baseUrl.includes('/api')) {
             baseUrl += '/api';
@@ -81,7 +81,7 @@ export const Api = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'X-User-Name': sessionStorage.getItem('session_user') || '',
+                ...(finalUrl.includes('127.0.0.1') || finalUrl.includes('localhost') || finalUrl.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
 
@@ -109,8 +109,7 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'X-User-Name': sessionStorage.getItem('session_user') || '',
-
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -139,8 +138,7 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'X-User-Name': sessionStorage.getItem('session_user') || '',
-
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -167,7 +165,7 @@ export const Api = {
             const headers = {
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'X-User-Name': sessionStorage.getItem('session_user') || '',
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {

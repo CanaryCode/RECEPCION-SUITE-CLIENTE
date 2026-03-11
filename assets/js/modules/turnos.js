@@ -31,6 +31,7 @@ export const TurnosManager = {
         this.setupVacationDragPropagation();
         this.setupKeyboardShortcuts();
         await this.loadData();
+        this.loadPersistence(); // Cargar resultados previos del sorteo
         this.render();
     },
 
@@ -208,8 +209,75 @@ export const TurnosManager = {
             this.populateVacationSelectors();
             this.populateMonthlySelectors();
             this.populateStatsSelectors();
+            
+            // Mapear avatares tras cargar recepcionistas
+            await this.mapearAvatares();
         } catch (e) {
             console.error("[Turnos] Error en loadData:", e);
+        }
+    },
+
+    async mapearAvatares() {
+        try {
+            console.log("[Turnos] Solicitando lista de avatares...");
+            const files = await Api.get('storage/list?folder=media/avatars');
+            console.log("[Turnos] Respuesta storage/list:", files);
+
+            if (!Array.isArray(files)) {
+                console.warn("[Turnos] La respuesta de storage/list no es un array:", files);
+                return;
+            }
+
+            this.receptionists.forEach(r => {
+                const name = this.getUserName(r);
+                const nameLower = name.toLowerCase();
+                console.log(`[Turnos] Buscando avatar para: ${name} (lower: ${nameLower})`);
+                
+                // Buscar el avatar más reciente para este usuario (case-insensitive)
+                const userFiles = files.filter(f => {
+                    const match = f.name.toLowerCase().includes(`avatar_${nameLower}_`);
+                    if (match) console.log(`[Turnos]   ✓ Coincidencia encontrada: ${f.name}`);
+                    return match;
+                }).sort((a, b) => b.name.localeCompare(a.name));
+                
+                if (userFiles.length > 0) {
+                    if (typeof r === 'object') {
+                        // Usar ruta absoluta con slash inicial para evitar problemas de resolución
+                        r.avatar = `/storage/media/avatars/${userFiles[0].name}`;
+                        console.log(`[Turnos]   ✓ Avatar ASIGNADO: ${r.avatar}`);
+                    }
+                } else {
+                    // Fallback a un avatar generado por nombre si no hay foto
+                    if (typeof r === 'object') {
+                        r.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
+                        console.log(`[Turnos]   ! No se encontró foto. Usando fallback for ${name}`);
+                    }
+                }
+            });
+            console.log("[Turnos] Mapeo de avatares completado.");
+            this.renderRafflePanel(); // Refrescar el panel por si ya hay resultados
+        } catch (e) {
+            console.warn("[Turnos] No se pudieron mapear los avatares:", e);
+        }
+    },
+
+    loadPersistence() {
+        try {
+            const savedResults = localStorage.getItem('RS_TURNOS_LAST_RAFFLE');
+            if (savedResults) {
+                this.lastRaffleResults = JSON.parse(savedResults);
+                console.log("[Turnos] Resultados del sorteo cargados desde persistencia.");
+            }
+        } catch (e) {
+            console.error("[Turnos] Error detectado al cargar persistencia:", e);
+        }
+    },
+
+    savePersistence() {
+        try {
+            localStorage.setItem('RS_TURNOS_LAST_RAFFLE', JSON.stringify(this.lastRaffleResults));
+        } catch (e) {
+            console.error("[Turnos] Error al guardar persistencia:", e);
         }
     },
 
@@ -263,11 +331,20 @@ export const TurnosManager = {
         }
 
         container.classList.remove('d-none');
-        list.innerHTML = this.lastRaffleResults.map((name, i) => `
-            <div class="badge bg-white text-dark border shadow-sm p-2 animate__animated animate__fadeIn" style="font-size: 0.9rem;">
-                <span class="text-primary fw-bold me-1">#${i + 1}</span> ${name}
-            </div>
-        `).join('');
+        list.innerHTML = this.lastRaffleResults.map((name, i) => {
+            // Busqueda robusta (case-insensitive) para el trabajador
+            const nameLower = name.toLowerCase();
+            const worker = this.receptionists.find(r => this.getUserName(r).toLowerCase() === nameLower);
+            
+            const avatar = (typeof worker === 'object' && worker.avatar) ? worker.avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
+            return `
+                <div class="badge bg-white text-dark border shadow-sm p-2 animate__animated animate__fadeIn d-flex align-items-center gap-2" style="font-size: 0.9rem;">
+                    <span class="text-primary fw-bold">#${i + 1}</span>
+                    <img src="${avatar}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover;">
+                    ${name}
+                </div>
+            `;
+        }).join('');
     },
 
     populateMonthlySelectors() {
@@ -3148,8 +3225,9 @@ export const TurnosManager = {
             [finalOrder[i], finalOrder[j]] = [finalOrder[j], finalOrder[i]];
         }
         
-        // Guardar para persistencia
-        this.lastRaffleResults = finalOrder.map(w => typeof w === 'string' ? w : w.nombre);
+        // Guardar para persistencia (nombres)
+        this.lastRaffleResults = finalOrder.map(w => this.getUserName(w));
+        this.savePersistence();
 
         // 2. Preparar UI - Mostrar AMBOS estados (Animación y Resultados)
         document.getElementById('sorteo-state-ready')?.classList.add('d-none');
@@ -3157,11 +3235,14 @@ export const TurnosManager = {
         document.getElementById('sorteo-state-results')?.classList.add('d-none'); 
         
         const spotlightName = document.getElementById('lottery-spotlight-name');
+        const spotlightAvatar = document.getElementById('lottery-spotlight-avatar');
+        const liveResults = document.getElementById('lottery-live-results');
         const persistentList = document.getElementById('persistentSorteoList');
         const raffleContainer = document.getElementById('raffle-results-container');
         const pickingTitle = document.getElementById('lottery-picking-title');
         const btnRepeat = document.getElementById('btnRepeatSorteo');
         
+        if (liveResults) liveResults.innerHTML = '';
         if (persistentList) persistentList.innerHTML = '';
         if (raffleContainer) raffleContainer.classList.remove('d-none');
         if (btnRepeat) btnRepeat.classList.add('d-none');
@@ -3169,7 +3250,8 @@ export const TurnosManager = {
         // 3. Revelación uno a uno con efecto Slot Machine
         for (let i = 0; i < finalOrder.length; i++) {
             const winner = finalOrder[i];
-            const winnerName = typeof winner === 'string' ? winner : winner.nombre;
+            const winnerName = this.getUserName(winner);
+            const winnerAvatar = (typeof winner === 'object' && winner.avatar) ? winner.avatar : null;
 
             // Título dinámico
             if (pickingTitle) pickingTitle.innerText = `Buscando el puesto #${i + 1}...`;
@@ -3178,13 +3260,21 @@ export const TurnosManager = {
             const spinDuration = i === 0 ? 1800 : 1000; 
             const startTime = Date.now();
             
+            if (spotlightAvatar) spotlightAvatar.classList.remove('d-none');
+
             while (Date.now() - startTime < spinDuration) {
                 const randomWorker = activeWorkers[Math.floor(Math.random() * activeWorkers.length)];
-                const randomName = typeof randomWorker === 'object' ? randomWorker.nombre : randomWorker;
+                const randomName = this.getUserName(randomWorker);
+                const randomAvatar = (typeof randomWorker === 'object' && randomWorker.avatar) ? randomWorker.avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(randomName)}&background=random`;
                 
                 if (spotlightName) {
                     spotlightName.innerText = randomName;
-                    spotlightName.className = 'display-5 fw-bold animate__animated animate__slideInDown';
+                    spotlightName.className = 'display-6 fw-bold animate__animated animate__slideInDown';
+                }
+                if (spotlightAvatar) {
+                    const img = spotlightAvatar.querySelector('img');
+                    if (img) img.src = randomAvatar;
+                    spotlightAvatar.className = 'mb-2 animate__animated animate__headShake';
                 }
                 await new Promise(r => setTimeout(r, 60));
             }
@@ -3192,37 +3282,59 @@ export const TurnosManager = {
             // REVELACIÓN DEL GANADOR EN EL FOCO
             if (spotlightName) {
                 spotlightName.innerText = winnerName;
-                spotlightName.className = 'display-4 fw-bold text-warning animate__animated animate__tada';
+                spotlightName.className = 'display-5 fw-bold text-warning animate__animated animate__tada';
+            }
+            if (spotlightAvatar) {
+                const img = spotlightAvatar.querySelector('img');
+                if (img) img.src = winnerAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(winnerName)}&background=0D8ABC&color=fff`;
+                spotlightAvatar.className = 'mb-2 animate__animated animate__bounceIn';
             }
 
             // Pausa dramática en el foco
             await new Promise(r => setTimeout(r, 800));
 
-            // AÑADIR A LA LISTA PERSISTENTE (crece a medida que sale)
+            // AÑADIR A LAS LISTAS (crece a medida que sale)
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(winnerName)}&background=0D8ABC&color=fff`;
+            const badgeHtml = `
+                <div class="d-flex align-items-center bg-white border rounded shadow-sm p-2 mb-2 animate__animated animate__fadeInRight">
+                    <span class="badge bg-primary rounded-circle me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">${i + 1}</span>
+                    <img src="${winnerAvatar || fallbackAvatar}" class="rounded-circle me-2" style="width: 25px; height: 25px; object-fit: cover;">
+                    <span class="fw-bold small">${winnerName}</span>
+                </div>
+            `;
+
+            if (liveResults) {
+                liveResults.insertAdjacentHTML('beforeend', badgeHtml);
+                liveResults.scrollTop = liveResults.scrollHeight;
+            }
+
             if (persistentList) {
-                const badge = document.createElement('div');
-                badge.className = 'badge bg-white text-dark border shadow-sm p-2 animate__animated animate__zoomIn';
-                badge.style.fontSize = '0.9rem';
-                badge.innerHTML = `<span class="text-primary fw-bold me-1">#${i + 1}</span> ${winnerName}`;
-                persistentList.appendChild(badge);
+                persistentList.insertAdjacentHTML('beforeend', `
+                    <div class="badge bg-white text-dark border shadow-sm p-2 animate__animated animate__zoomIn d-flex align-items-center gap-2" style="font-size: 0.9rem;">
+                        <span class="text-primary fw-bold">#${i + 1}</span>
+                        <img src="${winnerAvatar || fallbackAvatar}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover;">
+                        ${winnerName}
+                    </div>
+                `);
             }
             
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 300));
         }
 
         // 4. Finalizar
         if (pickingTitle) pickingTitle.innerText = "¡Sorteo finalizado!";
         if (spotlightName) {
             spotlightName.innerText = "¡COMPLETO!";
-            spotlightName.className = 'display-5 fw-bold text-success animate__animated animate__pulse animate__infinite';
+            spotlightName.className = 'display-6 fw-bold text-success animate__animated animate__pulse animate__infinite';
         }
+        if (spotlightAvatar) spotlightAvatar.classList.add('d-none');
         
         await new Promise(r => setTimeout(r, 1000));
         document.getElementById('sorteo-state-results')?.classList.remove('d-none');
         document.getElementById('sorteo-state-anim')?.classList.add('d-none');
         if (btnRepeat) btnRepeat.classList.remove('d-none');
         
-        Ui.showToast("Sorteo completado con éxito", "success");
+        Ui.showToast("Sorteo completado y guardado", "success");
     }
 };
 

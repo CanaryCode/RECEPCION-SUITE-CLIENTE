@@ -62,6 +62,41 @@ const TABLE_MAP = {
 
 
 /**
+ * GET /api/storage/list?folder=...
+ * Lists files in a specific subfolder of storage/
+ */
+router.get('/list', async (req, res) => {
+    const { folder } = req.query;
+    logToFile(`[Storage] GET /list - folder: ${folder}`);
+    if (!folder) return res.status(400).json({ error: 'Missing folder parameter' });
+
+    try {
+        const targetDir = path.join(STORAGE_DIR, folder);
+        logToFile(`[Storage] GET /list - targetDir: ${targetDir}`);
+        // Basic security check to prevent directory traversal
+        if (!targetDir.startsWith(STORAGE_DIR)) {
+            logToFile(`[Storage] GET /list - FORBIDDEN (traversal attempt)`);
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+
+        const files = await fs.readdir(targetDir, { withFileTypes: true });
+        const result = files
+            .filter(f => f.isFile())
+            .map(f => ({
+                name: f.name,
+                path: path.join(folder, f.name).replace(/\\/g, '/')
+            }));
+
+        logToFile(`[Storage] GET /list - Found ${result.length} files`);
+        res.json(result);
+    } catch (err) {
+        logToFile(`[Storage] GET /list - Error: ${err.message}`);
+        if (err.code === 'ENOENT') return res.json([]);
+        res.status(500).json({ error: 'Read error', details: err.message });
+    }
+});
+
+/**
  * GET /api/storage/debug/log
  * Devuelve el contenido del log de depuración.
  */

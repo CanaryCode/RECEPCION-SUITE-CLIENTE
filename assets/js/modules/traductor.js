@@ -351,8 +351,8 @@ const Traductor = {
             
             // Bring to front
             const cal = document.getElementById('calculadora-flotante');
-            win.style.zIndex = '1046';
-            if(cal) cal.style.zIndex = '1040';
+            win.style.zIndex = '10001';
+            if(cal) cal.style.zIndex = '10000';
         };
 
         document.onmousemove = (e) => {

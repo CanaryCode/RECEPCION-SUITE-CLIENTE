@@ -677,20 +677,34 @@
 
                 <!-- ESTADO 2: ANIMACIÓN (SORTEANDO) -->
                 <div id="sorteo-state-anim" class="p-4 text-center d-none animate__animated animate__fadeIn">
-                    <div class="lottery-spinner mb-3">
-                        <i class="bi bi-dice-6 display-3 text-warning animate__animated animate__infinite animate__swing d-inline-block"></i>
-                    </div>
-                    
-                    <!-- AREA DE SPINNING (SLOT MACHINE) -->
-                    <div class="spotlight-container bg-dark text-white rounded-3 p-4 mb-3 shadow-inner position-relative overflow-hidden" style="height: 120px;">
-                        <div id="lottery-spotlight-name" class="display-5 fw-bold animate__animated animate__fast">
-                            ???
-                        </div>
-                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.4) 100%); pointer-events: none;"></div>
-                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-md-7 border-end">
+                            <div class="lottery-spinner mb-3">
+                                <i class="bi bi-dice-6 fs-1 text-warning animate__animated animate__infinite animate__swing d-inline-block"></i>
+                            </div>
+                            
+                            <!-- AREA DE SPINNING (SLOT MACHINE) -->
+                            <div class="spotlight-container bg-dark text-white rounded-4 p-4 mb-3 shadow-lg position-relative overflow-hidden d-flex flex-column align-items-center justify-content-center" style="height: 200px; border: 4px solid #ffc107;">
+                                <div id="lottery-spotlight-avatar" class="mb-2 animate__animated d-none">
+                                    <img src="" class="rounded-circle border border-3 border-warning shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+                                <div id="lottery-spotlight-name" class="display-6 fw-bold animate__animated animate__fast">
+                                    ???
+                                </div>
+                                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.5) 100%); pointer-events: none;"></div>
+                            </div>
 
-                    <h4 class="fw-bold mb-0 text-primary" id="lottery-picking-title">Buscando el próximo...</h4>
-                    <p class="text-muted small" id="lottery-status-text">La suerte está echada</p>
+                            <h5 class="fw-bold mb-0 text-primary" id="lottery-picking-title">Buscando el próximo...</h5>
+                            <p class="text-muted small" id="lottery-status-text">La suerte está echada</p>
+                        </div>
+                        <div class="col-md-5">
+                            <h6 class="fw-bold text-muted small text-uppercase mb-3"><i class="bi bi-list-ol me-2"></i>Orden actual</h6>
+                            <div id="lottery-live-results" class="overflow-auto border rounded bg-light p-2" style="max-height: 250px;">
+                                <!-- Se llena en tiempo real -->
+                                <div class="text-muted small py-4 mt-2">Esperando resultados...</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ESTADO 3: CIERRE (SOLO BOTÓN REPETIR) -->

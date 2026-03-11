@@ -1,57 +1,102 @@
 <div id="calculadora-flotante" class="calculadora-window shadow-lg d-none">
-    <!-- Header / Drag Bar -->
-    <div class="calculadora-header d-flex justify-content-between align-items-center px-3 py-2">
+    <!-- Header -->
+    <div class="calculadora-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2 overflow-hidden">
             <i class="bi bi-calculator text-primary"></i>
-            <span class="fw-bold small text-truncate">Calculadora Operativa</span>
+            <span class="fw-bold text-truncate">Calculadora Estándar</span>
         </div>
-        <div class="d-flex align-items-center gap-1">
-            <button class="btn btn-sm btn-link text-muted p-0 me-2" id="btn-calc-copy" title="Copiar Resultado">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-sm btn-link text-muted" id="btn-calc-history" title="Ver Guardados">
+                <i class="bi bi-clock-history"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-muted" id="btn-calc-copy" title="Copiar Result">
                 <i class="bi bi-clipboard"></i>
             </button>
-            <button class="btn btn-sm btn-link text-danger p-0" id="btn-calc-close">
+            <button class="btn btn-sm btn-link text-danger" id="btn-calc-close">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
     </div>
 
     <!-- Display -->
-    <div class="calculadora-display-container p-3">
-        <div id="calc-history" class="text-end text-muted x-small mb-1" style="height: 15px; overflow: hidden;">&nbsp;</div>
-        <div id="calc-screen" class="text-end fw-bold h3 mb-0">0</div>
+    <div class="calculadora-display-container">
+        <div id="calc-history" class="text-muted">&nbsp;</div>
+        <div id="calc-screen" class="text-truncate">0</div>
+        <!-- Quick History Bar -->
+        <div id="calc-quick-history" class="calc-quick-history mt-2">
+            <!-- Last 3 items here -->
+        </div>
+    </div>
+
+    <!-- Memory Bar -->
+    <div class="calc-memory-bar">
+        <button class="btn-calc-mem" data-mem="MC" title="Limpiar memoria">MC</button>
+        <button class="btn-calc-mem" data-mem="MR" title="Recuperar de memoria">MR</button>
+        <button class="btn-calc-mem" data-mem="M+" title="Sumar a memoria">M+</button>
+        <button class="btn-calc-mem" data-mem="M-" title="Restar de memoria">M-</button>
+        <button class="btn-calc-mem" data-mem="MS" title="Guardar en memoria">MS</button>
     </div>
 
     <!-- Buttons Grid -->
-    <div class="calculadora-buttons p-2">
-        <div class="row g-1 mb-1">
-            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="C">C</button></div>
-            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="(">(</button></div>
-            <div class="col-3"><button class="btn btn-calc-op w-100" data-val=")">)</button></div>
-            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="/">÷</button></div>
+    <div class="calculadora-buttons">
+        <!-- Row 1 -->
+        <button class="btn btn-calc-op" data-val="C" title="Limpiar todo (C)">C</button>
+        <button class="btn btn-calc-op" data-val="CE" title="Limpiar entrada (CE)">CE</button>
+        <button class="btn btn-calc-op" data-val="BACK" title="Borrar último dígito (Backspace)"><i class="bi bi-backspace"></i></button>
+        <button class="btn btn-calc-op" data-val="%" title="Porcentaje (%)">%</button>
+
+        <!-- Row 2 -->
+        <button class="btn btn-calc-num" data-val="7" title="Siete">7</button>
+        <button class="btn btn-calc-num" data-val="8" title="Ocho">8</button>
+        <button class="btn btn-calc-num" data-val="9" title="Nueve">9</button>
+        <button class="btn btn-calc-action" data-val="/" title="Dividir (/)">÷</button>
+
+        <!-- Row 3 -->
+        <button class="btn btn-calc-num" data-val="4" title="Cuatro">4</button>
+        <button class="btn btn-calc-num" data-val="5" title="Cinco">5</button>
+        <button class="btn btn-calc-num" data-val="6" title="Seis">6</button>
+        <button class="btn btn-calc-action" data-val="*" title="Multiplicar (*)">×</button>
+
+        <!-- Row 4 -->
+        <button class="btn btn-calc-num" data-val="1" title="Uno">1</button>
+        <button class="btn btn-calc-num" data-val="2" title="Dos">2</button>
+        <button class="btn btn-calc-num" data-val="3" title="Tres">3</button>
+        <button class="btn btn-calc-action" data-val="-" title="Restar (-)">−</button>
+
+        <!-- Row 5 -->
+        <button class="btn btn-calc-op" data-val="+/-" title="Cambiar signo">+/-</button>
+        <button class="btn btn-calc-num" data-val="0" title="Cero">0</button>
+        <button class="btn btn-calc-num" data-val="." title="Punto decimal">,</button>
+        <button class="btn btn-calc-action" data-val="+" title="Sumar (+)">+</button>
+
+        <!-- Row 6 -->
+        <button class="btn btn-calc-op" data-val="(" title="Paréntesis abierto">(</button>
+        <button class="btn btn-calc-op" data-val=")" title="Paréntesis cerrado">)</button>
+        <button class="btn btn-calc-op" data-val="x2" title="Elevar al cuadrado">x²</button>
+        <button class="btn btn-calc-equal" id="btn-calc-equal" title="Igual (Enter)">=</button>
+    </div>
+
+    <!-- Save Tool -->
+    <div class="calc-save-tool">
+        <div class="d-flex gap-2">
+            <input type="text" id="calc-save-comment" class="form-control" placeholder="Comentario...">
+            <button class="btn btn-primary" id="btn-calc-save"><i class="bi bi-save"></i></button>
         </div>
-        <div class="row g-1 mb-1">
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="7">7</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="8">8</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="9">9</button></div>
-            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="*">×</button></div>
+    </div>
+
+    <!-- History Drawer -->
+    <div id="calc-saved-pane" class="calc-saved-pane">
+        <div class="calc-saved-header d-flex justify-content-between align-items-center">
+            <span>Operaciones Guardadas</span>
+            <button class="btn btn-sm btn-link text-dark p-0" id="btn-calc-history-close">
+                <i class="bi bi-arrow-left"></i>
+            </button>
         </div>
-        <div class="row g-1 mb-1">
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="4">4</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="5">5</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="6">6</button></div>
-            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="-">−</button></div>
+        <div id="calc-saved-list" class="calc-saved-list">
+            <!-- Items injected by JS -->
         </div>
-        <div class="row g-1 mb-1">
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="1">1</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="2">2</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="3">3</button></div>
-            <div class="col-3"><button class="btn btn-calc-action w-100" data-val="+">+</button></div>
-        </div>
-        <div class="row g-1">
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val="0">0</button></div>
-            <div class="col-3"><button class="btn btn-calc-num w-100" data-val=".">.</button></div>
-            <div class="col-3"><button class="btn btn-calc-op w-100" data-val="%">%</button></div>
-            <div class="col-3"><button class="btn btn-primary w-100 fw-bold shadow-sm" id="btn-calc-equal">=</button></div>
+        <div class="p-2 border-top">
+            <button class="btn btn-sm btn-outline-danger w-100" id="btn-calc-clear-saved">Limpiar Todo</button>
         </div>
     </div>
 

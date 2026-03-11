@@ -436,9 +436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     realTimeSync.connect();
 
     // 11. Exponer abrirCalculadora (Asegurar que esté disponible para el Dashboard)
-    import("./modules/calculadora.js").then(m => {
-      window.abrirCalculadora = () => m.calculadora.abrir();
-    });
+    // Eliminado: Delegado a ModuleLoader y exposición global en calculadora.js
   } catch (criticalError) {
     console.error("CRITICAL BOOT ERROR:", criticalError);
     const errorBox = document.getElementById("global-error-box");
@@ -1022,22 +1020,21 @@ window.abrirCaja = async function() {
   }
 };
 
+// Módulo de calculadora cargado bajo demanda
 window.abrirCalculadora = async function() {
-  console.log('[Calculadora] Intentando abrir...');
-  try {
-    // Carga e inicializa el módulo de forma perezosa
-    const m = await import("./modules/calculadora.js");
-    if (m.calculadora) {
-      console.log('[Calculadora] Módulo importado. Llamando a init()...');
-      await m.calculadora.init();
-      m.calculadora.abrir();
-    } else {
-      console.error('[Calculadora] ✗ Error: No se encontró el objeto "calculadora" en el módulo importado.');
+    console.log('[Calculadora] Iniciando apertura...');
+    try {
+        const m = await ModuleLoader.loadModule('calculadora');
+        // El ModuleLoader ya llama al initItem que ejecuta m.calculadora.init()
+        // Solo necesitamos asegurar que el objeto global esté disponible o llamarlo desde m
+        const version = APP_CONFIG.SYSTEM.VERSION || Date.now();
+        const calcModule = await import(`./modules/calculadora.js?v=${version}`);
+        if (calcModule.calculadora) {
+            calcModule.calculadora.abrir();
+        }
+    } catch (err) {
+        console.error('[Calculadora] Error al abrir:', err);
     }
-  } catch (err) {
-    console.error('[Calculadora] ✗ Error crítico al cargar el módulo:', err);
-    alert('Error al abrir la calculadora. Revisa la consola para más detalles.');
-  }
 };
 
 window.abrirTraductor = async function() {

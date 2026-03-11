@@ -12,11 +12,11 @@
 
 | Campo                      | Valor                                                                                     |
 | -------------------------- | ----------------------------------------------------------------------------------------- |
-| **Última versión**         | v5.0.3                                                                                    |
-| **Módulo en foco**         | Chat con Mensajería Privada + Robustez de API Core                                        |
+| **Última versión**         | v5.1.0                                                                                    |
+| **Módulo en foco**         | Robustez de Galería (CORS) + Mejora UX Calculadora                                        |
 | **Deuda técnica conocida** | Ninguna conocida                                                                          |
 | **Próximo objetivo**       | Ver `roadmap.md`                                                                          |
-| **Última sesión**          | 2026-03-03 — SELLADO: Implementación de Chat Privado y fix de errores críticos en Api.js. |
+| **Última sesión**          | 2026-03-11 — SELLADO: Fix de desbordamiento en Calculadora y error de CORS en Galería. |
 
 ---
 

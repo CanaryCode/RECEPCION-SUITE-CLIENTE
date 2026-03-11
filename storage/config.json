@@ -397,50 +397,16 @@
             }
         ],
         "RECEPCIONISTAS": [
-            {
-                "nombre": "Pavel",
-                "vacaciones": 48
-            },
-            {
-                "nombre": "Javi",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Anadelia",
-                "vacaciones": 48
-            },
-            {
-                "nombre": "Marta",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Carmen",
-                "vacaciones": 48
-            },
-            {
-                "nombre": "Alberto",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Nerea",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Emiliano",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Domingo",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Antonio",
-                "vacaciones": 30
-            },
-            {
-                "nombre": "Marcos",
-                "vacaciones": 30
-            }
+            "Pavel",
+            "Javi",
+            "Anadelia",
+            "Marta",
+            "Carmen",
+            "Alberto",
+            "Nerea",
+            "Emiliano",
+            "Domingo",
+            "Antonio"
         ],
         "ALARMAS_SISTEMA": [
             {
@@ -522,7 +488,6 @@
         "PRECIO_DIARIO": 2
     },
     "SYSTEM": {
-        "VERSION": "1.0.10",
         "MODE": "local",
         "API_URL": "/api",
         "USE_API": false,
@@ -563,7 +528,7 @@
                 "embedded": false
             }
         ],
-        "GALLERY_PATH": "C:/Users/usuario/Desktop/ANTONIO/RECURSOS/INFORMACIÓN",
+        "GALLERY_PATH": "C:/Users/jesus/Downloads",
         "SYNC_INTERVAL": 10000,
         "ADMIN_PASSWORD": "1234",
         "GALLERY_FOLDERS": [

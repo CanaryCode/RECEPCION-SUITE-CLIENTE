@@ -249,3 +249,23 @@ Permission was denied for this request to access the `loopback` address space.
 **Archivos afectados**: `server/schema.sql`, `server/app.js`, `server/routes/chat.js`, `assets/js/modules/chat.js`, `assets/templates/chat.html`, `assets/css/chat.css`
 
 **Lección**: Para sistemas de mensajería, la persistencia debe soportar el filtrado `sender <-> recipient` desde el diseño inicial para evitar refactorizaciones pesadas de la UI más adelante.
+
+---
+
+### [2026-03-11] Error de CORS en Galería (Header `X-User-Name`)
+
+**Síntoma**: El módulo de galería no cargaba las imágenes y mostraba un error de CORS en la consola.
+**Causa raíz**: El frontend enviaba el header `X-User-Name` (no estándar) a peticiones dirigidas al agente local (localhost), disparando un preflight (OPTIONS) que el agente no permitía.
+**Solución**: Se modificó `Api.js` para excluir dinámicamente este header en peticiones a localhost/agente. Se simplificó el middleware de CORS en el agente.
+**Archivos afectados**: `assets/js/core/Api.js`, `agent/src/index.js`
+**Lección**: Minimalismo en headers para servicios locales. No enviar datos de sesión donde no se requieren.
+
+---
+
+### [2026-03-11] Desbordamiento en Display de Calculadora
+
+**Síntoma**: Cifras largas se salían del display o lo desplazaban de forma visualmente incorrecta.
+**Causa raíz**: Falta de límite de dígitos en la lógica y de escalado dinámico en la UI.
+**Solución**: Implementado límite de 16 dígitos, formateo inteligente (redondeo prioritario) y escalado dinámico de fuente (`font-size` variable).
+**Archivos afectados**: `assets/js/modules/calculadora.js`, `assets/css/calculadora.css`
+**Lección**: Todo display visual debe tener una gestión activa de su capacidad máxima.
