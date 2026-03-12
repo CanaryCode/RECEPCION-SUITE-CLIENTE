@@ -397,16 +397,72 @@
             }
         ],
         "RECEPCIONISTAS": [
-            "Pavel",
-            "Javi",
-            "Anadelia",
-            "Marta",
-            "Carmen",
-            "Alberto",
-            "Nerea",
-            "Emiliano",
-            "Domingo",
-            "Antonio"
+            {
+                "id": 37,
+                "email": "",
+                "activo": 1,
+                "nombre": "Johanna",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Johanna_1773287091938.png",
+                "created_at": "2026-03-12T03:36:56.000Z",
+                "display_name": "",
+                "password_hash": null
+            },
+            {
+                "id": 38,
+                "email": "",
+                "activo": 1,
+                "nombre": "Elisa",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Elisa_1773287120427.jpg",
+                "created_at": "2026-03-12T03:36:56.000Z",
+                "display_name": "",
+                "password_hash": null
+            },
+            {
+                "id": 39,
+                "email": "",
+                "activo": 1,
+                "nombre": "Yulimar",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Yulimar_1773287156611.jpg",
+                "created_at": "2026-03-12T03:36:56.000Z",
+                "display_name": "",
+                "password_hash": null
+            },
+            {
+                "id": 40,
+                "email": "",
+                "activo": 1,
+                "nombre": "Jose Luis",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Jose Luis_1773287207189.jpg",
+                "created_at": "2026-03-12T03:36:56.000Z",
+                "display_name": "",
+                "password_hash": null
+            },
+            {
+                "id": 41,
+                "email": "",
+                "activo": 1,
+                "nombre": "Antonio",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Antonio_1773287859032.jpeg",
+                "created_at": "2026-03-12T03:36:56.000Z",
+                "display_name": "",
+                "password_hash": null
+            },
+            {
+                "id": 43,
+                "email": "",
+                "activo": 1,
+                "nombre": "Adriana",
+                "hotel_id": 2,
+                "avatar_url": "storage/media/avatars/avatar_Adriana_1773287810662.jpg",
+                "created_at": "2026-03-12T03:44:14.000Z",
+                "display_name": "",
+                "password_hash": null
+            }
         ],
         "ALARMAS_SISTEMA": [
             {
@@ -522,18 +578,103 @@
             },
             {
                 "icon": "house",
-                "path": "C:/Users/usuario/Desktop/SIHOT.url",
+                "path": "C:/Users/usuario/Desktop/SIHOT.lnk",
                 "type": "app",
                 "label": "SIHOT",
                 "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc britanico",
+                "type": "folder",
+                "label": "DOCUMENTOS INGLÉS",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc español",
+                "type": "folder",
+                "label": "DOCUMENTOS FRANCÉS",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc aleman",
+                "type": "folder",
+                "label": "DOCUMENTOS ALEMAN",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc español",
+                "type": "folder",
+                "label": "DOCUMENTOS ESPAÑOL",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc italiano",
+                "type": "folder",
+                "label": "DOCUMENTOS ITALIANO",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc holandes",
+                "type": "folder",
+                "label": "DOCUMENTOS HOLANDES",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents/doc administración",
+                "type": "folder",
+                "label": "DOCUMENTOS ADMINISTRACIÓN",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:\\Users\\usuario\\Documents",
+                "type": "folder",
+                "label": "DOCUMENTOS",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Program Files (x86)/Safire Smart VMS lite/Client/MonitorClient.exe",
+                "type": "app",
+                "label": "CÁMARAS",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Desktop/VOXEL.url",
+                "type": "app",
+                "label": "VOXEL",
+                "embedded": false
+            },
+            {
+                "icon": "",
+                "path": "C:/Users/usuario/Documents",
+                "type": "documentos",
+                "label": "DOCUMENTOS",
+                "embedded": false
             }
         ],
-        "GALLERY_PATH": "C:/Users/jesus/Downloads",
+        "GALLERY_PATH": "C:/Users/usuario/Documents/ANTONIO/GALERIA",
         "SYNC_INTERVAL": 10000,
         "ADMIN_PASSWORD": "1234",
         "GALLERY_FOLDERS": [
             {
-                "path": "Z:\\ESCANER",
+                "path": "C:/Users/usuario/Downloads",
+                "label": "DOWNLOADS"
+            },
+            {
+                "path": "C:\\Users\\usuario\\Pictures",
+                "label": "IMAGENES"
+            },
+            {
+                "path": "C:\\Users\\usuario\\Pictures\\ControlCenter4\\Scan",
                 "label": "ESCANER"
             }
         ],

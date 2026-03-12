@@ -16,7 +16,7 @@ class ChatModule {
         this.recipientSelect = null;
         this.isOpen = false;
         this.unreadCount = 0;
-        this.currentUser = sessionStorage.getItem('session_user') || 'Invitado';
+        this.currentUser = localStorage.getItem('session_user') || 'Invitado';
         this.currentRecipient = null; // null means GLobal
         this.socket = null;
         this.onlineUsers = new Set();
@@ -38,7 +38,7 @@ class ChatModule {
         this.isInitialized = true;
         
         // Refresh current user from session just in case
-        this.currentUser = sessionStorage.getItem('session_user') || 'Invitado';
+        this.currentUser = localStorage.getItem('session_user') || 'Invitado';
         
         console.log(`[CHAT] Initializing module for user: ${this.currentUser}...`);
         

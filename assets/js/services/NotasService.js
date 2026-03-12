@@ -59,7 +59,7 @@ class NotasService extends BaseService {
         if (changed) {
             console.log(`[NotasService] Normalizadas ${notas.length} notas con nuevos campos.`);
             this.cache = notas;
-            LocalStorage.set(this.endpoint, notas); // Guardamos sin pasar por validate() si fuera necesario
+            LocalStorage.set(this.getStorageKey(), notas); // Guardamos sin pasar por validate() si fuera necesario
         }
 
         return notas;

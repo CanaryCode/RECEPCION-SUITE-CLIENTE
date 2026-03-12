@@ -4,8 +4,14 @@ const db = require('../db');
 const crypto = require('crypto');
 
 function getHotelId(req) {
+    // 1. Prioritize explicit parameters in query or body (important for Login)
+    const explicitId = req.query.hotel_id || req.body.hotel_id || (req.body && req.body.hotelId);
+    if (explicitId) return parseInt(explicitId) || 1;
+
+    // 2. Otherwise look at headers
     const raw = req.headers['x-hotel-id'];
     if (!raw) return 1;
+    // Handle potential list of headers (Express/Node behavior)
     if (Array.isArray(raw)) return parseInt(raw[raw.length - 1]) || 1;
     if (typeof raw === 'string' && raw.includes(',')) {
         const parts = raw.split(',');

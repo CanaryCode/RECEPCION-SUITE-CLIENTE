@@ -138,6 +138,11 @@ const TABLE_TO_MODULO = {
 };
 
 function getHotelId(req) {
+    // 1. Prioritize explicit parameters in query or body (important for Login)
+    const explicitId = req.query.hotel_id || req.body.hotel_id || (req.body && req.body.hotelId);
+    if (explicitId) return parseInt(explicitId) || 1;
+
+    // 2. Otherwise look at headers
     const raw = req.headers['x-hotel-id'];
     if (!raw) return 1;
     // Handle potential list of headers (Express/Node behavior)
@@ -284,19 +289,25 @@ router.get('/:key', async (req, res) => {
 
     // Try Database first if mapping exists
     if (tableName) {
+        const hotelId = getHotelId(req);
+        const isIsolated = ISOLATED_TABLES.has(tableName);
+        let isSharedValue = true;
+
         try {
-            const hotelId = getHotelId(req);
-            const isIsolated = ISOLATED_TABLES.has(tableName);
-            const isSharedValue = isIsolated ? await checkIfShared(tableName, hotelId) : true;
+            isSharedValue = isIsolated ? await checkIfShared(tableName, hotelId) : true;
             
             logToFile(`[Storage] DB Read attempt: ${tableName} (key: ${key}, hotel: ${hotelId}, isolated: ${isIsolated}, shared: ${isSharedValue})`);
             
             let queryArr;
             // Si la tabla NO es aislada O es compartida, no filtramos por hotel_id
             if (isIsolated && !isSharedValue && tableName !== 'hoteles') {
-                queryArr = await db.query(`SELECT * FROM \`${tableName}\` WHERE hotel_id = ?`, [hotelId]);
+                const sql = `SELECT * FROM \`${tableName}\` WHERE hotel_id = ?`;
+                logToFile(`[Storage] SQL EXEC: ${sql} [${hotelId}]`);
+                queryArr = await db.query(sql, [hotelId]);
             } else {
-                queryArr = await db.query(`SELECT * FROM \`${tableName}\``);
+                const sql = `SELECT * FROM \`${tableName}\``;
+                logToFile(`[Storage] SQL EXEC: ${sql}`);
+                queryArr = await db.query(sql);
             }
             const [rows] = queryArr;
             logToFile(`[Storage] DB Read success: ${tableName} - Found ${rows.length} rows`);
@@ -423,12 +434,22 @@ router.get('/:key', async (req, res) => {
             }
 
             return res.json(processedRows);
+
         } catch (dbErr) {
-            logToFile(`[Storage] DB Read Error for ${tableName}: ${dbErr.message}. Falling back to JSON.`);
+            logToFile(`[Storage] DB Read Error for ${tableName}: ${dbErr.message}.`);
+            // Only continue to JSON fallback if NOT an isolated table
+            if (isIsolated) {
+                return res.status(500).json({ error: 'Database error on isolated table', details: dbErr.message });
+            }
+        }
+
+        // JSON Fallback (ONLY for non-isolated or shared data tables)
+        if (isIsolated && !isSharedValue) {
+            logToFile(`[Storage] 🛑 Blocked JSON fallback for isolated table: ${tableName}`);
+            return res.json(key === 'config' ? {} : []); // Return empty instead of leaking
         }
     }
 
-    // JSON Fallback
     const filePath = path.join(STORAGE_DIR, `${key}.json`);
     try {
         const data = await fs.readFile(filePath, 'utf8');

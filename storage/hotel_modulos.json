@@ -1,0 +1,192 @@
+[
+    {
+        "modulo_id": "dashboard-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "novedades-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "tareas-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "agenda-content",
+        "activo": 1,
+        "compartido": 1
+    },
+    {
+        "modulo_id": "cena-fria-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "desayuno-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "riu-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "atenciones-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "despertadores-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "transfers-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "excursiones-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "reservas-instalaciones-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "lost-found-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "turnos-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "vales-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "estancia-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "rack-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "notas-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "calendario-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "guia-interactiva-content",
+        "activo": 1,
+        "compartido": 1
+    },
+    {
+        "modulo_id": "ayuda-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "chat-wrapper",
+        "activo": 1,
+        "compartido": 1
+    },
+    {
+        "modulo_id": "calculadora-container",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "precios-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "safe-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "caja-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "cobro-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "valoracion-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "spotify-footer-player",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "traductor-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "tiempo-content",
+        "activo": 1,
+        "compartido": 1
+    },
+    {
+        "modulo_id": "ocr-datafonos-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "system-alarms-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "error-list-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "perfil-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "aplicaciones-content",
+        "activo": 1,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "impresion-content",
+        "activo": 0,
+        "compartido": 0
+    },
+    {
+        "modulo_id": "gallery-content",
+        "activo": 1,
+        "compartido": 0
+    }
+]

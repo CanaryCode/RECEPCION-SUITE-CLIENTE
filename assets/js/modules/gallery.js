@@ -28,58 +28,65 @@ let _galleryScrollObserver = null; // El observador del fondo para infinite scro
 
 export const Gallery = {
     async inicializar() {
-        try {
-            if (moduloInicializado) return;
-            
-            // Cargar favoritos del servidor
-            await this.loadFavorites();
-        
-        // Initial load
-        await this.loadImages();
-        
-        // Debounce para la búsqueda (300ms)
-        let searchTimeout;
-        document.getElementById('gallerySearch')?.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                this.filterImages(e.target.value);
-            }, 300);
-        });
-
-        // Event for Type Filter
-        document.getElementById('galleryTypeFilter')?.addEventListener('change', (e) => {
-            currentTypeFilter = e.target.value;
-            this.renderGrid(currentImages);
-        });
-
-        // Event for Folder Filter
-        document.getElementById('galleryFolderFilter')?.addEventListener('change', (e) => {
-            currentFolderFilter = e.target.value;
-            this.renderGrid(currentImages);
-        });
-
-        // Event for Sort
-        document.getElementById('gallerySort')?.addEventListener('change', (e) => {
-            currentSort = e.target.value;
-            this.renderGrid(currentImages);
-        });
-
-        // Event for Favorite Filter
-        document.getElementById('galleryFavoriteFilter')?.addEventListener('change', (e) => {
-            showOnlyFavorites = e.target.checked;
-            this.renderGrid(currentImages);
-        });
-
-        // Event for Selection Mode
-        document.getElementById('gallerySelectionMode')?.addEventListener('change', (e) => {
-            this.toggleSelectionMode(e.target.checked);
-        });
-
-        this.setupModalEvents();
+        if (moduloInicializado) return;
         moduloInicializado = true;
+
+        try {
+            console.log('[Gallery] inicializar started');
+            
+            // Cargar favoritos del servidor (no bloqueamos el arranque principal si tarda)
+            this.loadFavorites();
+        
+            // Initial load (no bloqueamos para que el Router pueda cambiar de pestaña rápido)
+            console.log('[Gallery] triggering first loadImages in background');
+            this.loadImages();
+            
+            // Debounce para la búsqueda (300ms)
+            let searchTimeout;
+            const searchInput = document.getElementById('gallerySearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.filterImages(e.target.value);
+                    }, 300);
+                });
+            }
+
+            // Event for Type Filter
+            document.getElementById('galleryTypeFilter')?.addEventListener('change', (e) => {
+                currentTypeFilter = e.target.value;
+                this.renderGrid(currentImages);
+            });
+
+            // Event for Folder Filter
+            document.getElementById('galleryFolderFilter')?.addEventListener('change', (e) => {
+                currentFolderFilter = e.target.value;
+                this.renderGrid(currentImages);
+            });
+
+            // Event for Sort
+            document.getElementById('gallerySort')?.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                this.renderGrid(currentImages);
+            });
+
+            // Event for Favorite Filter
+            document.getElementById('galleryFavoriteFilter')?.addEventListener('change', (e) => {
+                showOnlyFavorites = e.target.checked;
+                this.renderGrid(currentImages);
+            });
+
+            // Event for Selection Mode
+            document.getElementById('gallerySelectionMode')?.addEventListener('change', (e) => {
+                this.toggleSelectionMode(e.target.checked);
+            });
+
+            this.setupModalEvents();
         } catch (err) {
             console.error('[Gallery-Init-Error]', err);
-            try { fetch('http://localhost:3001/debug-log', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({error: err.toString(), stack: err.stack})}); } catch(e){}
+            // Intentar reportar error al servidor
+            try { fetch('/api/debug-log', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({error: err.toString(), stack: err.stack, module: 'gallery'})}); } catch(e){}
         }
     },
 
@@ -360,8 +367,12 @@ export const Gallery = {
     },
 
     renderGrid(images) {
+        console.log('[Gallery] renderGrid started. Images count:', images.length);
         const container = document.getElementById('gallery-grid');
-        if (!container) return;
+        if (!container) {
+            console.error('[Gallery] #gallery-grid NOT FOUND in DOM during renderGrid');
+            return;
+        }
         
         // Limpiar de forma segura
         while (container.firstChild) container.removeChild(container.firstChild);

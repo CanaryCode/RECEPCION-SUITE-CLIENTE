@@ -1,4 +1,5 @@
 import { Ui } from '../core/Ui.js';
+import { Api } from '../core/Api.js';
 
 /**
  * MÓDULO CALCULADORA PREMIUM (calculadora.js)
@@ -439,7 +440,7 @@ const Calculadora = {
     },
 
     // --- PERSISTENCIA ---
-    saveCurrentOperation() {
+    async saveCurrentOperation() {
         const commentInput = document.getElementById('calc-save-comment');
         const comment = commentInput ? commentInput.value.trim() : '';
         const value = calcState.display;
@@ -459,15 +460,36 @@ const Calculadora = {
         };
 
         this.savedOperations.unshift(op);
-        localStorage.setItem('calc_saved_ops', JSON.stringify(this.savedOperations));
-        if (commentInput) commentInput.value = '';
-        this.renderSavedList();
-        Ui.showToast('Operación guardada', 'success');
+        try {
+            await Api.post('storage/calculadora_ops', this.savedOperations);
+            if (commentInput) commentInput.value = '';
+            this.renderSavedList();
+            Ui.showToast('Operación guardada en servidor', 'success');
+        } catch (err) {
+            console.error('[Calculadora] Error saving to API:', err);
+            // Fallback to localStorage if API fails
+            localStorage.setItem('calc_saved_ops', JSON.stringify(this.savedOperations));
+            if (commentInput) commentInput.value = '';
+            this.renderSavedList();
+            Ui.showToast('Guardado localmente (servidor offline)', 'warning');
+        }
     },
 
-    loadSavedOperations() {
-        const raw = localStorage.getItem('calc_saved_ops');
-        if (raw) this.savedOperations = JSON.parse(raw);
+    async loadSavedOperations() {
+        try {
+            const data = await Api.get('storage/calculadora_ops');
+            if (data && Array.isArray(data)) {
+                this.savedOperations = data;
+            } else {
+                // Fallback to localStorage
+                const raw = localStorage.getItem('calc_saved_ops');
+                if (raw) this.savedOperations = JSON.parse(raw);
+            }
+        } catch (err) {
+            console.log('[Calculadora] API Load failed, using localStorage');
+            const raw = localStorage.getItem('calc_saved_ops');
+            if (raw) this.savedOperations = JSON.parse(raw);
+        }
         this.renderSavedList();
     },
 
@@ -678,9 +700,13 @@ window.loadCalcOp = (id) => {
     }
 };
 
-window.deleteCalcOp = (id) => {
+window.deleteCalcOp = async (id) => {
     Calculadora.savedOperations = Calculadora.savedOperations.filter(o => o.id !== id);
-    localStorage.setItem('calc_saved_ops', JSON.stringify(Calculadora.savedOperations));
+    try {
+        await Api.post('storage/calculadora_ops', Calculadora.savedOperations);
+    } catch (err) {
+        localStorage.setItem('calc_saved_ops', JSON.stringify(Calculadora.savedOperations));
+    }
     Calculadora.renderSavedList();
 };
 

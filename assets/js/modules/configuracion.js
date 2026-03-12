@@ -152,16 +152,18 @@ export const Configurator = {
     async renderRecepcionistas() {
         try {
             const data = await Api.get('storage/recepcionistas');
-            const list = Array.isArray(data) ? data.map(u => typeof u === 'string' ? u : u.nombre) : [];
-            tempConfig.HOTEL.RECEPCIONISTAS = list;
+            // Store full objects to preserve metadata like avatar_url
+            tempConfig.HOTEL.RECEPCIONISTAS = Array.isArray(data) ? data : [];
 
-            Ui.renderTable('config-recepcionistas-list', list, (nombre) => `
+            Ui.renderTable('config-recepcionistas-list', tempConfig.HOTEL.RECEPCIONISTAS, (user) => {
+                const nombre = typeof user === 'string' ? user : (user.nombre || user.display_name || 'Sin nombre');
+                return `
                 <div class="badge bg-light text-dark border p-2 d-flex align-items-center">
                     <span class="fs-6 text-truncate me-2" style="max-width: 150px;">${nombre}</span>
                     <button type="button" class="btn btn-link link-primary p-0 text-decoration-none me-2" onclick="Configurator.editRecepcionista('${nombre}')" title="Editar"><i class="bi bi-pencil-square"></i></button>
                     <button type="button" class="btn-close" style="width: 0.5em; height: 0.5em;" onclick="Configurator.removeRecepcionista('${nombre}')" title="Eliminar"></button>
                 </div>
-            `);
+            `;});
         } catch (e) {
             console.error("Error loading receptionists:", e);
             Ui.renderTable('config-recepcionistas-list', [], () => '');
@@ -513,16 +515,20 @@ export const Configurator = {
 
     async addRecepcionista() {
         const nombre = Utils.getVal('newRecepcionista');
-        if (nombre && !tempConfig.HOTEL.RECEPCIONISTAS.includes(nombre)) {
+        if (nombre && !tempConfig.HOTEL.RECEPCIONISTAS.some(r => (typeof r === 'string' ? r : r.nombre) === nombre)) {
             try {
-                tempConfig.HOTEL.RECEPCIONISTAS.push(nombre);
+                // Preservar objeto si ya existe (para no perder avatar_url), sino crear uno nuevo
+                const existing = tempConfig.HOTEL.RECEPCIONISTAS.find(r => (typeof r === 'string' ? r : r.nombre) === nombre);
+                if (!existing) {
+                    tempConfig.HOTEL.RECEPCIONISTAS.push({ nombre: nombre });
+                }
+                
                 await Api.post('storage/recepcionistas', tempConfig.HOTEL.RECEPCIONISTAS);
                 this.renderRecepcionistas();
                 Utils.setVal('newRecepcionista', '');
                 Ui.showToast("Recepcionista añadido correctamente", "success");
             } catch (e) {
                 console.error("Error adding receptionist:", e);
-                tempConfig.HOTEL.RECEPCIONISTAS = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => r !== nombre);
                 Ui.showToast("Error al guardar en la base de datos", "danger");
             }
         }
@@ -531,7 +537,7 @@ export const Configurator = {
     async removeRecepcionista(nombre) {
         if (await Ui.showConfirm(`¿Eliminar ${nombre}?`)) {
             try {
-                const newList = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => r !== nombre);
+                const newList = tempConfig.HOTEL.RECEPCIONISTAS.filter(r => (typeof r === 'string' ? r : r.nombre) !== nombre);
                 await Api.post('storage/recepcionistas', newList);
                 tempConfig.HOTEL.RECEPCIONISTAS = newList;
                 this.renderRecepcionistas();

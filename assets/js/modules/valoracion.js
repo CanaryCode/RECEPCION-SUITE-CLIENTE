@@ -13,8 +13,8 @@ import { sessionService } from '../services/SessionService.js';
 
 let moduloInicializado = false;
 let editingId = null;
-const HISTORIAL_KEY = 'app_valoraciones_historial';
-const HISTORIAL_PERMANENTE_KEY = 'app_valoraciones_permanente';
+const getHistorialKey = () => `app_valoraciones_historial_h${localStorage.getItem('current_hotel_id') || '1'}`;
+const getHistorialPermanenteKey = () => `app_valoraciones_permanente_h${localStorage.getItem('current_hotel_id') || '1'}`;
 let selectedValuationIds = new Set();
 
 export function inicializarValoracion() {
@@ -71,11 +71,11 @@ export function inicializarValoracion() {
     window.seleccionarObsoletos = seleccionarObsoletos;
 
     // Migración de datos (si el histórico permanente está vacío)
-    const currentPermanente = LocalStorage.get(HISTORIAL_PERMANENTE_KEY, []);
+    const currentPermanente = LocalStorage.get(getHistorialPermanenteKey(), []);
     if (currentPermanente.length === 0) {
-        const tempHistorial = LocalStorage.get(HISTORIAL_KEY, []);
+        const tempHistorial = LocalStorage.get(getHistorialKey(), []);
         if (tempHistorial.length > 0) {
-            LocalStorage.set(HISTORIAL_PERMANENTE_KEY, tempHistorial);
+            LocalStorage.set(getHistorialPermanenteKey(), tempHistorial);
             console.log("Valuations: Migrated ephemeral records to permanent history.");
         }
     }
@@ -624,8 +624,8 @@ function guardarValoracionEnLista() {
     };
 
     // Almacenamiento Dual
-    let historial = LocalStorage.get(HISTORIAL_KEY, []);
-    let historialPermanente = LocalStorage.get(HISTORIAL_PERMANENTE_KEY, []);
+    let historial = LocalStorage.get(getHistorialKey(), []);
+    let historialPermanente = LocalStorage.get(getHistorialPermanenteKey(), []);
 
     if (editingId) {
         historial = historial.map(r => r.id === editingId || r.id.toString() === editingId.toString() ? registro : r);
@@ -637,8 +637,8 @@ function guardarValoracionEnLista() {
         Ui.showToast("Guardado en Histórico y Cola", "success");
     }
     
-    LocalStorage.set(HISTORIAL_KEY, historial);
-    LocalStorage.set(HISTORIAL_PERMANENTE_KEY, historialPermanente);
+    LocalStorage.set(getHistorialKey(), historial);
+    LocalStorage.set(getHistorialPermanenteKey(), historialPermanente);
     
     resetearValoracion(true);
     
@@ -650,7 +650,7 @@ function actualizarTablaHistorial() {
     const container = document.getElementById('valoracion-tabla-historial');
     if (!container) return;
 
-    const historial = LocalStorage.get(HISTORIAL_KEY, []);
+    const historial = LocalStorage.get(getHistorialKey(), []);
     if (historial.length === 0) {
         container.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Lista vacía</td></tr>';
         return;
@@ -691,8 +691,8 @@ function actualizarTablaHistorial() {
 
 function editarValoracionHistorial(id) {
     if (!Utils.validateUser()) return;
-    const historial = LocalStorage.get(HISTORIAL_KEY) || [];
-    const historialPermanente = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+    const historial = LocalStorage.get(getHistorialKey()) || [];
+    const historialPermanente = LocalStorage.get(getHistorialPermanenteKey()) || [];
     
     const reg = historial.find(r => r.id === id || r.id.toString() === id.toString()) || 
                 historialPermanente.find(r => r.id === id || r.id.toString() === id.toString());
@@ -744,11 +744,11 @@ function cancelarEdicionValoracion() {
 async function eliminarValoracionHistorial(id) {
     if (!Utils.validateUser()) return;
     if (await Ui.showConfirm("¿Eliminar de la lista?")) {
-        const historial = LocalStorage.get(HISTORIAL_KEY) || [];
-        const historialPermanente = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+        const historial = LocalStorage.get(getHistorialKey()) || [];
+        const historialPermanente = LocalStorage.get(getHistorialPermanenteKey()) || [];
 
-        LocalStorage.set(HISTORIAL_KEY, historial.filter(r => String(r.id) !== String(id)));
-        LocalStorage.set(HISTORIAL_PERMANENTE_KEY, historialPermanente.filter(r => String(r.id) !== String(id)));
+        LocalStorage.set(getHistorialKey(), historial.filter(r => String(r.id) !== String(id)));
+        LocalStorage.set(getHistorialPermanenteKey(), historialPermanente.filter(r => String(r.id) !== String(id)));
         
         actualizarTablaHistorial();
         actualizarTablaHistoricoPermanente();
@@ -757,7 +757,7 @@ async function eliminarValoracionHistorial(id) {
 
 async function limpiarHistorialValoraciones() {
     if (await Ui.showConfirm("¿Borrar TODA la lista?")) {
-        LocalStorage.remove(HISTORIAL_KEY);
+        LocalStorage.remove(getHistorialKey());
         actualizarTablaHistorial();
     }
 }
@@ -895,7 +895,7 @@ function imprimirValoracionActual() {
 }
 
 function imprimirHistorialCompleto() {
-    const historial = LocalStorage.get(HISTORIAL_KEY, []);
+    const historial = LocalStorage.get(getHistorialKey(), []);
     if (!historial.length) return;
 
     let html = _getPrintStyles();
@@ -985,7 +985,7 @@ function aplicarPrevisualizacionBorrado() {
 }
 
 function getFilteredHistoricalData(smartFilter = false, batchPreview = false) {
-    let data = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+    let data = LocalStorage.get(getHistorialPermanenteKey()) || [];
     let filterArrival = document.getElementById('val-filter-arrival').value;
     let filterDeparture = document.getElementById('val-filter-departure').value;
     
@@ -1185,14 +1185,14 @@ async function eliminarRangoHistorialPermanente() {
     const msg = `¿Desea borrar permanentemente los ${selectedValuationIds.size} registros seleccionados? Esta acción no se puede deshacer.`;
     
     if (await Ui.showConfirm(msg)) {
-        let historial = LocalStorage.get(HISTORIAL_PERMANENTE_KEY, []);
+        let historial = LocalStorage.get(getHistorialPermanenteKey(), []);
         const totalAntes = historial.length;
 
         // Filtramos para MANTENER lo que NO está en el Set de seleccionados
         historial = historial.filter(reg => !selectedValuationIds.has(reg.id.toString()));
 
         const borrados = totalAntes - historial.length;
-        LocalStorage.set(HISTORIAL_PERMANENTE_KEY, historial);
+        LocalStorage.set(getHistorialPermanenteKey(), historial);
         
         selectedValuationIds.clear();
         toggleSeccionBorradoMasivo(); // Cierra y refresca
@@ -1236,7 +1236,7 @@ async function ejecutarChequeoIniciativa() {
     if (!text) return Ui.showToast("Pega datos para analizar", "warning");
 
     const lines = text.split('\n');
-    const historical = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+    const historical = LocalStorage.get(getHistorialPermanenteKey()) || [];
     
     let matches = 0;
     let mismatches = 0;
@@ -1358,7 +1358,7 @@ async function copiarHistorialPortapapeles() {
  * IMPRESIÓN COMPACTA DEL HISTÓRICO
  */
 function imprimirTablaCompactaHistorico() {
-    const data = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+    const data = LocalStorage.get(getHistorialPermanenteKey()) || [];
     const filterArrival = document.getElementById('val-filter-arrival').value;
     const filterDeparture = document.getElementById('val-filter-departure').value;
     
@@ -1498,8 +1498,8 @@ function _generarHtmlItemValoracion(reg, num) {
 }
 
 function imprimirValoracionIndividual(id) {
-    const historial = LocalStorage.get(HISTORIAL_KEY) || [];
-    const historialPermanente = LocalStorage.get(HISTORIAL_PERMANENTE_KEY) || [];
+    const historial = LocalStorage.get(getHistorialKey()) || [];
+    const historialPermanente = LocalStorage.get(getHistorialPermanenteKey()) || [];
     
     const reg = historial.find(r => r.id === id || r.id.toString() === id.toString()) || 
                 historialPermanente.find(r => r.id === id || r.id.toString() === id.toString());

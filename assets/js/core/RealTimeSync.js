@@ -114,7 +114,7 @@ class RealTimeSync {
     }
 
     login() {
-        const username = sessionStorage.getItem('session_user');
+        const username = localStorage.getItem('session_user');
         if (this.socket && this.socket.readyState === WebSocket.OPEN && username) {
             console.log(`[Sync-RT] Identificando conexión como: ${username}`);
             this.socket.send(JSON.stringify({

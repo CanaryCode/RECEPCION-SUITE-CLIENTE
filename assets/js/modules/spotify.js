@@ -7,6 +7,8 @@ import { Ui } from '../core/Ui.js';
  * Gestiona el reproductor del footer y su configuración.
  */
 export const Spotify = {
+    activeUrl: null,
+
     /**
      * INICIALIZACIÓN DEL REPRODUCTOR
      */
@@ -23,11 +25,12 @@ export const Spotify = {
 
         console.log(`[Spotify] Found container. Playlists count: ${playlists.length}`);
 
-        // 1. Determinar URL inicial
+        // 1. Determinar URL inicial (Aleatoria si hay varias)
         let initialUrl = "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM3M"; // Fallback
         if (playlists.length > 0) {
-            initialUrl = playlists[0].url;
-            console.log(`[Spotify] Using first configured playlist: ${playlists[0].label}`);
+            const randomIndex = Math.floor(Math.random() * playlists.length);
+            initialUrl = playlists[randomIndex].url;
+            console.log(`[Spotify] Initial playlist (randomly picked): ${playlists[randomIndex].label}`);
         } else {
             console.log('[Spotify] No playlists configured, using fallback.');
         }
@@ -36,15 +39,34 @@ export const Spotify = {
         if (switcher) {
             if (playlists.length >= 1) {
                 switcher.classList.remove('d-none');
-                switcher.innerHTML = playlists.map(p => `
-                    <button class="btn btn-sm btn-success border-0 px-2 py-0 text-truncate" 
-                            style="max-width: 120px; font-size: 0.65rem; border-radius: 4px;"
-                            onclick="window.switchSpotifyPlaylist('${p.url}')"
-                            title="${p.label}">
-                        <i class="bi bi-music-note-list me-1"></i>${p.label}
+                switcher.innerHTML = `
+                    <button class="btn btn-sm btn-outline-light border-0 px-2 py-0" 
+                            style="font-size: 0.65rem; border-radius: 4px;"
+                            onclick="window.randomizeSpotifyPlaylist()"
+                            title="Lista Aleatoria">
+                        <i class="bi bi-shuffle me-1"></i>Aleatorio
                     </button>
-                `).join('');
-                console.log('[Spotify] Playlist switcher rendered.');
+                    ${playlists.map(p => `
+                        <button class="btn btn-sm btn-success border-0 px-2 py-0 text-truncate" 
+                                style="max-width: 120px; font-size: 0.65rem; border-radius: 4px;"
+                                onclick="window.switchSpotifyPlaylist('${p.url}')"
+                                title="${p.label}">
+                            <i class="bi bi-music-note-list me-1"></i>${p.label}
+                        </button>
+                    `).join('')}
+                    <button class="btn btn-sm btn-outline-info border-0 px-2 py-0" 
+                            style="font-size: 0.65rem; border-radius: 4px;"
+                            onclick="window.openFullSpotify()"
+                            title="Abrir en Spotify (Modo Aleatorio disponible)">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>Abrir Full
+                    </button>
+                    <a href="https://open.spotify.com" target="_blank" 
+                       class="btn btn-sm btn-link text-white-50 text-decoration-none px-2 py-0" 
+                       style="font-size: 0.6rem;">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                `;
+                console.log('[Spotify] Playlist switcher rendered with extra controls.');
             } else {
                 switcher.classList.add('d-none');
             }
@@ -97,7 +119,19 @@ export const Spotify = {
         iframe.style.borderRadius = "12px";
 
         console.log(`[Spotify] Switching to: ${embedUrl}`);
+        this.activeUrl = url; // Store the original non-embed URL
         iframe.src = embedUrl;
+    },
+
+    /**
+     * ABRIR EL REPRODUCTOR COMPLETO PARA SHUFFLE/CONTROL TOTAL
+     */
+    openFull() {
+        if (this.activeUrl) {
+            window.open(this.activeUrl, '_blank');
+        } else {
+            window.open('https://open.spotify.com', '_blank');
+        }
     },
 
     /**
@@ -113,6 +147,17 @@ export const Spotify = {
                 icon.classList.toggle('bi-chevron-down');
             }
         }
+    },
+
+    /**
+     * ELEGIR UNA PLAYLIST AL AZAR DE LAS CONFIGURADAS
+     */
+    randomize() {
+        const playlists = APP_CONFIG.HOTEL?.SPOTIFY_PLAYLISTS || [];
+        if (playlists.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * playlists.length);
+        this.switchPlaylist(playlists[randomIndex].url);
+        Ui.showToast(`Cambiando a lista: ${playlists[randomIndex].label}`, "success");
     },
 
     // --- CONFIGURACIÓN ---
@@ -172,5 +217,7 @@ export const Spotify = {
 
 // Global exports for inline events
 window.switchSpotifyPlaylist = (url) => Spotify.switchPlaylist(url);
+window.randomizeSpotifyPlaylist = () => Spotify.randomize();
+window.openFullSpotify = () => Spotify.openFull();
 window.toggleSpotifyFooter = () => Spotify.toggleFooter();
 window.initFooterSpotify = () => Spotify.initPlayer();

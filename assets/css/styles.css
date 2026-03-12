@@ -121,7 +121,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10800; /* Por encima de todo */
+    z-index: 10200; /* Por encima de navbar (5000) y spotify (10000), pero bajo modales (10500+) */
     color: white;
 }
 
@@ -227,12 +227,45 @@
 }
 
 @media (max-width: 768px) {
-    .login-user-card {
+    .login-user-card, .login-hotel-card {
         width: 120px;
     }
     .login-user-avatar {
         font-size: 3.5rem;
     }
+}
+
+.login-hotel-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    cursor: pointer;
+    width: 250px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.4s ease;
+}
+
+.login-hotel-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.login-hotel-logo {
+    width: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.login-hotel-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* MODAL DE CONTRASEÑA PREMIUM */

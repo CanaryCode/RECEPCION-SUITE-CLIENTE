@@ -104,7 +104,7 @@ export class Login {
         console.log(`[Login] Fetching users for hotel ${hotelId}...`);
         let users = [];
         try {
-            const data = await Api.get('storage/recepcionistas', { 
+            const data = await Api.get(`storage/recepcionistas?hotel_id=${hotelId}`, { 
                 headers: { 'x-hotel-id': hotelId } 
             });
             users = Array.isArray(data) ? data : [];
@@ -170,7 +170,7 @@ export class Login {
         console.log(`[Login] Selected user: ${username} for hotel ${hotelId}`);
 
         try {
-            const user = await Api.get(`users/info/${username}`, { headers: { 'x-hotel-id': hotelId } });
+            const user = await Api.get(`users/info/${username}?hotel_id=${hotelId}`, { headers: { 'x-hotel-id': hotelId } });
             
             if (user.hasPassword) {
                 const password = await this.showPasswordPrompt(username, hotelId, overlay);

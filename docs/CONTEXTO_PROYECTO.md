@@ -12,11 +12,11 @@
 
 | Campo                      | Valor                                                                                     |
 | -------------------------- | ----------------------------------------------------------------------------------------- |
-| **Última versión**         | v5.1.0                                                                                    |
-| **Módulo en foco**         | Robustez de Galería (CORS) + Mejora UX Calculadora                                        |
+| **Última versión**         | v5.2.0                                                                                    |
+| **Módulo en foco**         | Integración de Perfil, Mejoras en Spotify y Estabilización General                        |
 | **Deuda técnica conocida** | Ninguna conocida                                                                          |
 | **Próximo objetivo**       | Ver `roadmap.md`                                                                          |
-| **Última sesión**          | 2026-03-11 — SELLADO: Fix de desbordamiento en Calculadora y error de CORS en Galería. |
+| **Última sesión**          | 2026-03-12 — SELLADO: Implementación de Perfil, mejoras en Spotify, Chat, Calculadora y correcciones en Galería/Launcher. |
 
 ---
 

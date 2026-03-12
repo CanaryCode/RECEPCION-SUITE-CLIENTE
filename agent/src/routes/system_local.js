@@ -17,29 +17,63 @@ router.get('/ping', (req, res) => {
  * POST /api/system/launch
  * Abre un ejecutable o ruta en el PC local.
  */
-router.post('/launch', (req, res) => {
-    const { command, type } = req.body;
+router.post('/launch', async (req, res) => {
+    let { command, type } = req.body;
     if (!command) return res.status(400).json({ error: 'No command provided' });
 
-    let launchCmd;
+    console.log(`[AGENT] Request to launch ${type || 'app'}: ${command}`);
 
-    // Para carpetas, usar explorer en Windows o xdg-open en Linux
-    if (type === 'folder') {
-        launchCmd = isWin ? `explorer "${command}"` : `xdg-open "${command}"`;
-    } else {
-        // Para aplicaciones y archivos, usar start en Windows o xdg-open en Linux
-        launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
-    }
-
-    console.log(`[AGENT] Executing (${type || 'app'}): ${launchCmd}`);
-
-    exec(launchCmd, (err) => {
-        if (err) {
-            console.error(`[AGENT] Launch error:`, err);
-            return res.status(500).json({ error: err.message });
+    try {
+        // Normalizar la ruta para el sistema operativo actual
+        const normalizedPath = path.normalize(command);
+        
+        // Verificar si la ruta existe antes de intentar lanzarla
+        try {
+            await fs.access(normalizedPath);
+        } catch (e) {
+            console.error(`[AGENT] Path not accessible: ${normalizedPath}`);
+            return res.status(404).json({ 
+                error: 'La ruta especificada no existe o no es accesible.', 
+                path: normalizedPath 
+            });
         }
-        res.json({ success: true });
-    });
+
+        let launchCmd;
+        if (isWin) {
+            // En Windows, 'start' es lo más robusto para abrir tanto archivos como carpetas.
+            // Usamos comillas dobles para el path y un par de comillas vacías al principio 
+            // porque 'start' interpreta el primer argumento entre comillas como el título de la ventana.
+            // También nos aseguramos de usar backslashes.
+            const winPath = normalizedPath.replace(/\//g, '\\');
+            launchCmd = `start "" "${winPath}"`;
+        } else {
+            // En Linux usamos xdg-open
+            launchCmd = `xdg-open "${normalizedPath}"`;
+        }
+
+        console.log(`[AGENT] Executing: ${launchCmd}`);
+
+        exec(launchCmd, (err, stdout, stderr) => {
+            if (err) {
+                // Logueamos como advertencia pero retornamos éxito porque el usuario confirma que se abre.
+                // En Windows, 'start' puede devolver códigos de salida distintos de 0 por mil razones
+                // aunque la acción se haya realizado satisfactoriamente.
+                console.warn(`[AGENT] Launch command [${launchCmd}] returned an error code, but may have succeeded:`, err.message);
+                if (stderr) console.warn(`[AGENT] Stderr: ${stderr}`);
+                
+                return res.json({ 
+                    success: true, 
+                    warning: 'Command executed but returned non-zero exit code',
+                    details: err.message 
+                });
+            }
+            console.log(`[AGENT] Launch successful: ${launchCmd}`);
+            res.json({ success: true });
+        });
+    } catch (e) {
+        console.error(`[AGENT] Unexpected error in /launch:`, e);
+        res.status(500).json({ error: e.message });
+    }
 });
 
 /**

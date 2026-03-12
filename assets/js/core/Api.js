@@ -77,12 +77,15 @@ export const Api = {
             const version = APP_CONFIG.SYSTEM.VERSION || Date.now();
             const url = `${finalUrl}${separator}v=${version}`;
 
+            const isLocal = finalUrl.includes('127.0.0.1') || finalUrl.includes('localhost') || finalUrl.includes('/agent-proxy');
+            if (isLocal) console.debug(`[Api] GET to Local Agent: ${finalUrl} (Omitting x-hotel-id)`);
+
             const headers = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
-                ...(finalUrl.includes('127.0.0.1') || finalUrl.includes('localhost') || finalUrl.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
+                ...(!isLocal ? { 'x-hotel-id': localStorage.getItem('current_hotel_id') || '1' } : {}),
+                ...(!isLocal ? { 'X-User-Name': localStorage.getItem('session_user') || '' } : {}),
                 ...(options.headers || {})
             };
 
@@ -106,12 +109,14 @@ export const Api = {
     async post(endpoint, data, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
+            const isLocal = url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy');
+            if (isLocal) console.debug(`[Api] ${endpoint} to Local Agent: ${url} (Omitting x-hotel-id)`);
             const headers = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
+                ...(!isLocal ? { 'x-hotel-id': localStorage.getItem('current_hotel_id') || '1' } : {}),
+                ...(!isLocal ? { 'X-User-Name': localStorage.getItem('session_user') || '' } : {}),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -136,12 +141,14 @@ export const Api = {
     async put(endpoint, data, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
+            const isLocal = url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy');
+            if (isLocal) console.debug(`[Api] ${endpoint} to Local Agent: ${url} (Omitting x-hotel-id)`);
             const headers = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
+                ...(!isLocal ? { 'x-hotel-id': localStorage.getItem('current_hotel_id') || '1' } : {}),
+                ...(!isLocal ? { 'X-User-Name': localStorage.getItem('session_user') || '' } : {}),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -165,11 +172,13 @@ export const Api = {
     async delete(endpoint, options = {}) {
         try {
             const url = this._getFinalUrl(endpoint);
+            const isLocal = url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy');
+            if (isLocal) console.debug(`[Api] ${endpoint} to Local Agent: ${url} (Omitting x-hotel-id)`);
             const headers = {
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
+                ...(!isLocal ? { 'x-hotel-id': localStorage.getItem('current_hotel_id') || '1' } : {}),
+                ...(!isLocal ? { 'X-User-Name': localStorage.getItem('session_user') || '' } : {}),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {

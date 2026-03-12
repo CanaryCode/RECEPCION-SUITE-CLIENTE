@@ -188,48 +188,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     console.log(`[AUTH] Estación validada: ${station.stationId}`);
 
-    if (!sessionService.isAuthenticated()) {
-      console.log("Main: No hay sesión activa. Mostrando selector de usuario...");
-      await Login.showSelector();
-    }
-    const currentUser = sessionService.getUser();
-    console.log(`[AUTH] Usuario identificado: ${currentUser}`);
-    
-    // Actualizar UI inmediatamente después de login
-    updateUserUI(currentUser);
-
-    if (typeof Spotify !== 'undefined' && Spotify.initPlayer) {
-      console.log('[Main] Inicializando reproductor de Spotify...');
-      Spotify.initPlayer();
-    } else {
-      console.error('[Main] ✗ Error: Módulo Spotify no disponible o sin initPlayer.');
-    }
-
-    // Diagnóstico de Almacenamiento Local
-    try {
-      const testKey = "__test_storage__";
-      localStorage.setItem(testKey, testKey);
-      localStorage.removeItem(testKey);
-    } catch (e) {
-      console.error("Critical Storage Error:", e);
-      alert("⚠️ ERROR CRÍTICO: El sistema no puede guardar datos locales.");
-    }
-
-    // 3. Inicializar Sistemas Base
-
-    Ui.init();
-    Ui.updateUserUi();
-
-    window.addEventListener('app:login-success', () => {
-      Ui.updateUserUi();
-    });
-
-    clock.init();
-    Modal.init();
-    Router.init();
-    Search.init();
-
-    // 4. Cargar Plantillas
+    // --- 4. CARGA DE COMPONENTES Y MÓDULOS ---
+    console.log('[STARTUP] Cargando componentes base...');
     const componentes = [
       { id: "riu-content", path: "assets/templates/riu.html" },
       { id: "agenda-content", path: "assets/templates/agenda.html" },
@@ -277,6 +237,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     ];
 
     await CompLoader.loadAll(componentes);
+    console.log('[STARTUP] Componentes base cargados.');
+
+    // 4.1 Inicialización de Sistemas de UI
+    Ui.init();
+    clock.init();
+    Modal.init();
+    Router.init();
+    Search.init();
+
+    if (typeof Spotify !== 'undefined' && Spotify.initPlayer) {
+      console.log('[Main] Inicializando reproductor de Spotify...');
+      Spotify.initPlayer();
+    }
+
+    // 5. Gestión de Sesión (Login inicial)
+    // Lo hacemos DESPUÉS de cargar el shell para que el usuario no vea "todo negro" detrás del login
+    if (!sessionService.isAuthenticated()) {
+      console.log("Main: No hay sesión activa. Mostrando selector de usuario...");
+      await Login.showSelector();
+    }
+    const currentUser = sessionService.getUser();
+    console.log(`[AUTH] Usuario identificado: ${currentUser}`);
+    
+    // Actualizar UI inmediatamente después de login
+    updateUserUI(currentUser);
 
     // 5. Inicialización de Módulos CRÍTICOS (Lazy Loading)
     console.log('[STARTUP] Cargando módulos críticos...');
@@ -298,6 +283,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Actualizar widget de Calendario sin cargar el módulo completo
       await actualizarWidgetCalendario();
+
+      // 6. Filtrar Módulos por Hotel
+      await applyModuleFiltering();
 
       // Inicializar Chat
       console.log('[Main] Inicializando módulo de chat...');
@@ -356,6 +344,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
           Router.navegarA(initialHash);
         }, 50);
+      } else {
+        // Por defecto, ir a inicio si hay sesión
+        if (sessionService.isAuthenticated()) {
+            Router.navegarA('#dashboard-content');
+        }
       }
 
       // Mostrar estadísticas de carga en consola
@@ -911,12 +904,13 @@ function initGlobalTooltips() {
 function updateUserUI(name) {
   const userBtnName = document.getElementById("globalUserName");
   const userBtn = document.getElementById("globalUserBtn");
-  if (userBtnName) userBtnName.innerText = name;
+  if (userBtnName) userBtnName.innerText = name || "Usuario";
+  
   if (userBtn) {
     userBtn.classList.remove("btn-outline-secondary", "btn-outline-danger", "animation-pulse");
     userBtn.classList.add("btn-success", "text-white");
   }
-  
+
   // Propagar cambio de identidad a otros módulos (Chat, Sync, etc)
   window.dispatchEvent(new CustomEvent('user-updated', { detail: { name } }));
 }
@@ -980,8 +974,16 @@ window.stopYouTubeVideo = () => {
 window._currentWebUrl = "";
 
 window.openWebViewer = (url, title, useProxy = true) => {
+  console.log(`[WebViewer] Intentando abrir: ${url} (${title})`);
   const iframe = document.getElementById("webViewerIframe");
   const titleEl = document.getElementById("webViewerTitle");
+  const modalEl = document.getElementById("webViewerModal");
+
+  if (!modalEl) {
+    console.error("[WebViewer] Error: No se encontró el modal #webViewerModal en el DOM");
+    alert("Error de sistema: El visor de módulos no está disponible.");
+    return;
+  }
 
   window._currentWebUrl = url;
 
@@ -990,11 +992,25 @@ window.openWebViewer = (url, title, useProxy = true) => {
     ? `/api/system/web-proxy?url=${encodeURIComponent(url)}`
     : url;
 
+  console.log(`[WebViewer] URL final: ${finalUrl}`);
+
   if (iframe) iframe.src = finalUrl;
   if (titleEl) titleEl.textContent = title;
 
-  const modal = new bootstrap.Modal(document.getElementById("webViewerModal"));
-  modal.show();
+  try {
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+    console.log("[WebViewer] Modal mostrado correctamente");
+  } catch (err) {
+    console.error("[WebViewer] Error al iniciar modal con Bootstrap:", err);
+    // Fallback manual si falla la instancia de Bootstrap
+    modalEl.classList.add('show');
+    modalEl.style.display = 'block';
+    document.body.classList.add('modal-open');
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop fade show';
+    document.body.appendChild(backdrop);
+  }
 };
 
 window.openExternalWeb = () => {
@@ -1041,3 +1057,52 @@ window.abrirTraductor = async function() {
     const { traductor } = await import("./modules/traductor.js");
     traductor.abrir();
 };
+/**
+ * Filtra los módulos visibles según el hotel seleccionado
+ */
+async function applyModuleFiltering() {
+  const hotelId = localStorage.getItem('current_hotel_id');
+  if (!hotelId) return;
+
+  console.log(`[Main] Aplicando filtrado de módulos para hotel ${hotelId}...`);
+  try {
+    const activeModules = await Api.get('storage/hotel_modulos');
+    if (!activeModules || !Array.isArray(activeModules)) return;
+
+    // Los que NO están activos
+    const inactiveMap = {};
+    activeModules.forEach(m => {
+        if (m.activo === 0) inactiveMap[m.modulo_id] = true;
+    });
+    
+    console.log(`[Main] Módulos desactivados para este hotel:`, Object.keys(inactiveMap));
+
+    Object.keys(inactiveMap).forEach(modId => {
+      // 1. Ocultar pestañas (tabs)
+      const tabBtn = document.querySelector(`[data-bs-target="#${modId}"]`);
+      if (tabBtn) {
+        const li = tabBtn.closest('li');
+        if (li) li.style.display = 'none';
+      }
+
+      // 2. Ocultar accesos directos (shortcuts)
+      const shortcut = document.querySelector(`.btn-shortcut[onclick*="#${modId}"]`);
+      if (shortcut) {
+        const col = shortcut.closest('.col-6') || shortcut.closest('.col-md');
+        if (col) col.style.display = 'none';
+      }
+
+      // 3. Ocultar widgets específicos en dashboard
+      // Por ejemplo: despertadores-content -> dash-col-despertadores
+      const prefix = modId.split('-')[0];
+      const widget = document.getElementById(`dash-col-${prefix}`) || 
+                     document.getElementById(`dash-col-${prefix}s`) ||
+                     document.getElementById(`dash-col-${prefix}es`);
+      if (widget) widget.style.display = 'none';
+    });
+
+  } catch (e) {
+    console.error('[Main] Error aplicando filtrado de módulos:', e);
+  }
+}
+

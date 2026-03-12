@@ -259,13 +259,22 @@ Permission was denied for this request to access the `loopback` address space.
 **Solución**: Se modificó `Api.js` para excluir dinámicamente este header en peticiones a localhost/agente. Se simplificó el middleware de CORS en el agente.
 **Archivos afectados**: `assets/js/core/Api.js`, `agent/src/index.js`
 **Lección**: Minimalismo en headers para servicios locales. No enviar datos de sesión donde no se requieren.
-
 ---
 
-### [2026-03-11] Desbordamiento en Display de Calculadora
+### [2026-03-12] Integración de Perfil, Mejoras en Spotify y Estabilización
 
-**Síntoma**: Cifras largas se salían del display o lo desplazaban de forma visualmente incorrecta.
-**Causa raíz**: Falta de límite de dígitos en la lógica y de escalado dinámico en la UI.
-**Solución**: Implementado límite de 16 dígitos, formateo inteligente (redondeo prioritario) y escalado dinámico de fuente (`font-size` variable).
-**Archivos afectados**: `assets/js/modules/calculadora.js`, `assets/css/calculadora.css`
-**Lección**: Todo display visual debe tener una gestión activa de su capacidad máxima.
+**Síntoma**: Múltiples ajustes necesarios en UI y lógica de varios módulos (Spotify, Calculadora, Chat, Galería, Perfil y Turnos).
+
+**Causa raíz**: Evolución natural del proyecto hacia mayor madurez funcional y estética (UX).
+
+**Solución**:
+1. **Spotify**: Implementado modo aleatorio (shuffle), login integrado para evitar límite de 30s y arranque con playlist aleatoria.
+2. **Calculadora**: Corregidos cortes en el layout (tema claro) y errores de lógica en paréntesis e historial.
+3. **Chat**: Optimizada la visibilidad del botón de toggle y el flujo de carga asíncrona.
+4. **Galería & Launcher**: Corregida la navegación del botón de acceso rápido y la lógica de lanzamiento de rutas locales.
+5. **Perfil**: Nuevo módulo para edición de datos de usuario, contraseña y carga de fotos de perfil.
+6. **Turnos**: Depurado el sistema de avatares mediante logs exhaustivos para mapear correctamente fotos a empleados.
+
+**Archivos afectados**: `assets/js/modules/*.js`, `assets/js/services/*.js`, `assets/css/*.css`, `server/routes/*.js`, `index.html`.
+
+**Lección**: La estabilidad de los servicios core (`Api.js`, `BaseService.js`) es clave para permitir que los módulos de UI crezcan sin introducir regresiones de comunicación. La instrumentación con logs sigue siendo la mejor herramienta de diagnóstico preventivo.

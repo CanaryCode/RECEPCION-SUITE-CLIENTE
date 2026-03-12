@@ -35,7 +35,7 @@ app.use((req, res, next) => {
     else res.setHeader('Access-Control-Allow-Origin', '*');
     
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint, X-User-Name, x-user-name');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Station-Key, x-admin-password, Accept, Origin, Authorization, Access-Control-Request-Private-Network, Cache-Control, cache-control, X-Fingerprint, X-User-Name, x-user-name, x-hotel-id');
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Max-Age', '86400');
@@ -559,12 +559,11 @@ function executeRemoteCommand(payload) {
     if (action === 'launch') {
         let launchCmd;
 
-        // Para carpetas, usar explorer en Windows o xdg-open en Linux
-        if (type === 'folder') {
-            launchCmd = isWin ? `explorer "${command}"` : `xdg-open "${command}"`;
+        if (isWin) {
+            const winPath = path.normalize(command).replace(/\//g, '\\');
+            launchCmd = `start "" "${winPath}"`;
         } else {
-            // Para aplicaciones y archivos, usar start en Windows o xdg-open en Linux
-            launchCmd = isWin ? `start "" "${command}"` : `xdg-open "${command}"`;
+            launchCmd = `xdg-open "${command}"`;
         }
 
         console.log(`[AGENT] Executing Remote Launch (Platform: ${process.platform}, Type: ${type || 'app'}): ${launchCmd}`);
