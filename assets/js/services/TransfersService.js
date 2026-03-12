@@ -104,7 +104,8 @@ class TransfersService extends BaseService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || ''
+                    'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
+                    'x-hotel-id': localStorage.getItem('current_hotel_id') || '1'
                 },
                 body: JSON.stringify(data)
             });

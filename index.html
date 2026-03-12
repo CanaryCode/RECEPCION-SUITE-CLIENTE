@@ -98,7 +98,7 @@
   <!-- UI STRUCTURE -->
   <div id="app-layout" class="container-fluid py-4">
     <!-- App Header Panel -->
-    <div id="app-header" class="app-header-panel text-center" onclick="Router.handleHeaderClick(event)"
+    <div id="app-header" class="app-header-panel text-center position-relative" onclick="Router.handleHeaderClick(event)"
       style="cursor: pointer">
       <!-- Indicadores de navegación laterales -->
       <div id="header-indicator-left"
@@ -797,6 +797,14 @@
         <div class="text-center p-5">
           <div class="spinner-border text-primary" role="status"></div>
           <p class="mt-2 text-muted">Cargando Guía de Uso...</p>
+        </div>
+      </div>
+
+      <!-- NUEVO MÓDULO CONFIGURACIÓN DE MÓDULOS -->
+      <div class="tab-pane fade bg-soft-panel" id="config-modulos-content" role="tabpanel">
+        <div class="text-center p-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Cargando Gestor de Módulos...</p>
         </div>
       </div>
 
@@ -3418,7 +3426,7 @@
   </div>
 
   <!-- ARCHIVO JS PRINCIPAL (Punto de entrada) -->
-  <script type="module" src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/main.js?v=2026031201"></script>
 
   <!-- Spotify Footer Player (Minimizable) -->
   <div id="spotify-footer-player" class="spotify-footer-player no-print">

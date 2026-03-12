@@ -81,7 +81,8 @@ export const Api = {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                ...(finalUrl.includes('127.0.0.1') || finalUrl.includes('localhost') || finalUrl.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
+                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
+                ...(finalUrl.includes('127.0.0.1') || finalUrl.includes('localhost') || finalUrl.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
 
@@ -109,7 +110,8 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
+                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -138,7 +140,8 @@ export const Api = {
                 'Content-Type': 'application/json',
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
+                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {
@@ -165,7 +168,8 @@ export const Api = {
             const headers = {
                 'X-Station-Key': sessionStorage.getItem('RS_STATION_KEY') || '',
                 'X-Fingerprint': sessionStorage.getItem('RS_FINGERPRINT') || '',
-                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': sessionStorage.getItem('session_user') || '' }),
+                'x-hotel-id': localStorage.getItem('current_hotel_id') || '1',
+                ...(url.includes('127.0.0.1') || url.includes('localhost') || url.includes('/agent-proxy') ? {} : { 'X-User-Name': localStorage.getItem('session_user') || '' }),
                 ...(options.headers || {})
             };
             const response = await fetch(url, {

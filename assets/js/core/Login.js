@@ -6,102 +6,194 @@ import { Ui } from './Ui.js';
 /**
  * LOGIN COMPONENT
  * ---------------
- * Displays a full-screen overlay to select the current receptionist.
+ * Displays a two-step full-screen overlay to select hotel and receptionist.
  */
 export class Login {
     static async showSelector() {
-        console.log('[Login] Fetching receptionists from DB...');
-        let users = [];
+        return this.showHotelSelector();
+    }
+
+    static async showHotelSelector() {
+        console.log('[Login] Fetching hotels...');
+        let hotels = [];
         try {
-            const data = await Api.get('storage/recepcionistas');
-            // 'data' ahora puede ser un array de objetos { nombre, avatar_url, ... }
-            users = Array.isArray(data) ? data : [];
+            const data = await Api.get('storage/hoteles');
+            hotels = Array.isArray(data) ? data : [];
+            if (hotels.length === 0) throw new Error('No hotels found');
         } catch (e) {
-            console.error('[Login] Error fetching users, falling back to config:', e);
-            const fallback = APP_CONFIG.HOTEL?.RECEPCIONISTAS || [];
-            users = fallback.map(u => typeof u === 'string' ? { nombre: u } : u);
+            console.error('[Login] Error fetching hotels:', e);
+            hotels = [{ id: 1, nombre: 'Garoé', logo_url: 'assets/img/hotel_garoe.png' }];
         }
-        
-        console.log(`[Login] Found ${users.length} receptionists.`);
+
         return new Promise((resolve) => {
-            
-            // Create overlay
             const overlay = document.createElement('div');
             overlay.id = 'login-overlay';
             overlay.className = 'login-overlay animate__animated animate__fadeIn';
-            
+
             const content = `
                 <div class="login-container">
-                    <h1 class="login-title animate__animated animate__slideInDown">¿Quién eres hoy?</h1>
+                    <h1 class="login-title animate__animated animate__slideInDown">Selecciona tu Hotel</h1>
                     <div class="login-users-grid">
-                        ${users.map((user, index) => {
-                            const name = typeof user === 'string' ? user : user.nombre;
-                            const avatar = user.avatar_url ? `/${user.avatar_url}` : null;
-                            const avatarHtml = avatar 
-                                ? `<img src="${avatar}" class="login-user-img shadow-sm">`
-                                : `<i class="bi bi-person-fill"></i>`;
-
+                        ${hotels.map((hotel, index) => {
+                            const logo = hotel.logo_url || 'assets/img/hotel-default.png';
                             return `
-                                <button class="login-user-card animate__animated animate__zoomIn" 
-                                        style="animation-delay: ${index * 0.05}s"
-                                        data-username="${name}">
-                                    <div class="login-user-avatar">
-                                        ${avatarHtml}
+                                <button class="login-hotel-card animate__animated animate__zoomIn" 
+                                        style="animation-delay: ${index * 0.1}s"
+                                        data-hotel-id="${hotel.id}"
+                                        data-hotel-name="${hotel.nombre}">
+                                    <div class="login-hotel-logo">
+                                        <img src="${logo}" class="img-fluid rounded shadow-sm">
                                     </div>
-                                    <span class="login-user-name">${name}</span>
+                                    <span class="login-user-name mt-3">${hotel.nombre}</span>
                                 </button>
                             `;
                         }).join('')}
+                    </div>
+                    <div class="mt-5 text-center animate__animated animate__fadeIn" style="animation-delay: 1s">
+                        <div class="d-flex justify-content-center gap-4">
+                            <button id="login-open-config" class="btn btn-link text-white-50 text-decoration-none small">
+                                <i class="bi bi-gear-fill me-1"></i> Configuración de Módulos
+                            </button>
+                            <button id="login-open-admin" class="btn btn-link text-white-50 text-decoration-none small">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Consola de Administración
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
             
             overlay.innerHTML = content;
             document.body.appendChild(overlay);
-            
-            // Add click events
-            overlay.addEventListener('click', (e) => {
-                const card = e.target.closest('.login-user-card');
+
+            overlay.addEventListener('click', async (e) => {
+                const adminBtn = e.target.closest('#login-open-admin');
+                if (adminBtn) {
+                    if (window.openWebViewer) {
+                        window.openWebViewer('/assets/admin/index.html', 'Consola de Administración', false);
+                    } else {
+                        alert('Consola de administración no disponible en este momento.');
+                    }
+                    return;
+                }
+
+                const configBtn = e.target.closest('#login-open-config');
+                if (configBtn) {
+                    if (window.openWebViewer) {
+                        window.openWebViewer('/assets/admin/modulos.html', 'Configuración de Módulos', false);
+                    } else {
+                        window.open('/assets/admin/modulos.html', '_blank');
+                    }
+                    return;
+                }
+
+                const card = e.target.closest('.login-hotel-card');
                 if (card) {
-                    const username = card.dataset.username;
-                    this.handleLogin(username, overlay, resolve);
+                    const hotelId = card.dataset.hotelId;
+                    const hotelName = card.dataset.hotelName;
+                    overlay.classList.add('animate__fadeOut');
+                    setTimeout(async () => {
+                        overlay.remove();
+                        await this.showUserSelector(hotelId, hotelName, resolve);
+                    }, 500);
                 }
             });
         });
     }
 
-    static async handleLogin(username, overlay, resolve) {
-        console.log(`[Login] Selected user: ${username}`);
+    static async showUserSelector(hotelId, hotelName, resolve) {
+        console.log(`[Login] Fetching users for hotel ${hotelId}...`);
+        let users = [];
+        try {
+            const data = await Api.get('storage/recepcionistas', { 
+                headers: { 'x-hotel-id': hotelId } 
+            });
+            users = Array.isArray(data) ? data : [];
+        } catch (e) {
+            console.error('[Login] Error fetching users:', e);
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'login-overlay';
+        overlay.className = 'login-overlay animate__animated animate__fadeIn';
+
+        const content = `
+            <div class="login-container">
+                <div class="mb-4 animate__animated animate__fadeIn">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm" style="cursor:pointer" id="login-back-to-hotels">
+                        <i class="bi bi-arrow-left me-2"></i> Cambiar de Hotel (${hotelName})
+                    </span>
+                </div>
+                <h1 class="login-title animate__animated animate__slideInDown">¿Quién eres hoy?</h1>
+                <div class="login-users-grid">
+                    ${users.length === 0 ? '<p class="text-white">Lo sentimos, no hay usuarios en este hotel.</p>' : ''}
+                    ${users.map((user, index) => {
+                        const name = user.nombre;
+                        const avatar = user.avatar_url ? `/${user.avatar_url}` : null;
+                        const avatarHtml = avatar 
+                            ? `<img src="${avatar}" class="login-user-img shadow-sm">`
+                            : `<i class="bi bi-person-fill"></i>`;
+
+                        return `
+                            <button class="login-user-card animate__animated animate__zoomIn" 
+                                    style="animation-delay: ${index * 0.05}s"
+                                    data-username="${name}"
+                                    data-hotel-id="${hotelId}">
+                                <div class="login-user-avatar">
+                                    ${avatarHtml}
+                                </div>
+                                <span class="login-user-name">${name}</span>
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+        
+        overlay.innerHTML = content;
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target.closest('#login-back-to-hotels')) {
+                overlay.remove();
+                this.showHotelSelector().then(resolve);
+                return;
+            }
+            const card = e.target.closest('.login-user-card');
+            if (card) {
+                const username = card.dataset.username;
+                this.handleLogin(username, hotelId, overlay, resolve);
+            }
+        });
+    }
+
+    static async handleLogin(username, hotelId, overlay, resolve) {
+        console.log(`[Login] Selected user: ${username} for hotel ${hotelId}`);
 
         try {
-            // 1. Verificar si el usuario requiere contraseña
-            const user = await Api.get(`users/info/${username}`);
+            const user = await Api.get(`users/info/${username}`, { headers: { 'x-hotel-id': hotelId } });
             
             if (user.hasPassword) {
-                const password = await this.showPasswordPrompt(username, overlay);
-                if (password === null) return; // Cancelado
+                const password = await this.showPasswordPrompt(username, hotelId, overlay);
+                if (password === null) return; 
 
-                // 2. Validar contraseña
-                const auth = await Api.post('users/login-check', { username, password });
+                const auth = await Api.post('users/login-check', { username, password, hotelId });
                 if (!auth.success) {
                     Ui.showToast('Contraseña incorrecta', 'danger');
                     return;
                 }
             }
 
-            // 3. Proceder con el login
             sessionService.setUser(username);
+            localStorage.setItem('current_hotel_id', hotelId);
             
-            // Success animation
             overlay.classList.remove('animate__fadeIn');
             overlay.classList.add('animate__fadeOut');
             
             setTimeout(() => {
                 overlay.remove();
                 resolve(username);
-                
-                // Dispatch event for UI updates
-                window.dispatchEvent(new CustomEvent('app:login-success', { detail: { username } }));
+                window.dispatchEvent(new CustomEvent('app:login-success', { detail: { username, hotelId } }));
+                location.reload(); 
             }, 500);
 
         } catch (err) {
@@ -110,10 +202,7 @@ export class Login {
         }
     }
 
-    static showPasswordPrompt(username, overlay) {
-        const grid = overlay.querySelector('.login-users-grid');
-        const originalContent = overlay.innerHTML;
-        
+    static showPasswordPrompt(username, hotelId, overlay) {
         return new Promise((resolve) => {
             const modalContent = `
                 <div class="login-container d-flex flex-column align-items-center justify-content-center h-100">
@@ -144,23 +233,9 @@ export class Login {
             };
             
             const handleCancel = () => {
-                overlay.innerHTML = originalContent;
-                // Re-attach grid click events because we replaced innerHTML
-                overlay.addEventListener('click', (e) => {
-                    const card = e.target.closest('.login-user-card');
-                    if (card) {
-                        const uname = card.dataset.username;
-                        this.handleLogin(uname, overlay, (val) => {
-                            // This part is tricky because of the original resolve from showSelector
-                            // But usually handleLogin will eventually resolve the top-level promise
-                        });
-                    }
-                });
-                // Effectively we just need to re-render the selector.
-                // Shortcut: reload selector logic or just resolve null to stop current flow
                 resolve(null);
-                this.showSelector(); // Re-trigger selector cleanly
                 overlay.remove();
+                this.showUserSelector(hotelId, "Volviendo...", resolve);
             };
             
             confirmBtn.onclick = handleConfirm;

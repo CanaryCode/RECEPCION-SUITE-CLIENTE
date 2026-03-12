@@ -8,20 +8,54 @@ router.use((req, res, next) => {
 });
 const db = require('../db');
 
+function getHotelId(req) {
+    const raw = req.headers['x-hotel-id'];
+    if (!raw) return 1;
+    if (Array.isArray(raw)) return parseInt(raw[raw.length - 1]) || 1;
+    if (typeof raw === 'string' && raw.includes(',')) {
+        const parts = raw.split(',');
+        return parseInt(parts[parts.length - 1].trim()) || 1;
+    }
+    return parseInt(raw) || 1;
+}
+
+/**
+ * Verifica si el módulo de chat está marcado como compartido.
+ */
+async function checkIfChatShared(hotelId) {
+    try {
+        const [rows] = await db.query(
+            'SELECT compartido FROM hotel_modulos WHERE hotel_id = ? AND modulo_id = ?',
+            [hotelId, 'chat-wrapper']
+        );
+        return rows.length > 0 && rows[0].compartido === 1;
+    } catch (e) {
+        return false;
+    }
+}
+
 /**
  * GET /api/chat/presence/:username
  * Returns the last seen and online status of a user.
  */
 router.get('/presence/:username', async (req, res) => {
     const { username } = req.params;
+    const hotelId = getHotelId(req);
     const logToFile = req.app.get('logToFile') || console.log;
-    logToFile(`[DEBUG CHAT] Request for presence: ${username}`);
+    
     try {
-        const [rows] = await db.query(
-            'SELECT last_seen, is_online FROM chat_user_presence WHERE username = ?',
-            [username]
-        );
-        logToFile(`[DEBUG CHAT] Presence DB Result for ${username}: ${JSON.stringify(rows)}`);
+        const isShared = await checkIfChatShared(hotelId);
+        logToFile(`[DEBUG CHAT] Request for presence: ${username} (hotel: ${hotelId}, shared: ${isShared})`);
+        
+        let query = 'SELECT last_seen, is_online FROM chat_user_presence WHERE username = ?';
+        let params = [username];
+        
+        if (!isShared) {
+            query += ' AND hotel_id = ?';
+            params.push(hotelId);
+        }
+
+        const [rows] = await db.query(query, params);
         if (rows.length > 0) {
             res.json(rows[0]);
         } else {
@@ -29,7 +63,6 @@ router.get('/presence/:username', async (req, res) => {
         }
     } catch (err) {
         console.error('[CHAT ERROR]', err);
-        logToFile(`[CHAT ERROR] Presence fetch fail: ${err.message}`);
         res.status(500).json({ error: 'Fallo al obtener presencia' });
     }
 });
@@ -40,51 +73,40 @@ router.get('/presence/:username', async (req, res) => {
  */
 router.get('/history', async (req, res) => {
     const logToFile = req.app.get('logToFile') || console.log;
-    logToFile(`[HISTORY TRACE] 1. Route hit. Params: recipient=${req.query.recipient}, sender=${req.query.sender}`);
+    const hotelId = getHotelId(req);
     
     try {
+        const isShared = await checkIfChatShared(hotelId);
         const recipient = req.query.recipient;
         const sender = req.query.sender;
+        
+        logToFile(`[HISTORY TRACE] Route hit. Params: recipient=${recipient}, sender=${sender}, hotel=${hotelId}, shared=${isShared}`);
         
         let query = '';
         let params = [];
 
         if (recipient && sender) {
-            logToFile(`[HISTORY TRACE] 2a. Building private query`);
             query = `SELECT * FROM chat_messages 
-                     WHERE (sender = ? AND recipient = ?) 
-                        OR (sender = ? AND recipient = ?)
-                     ORDER BY created_at DESC LIMIT 50`;
+                     WHERE ((sender = ? AND recipient = ?) OR (sender = ? AND recipient = ?))`;
             params = [sender, recipient, recipient, sender];
         } else {
-            logToFile(`[HISTORY TRACE] 2b. Building general query`);
-            query = `SELECT * FROM chat_messages 
-                     WHERE recipient IS NULL
-                     ORDER BY created_at DESC LIMIT 50`;
+            query = `SELECT * FROM chat_messages WHERE recipient IS NULL`;
             params = [];
         }
 
-        logToFile(`[HISTORY TRACE] 3. Executing query. Params count: ${params.length}`);
+        if (!isShared) {
+            query += ` AND hotel_id = ?`;
+            params.push(hotelId);
+        }
+
+        query += ` ORDER BY created_at DESC LIMIT 50`;
+
         const [rows] = await db.query(query, params);
-        
-        logToFile(`[HISTORY TRACE] 4. Query finished. Rows returned: ${rows ? rows.length : 'undefined'}`);
-        
-        let data = [];
-        if (Array.isArray(rows)) {
-             data = [...rows].reverse();
-        }
-        
-        logToFile(`[HISTORY TRACE] 5. Sending response`);
+        let data = Array.isArray(rows) ? [...rows].reverse() : [];
         res.json(data);
-        logToFile(`[HISTORY TRACE] 6. Response sent successfully`);
     } catch (err) {
-        logToFile(`[CHAT FATAL ERROR] /history: ${err ? err.message : 'Unknown object thrown'}`);
         console.error('[CHAT ERROR]', err);
-        try {
-            res.status(500).json({ error: 'Fallo al obtener historial de chat', detail: err ? err.message : 'Unknown' });
-        } catch(e) {
-            logToFile(`[CHAT FATAL ERROR] Failed to send 500 response: ${e.message}`);
-        }
+        res.status(500).json({ error: 'Fallo al obtener historial de chat' });
     }
 });
 
@@ -93,34 +115,34 @@ router.get('/history', async (req, res) => {
  * Saves a message to the database.
  */
 router.post('/message', async (req, res) => {
-    console.log('[DEBUG CHAT] POST /api/chat/message hit', req.body);
     const { sender, recipient, message, is_system } = req.body;
+    const hotelId = getHotelId(req);
 
     if (!sender || !message) {
         return res.status(400).json({ error: 'Remitente y mensaje son requeridos' });
     }
 
     try {
+        const isShared = await checkIfChatShared(hotelId);
+        // If shared, we still tag with hotel_id for info, but don't filter it in history
         const [result] = await db.query(
-            'INSERT INTO chat_messages (sender, recipient, message, is_system) VALUES (?, ?, ?, ?)',
-            [sender, recipient || null, message, is_system || false]
+            'INSERT INTO chat_messages (sender, recipient, message, is_system, hotel_id) VALUES (?, ?, ?, ?, ?)',
+            [sender, recipient || null, message, is_system || false, hotelId]
         );
         
         const newMessage = {
             id: result.insertId,
             sender,
+            recipient,
             message,
             is_system: is_system || false,
+            hotel_id: hotelId,
             created_at: new Date()
         };
 
-        // Broadcast to all WS clients
         const broadcast = req.app.get('broadcast');
         if (broadcast) {
-            broadcast({
-                type: 'chat_message',
-                payload: newMessage
-            });
+            broadcast({ type: 'chat_message', payload: newMessage });
         }
 
         res.json(newMessage);
@@ -132,22 +154,24 @@ router.post('/message', async (req, res) => {
 
 /**
  * DELETE /api/chat/message/:id
- * Deletes a message by ID.
  */
 router.delete('/message/:id', async (req, res) => {
     const { id } = req.params;
-    console.log(`[DEBUG CHAT] DELETE /api/chat/message/${id} hit`);
+    const hotelId = getHotelId(req);
 
     try {
-        await db.query('DELETE FROM chat_messages WHERE id = ?', [id]);
+        const isShared = await checkIfChatShared(hotelId);
+        let sql = 'DELETE FROM chat_messages WHERE id = ?';
+        let params = [id];
+        if (!isShared) {
+            sql += ' AND hotel_id = ?';
+            params.push(hotelId);
+        }
+        await db.query(sql, params);
         
-        // Broadcast deletion to all WS clients
         const broadcast = req.app.get('broadcast');
         if (broadcast) {
-            broadcast({
-                type: 'chat_delete',
-                payload: { id }
-            });
+            broadcast({ type: 'chat_delete', payload: { id, hotel_id: hotelId } });
         }
 
         res.json({ success: true });
@@ -157,65 +181,61 @@ router.delete('/message/:id', async (req, res) => {
     }
 });
 
-
-
 /**
  * GET /api/chat/unread-counts
- * Returns unread message count grouped by sender for a given user.
  */
 router.get('/unread-counts', async (req, res) => {
     const { user } = req.query;
+    const hotelId = getHotelId(req);
     if (!user) return res.status(400).json({ error: 'Usuario requerido' });
 
     try {
-        // First check if is_read column exists to avoid 500 html errors if migration wasn't run
-        const [columns] = await db.query('SHOW COLUMNS FROM chat_messages LIKE "is_read"');
-        if (columns.length === 0) {
-            console.error('[CHAT ERROR] Database migration not performed: is_read column missing.');
-            return res.status(200).json({}); // Return empty counts instead of failing
+        const isShared = await checkIfChatShared(hotelId);
+        let sql = `SELECT sender, COUNT(*) as count 
+                   FROM chat_messages 
+                   WHERE recipient = ? AND is_read = 0`;
+        let params = [user];
+
+        if (!isShared) {
+            sql += ' AND hotel_id = ?';
+            params.push(hotelId);
         }
 
-        const [rows] = await db.query(
-            `SELECT sender, COUNT(*) as count 
-             FROM chat_messages 
-             WHERE recipient = ? AND is_read = 0 
-             GROUP BY sender`,
-            [user]
-        );
-        
+        sql += ' GROUP BY sender';
+
+        const [rows] = await db.query(sql, params);
         const counts = {};
         rows.forEach(row => counts[row.sender] = row.count);
         res.json(counts);
     } catch (err) {
         console.error('[CHAT ERROR]', err);
-        res.status(500).json({ error: 'Fallo al obtener mensajes no leídos', detail: err.message });
+        res.status(500).json({ error: 'Fallo al obtener mensajes no leídos' });
     }
 });
 
 /**
  * DELETE /api/chat/conversation
- * Deletes all messages between two users.
  */
 router.delete('/conversation', async (req, res) => {
-    console.log('[DEBUG CHAT] DELETE /api/chat/conversation hit', req.query);
     const { user1, user2 } = req.query;
-    if (!user1 || !user2) {
-        return res.status(400).json({ error: 'user1 y user2 son requeridos' });
-    }
+    const hotelId = getHotelId(req);
+    if (!user1 || !user2) return res.status(400).json({ error: 'user1 y user2 son requeridos' });
 
     try {
-        await db.query(
-            'DELETE FROM chat_messages WHERE (sender = ? AND recipient = ?) OR (sender = ? AND recipient = ?)',
-            [user1, user2, user2, user1]
-        );
+        const isShared = await checkIfChatShared(hotelId);
+        let sql = 'DELETE FROM chat_messages WHERE ((sender = ? AND recipient = ?) OR (sender = ? AND recipient = ?))';
+        let params = [user1, user2, user2, user1];
 
-        // Broadcast deletion to all WS clients
+        if (!isShared) {
+            sql += ' AND hotel_id = ?';
+            params.push(hotelId);
+        }
+
+        await db.query(sql, params);
+
         const broadcast = req.app.get('broadcast');
         if (broadcast) {
-            broadcast({
-                type: 'chat_clear_conversation',
-                payload: { user1, user2 }
-            });
+            broadcast({ type: 'chat_clear_conversation', payload: { user1, user2, hotel_id: hotelId } });
         }
 
         res.json({ success: true });

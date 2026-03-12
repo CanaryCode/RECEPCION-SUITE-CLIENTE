@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Módulos | Recepción Suite</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/admin/admin.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .bg-black-glass { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .table-dark { background: transparent; }
+        .form-check-input { cursor: pointer; width: 1.4em; height: 1.4em; }
+        code { color: #0dcaf0; }
+    </style>
+</head>
+<body class="bg-dark text-light">
+    <header class="admin-header py-3 px-4 shadow-lg border-bottom border-secondary">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0 fw-bold d-flex align-items-center">
+                <i class="bi bi-grid-3x3-gap-fill text-primary me-3"></i>
+                GESTIÓN DE <span class="text-secondary fw-light ms-2">MÓDULOS</span>
+            </h1>
+            <button class="btn btn-outline-secondary btn-sm" onclick="window.close()">
+                <i class="bi bi-x-lg me-2"></i>Cerrar
+            </button>
+        </div>
+    </header>
+
+    <main class="container py-5 d-none" id="main-content">
+        <div class="card bg-black-glass border-secondary shadow-lg">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="fw-bold mb-1">Configuración por Hotel</h5>
+                        <p class="text-secondary small">Activa o desactiva módulos para cada hotel de forma independiente.</p>
+                    </div>
+                    <button class="btn btn-primary px-4 shadow" id="btn-save">
+                        <i class="bi bi-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle border-secondary">
+                        <thead class="text-secondary small text-uppercase">
+                            <tr>
+                                <th class="ps-3">Módulo ID / Nombre</th>
+                                <th class="text-center">Garoé</th>
+                                <th class="text-center">Ambassador</th>
+                                <th class="text-center" style="width: 150px;">Datos Compartidos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <tr>
+                                <td colspan="3" class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <div class="mt-2 text-secondary">Cargando módulos...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card p-4 rounded shadow-lg border border-secondary bg-black-glass text-center">
+            <i class="bi bi-shield-lock text-primary h1 mb-4"></i>
+            <h5 class="mb-3">CONFIGURACIÓN PROTEGIDA</h5>
+            <p class="text-secondary small mb-4">Ingrese la contraseña maestra para continuar</p>
+            <input type="password" id="admin-pass-input" class="form-control mb-3 bg-dark text-light border-secondary"
+                placeholder="Contraseña">
+            <button id="btn-login" class="btn btn-primary w-100 mb-2">Acceder</button>
+            <div id="login-error" class="text-danger small d-none mt-2">Contraseña incorrecta</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Api } from '../js/core/Api.js';
+
+        const tableBody = document.getElementById('table-body');
+        const btnSave = document.getElementById('btn-save');
+        const loginOverlay = document.getElementById('login-overlay');
+        const mainContent = document.getElementById('main-content');
+        const passInput = document.getElementById('admin-pass-input');
+        const loginBtn = document.getElementById('btn-login');
+        const loginError = document.getElementById('login-error');
+
+        // Maestro de módulos (basado en IDs reales de index.html)
+        const MASTER_MODULES = [
+            { id: 'dashboard-content', name: 'Dashboard Principal' },
+            { id: 'novedades-content', name: 'Novedades del Turno' },
+            { id: 'tareas-content', name: 'Registro de Tareas' },
+            { id: 'agenda-content', name: 'Agenda de Contactos' },
+            { id: 'cena-fria-content', name: 'Cenas Frías' },
+            { id: 'desayuno-content', name: 'Desayunos' },
+            { id: 'riu-content', name: 'Clientes Riu' },
+            { id: 'atenciones-content', name: 'Atenciones Especiales' },
+            { id: 'despertadores-content', name: 'Despertadores' },
+            { id: 'transfers-content', name: 'Transfers / Traslados' },
+            { id: 'excursiones-content', name: 'Registro de Excursiones' },
+            { id: 'reservas-instalaciones-content', name: 'Reservas de Instalaciones' },
+            { id: 'lost-found-content', name: 'Lost & Found (Objetos Perdidos)' },
+            { id: 'turnos-content', name: 'Turnos de Empleados' },
+            { id: 'vales-content', name: 'Vales y Consumos' },
+            { id: 'estancia-content', name: 'Estancia Diaria' },
+            { id: 'rack-content', name: 'Rack de Habitaciones' },
+            { id: 'notas-content', name: 'Notas Permanentes' },
+            { id: 'calendario-content', name: 'Calendario de Eventos' },
+            { id: 'guia-interactiva-content', name: 'Guía de Uso (Tutorial App)' },
+            { id: 'ayuda-content', name: 'Guía Operativa (Manuales Recepción)' },
+            { id: 'chat-wrapper', name: 'Chat Global de Recepción' },
+            { id: 'calculadora-container', name: 'Calculadora de Cambio (Caja)' },
+            { id: 'precios-content', name: 'Precios y Tarifas' },
+            { id: 'safe-content', name: 'Alquiler Cajas Fuertes' },
+            { id: 'caja-content', name: 'Arqueo de Caja' },
+            { id: 'cobro-content', name: 'Gestión de Cobros' },
+            { id: 'valoracion-content', name: 'Módulo de Valoraciones' },
+            { id: 'spotify-footer-player', name: 'Reproductor Spotify' },
+            { id: 'traductor-content', name: 'Traductor / Diccionario' },
+            { id: 'tiempo-content', name: 'El Tiempo' },
+            { id: 'ocr-datafonos-content', name: 'Lector OCR Datáfonos' },
+            { id: 'system-alarms-content', name: 'Alarmas del Sistema' },
+            { id: 'error-list-content', name: 'Listado de Errores' },
+            { id: 'perfil-content', name: 'Perfil de Usuario' },
+            { id: 'aplicaciones-content', name: 'Apps y Herramientas Externas' },
+            { id: 'impresion-content', name: 'Módulo de Impresión' },
+            { id: 'gallery-content', name: 'Galería de Archivos' }
+        ];
+
+        function handleLogin() {
+            if (passInput.value === '1234') {
+                loginOverlay.classList.add('d-none');
+                mainContent.classList.remove('d-none');
+                init();
+            } else {
+                loginError.classList.remove('d-none');
+                passInput.classList.add('is-invalid');
+                setTimeout(() => {
+                    passInput.classList.remove('is-invalid');
+                }, 1000);
+            }
+        }
+
+        loginBtn.onclick = handleLogin;
+        passInput.onkeypress = (e) => { if (e.key === 'Enter') handleLogin(); };
+
+        async function init() {
+            try {
+                // Fetch modulos for both hotels
+                const [gas, amb] = await Promise.all([
+                    Api.get('storage/hotel_modulos', { headers: { 'x-hotel-id': 1 } }),
+                    Api.get('storage/hotel_modulos', { headers: { 'x-hotel-id': 2 } })
+                ]);
+
+                const modulos1 = Array.isArray(gas) ? gas : [];
+                const modulos2 = Array.isArray(amb) ? amb : [];
+
+                tableBody.innerHTML = MASTER_MODULES.map(mod => {
+                    const row1 = modulos1.find(m => m.modulo_id === mod.id);
+                    const row2 = modulos2.find(m => m.modulo_id === mod.id);
+                    
+                    // Activo por defecto (1) si no existe registro
+                    const is1 = row1 ? row1.activo === 1 : true;
+                    const is2 = row2 ? row2.activo === 1 : true;
+                    const shared = row1 ? row1.compartido === 1 : (row2 ? row2.compartido === 1 : false);
+
+                    return `
+                        <tr>
+                            <td class="ps-3">
+                                <div class="fw-bold">${mod.name}</div>
+                                <div class="text-secondary x-small"><code>${mod.id}</code></div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input" type="checkbox" data-hotel="1" data-modulo="${mod.id}" ${is1 ? 'checked' : ''}>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input" type="checkbox" data-hotel="2" data-modulo="${mod.id}" ${is2 ? 'checked' : ''}>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input shared-toggle" type="checkbox" data-modulo="${mod.id}" ${shared ? 'checked' : ''}>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('Error cargando módulos:', err);
+                tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-danger py-4">Error al cargar datos.</td></tr>`;
+            }
+        }
+
+        btnSave.onclick = async () => {
+            const btn = btnSave;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+            try {
+                const inputs = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+                
+                const garoeCheckboxes = inputs.filter(i => i.dataset.hotel === "1");
+                const ambassadorCheckboxes = inputs.filter(i => i.dataset.hotel === "2");
+                const sharedCheckboxes = Array.from(document.querySelectorAll('.shared-toggle'));
+
+                const data1 = garoeCheckboxes.map(i => {
+                    const isShared = sharedCheckboxes.find(s => s.dataset.modulo === i.dataset.modulo).checked;
+                    return {
+                        modulo_id: i.dataset.modulo,
+                        activo: i.checked ? 1 : 0,
+                        compartido: isShared ? 1 : 0
+                    };
+                });
+
+                const data2 = ambassadorCheckboxes.map(i => {
+                    const isShared = sharedCheckboxes.find(s => s.dataset.modulo === i.dataset.modulo).checked;
+                    return {
+                        modulo_id: i.dataset.modulo,
+                        activo: i.checked ? 1 : 0,
+                        compartido: isShared ? 1 : 0
+                    };
+                });
+
+                // Guardar para ambos hoteles
+                await Promise.all([
+                    Api.post('storage/hotel_modulos', data1, { headers: { 'x-hotel-id': 1 } }),
+                    Api.post('storage/hotel_modulos', data2, { headers: { 'x-hotel-id': 2 } })
+                ]);
+
+                alert('Configuración guardada correctamente. Los cambios se aplicarán al recargar la aplicación principal.');
+            } catch (err) {
+                console.error(err);
+                alert('Error al guardar: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        };
+
+        // init(); // Removed auto-init to wait for login
+    </script>
+</body>
+</html>

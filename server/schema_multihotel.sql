@@ -1,0 +1,11 @@
+-- NEW TABLE FOR HOTELS
+CREATE TABLE IF NOT EXISTS hoteles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    habitaciones INT DEFAULT 0,
+    config JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- SEED INITIAL HOTEL
+INSERT IGNORE INTO hoteles (id, nombre, habitaciones) VALUES (1, 'Hotel Default', 190);

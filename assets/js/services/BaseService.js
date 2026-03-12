@@ -26,7 +26,14 @@ export class BaseService {
         /** @type {boolean} */
         this._initialized = false;
         /** @type {Object<string, string> | null} */
-        this.schema = null; // Opcional: Definido en clases hijas
+        // Opcional: Definido en clases hijas
+        this.schema = null; 
+
+        // Cache depends on hotel
+        this.getStorageKey = () => {
+            const hotelId = localStorage.getItem('current_hotel_id') || '1';
+            return `${this.endpoint}_h${hotelId}`;
+        };
 
         // Registrar para refresco automático si la sincronización está activa
         if (this.syncEnabled) {
@@ -120,9 +127,8 @@ export class BaseService {
     async init() {
         if (this._initialized) return this.getAll();
 
-        // Cargar desde LocalStorage (Caché Rápida)
-        // LocalStorage.get ya devuelve el objeto/array parseado, no el string.
-        const localData = LocalStorage.get(this.endpoint);
+        // Cargar desde LocalStorage (Caché Rápida) aislada por hotel
+        const localData = LocalStorage.get(this.getStorageKey());
         if (localData) {
             this.cache = localData;
         } else {
@@ -161,7 +167,7 @@ export class BaseService {
      */
     getAll() {
         if (!this.cache) {
-            this.cache = LocalStorage.get(this.endpoint, this.defaultValue);
+            this.cache = LocalStorage.get(this.getStorageKey(), this.defaultValue);
             this.syncWithServer();
         }
         return this.cache;
@@ -186,7 +192,7 @@ export class BaseService {
         }
 
         this.cache = data;
-        LocalStorage.set(this.endpoint, data);
+        LocalStorage.set(this.getStorageKey(), data);
 
         // Push a la cola de sincronización (SyncManager)
         if (this.syncEnabled) {
@@ -313,7 +319,7 @@ export class BaseService {
 
     clear() {
         this.cache = Array.isArray(this.defaultValue) ? [] : {};
-        LocalStorage.remove(this.endpoint);
+        LocalStorage.remove(this.getStorageKey());
         return this.save(this.cache); // Sincroniza el borrado al servidor
     }
 
@@ -339,7 +345,7 @@ export class BaseService {
                 if (localStr !== remoteStr) {
                     console.log(`[BaseService] ${this.endpoint} actualizado desde servidor`);
                     this.cache = remoteData;
-                    LocalStorage.set(this.endpoint, remoteData);
+                    LocalStorage.set(this.getStorageKey(), remoteData);
                     // Emitir evento global por si el UI necesita refrescarse
                     window.dispatchEvent(new CustomEvent('service-synced', { detail: { endpoint: this.endpoint } }));
                 }

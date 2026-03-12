@@ -3,18 +3,31 @@ const router = express.Router();
 const db = require('../db');
 const crypto = require('crypto');
 
+function getHotelId(req) {
+    const raw = req.headers['x-hotel-id'];
+    if (!raw) return 1;
+    if (Array.isArray(raw)) return parseInt(raw[raw.length - 1]) || 1;
+    if (typeof raw === 'string' && raw.includes(',')) {
+        const parts = raw.split(',');
+        return parseInt(parts[parts.length - 1].trim()) || 1;
+    }
+    return parseInt(raw) || 1;
+}
+
 /**
  * GET /api/users/current
  * Obtiene los detalles del usuario actual basados en el nombre de sesión.
  */
 router.get('/current', async (req, res) => {
     const username = req.headers['x-user-name'];
+    const hotelId = getHotelId(req);
+
     if (!username) {
         return res.status(400).json({ error: 'Falta identificación de usuario' });
     }
 
     try {
-        const [rows] = await db.query('SELECT id, nombre, email, display_name, avatar_url, activo, password_hash FROM usuarios_recepcion WHERE nombre = ?', [username]);
+        const [rows] = await db.query('SELECT id, nombre, email, display_name, avatar_url, activo, password_hash, hotel_id FROM usuarios_recepcion WHERE nombre = ? AND hotel_id = ?', [username, hotelId]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
@@ -27,6 +40,8 @@ router.get('/current', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener datos del usuario', details: err.message });
     }
 });
+// ... (omitting intermediate lines for brevity if possible, but replace_file_content needs contiguous block)
+// I will do two separate replaces if non-contiguous, but here I'll try to catch the other part if close or use multi_replace
 
 /**
  * POST /api/users/update
@@ -41,8 +56,9 @@ router.post('/update', async (req, res) => {
     }
 
     try {
+        const hotelId = getHotelId(req);
         // 1. Obtener datos actuales para validar contraseña si es necesario
-        const [rows] = await db.query('SELECT * FROM usuarios_recepcion WHERE nombre = ?', [username]);
+        const [rows] = await db.query('SELECT * FROM usuarios_recepcion WHERE nombre = ? AND hotel_id = ?', [username, hotelId]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
@@ -89,7 +105,8 @@ router.post('/update', async (req, res) => {
         }
 
         params.push(username);
-        await db.query(`UPDATE usuarios_recepcion SET ${updates.join(', ')} WHERE nombre = ?`, params);
+        params.push(hotelId);
+        await db.query(`UPDATE usuarios_recepcion SET ${updates.join(', ')} WHERE nombre = ? AND hotel_id = ?`, params);
 
         res.json({ success: true, message: 'Perfil actualizado correctamente' });
     } catch (err) {
@@ -103,13 +120,22 @@ router.post('/update', async (req, res) => {
 router.get('/info/:username', async (req, res) => {
     const { username } = req.params;
     try {
-        const [rows] = await db.query('SELECT password_hash FROM usuarios_recepcion WHERE nombre = ?', [username]);
+        const hotelId = getHotelId(req);
+        const [rows] = await db.query(`
+            SELECT u.password_hash, u.hotel_id, h.habitaciones, h.nombre as hotel_nombre 
+            FROM usuarios_recepcion u
+            LEFT JOIN hoteles h ON u.hotel_id = h.id
+            WHERE u.nombre = ? AND u.hotel_id = ?
+        `, [username, hotelId]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
         res.json({
             username: username,
-            hasPassword: !!rows[0].password_hash
+            hasPassword: !!rows[0].password_hash,
+            hotelId: rows[0].hotel_id,
+            hotelHabitaciones: rows[0].habitaciones,
+            hotelNombre: rows[0].hotel_nombre
         });
     } catch (err) {
         res.status(500).json({ error: 'Error al consultar usuario' });
@@ -123,18 +149,27 @@ router.get('/info/:username', async (req, res) => {
 router.post('/login-check', async (req, res) => {
     const { username, password } = req.body;
     try {
-        const [rows] = await db.query('SELECT password_hash FROM usuarios_recepcion WHERE nombre = ?', [username]);
+        const [rows] = await db.query(`
+            SELECT u.password_hash, u.hotel_id, h.habitaciones, h.nombre as hotel_nombre
+            FROM usuarios_recepcion u
+            LEFT JOIN hoteles h ON u.hotel_id = h.id
+            WHERE u.nombre = ? AND u.hotel_id = ?
+        `, [username, req.body.hotelId || req.body.hotel_id || getHotelId(req)]);
         if (rows.length === 0) return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
 
         const user = rows[0];
-        if (!user.password_hash) return res.json({ success: true });
-
-        const hash = crypto.createHash('sha256').update(password).digest('hex');
-        if (hash === user.password_hash) {
-            res.json({ success: true });
-        } else {
-            res.json({ success: false, error: 'Credenciales inválidas' });
+        const hash = password ? crypto.createHash('sha256').update(password).digest('hex') : null;
+        
+        if (user.password_hash && hash !== user.password_hash) {
+            return res.json({ success: false, error: 'Credenciales inválidas' });
         }
+
+        res.json({ 
+            success: true,
+            hotelId: user.hotel_id,
+            hotelHabitaciones: user.habitaciones,
+            hotelNombre: user.hotel_nombre
+        });
     } catch (err) {
         res.status(500).json({ success: false, error: 'Error de servidor' });
     }

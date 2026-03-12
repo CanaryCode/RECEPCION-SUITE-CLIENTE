@@ -11,7 +11,8 @@ import { Api } from './Api.js';
  */
 class SyncManager {
     constructor() {
-        this.queueKey = 'sync_queue'; // Clave para guardar la cola de pendientes en el navegador
+        const hotelId = localStorage.getItem('current_hotel_id') || '1';
+        this.queueKey = `sync_queue_h${hotelId}`; // Clave aislada por hotel
         this.queue = LocalStorage.get(this.queueKey, []);
         this.isSyncing = false; // Bandera para evitar que se pisen dos procesos de subida
         this.intervalId = null;

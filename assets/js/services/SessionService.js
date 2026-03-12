@@ -17,23 +17,23 @@ class SessionService {
      * @returns {string|null} El nombre del recepcionista o null si nadie se ha identificado.
      */
     getUser() {
-        // Migración: Si existe en app_current_user (versión antigua), migrarlo a session_user
-        const legacyUser = sessionStorage.getItem('app_current_user');
-        if (legacyUser) {
-            sessionStorage.setItem(this.STORAGE_KEY, legacyUser);
-            sessionStorage.removeItem('app_current_user');
+        // Migración: Si existe en sessionStorage (versión previa), migrarlo a localStorage
+        const sessionUser = sessionStorage.getItem(this.STORAGE_KEY);
+        if (sessionUser) {
+            localStorage.setItem(this.STORAGE_KEY, sessionUser);
+            sessionStorage.removeItem(this.STORAGE_KEY);
         }
         
-        return sessionStorage.getItem(this.STORAGE_KEY);
+        return localStorage.getItem(this.STORAGE_KEY);
     }
 
     /**
      * ESTABLECER USUARIO
-     * Guarda el nombre del nuevo recepcionista temporalmente (solo esta pestana).
+     * Guarda el nombre del nuevo recepcionista permanentemente.
      */
     setUser(username) {
         if (username) {
-            sessionStorage.setItem(this.STORAGE_KEY, username);
+            localStorage.setItem(this.STORAGE_KEY, username);
             // Notificar a otros módulos (Chat, Sync, etc)
             window.dispatchEvent(new CustomEvent('user-updated', { detail: { name: username } }));
         } else {
@@ -46,6 +46,8 @@ class SessionService {
      * Borra el nombre del usuario actual del sistema.
      */
     logout() {
+        localStorage.removeItem(this.STORAGE_KEY);
+        localStorage.removeItem('current_hotel_id');
         sessionStorage.removeItem(this.STORAGE_KEY);
         window.dispatchEvent(new CustomEvent('user-updated', { detail: { name: null } }));
     }

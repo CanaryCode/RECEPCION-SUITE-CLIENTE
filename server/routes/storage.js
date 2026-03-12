@@ -52,13 +52,119 @@ const TABLE_MAP = {
     'calendario_eventos': 'calendario_eventos',
     'recepcionistas': 'usuarios_recepcion',
     'turnos_empleados': 'turnos_empleados',
+    'hoteles': 'hoteles',
+    'hotel_modulos': 'hotel_modulos',
 
 
     // ALIAS PARA COMPATIBILIDAD O LEGACY
     'riu_agenda_contactos': 'agenda_contactos',
     'riu_class_db': 'clientes_riu',
-    'config': 'app_config'
+    'config': 'app_config',
+    'alarm_log': 'alarm_log',
+    'chat_messages': 'chat_messages',
+    'chat_presence': 'chat_user_presence',
+    'calculadora_ops': 'calculadora_ops',
+    'apps_herramientas': 'apps_herramientas'
 };
+
+// TABLAS QUE REQUIEREN AISLAMIENTO POR HOTEL
+const ISOLATED_TABLES = new Set([
+    'clientes_riu',
+    'safe_rentals',
+    'despertadores',
+    'estancia_diaria',
+    'novedades',
+    'notas',
+    'precios',
+    'guia_checks',
+    'arqueo_caja',
+    'reservas_instalaciones',
+    'atenciones',
+    'cenas_frias',
+    'desayunos',
+    'lost_found',
+    'transfers',
+    'registro_excursiones',
+    'rack_status',
+    'system_alarms',
+    'vales',
+    'guia_operativa',
+    'calendario_eventos',
+    'usuarios_recepcion',
+    'turnos_empleados',
+    'hoteles',
+    'hotel_modulos',
+    'agenda_contactos',
+    'alarm_log',
+    'chat_messages',
+    'chat_user_presence',
+    'gallery_favorites',
+    'calculadora_ops',
+    'apps_herramientas',
+    'app_config'
+]);
+
+// MAPEO DE TABLAS A IDS DE MODULO (Para verificar si son compartidos)
+const TABLE_TO_MODULO = {
+    'clientes_riu': 'riu-content',
+    'safe_rentals': 'safe-content',
+    'despertadores': 'despertadores-content',
+    'estancia_diaria': 'estancia-content',
+    'novedades': 'novedades-content',
+    'notas': 'notas-content',
+    'precios': 'precios-content',
+    'guia_checks': 'guia-interactiva-content',
+    'arqueo_caja': 'caja-content',
+    'reservas_instalaciones': 'reservas_instalaciones-content',
+    'atenciones': 'atenciones-content',
+    'cenas_frias': 'cena-fria-content',
+    'desayunos': 'desayuno-content',
+    'lost_found': 'lost-found-content',
+    'transfers': 'transfers-content',
+    'registro_excursiones': 'excursiones-content',
+    'rack_status': 'rack-content',
+    'system_alarms': 'system-alarms-content',
+    'vales': 'vales-content',
+    'guia_operativa': 'ayuda-content',
+    'calendario_eventos': 'calendario-content',
+    'usuarios_recepcion': 'turnos-content',
+    'turnos_empleados': 'turnos-content',
+    'agenda_contactos': 'agenda-content',
+    'chat_messages': 'chat-wrapper',
+    'chat_user_presence': 'chat-wrapper',
+    'alarm_log': 'system-alarms-content',
+    'calculadora_ops': 'calculadora-container',
+    'apps_herramientas': 'aplicaciones-content'
+};
+
+function getHotelId(req) {
+    const raw = req.headers['x-hotel-id'];
+    if (!raw) return 1;
+    // Handle potential list of headers (Express/Node behavior)
+    if (Array.isArray(raw)) return parseInt(raw[raw.length - 1]) || 1;
+    if (typeof raw === 'string' && raw.includes(',')) {
+        const parts = raw.split(',');
+        return parseInt(parts[parts.length - 1].trim()) || 1;
+    }
+    return parseInt(raw) || 1;
+}
+
+/**
+ * Verifica si un módulo está marcado como compartido para el hotel actual.
+ */
+async function checkIfShared(tableName, hotelId) {
+    const modId = TABLE_TO_MODULO[tableName];
+    if (!modId) return false;
+    try {
+        const [rows] = await db.query(
+            'SELECT compartido FROM hotel_modulos WHERE hotel_id = ? AND modulo_id = ?',
+            [hotelId, modId]
+        );
+        return rows.length > 0 && rows[0].compartido === 1;
+    } catch (e) {
+        return false;
+    }
+}
 
 
 /**
@@ -179,8 +285,21 @@ router.get('/:key', async (req, res) => {
     // Try Database first if mapping exists
     if (tableName) {
         try {
-            logToFile(`[Storage] DB Read: ${tableName} (key: ${key})`);
-            const [rows] = await db.query(`SELECT * FROM \`${tableName}\``);
+            const hotelId = getHotelId(req);
+            const isIsolated = ISOLATED_TABLES.has(tableName);
+            const isSharedValue = isIsolated ? await checkIfShared(tableName, hotelId) : true;
+            
+            logToFile(`[Storage] DB Read attempt: ${tableName} (key: ${key}, hotel: ${hotelId}, isolated: ${isIsolated}, shared: ${isSharedValue})`);
+            
+            let queryArr;
+            // Si la tabla NO es aislada O es compartida, no filtramos por hotel_id
+            if (isIsolated && !isSharedValue && tableName !== 'hoteles') {
+                queryArr = await db.query(`SELECT * FROM \`${tableName}\` WHERE hotel_id = ?`, [hotelId]);
+            } else {
+                queryArr = await db.query(`SELECT * FROM \`${tableName}\``);
+            }
+            const [rows] = queryArr;
+            logToFile(`[Storage] DB Read success: ${tableName} - Found ${rows.length} rows`);
 
             // Special handling for JSON fields in DB if needed (e.g. departamentos in novedades)
             const processedRows = rows.map(row => {
@@ -349,7 +468,10 @@ router.post('/:key', async (req, res) => {
         await connection.beginTransaction();
 
         if (tableName) {
-            logToFile(`[Storage] DB Write (Transaction Start): ${tableName} (key: ${key})`);
+            const hotelId = getHotelId(req);
+            const isIsolated = ISOLATED_TABLES.has(tableName);
+            
+            logToFile(`[Storage] DB Write (Transaction Start): ${tableName} (key: ${key}, hotel: ${hotelId}, isolated: ${isIsolated})`);
 
             // CASO ESPECIAL: CONFIG (No queremos borrar todo, sino hacer UPSERT)
             if (key === 'config') {
@@ -358,13 +480,13 @@ router.post('/:key', async (req, res) => {
                     // Si el valor ya es un objeto, lo stringificamos para la DB
                     const valStr = (typeof v === 'object' && v !== null) ? JSON.stringify(v) : v;
                     await connection.query(
-                        'INSERT INTO app_config (config_key, config_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE config_value = ?',
-                        [k, valStr, valStr]
+                        'INSERT INTO app_config (config_key, config_value, hotel_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE config_value = ?',
+                        [k, valStr, hotelId, valStr]
                     );
                 }
 
-                // Recuperar la configuración completa para el archivo JSON y para el broadcast
-                const [allRows] = await connection.query('SELECT * FROM app_config');
+                // Recuperar la configuración completa para el archivo JSON y para el broadcast (Filtrado por hotel)
+                const [allRows] = await connection.query('SELECT * FROM app_config WHERE hotel_id = ?', [hotelId]);
                 const fullConfig = {};
                 allRows.forEach(r => {
                     let val = r.config_value;
@@ -381,7 +503,13 @@ router.post('/:key', async (req, res) => {
                 
             } else {
                 // 1. Limpiar tabla actual para otros módulos (comportamiento estándar actual)
-                await connection.query(`DELETE FROM \`${tableName}\``);
+                const isSharedValue = isIsolated ? await checkIfShared(tableName, hotelId) : true;
+                
+                if (isIsolated && !isSharedValue) {
+                    await connection.query(`DELETE FROM \`${tableName}\` WHERE hotel_id = ?`, [hotelId]);
+                } else {
+                    await connection.query(`DELETE FROM \`${tableName}\``);
+                }
 
                 // 2. Normalizar data a array para inserción
                 let itemsToInsert = [];
@@ -507,6 +635,25 @@ router.post('/:key', async (req, res) => {
 
                 // Inserción genérica con validación de columnas
                 if (itemsToInsert.length > 0) {
+                    // AUTO-CREATE TABLE hotel_modulos if missing
+                    if (tableName === 'hotel_modulos') {
+                        try {
+                            await connection.query(`
+                                CREATE TABLE IF NOT EXISTS hotel_modulos (
+                                    id INT AUTO_INCREMENT PRIMARY KEY,
+                                    hotel_id INT NOT NULL,
+                                    modulo_id VARCHAR(100) NOT NULL,
+                                    activo TINYINT(1) DEFAULT 1,
+                                    compartido TINYINT(1) DEFAULT 0,
+                                    UNIQUE KEY (hotel_id, modulo_id),
+                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                )
+                            `);
+                        } catch (e) {
+                            logToFile(`[Storage] hotel_modulos creation error: ${e.message}`);
+                        }
+                    }
+
                     let [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
                     let validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
 
@@ -533,6 +680,18 @@ router.post('/:key', async (req, res) => {
                             logToFile(`[Storage] Auto-migration success. New columns: ${Array.from(validDbColumns).join(',')}`);
                         } catch (migErr) {
                             logToFile(`[Storage] CRITICAL: Auto-migration failed for notas: ${migErr.message}`);
+                        }
+                    }
+
+                    // AUTO-MIGRACIÓN HOTEL_MODULOS
+                    if (tableName === 'hotel_modulos' && !validDbColumns.has('compartido')) {
+                        try {
+                            logToFile('[Storage] Migration: Adding column compartido to hotel_modulos');
+                            await connection.query('ALTER TABLE hotel_modulos ADD COLUMN compartido TINYINT(1) DEFAULT 0');
+                            [dbColumnsResult] = await connection.query(`SHOW COLUMNS FROM \`${tableName}\``);
+                            validDbColumns = new Set(dbColumnsResult.map(c => c.Field));
+                        } catch (migErr) {
+                            logToFile(`[Storage] CRITICAL: Auto-migration failed for hotel_modulos: ${migErr.message}`);
                         }
                     }
 
@@ -564,7 +723,22 @@ router.post('/:key', async (req, res) => {
 
                             return (val === undefined) ? null : val;
                         });
-                        await connection.query(sql, values);
+
+                        // Inject hotel_id if the table is isolated AND NOT SHARED
+                        if (isIsolated && !isSharedValue) {
+                            const hotelIdIdx = itemColumns.indexOf('hotel_id');
+                            if (hotelIdIdx === -1) {
+                                // Add hotel_id to the query if not present in item keys
+                                const sqlIsolated = `INSERT INTO \`${tableName}\` (\`${itemColumns.join('\`, \`')}\`, \`hotel_id\`) VALUES (${placeholders}, ?)`;
+                                await connection.query(sqlIsolated, [...values, hotelId]);
+                            } else {
+                                // Replace existing hotel_id with the request context one to enforce isolation
+                                values[hotelIdIdx] = hotelId;
+                                await connection.query(sql, values);
+                            }
+                        } else {
+                            await connection.query(sql, values);
+                        }
                     }
                 } else {
                     logToFile(`[Storage] No items to insert for ${tableName}`);

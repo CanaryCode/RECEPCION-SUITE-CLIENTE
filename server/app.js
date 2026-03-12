@@ -312,19 +312,30 @@ app.use('/api/tts', ttsRoutes);
 // app.use('/assets/admin', adminAuthGate); // ELIMINADO para permitir Password-Only Overlay
 
 // --- STATIC FILES ---
-// Servidor de archivos estáticos para el frontend
+// Servior de archivos estáticos para el frontend
 const frontendPath = path.resolve(__dirname, '..');
+
+const staticOptions = {
+    setHeaders: (res, destPath) => {
+        if (destPath.endsWith('.js') || destPath.endsWith('.css') || destPath.endsWith('.html')) {
+            res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+            res.set('Pragma', 'no-cache');
+            res.set('Expires', '0');
+            res.set('Surrogate-Control', 'no-store');
+        }
+    }
+};
 
 // FIX: Servir explícitamente la carpeta assets para evitar fallos de resolución relativa
 const assetsPath = path.join(frontendPath, 'assets');
-app.use('/assets', express.static(assetsPath));
+app.use('/assets', express.static(assetsPath, staticOptions));
 
 // Servidor general (para index.html y otros archivos en la raíz)
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, staticOptions));
 
 // FIX: Servir explícitamente la carpeta storage para que las imágenes sean accesibles
 const storagePath = path.resolve(__dirname, '../storage');
-app.use('/storage', express.static(storagePath));
+app.use('/storage', express.static(storagePath, staticOptions));
 
 // Fallback para SPA (aunque el index.html está en la raíz, express.static ya lo sirve si safePath era '/')
 app.get('*', (req, res) => {
