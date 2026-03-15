@@ -278,3 +278,33 @@ Permission was denied for this request to access the `loopback` address space.
 **Archivos afectados**: `assets/js/modules/*.js`, `assets/js/services/*.js`, `assets/css/*.css`, `server/routes/*.js`, `index.html`.
 
 **Lección**: La estabilidad de los servicios core (`Api.js`, `BaseService.js`) es clave para permitir que los módulos de UI crezcan sin introducir regresiones de comunicación. La instrumentación con logs sigue siendo la mejor herramienta de diagnóstico preventivo.
+
+---
+
+### [2026-03-15] Presencia de Chat Invisible para Recién Llegados
+
+**Síntoma**: Los usuarios ya conectados podían ver al nuevo usuario, pero el nuevo usuario veía la lista de chats vacía (no veía a los que ya estaban).
+
+**Causa raíz**: El módulo de chat intentaba recuperar la lista inicial de usuarios usando `window.realTimeSync`, que no estaba definida globalmente en ese punto del arranque. Además, si el mensaje "online_users" llegaba muy rápido durante el apretón de manos, el módulo aún no estaba escuchando.
+
+**Solución**: 
+1. Exponer `realTimeSync` al objeto `window` globalmente en `RealTimeSync.js`.
+2. Añadir un reintento táctico (500ms) en la inicialización del chat para solicitar explícitamente la lista de usuarios si el socket está abierto y no se ha recibido la lista aún.
+
+**Archivos afectados**: `assets/js/core/RealTimeSync.js`, `assets/js/modules/chat.js`
+
+**Lección**: En arquitecturas híbridas (módulos ES + scripts globales), los singletons core deben estar disponibles globalmente si otros módulos intentan acceder a ellos de forma asíncrona o legacy para evitar errores de referencia en el arranque.
+
+---
+
+### [2026-03-15] Mejora del Selector de Emojis (WhatsApp Style)
+
+**Síntoma**: El selector de emojis era muy básico, con pocos iconos y sin organización.
+
+**Causa raíz**: Falta de categorización y una base de datos de emojis limitada en el código original.
+
+**Solución**: Se implementó un selector tabulado con 8 categorías (Emoticonos, Personas, Animales, Comida, Viajes, Objetos, Símbolos y Banderas) y más de 800 emojis. Se rediseñó la UI con efectos de cristal (glassmorphism) y animaciones de entrada/salida.
+
+**Archivos afectados**: `assets/js/modules/chat.js`, `assets/css/chat.css`
+
+**Lección**: Una UI rica y familiar (como las categorías de WhatsApp) mejora drásticamente la adopción. El uso de estructuras de datos para definir categorías de UI facilita la expansión futura.

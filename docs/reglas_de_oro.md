@@ -29,6 +29,7 @@
 | C7  | **Cómputo pesado en cliente**    | OCR, PDF, imágenes → JavaScript del navegador. El servidor es solo para persistencia.      |
 | C8  | **Sin magic strings**            | Usar `core/Constants.js` para eventos, nombres de módulos y claves.                        |
 | C9  | **Minimalismo en headers para Agente** | Prohibido enviar headers de sesión (`X-User-Name`, etc.) a peticiones locales (localhost) para evitar bloqueos CORS/PNA innecesarios. |
+| C10 | **Singletons globales en arranque** | Servicios core (`realTimeSync`, `Api`, etc.) deben exponerse a `window` para ser accesibles por módulos asíncronos o scripts legacy durante el race condition del arranque. |
 
 ## INTERFAZ Y UX
 

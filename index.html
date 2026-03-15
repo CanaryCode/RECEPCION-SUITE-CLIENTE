@@ -96,7 +96,7 @@
     data-bs-target="#system-alarms-content"></button>
 
   <!-- UI STRUCTURE -->
-  <div id="app-layout" class="container-fluid py-4">
+  <div id="app-layout" class="container-fluid py-4 d-none">
     <!-- App Header Panel -->
     <div id="app-header" class="app-header-panel text-center position-relative" onclick="Router.handleHeaderClick(event)"
       style="cursor: pointer">
@@ -108,7 +108,7 @@
 
       <h1 class="display-5 fw-bold mb-2">Recepción Suite</h1>
       <p class="mb-0">by A. Jesús</p>
-      <div class="version-ribbon">beta 4</div>
+      <div class="version-ribbon">beta 5</div>
     </div>
 
     <!-- Cabecera Flexible: Navegación + Herramientas [CENTRADO] -->
@@ -254,6 +254,16 @@
                     class="bi bi-calculator-fill me-2"></i>Cálculo Valoración</span>
               </button>
             </li>
+            <li>
+              <button class="dropdown-item" data-bs-toggle="tab" data-bs-target="#llaves-content" onclick="
+                    import('./assets/js/modules/llaves.js').then(
+                      (m) => m.Llaves.init(),
+                    )
+                  ">
+                <span data-tooltip="true" data-bs-placement="right"
+                  data-bs-title="Gestión de llaves del hotel"><i class="bi bi-key-fill me-2"></i>Gestión de Llaves</span>
+              </button>
+            </li>
           </ul>
         </li>
 
@@ -364,19 +374,9 @@
                     class="bi bi-gear-wide-connected me-2"></i>Configuración</span>
               </button>
             </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <button class="dropdown-item" onclick="openWebViewer('/assets/admin/index.html', 'Consola de Administración', false)">
-                <span data-tooltip="true" data-bs-placement="left"
-                  data-bs-title="Monitoreo de servidores y acciones de gestión">
-                  <i class="bi bi-shield-lock-fill me-2"></i>Consola de Administración
-                </span>
-              </button>
-            </li>
           </ul>
         </li>
+
 
         <!-- Utilidades (Alarma, Usuario, Buscador) -->
         <li class="nav-item d-flex align-items-center ms-auto">
@@ -707,6 +707,11 @@
           <div class="spinner-border text-primary" role="status"></div>
           <p class="mt-2 text-muted">Cargando Módulo de Tareas...</p>
         </div>
+      </div>
+
+      <!-- LLAVES CONTENT -->
+      <div class="tab-pane fade bg-soft-panel" id="llaves-content" role="tabpanel">
+        <!-- El contenido se carga desde assets/templates/llaves.html via CompLoader -->
       </div>
 
       <!-- Nueva pestaña de Aplicaciones -->
@@ -3426,7 +3431,7 @@
   </div>
 
   <!-- ARCHIVO JS PRINCIPAL (Punto de entrada) -->
-  <script type="module" src="assets/js/main.js?v=2026031202"></script>
+  <script type="module" src="assets/js/main.js?v=2026031424"></script>
 
   <!-- Spotify Footer Player (Minimizable) -->
   <div id="spotify-footer-player" class="spotify-footer-player no-print">

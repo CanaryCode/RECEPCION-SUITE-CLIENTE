@@ -74,12 +74,17 @@ class RealTimeSync {
                             const duration = data.duration !== undefined ? data.duration : 5000;
                             window.showToast(message, variant, duration);
                         }
-                    } else if (data.type === 'chat_message' || 
-                               data.type === 'chat_delete' || 
-                               data.type === 'chat_delete_multiple' || 
-                               data.type === 'user_connected' || 
+                    } else if (data.type === 'ping') {
+                        // Responder inmediatamente al ping del servidor para mantener la conexión viva
+                        this.socket.send(JSON.stringify({ type: 'pong' }));
+                    } else if (data.type === 'chat_message' ||
+                               data.type === 'chat_delete' ||
+                               data.type === 'chat_delete_multiple' ||
+                               data.type === 'user_connected' ||
+                               data.type === 'online_users' ||
                                data.type === 'chat_typing' ||
                                data.type === 'chat_stop_typing' ||
+                               data.type === 'chat_buzz' ||
                                data.type === 'messages_read' ||
                                data.type === 'message_delivered' ||
                                data.type === 'chat_clear_conversation') {
@@ -114,12 +119,22 @@ class RealTimeSync {
     }
 
     login() {
-        const username = localStorage.getItem('session_user');
+        let username = localStorage.getItem('session_user');
+        const hotelId = localStorage.getItem('session_hotel_id') || 1;
+
+        // LIMPIEZA: Eliminar :hotelId del username si existe (datos legacy)
+        if (username && username.includes(':')) {
+            const cleanUsername = username.split(':')[0];
+            console.log(`[Sync-RT] Limpiando username legacy: "${username}" -> "${cleanUsername}"`);
+            username = cleanUsername;
+            localStorage.setItem('session_user', cleanUsername); // Actualizar localStorage
+        }
+
         if (this.socket && this.socket.readyState === WebSocket.OPEN && username) {
-            console.log(`[Sync-RT] Identificando conexión como: ${username}`);
+            console.log(`[Sync-RT] Identificando conexión como: ${username} (Hotel: ${hotelId})`);
             this.socket.send(JSON.stringify({
                 type: 'chat_login',
-                payload: { username }
+                payload: { username, hotelId }
             }));
         }
     }
@@ -136,3 +151,4 @@ class RealTimeSync {
 }
 
 export const realTimeSync = new RealTimeSync();
+window.realTimeSync = realTimeSync;
